@@ -1,0 +1,63 @@
+{
+  "name": "@xpan0988/prograph",
+  "version": "0.1.0",
+  "description": "Local-first repository dependency graph and code intelligence tool",
+  "type": "module",
+  "bin": {
+    "prograph": "./dist/cli/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "docs"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "npm run clean && tsc -p tsconfig.node.json && node scripts/finalize-build.mjs && vite build",
+    "clean": "node scripts/clean.mjs",
+    "dev": "vite",
+    "typecheck": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.ui.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "npm run typecheck",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "code-intelligence",
+    "dependency-graph",
+    "static-analysis",
+    "typescript",
+    "rust",
+    "tauri",
+    "react"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
+    "@xyflow/react": "^12.8.5",
+    "better-sqlite3": "^12.4.1",
+    "commander": "^14.0.2",
+    "elkjs": "^0.11.0",
+    "express": "^5.1.0",
+    "fast-glob": "^3.3.3",
+    "open": "^11.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tree-sitter": "^0.22.4",
+    "tree-sitter-rust": "^0.24.0",
+    "ts-morph": "^27.0.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.4",
+    "vitest": "^4.0.14"
+  }
+}
