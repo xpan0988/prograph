@@ -1,157 +1,49 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Background,
-  Controls,
-  MiniMap,
-  ReactFlow,
-  ReactFlowProvider,
-  useEdgesState,
-  useNodesState,
-  type Edge,
-  type Node,
-} from "@xyflow/react";
-import ELK from "elkjs/lib/elk.bundled.js";
-import {
-  ArrowsClockwise,
-  Binoculars,
-  BracketsCurly,
-  CaretDown,
-  ChartDonut,
-  CirclesFour,
-  Code,
-  File,
-  FlowArrow,
-  Graph,
-  MagnifyingGlass,
-  Path,
-  Pulse,
-  ShieldWarning,
-  TreeStructure,
-  WarningCircle,
-} from "@phosphor-icons/react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ReactFlowProvider, useEdgesState, useNodesState, type Edge, type Node } from "@xyflow/react";
 import type { Diagnostic, GraphEdge, GraphNode } from "../core/graph/schema";
+import { ApiError, errorFingerprint, getJson, postJson, shouldDisplayError } from "./api-client";
+import { DiagnosticsView } from "./components/DiagnosticsView";
+import { EmptyState, ErrorToast, LoadingState } from "./components/GraphStates";
+import { Inspector } from "./components/Inspector";
+import { Sidebar } from "./components/Sidebar";
+import { StatusBar } from "./components/StatusBar";
+import { TopToolbar } from "./components/TopToolbar";
+import { AffectedSummary, ArchitectureLanes, ContextSummary, GraphLegend, ViewHeader } from "./components/ViewChrome";
+import { focusGraph, GraphCanvas, layoutGraph, nodeLanguage, toFlowEdge, toFlowNode } from "./graph/GraphCanvas";
+import { I18nProvider, useI18n, type Locale } from "./i18n";
+import type { TranslationKey } from "./i18n/en";
+import { appShellClassName } from "./layout";
+import type {
+  AffectedResult,
+  ConfidenceLevel,
+  ContextResult,
+  ErrorNotice,
+  EvidenceMode,
+  FileSummary,
+  GraphResult,
+  Overview,
+  RepositoryState,
+  RepositoryStatus,
+  View,
+} from "./types";
 
-interface Overview {
-  repository: { root?: string; identity?: string };
-  counts: { files: number; nodes: number; edges: number; diagnostics: number };
-  nodesByKind: Array<{ kind: string; count: number }>;
-  edgesByKind: Array<{ kind: string; count: number }>;
-  adapters: Array<{ adapter: string; detected: number; durationMs: number; nodeCount: number; edgeCount: number; diagnosticCount: number }>;
+function confidenceQuery(level: ConfidenceLevel): string {
+  if (level === "unresolved") return "&includeUnresolved=true";
+  if (level === "probable") return "&includeProbable=true";
+  return "";
 }
 
-interface GraphResult {
-  nodes: GraphNode[];
-  edges: GraphEdge[];
-  truncated?: boolean;
-  center?: GraphNode;
+function promptForView(view: View, hasSelection: boolean): { title: TranslationKey; description: TranslationKey } | undefined {
+  if (view === "symbols" && !hasSelection) return { title: "graph.symbolPrompt", description: "graph.symbolPrompt.description" };
+  if (view === "context") return { title: "graph.contextPrompt", description: "graph.contextPrompt.description" };
+  if (view === "affected" && !hasSelection) return { title: "graph.affectedPrompt", description: "graph.affectedPrompt.description" };
+  return undefined;
 }
 
-type View = "architecture" | "dependencies" | "symbols" | "framework" | "impact" | "diagnostics";
-
-const elk = new ELK();
-const nodeWidth = 198;
-const nodeHeight = 82;
-
-function lane(node: GraphNode): string {
-  if (node.kind === "repository" || node.kind === "directory") return "entry";
-  if (node.kind === "framework_command" || node.kind === "framework_event") return "bridge";
-  if (node.language === "rust") return "rust";
-  if (node.kind === "external_package") return "external";
-  return "typescript";
-}
-
-function colorFor(node: GraphNode): string {
-  const colors: Record<string, string> = {
-    entry: "#8d98a6",
-    typescript: "#4a92ff",
-    bridge: "#20b8b4",
-    rust: "#f28b32",
-    external: "#9da6b1",
-  };
-  return colors[lane(node)] ?? "#9da6b1";
-}
-
-function graphNode(node: GraphNode): Node {
-  return {
-    id: node.id,
-    data: { label: node.name, graphNode: node },
-    position: { x: 0, y: 0 },
-    className: `graph-node lane-${lane(node)}`,
-    style: { width: nodeWidth, height: nodeHeight, borderColor: colorFor(node) },
-  };
-}
-
-function graphEdge(edge: GraphEdge): Edge {
-  return {
-    id: edge.id,
-    source: edge.source,
-    target: edge.target,
-    label: edge.kind,
-    data: { graphEdge: edge },
-    className: `graph-edge confidence-${edge.confidence}`,
-    animated: edge.kind === "invokes",
-  };
-}
-
-async function layoutGraph(nodes: Node[], edges: Edge[], architecture = false): Promise<{ nodes: Node[]; edges: Edge[] }> {
-  if (architecture) {
-    const order = new Map([["entry", 0], ["typescript", 1], ["bridge", 2], ["rust", 3], ["external", 4]]);
-    const rows = new Map<string, number>();
-    const positioned = [...nodes]
-      .sort((a, b) => String(a.data.label).localeCompare(String(b.data.label)))
-      .map((node) => {
-        const nodeLane = lane(node.data.graphNode as GraphNode);
-        const row = rows.get(nodeLane) ?? 0;
-        rows.set(nodeLane, row + 1);
-        return { ...node, position: { x: (order.get(nodeLane) ?? 0) * 300 + 55, y: row * 112 + 70 } };
-      });
-    return { nodes: positioned, edges };
-  }
-  const result = await elk.layout({
-    id: "root",
-    layoutOptions: {
-      "elk.algorithm": "layered",
-      "elk.direction": "RIGHT",
-      "elk.layered.spacing.nodeNodeBetweenLayers": "110",
-      "elk.spacing.nodeNode": "54",
-      "elk.layered.nodePlacement.strategy": "NETWORK_SIMPLEX",
-    },
-    children: nodes.map((node) => ({ id: node.id, width: nodeWidth, height: nodeHeight })),
-    edges: edges.map((edge) => ({ id: edge.id, sources: [edge.source], targets: [edge.target] })),
-  });
-  const positions = new Map(result.children?.map((child) => [child.id, { x: child.x ?? 0, y: child.y ?? 0 }]) ?? []);
-  return { nodes: nodes.map((node) => ({ ...node, position: positions.get(node.id) ?? node.position })), edges };
-}
-
-async function getJson<T>(url: string): Promise<T> {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`Request failed: ${response.status}`);
-  return response.json() as Promise<T>;
-}
-
-const nav: Array<{ id: View; label: string; detail: string; icon: typeof Graph }> = [
-  { id: "architecture", label: "Architecture", detail: "System layers", icon: TreeStructure },
-  { id: "dependencies", label: "Dependencies", detail: "File graph", icon: CirclesFour },
-  { id: "symbols", label: "Symbols", detail: "Functions and types", icon: BracketsCurly },
-  { id: "framework", label: "Frameworks", detail: "React and Tauri", icon: FlowArrow },
-  { id: "impact", label: "Impact", detail: "Reverse reachability", icon: Pulse },
-  { id: "diagnostics", label: "Diagnostics", detail: "Issues and smells", icon: ShieldWarning },
-];
-
-function nodeLabel(node: Node): React.ReactNode {
-  const graphData = node.data.graphNode as GraphNode;
-  return (
-    <div className="node-content">
-      <div className="node-title">{graphData.name}</div>
-      <div className="node-kind">{graphData.kind.replaceAll("_", " ")}</div>
-      <div className="node-file">{graphData.file ?? graphData.language ?? graphData.adapter}</div>
-    </div>
-  );
-}
-
-export function App(): React.ReactElement {
+function AppBody(): React.ReactElement {
+  const { t } = useI18n();
   const [overview, setOverview] = useState<Overview>();
-  const [files, setFiles] = useState<Array<{ path: string; language: string; nodeCount: number }>>([]);
+  const [files, setFiles] = useState<FileSummary[]>([]);
   const [diagnostics, setDiagnostics] = useState<Diagnostic[]>([]);
   const [view, setView] = useState<View>("architecture");
   const [rawGraph, setRawGraph] = useState<GraphResult>({ nodes: [], edges: [] });
@@ -159,211 +51,276 @@ export function App(): React.ReactElement {
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [selectedNode, setSelectedNode] = useState<GraphNode>();
   const [selectedEdge, setSelectedEdge] = useState<GraphEdge>();
+  const [contextResult, setContextResult] = useState<ContextResult>();
+  const [affectedResult, setAffectedResult] = useState<AffectedResult>();
   const [query, setQuery] = useState("");
   const [depth, setDepth] = useState(2);
   const [maxNodes, setMaxNodes] = useState(75);
+  const [confidence, setConfidence] = useState<ConfidenceLevel>("trusted");
+  const [evidenceMode, setEvidenceMode] = useState<EvidenceMode>("standard");
+  const [status, setStatus] = useState<RepositoryStatus>();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>();
+  const [syncing, setSyncing] = useState(false);
+  const [error, setError] = useState<ErrorNotice>();
   const [languages, setLanguages] = useState(new Set(["typescript", "rust", "framework"]));
+  const [fitRequest, setFitRequest] = useState(0);
+  const errorHistory = useRef<{ fingerprint: string; at: number } | undefined>(undefined);
+  const searchInput = useRef<HTMLInputElement>(null);
+  const inspectorOpen = Boolean(selectedNode);
+
+  const dismissError = useCallback(() => setError(undefined), []);
+  const reportError = useCallback((operation: TranslationKey, caught: unknown) => {
+    const fingerprint = errorFingerprint(operation, caught);
+    const now = Date.now();
+    if (!shouldDisplayError(errorHistory.current, fingerprint, now)) return;
+    errorHistory.current = { fingerprint, at: now };
+    setError({
+      operation,
+      fingerprint,
+      message: caught instanceof Error ? caught.message : String(caught),
+      ...(caught instanceof ApiError && caught.returnedHtml ? { messageKey: "error.nonJson" as const } : {}),
+    });
+  }, []);
 
   const refreshArchitecture = useCallback(async () => {
     setLoading(true);
-    setError(undefined);
     try {
-      const result = await getJson<GraphResult>(`/api/architecture?maxNodes=${maxNodes}`);
-      setRawGraph(result);
+      setRawGraph(await getJson<GraphResult>(`/api/architecture?maxNodes=${maxNodes}&mode=${evidenceMode}${confidenceQuery(confidence)}`, "operation.architecture"));
+      dismissError();
     } catch (caught) {
-      setError(String(caught));
+      reportError("operation.architecture", caught);
     } finally {
       setLoading(false);
     }
-  }, [maxNodes]);
+  }, [maxNodes, confidence, evidenceMode, dismissError, reportError]);
 
   useEffect(() => {
+    let active = true;
     void Promise.all([
-      getJson<Overview>("/api/overview").then(setOverview),
-      getJson<Array<{ path: string; language: string; nodeCount: number }>>("/api/files").then(setFiles),
-      getJson<Diagnostic[]>("/api/diagnostics").then(setDiagnostics),
-      refreshArchitecture(),
-    ]).catch((caught) => setError(String(caught)));
-  }, [refreshArchitecture]);
+      getJson<Overview>("/api/overview", "operation.bootstrap"),
+      getJson<FileSummary[]>("/api/files", "operation.bootstrap"),
+      getJson<Diagnostic[]>("/api/diagnostics", "operation.bootstrap"),
+      getJson<RepositoryStatus>("/api/status", "operation.bootstrap"),
+    ]).then(([nextOverview, nextFiles, nextDiagnostics, nextStatus]) => {
+      if (!active) return;
+      setOverview(nextOverview);
+      setFiles(nextFiles);
+      setDiagnostics(nextDiagnostics);
+      setStatus(nextStatus);
+      dismissError();
+    }).catch((caught) => reportError("operation.bootstrap", caught));
+    return () => { active = false; };
+  }, [dismissError, reportError]);
 
   useEffect(() => {
-    const allowed = rawGraph.nodes.filter((node) => !node.language || languages.has(node.language));
+    if (view === "architecture" || view === "dependencies") {
+      void refreshArchitecture();
+      return;
+    }
+    if (view === "framework") {
+      setLoading(true);
+      void getJson<GraphResult>(`/api/frameworks?mode=${evidenceMode}${confidenceQuery(confidence)}`, "operation.framework")
+        .then((result) => { setRawGraph(result); dismissError(); })
+        .catch((caught) => reportError("operation.framework", caught))
+        .finally(() => setLoading(false));
+      return;
+    }
+    if (view === "symbols" && selectedNode) {
+      setLoading(true);
+      void getJson<GraphResult>(`/api/symbols/${encodeURIComponent(selectedNode.id)}/neighborhood?depth=${depth}&maxNodes=${maxNodes}&mode=${evidenceMode}${confidenceQuery(confidence)}`, "operation.symbol")
+        .then((result) => { setRawGraph(result); dismissError(); })
+        .catch((caught) => reportError("operation.symbol", caught))
+        .finally(() => setLoading(false));
+      return;
+    }
+    if (view === "affected" && selectedNode) {
+      setLoading(true);
+      void getJson<AffectedResult>(`/api/affected?input=${encodeURIComponent(selectedNode.id)}&depth=${Math.max(depth, 3)}&maxNodes=${maxNodes}&includeTests=true&mode=${evidenceMode}${confidenceQuery(confidence)}`, "operation.affected")
+        .then((result) => {
+          setAffectedResult(result);
+          setRawGraph({ nodes: [...result.roots, ...result.directlyAffectedSymbols, ...result.transitivelyAffectedSymbols], edges: result.relationships });
+          dismissError();
+        })
+        .catch((caught) => reportError("operation.affected", caught))
+        .finally(() => setLoading(false));
+    }
+  }, [view, confidence, selectedNode, depth, maxNodes, evidenceMode, refreshArchitecture, dismissError, reportError]);
+
+  useEffect(() => {
+    const allowed = rawGraph.nodes.filter((node) => {
+      const language = nodeLanguage(node);
+      return !language || languages.has(language);
+    });
     const ids = new Set(allowed.map((node) => node.id));
     const relevantEdges = rawGraph.edges.filter((edge) => ids.has(edge.source) && ids.has(edge.target));
-    void layoutGraph(allowed.map(graphNode), relevantEdges.map(graphEdge), view === "architecture").then((layout) => {
-      setNodes(layout.nodes.map((node) => ({ ...node, data: { ...node.data, label: nodeLabel(node) } })));
+    let active = true;
+    void layoutGraph(allowed.map(toFlowNode), relevantEdges.map(toFlowEdge), view === "architecture").then((layout) => {
+      if (!active) return;
+      setNodes(layout.nodes);
       setEdges(layout.edges);
     });
+    return () => { active = false; };
   }, [rawGraph, languages, view, setNodes, setEdges]);
+
+  useEffect(() => {
+    const focused = focusGraph(nodes, edges, selectedNode?.id, selectedEdge?.id);
+    const nodeChanged = focused.nodes.some((node, index) => node.className !== nodes[index]?.className);
+    const edgeChanged = focused.edges.some((edge, index) => edge.className !== edges[index]?.className);
+    if (nodeChanged) setNodes(focused.nodes);
+    if (edgeChanged) setEdges(focused.edges);
+  }, [selectedNode?.id, selectedEdge?.id, nodes, edges, setNodes, setEdges]);
+
+  useEffect(() => {
+    if (selectedNode && !rawGraph.nodes.some((node) => node.id === selectedNode.id)) {
+      setSelectedNode(undefined);
+      setSelectedEdge(undefined);
+    }
+  }, [rawGraph, selectedNode]);
+
+  const clearSelection = useCallback(() => {
+    setSelectedNode(undefined);
+    setSelectedEdge(undefined);
+  }, []);
+
+  useEffect(() => {
+    const handleKey = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        searchInput.current?.focus();
+      }
+      if (event.key === "Escape" && selectedNode) clearSelection();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [selectedNode, clearSelection]);
 
   const runSearch = useCallback(async () => {
     if (!query.trim()) return;
     setLoading(true);
-    setError(undefined);
     try {
-      const symbols = await getJson<GraphNode[]>(`/api/symbols/search?q=${encodeURIComponent(query)}&maxNodes=10`);
-      const first = symbols[0];
-      if (!first) throw new Error(`No symbol matches "${query}"`);
-      const result = await getJson<GraphResult>(`/api/symbols/${encodeURIComponent(first.id)}/neighborhood?depth=${depth}&maxNodes=${maxNodes}`);
-      setRawGraph(result);
-      setSelectedNode(first);
-      setView("symbols");
+      if (view === "context") {
+        const result = await getJson<ContextResult>(`/api/context?task=${encodeURIComponent(query)}&maxSymbols=${maxNodes}&mode=${evidenceMode}${confidenceQuery(confidence)}`, "operation.context");
+        setContextResult(result);
+        setRawGraph({ nodes: result.symbols.map((item) => item.node), edges: result.relationships });
+      } else if (view === "affected") {
+        const result = await getJson<AffectedResult>(`/api/affected?input=${encodeURIComponent(query)}&depth=${Math.max(depth, 3)}&maxNodes=${maxNodes}&includeTests=true&mode=${evidenceMode}${confidenceQuery(confidence)}`, "operation.affected");
+        setAffectedResult(result);
+        setRawGraph({ nodes: [...result.roots, ...result.directlyAffectedSymbols, ...result.transitivelyAffectedSymbols], edges: result.relationships });
+        setSelectedNode(result.roots[0]);
+      } else {
+        const symbols = await getJson<GraphNode[]>(`/api/symbols/search?q=${encodeURIComponent(query)}&maxNodes=10`, "operation.symbol");
+        const first = symbols[0];
+        if (!first) throw new Error(`No symbol matches "${query}"`);
+        const result = await getJson<GraphResult>(`/api/symbols/${encodeURIComponent(first.id)}/neighborhood?depth=${depth}&maxNodes=${maxNodes}&mode=${evidenceMode}${confidenceQuery(confidence)}`, "operation.symbol");
+        setRawGraph(result);
+        setSelectedNode(first);
+        setView("symbols");
+      }
+      dismissError();
     } catch (caught) {
-      setError(String(caught));
+      reportError(view === "context" ? "operation.context" : view === "affected" ? "operation.affected" : "operation.symbol", caught);
     } finally {
       setLoading(false);
     }
-  }, [query, depth, maxNodes]);
+  }, [query, view, maxNodes, evidenceMode, confidence, depth, dismissError, reportError]);
 
-  const changeView = useCallback(async (next: View) => {
+  const runSync = useCallback(async () => {
+    setSyncing(true);
+    try {
+      await postJson<unknown>("/api/sync", "operation.sync");
+      setStatus(await getJson<RepositoryStatus>("/api/status", "operation.sync"));
+      await refreshArchitecture();
+      dismissError();
+    } catch (caught) {
+      reportError("operation.sync", caught);
+    } finally {
+      setSyncing(false);
+    }
+  }, [refreshArchitecture, dismissError, reportError]);
+
+  const changeView = useCallback((next: View) => {
     setView(next);
     setSelectedEdge(undefined);
-    if (next === "architecture" || next === "dependencies") {
-      await refreshArchitecture();
-      return;
-    }
-    if (next === "framework") {
-      const result = await getJson<GraphResult>("/api/frameworks");
-      setRawGraph(result);
-      return;
-    }
-    if ((next === "impact" || next === "symbols") && selectedNode) {
-      const nextDepth = next === "impact" ? Math.max(depth, 3) : depth;
-      setRawGraph(await getJson<GraphResult>(`/api/symbols/${encodeURIComponent(selectedNode.id)}/neighborhood?depth=${nextDepth}&maxNodes=${maxNodes}`));
-    }
-  }, [refreshArchitecture, selectedNode, depth, maxNodes]);
+    if (next === "symbols" && !selectedNode) setRawGraph({ nodes: [], edges: [] });
+    if (next === "context" && !contextResult) setRawGraph({ nodes: [], edges: [] });
+    if (next === "affected" && !selectedNode && !affectedResult) setRawGraph({ nodes: [], edges: [] });
+  }, [contextResult, selectedNode, affectedResult]);
 
-  const filteredFiles = useMemo(() => files.slice(0, 18), [files]);
-  const relationship = selectedEdge ?? rawGraph.edges.find((edge) => edge.source === selectedNode?.id || edge.target === selectedNode?.id);
+  const resetFilters = useCallback(() => {
+    setDepth(2);
+    setMaxNodes(75);
+    setConfidence("trusted");
+    setEvidenceMode("standard");
+    setLanguages(new Set(["typescript", "rust", "framework"]));
+    setQuery("");
+    setSelectedEdge(undefined);
+  }, []);
+
+  const toggleLanguage = useCallback((language: string) => setLanguages((current) => {
+    const next = new Set(current);
+    if (next.has(language)) next.delete(language); else next.add(language);
+    return next;
+  }), []);
+
   const relatedEdges = selectedNode ? rawGraph.edges.filter((edge) => edge.source === selectedNode.id || edge.target === selectedNode.id) : [];
+  const graphFitKey = `${view}:${inspectorOpen ? "inspector" : "full"}:${nodes.length}:${edges.length}:${nodes[0]?.id ?? ""}:${nodes.at(-1)?.id ?? ""}`;
+  const prompt = promptForView(view, Boolean(selectedNode));
+  const repositoryState: RepositoryState = syncing ? "syncing" : status?.state ?? "checking";
 
   return (
-    <ReactFlowProvider>
-      <div className="app-shell">
-        <aside className="sidebar">
-          <div className="brand">
-            <ChartDonut size={25} weight="duotone" />
-            <div><strong>ProGraph</strong><span>Evidence Workbench</span></div>
-            <b>v0.1</b>
-          </div>
-          <div className="repo-block">
-            <span>Repository</span>
-            <strong>{overview?.repository.root?.split("/").at(-1) ?? "Loading..."}</strong>
-            <small>{overview?.repository.root}</small>
-          </div>
-          <nav>
-            {nav.map((item) => {
-              const Icon = item.icon;
-              return (
-                <button className={view === item.id ? "active" : ""} key={item.id} onClick={() => void changeView(item.id)}>
-                  <Icon size={19} /><span><strong>{item.label}</strong><small>{item.detail}</small></span>
-                </button>
-              );
-            })}
-          </nav>
-          <div className="tree">
-            <div className="section-title"><span>Repository files</span><CaretDown size={14} /></div>
-            {filteredFiles.map((item) => <button key={item.path} title={item.path}><File size={14} /><span>{item.path}</span><b>{item.nodeCount}</b></button>)}
-          </div>
-          <div className="scope-card">
-            <div><span>Graph scope</span><b>{rawGraph.truncated ? "Bounded" : "Complete view"}</b></div>
-            <div><span>Depth</span><strong>{depth}</strong></div>
-            <div><span>Nodes</span><strong>{rawGraph.nodes.length} / {overview?.counts.nodes ?? "..."}</strong></div>
-            <div><span>Edges</span><strong>{rawGraph.edges.length} / {overview?.counts.edges ?? "..."}</strong></div>
-          </div>
-        </aside>
-
-        <main className="workspace">
-          <header className="toolbar">
-            <form onSubmit={(event) => { event.preventDefault(); void runSearch(); }}>
-              <MagnifyingGlass size={19} />
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search symbols, files, or packages..." />
-              <kbd>⌘ K</kbd>
-            </form>
-            <label>Max depth <select value={depth} onChange={(event) => setDepth(Number(event.target.value))}>{[1, 2, 3, 4, 5].map((item) => <option key={item}>{item}</option>)}</select></label>
-            <label>Max nodes <select value={maxNodes} onChange={(event) => setMaxNodes(Number(event.target.value))}>{[25, 50, 75, 100, 150].map((item) => <option key={item}>{item}</option>)}</select></label>
-            <button className="rebuild" onClick={() => void refreshArchitecture()}><ArrowsClockwise size={17} /> Refresh view</button>
-          </header>
-          <div className="subtoolbar">
-            <div><span>View</span><strong>{nav.find((item) => item.id === view)?.label}</strong><span>›</span><b>{rawGraph.nodes.length} nodes</b></div>
-            <div className="legend">
-              {["typescript", "rust", "framework"].map((language) => (
-                <button key={language} className={languages.has(language) ? "enabled" : ""} onClick={() => setLanguages((current) => {
-                  const next = new Set(current);
-                  if (next.has(language)) next.delete(language); else next.add(language);
-                  return next;
-                })}><i className={`dot ${language}`} />{language === "framework" ? "Bridge" : language}</button>
-              ))}
-            </div>
-          </div>
-          <section className="canvas-wrap">
-            {view === "architecture" && <div className="lane-labels">{["L0 Entry points", "L1 TypeScript / React", "L2 Framework bridge", "L3 Rust core", "L4 External"].map((item) => <span key={item}>{item}</span>)}</div>}
-            {view === "diagnostics" ? (
-              <div className="diagnostic-view">
-                <div><ShieldWarning size={30} /><h2>Diagnostics</h2><p>Parser failures and uncertain relationships remain visible instead of disappearing.</p></div>
-                {diagnostics.map((item, index) => <article key={`${item.code}-${index}`}><WarningCircle size={19} /><span><strong>{item.code}</strong><p>{item.message}</p><small>{item.file ? `${item.file}:${item.line ?? ""}` : item.adapter}</small></span><b className={item.severity}>{item.severity}</b></article>)}
-              </div>
-            ) : (
-              <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onNodeClick={(_event, node) => { setSelectedNode(node.data.graphNode as GraphNode); setSelectedEdge(undefined); }}
-                onEdgeClick={(_event, edge) => { setSelectedEdge(edge.data?.graphEdge as GraphEdge); }}
-                fitView
-                minZoom={0.15}
-                maxZoom={1.8}
-              >
-                <MiniMap pannable zoomable nodeColor={(node) => colorFor(node.data.graphNode as GraphNode)} />
-                <Controls showInteractive={false} />
-                <Background color="#27313c" gap={24} size={1} />
-              </ReactFlow>
-            )}
-            {loading && <div className="loading"><ArrowsClockwise size={20} className="spin" /> Loading bounded graph...</div>}
-            {error && <div className="error"><WarningCircle size={18} />{error}</div>}
-          </section>
-        </main>
-
-        <aside className="inspector">
-          <div className="inspector-title"><span>Evidence Inspector</span><Binoculars size={18} /></div>
-          {selectedNode ? (
-            <>
-              <section className="selected-symbol">
-                <div><Code size={22} /><span><strong>{selectedNode.name}</strong><small>{selectedNode.kind.replaceAll("_", " ")}</small></span><b>{selectedNode.language ?? selectedNode.adapter}</b></div>
-                <a>{selectedNode.file ?? selectedNode.qualifiedName}{selectedNode.startLine ? `:${selectedNode.startLine}` : ""}</a>
-              </section>
-              <section>
-                <div className="section-title"><span>Confidence</span><b>{relationship?.confidence ?? "exact"}</b></div>
-                <div className="confidence">{[1, 2, 3, 4, 5, 6].map((item) => <i key={item} />)}</div>
-              </section>
-              <section>
-                <div className="section-title"><span>Relationships</span><b>{relatedEdges.length}</b></div>
-                <div className="relationship-list">
-                  {relatedEdges.slice(0, 8).map((edge) => <button key={edge.id} onClick={() => setSelectedEdge(edge)}><Path size={16} /><span><strong>{edge.kind}</strong><small>{edge.source === selectedNode.id ? "outgoing" : "incoming"} · {edge.confidence}</small></span></button>)}
-                </div>
-              </section>
-              <section>
-                <div className="section-title"><span>Source evidence</span><b>{relationship?.evidence.length ?? 0}</b></div>
-                {relationship?.evidence.map((item, index) => <div className="evidence" key={index}><File size={15} /><span><strong>{item.matchedSyntax ?? relationship.kind}</strong><a>{item.file}:{item.line}:{item.column}</a><small>{item.resolutionMethod ?? item.adapter}</small></span></div>)}
-              </section>
-              <section>
-                <div className="section-title"><span>Stable graph ID</span></div>
-                <code>{selectedNode.id}</code>
-              </section>
-            </>
-          ) : (
-            <div className="empty-inspector"><Graph size={30} /><strong>Select a graph node</strong><p>Inspect the same stable ID, relationship confidence, and source evidence available through the CLI.</p></div>
-          )}
-        </aside>
-
-        <footer className="statusbar">
-          <div><span>Adapters</span>{overview?.adapters.map((adapter) => <b key={adapter.adapter} className={adapter.detected ? "ok" : ""}>{adapter.adapter}<small>{adapter.detected ? " indexed" : " idle"}</small></b>)}</div>
-          <div><span>Diagnostics</span><b className="errors">{diagnostics.filter((item) => item.severity === "error").length} errors</b><b className="warnings">{diagnostics.filter((item) => item.severity === "warning").length} warnings</b><b>{diagnostics.filter((item) => item.severity === "info").length} info</b></div>
-        </footer>
-      </div>
-    </ReactFlowProvider>
+    <div className={appShellClassName(inspectorOpen)} data-inspector-open={inspectorOpen}>
+      <Sidebar view={view} overview={overview} files={files} rawGraph={rawGraph} depth={depth} onViewChange={changeView} />
+      <main className="workspace">
+        <TopToolbar
+          query={query}
+          depth={depth}
+          maxNodes={maxNodes}
+          confidence={confidence}
+          evidenceMode={evidenceMode}
+          syncing={syncing}
+          searchInputRef={searchInput}
+          onQueryChange={setQuery}
+          onSearch={() => void runSearch()}
+          onDepthChange={setDepth}
+          onMaxNodesChange={setMaxNodes}
+          onConfidenceChange={setConfidence}
+          onEvidenceModeChange={setEvidenceMode}
+          onSync={() => void runSync()}
+          onFit={() => setFitRequest((current) => current + 1)}
+          onReset={resetFilters}
+        />
+        <ViewHeader view={view} nodes={rawGraph.nodes.length} edges={rawGraph.edges.length}>
+          {view !== "diagnostics" && <GraphLegend languages={languages} onToggle={toggleLanguage} />}
+        </ViewHeader>
+        <section className="canvas-wrap">
+          {status?.stale && <div className="stale-warning"><strong>{t("graph.stale")}</strong><span>{t("graph.stale.detail", { added: status.addedFiles.length, modified: status.modifiedFiles.length, deleted: status.deletedFiles.length })}</span></div>}
+          {view === "architecture" && <ArchitectureLanes />}
+          {view === "context" && contextResult && <ContextSummary result={contextResult} />}
+          {view === "affected" && affectedResult && <AffectedSummary result={affectedResult} />}
+          {view === "diagnostics" ? <DiagnosticsView diagnostics={diagnostics} /> : rawGraph.nodes.length ? (
+            <GraphCanvas
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              fitKey={graphFitKey}
+              fitRequest={fitRequest}
+              onNodeSelect={(node) => { setSelectedNode(node); setSelectedEdge(undefined); }}
+              onEdgeSelect={setSelectedEdge}
+              onDeselect={clearSelection}
+            />
+          ) : !loading && prompt ? <EmptyState {...prompt} /> : !loading ? <EmptyState title="graph.empty" description="graph.empty.description" /> : null}
+          {selectedNode && relatedEdges.length > 0 && <div className="selection-hint"><strong>{t("graph.selected")}</strong><span>{t("graph.selected.detail")}</span></div>}
+          {loading && <LoadingState />}
+          {error && <ErrorToast error={error} onDismiss={dismissError} />}
+        </section>
+      </main>
+      {selectedNode && <Inspector node={selectedNode} nodes={rawGraph.nodes} edges={rawGraph.edges} selectedEdge={selectedEdge} onEdgeSelect={setSelectedEdge} onClose={clearSelection} />}
+      <StatusBar state={repositoryState} overview={overview} diagnostics={diagnostics} graph={rawGraph} />
+    </div>
   );
+}
+
+export function App({ language }: { language?: Locale } = {}): React.ReactElement {
+  return <I18nProvider language={language}><ReactFlowProvider><AppBody /></ReactFlowProvider></I18nProvider>;
 }

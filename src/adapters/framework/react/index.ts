@@ -58,7 +58,7 @@ export const reactAdapter: FrameworkAdapter = {
         if (!owner) continue;
         const targets = byName.get(name) ?? [];
         let target = targets.length === 1 ? targets[0] : undefined;
-        let confidence: "resolved" | "probable" | "unresolved" = targets.length === 1 ? "resolved" : targets.length > 1 ? "probable" : "unresolved";
+        let confidence: "probable" | "unresolved" = targets.length > 0 ? "probable" : "unresolved";
         if (!target) {
           target = {
             id: nodeId({
@@ -86,7 +86,7 @@ export const reactAdapter: FrameworkAdapter = {
             target: target.id,
             kind: "renders",
             confidence,
-            evidence: [{ ...sourceEvidence(file, line, "jsx-element", name), resolutionMethod: confidence === "resolved" ? "unique-component-name" : "component-name-heuristic" }],
+            evidence: [{ ...sourceEvidence(file, line, "jsx-element", name), resolutionMethod: "component-name-heuristic" }],
             metadata: {},
           }),
         );
@@ -115,8 +115,8 @@ export const reactAdapter: FrameworkAdapter = {
             source: owner.id,
             target: targets[0]!.id,
             kind: "passes_callback",
-            confidence: "resolved",
-            evidence: [{ ...sourceEvidence(file, line, "jsx-attribute", callback), resolutionMethod: "unique-function-name" }],
+            confidence: "probable",
+            evidence: [{ ...sourceEvidence(file, line, "jsx-attribute", callback), resolutionMethod: "unique-function-name-heuristic" }],
             metadata: { prop },
           }),
         );

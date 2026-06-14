@@ -7,6 +7,16 @@ export default defineConfig({
   build: {
     outDir: "../../dist/ui",
     emptyOutDir: false,
+    chunkSizeWarningLimit: 1500,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          graph: ["@xyflow/react"],
+          layout: ["elkjs/lib/elk.bundled.js"],
+          icons: ["@phosphor-icons/react"],
+        },
+      },
+    },
   },
   server: {
     proxy: {

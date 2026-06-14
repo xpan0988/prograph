@@ -22,6 +22,7 @@ import { nodeId, withEdgeId } from "../../../core/graph/identity.js";
 import type { GraphNode, NodeKind, SourceEvidence } from "../../../core/graph/schema.js";
 
 const TYPESCRIPT_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".mts", ".cts"]);
+const LOW_VALUE_METHODS = new Set(["new", "get", "send", "clone", "insert", "update", "set", "map", "filter", "reduce", "forEach", "toString"]);
 
 function relative(snapshot: RepositorySnapshot, sourceFile: SourceFile): string {
   return path.relative(snapshot.repository.root, sourceFile.getFilePath()).split(path.sep).join("/");
@@ -160,6 +161,7 @@ export const typescriptAdapter: LanguageAdapter = {
     const nodeByDeclaration = new Map<string, GraphNode>();
     const fileNodes = new Map<string, GraphNode>();
     const externalNodes = new Map<string, GraphNode>();
+    const unresolvedNodes = new Map<string, GraphNode>();
     for (const sourceFile of project.getSourceFiles()) {
       const file = relative(snapshot, sourceFile);
       const fileNode: GraphNode = {
@@ -327,25 +329,36 @@ export const typescriptAdapter: LanguageAdapter = {
           );
         } else {
           const unresolvedName = expression.getText();
-          const unresolved: GraphNode = {
-            id: nodeId({
-              repositoryIdentity: snapshot.repository.identity,
+          const memberName = Node.isPropertyAccessExpression(expression) ? expression.getName() : undefined;
+          const scopeName = memberName && LOW_VALUE_METHODS.has(memberName) ? "<common-method>" : unresolvedName;
+          const unresolvedKey = `${source.id}:${Node.isPropertyAccessExpression(expression) ? "method" : "call"}:${scopeName}`;
+          let unresolved = unresolvedNodes.get(unresolvedKey);
+          if (!unresolved) {
+            unresolved = {
+              id: nodeId({
+                repositoryIdentity: snapshot.repository.identity,
+                language: "typescript",
+                file,
+                kind: "unresolved_symbol",
+                qualifiedName: `call:${unresolvedKey}`,
+              }),
+              kind: "unresolved_symbol",
+              name: scopeName,
+              qualifiedName: `call:${unresolvedKey}`,
               language: "typescript",
               file,
-              kind: "unresolved_symbol",
-              qualifiedName: `call:${unresolvedName}`,
-              discriminator: String(call.getStart()),
-            }),
-            kind: "unresolved_symbol",
-            name: unresolvedName,
-            qualifiedName: `call:${unresolvedName}`,
-            language: "typescript",
-            file,
-            ...location(call),
-            adapter: "typescript",
-            metadata: { category: "call", candidateCount: uniqueTargets.length },
-          };
-          graph.addNode(unresolved);
+              ...location(call),
+              adapter: "typescript",
+              metadata: {
+                category: Node.isPropertyAccessExpression(expression) ? "method" : "call",
+                candidateCount: uniqueTargets.length,
+                scopedOwner: source.id,
+                aggregated: scopeName !== unresolvedName,
+              },
+            };
+            unresolvedNodes.set(unresolvedKey, unresolved);
+            graph.addNode(unresolved);
+          }
           graph.addEdge(
             withEdgeId({
               source: source.id,

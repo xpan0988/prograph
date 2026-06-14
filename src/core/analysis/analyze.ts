@@ -11,6 +11,7 @@ import { tauriAdapter } from "../../adapters/framework/tauri/index.js";
 import type { AdapterResult, FrameworkAdapter, LanguageAdapter, RepositorySnapshot } from "../adapters/contracts.js";
 import { persistGraph } from "../storage/sqlite.js";
 import packageJson from "../../../package.json" with { type: "json" };
+import { createIndexState, writeIndexState } from "./state.js";
 
 export interface AnalyzeOptions {
   output?: string;
@@ -145,6 +146,7 @@ export async function analyzeRepository(input = ".", options: AnalyzeOptions = {
     writeFile(path.join(outputDirectory, "exports", "graph.json"), `${JSON.stringify(graph, null, 2)}\n`),
     writeFile(path.join(outputDirectory, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`),
     writeFile(path.join(outputDirectory, "diagnostics.json"), `${JSON.stringify(graph.diagnostics, null, 2)}\n`),
+    writeIndexState(outputDirectory, createIndexState(scan.snapshot, manifest)),
   ]);
   return { graph, manifest, adapterRuns, outputDirectory };
 }
