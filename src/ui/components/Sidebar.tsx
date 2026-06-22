@@ -22,8 +22,8 @@ const navGroups: Array<{ label: TranslationKey; items: Array<{ id: View; label: 
     items: [
       { id: "architecture", label: "nav.architecture", detail: "nav.architecture.detail", icon: TreeStructure },
       { id: "dependencies", label: "nav.dependencies", detail: "nav.dependencies.detail", icon: CirclesFour },
-      { id: "symbols", label: "nav.symbols", detail: "nav.symbols.detail", icon: BracketsCurly },
       { id: "framework", label: "nav.framework", detail: "nav.framework.detail", icon: FlowArrow },
+      { id: "symbols", label: "nav.symbols", detail: "nav.symbols.detail", icon: BracketsCurly },
     ],
   },
   {
@@ -48,8 +48,10 @@ interface SidebarProps {
 export function Sidebar({ view, overview, files, rawGraph, depth, onViewChange }: SidebarProps): React.ReactElement {
   const { locale, setLocale, t } = useI18n();
   const [filesOpen, setFilesOpen] = useState(true);
+  const [fileFilter, setFileFilter] = useState("");
   const repositoryRoot = overview?.repository.root;
-  const visibleFiles = files.slice(0, 12);
+  const filteredFiles = files.filter((file) => file.path.toLowerCase().includes(fileFilter.trim().toLowerCase()));
+  const visibleFiles = filteredFiles.slice(0, 13);
 
   return (
     <aside className="sidebar">
@@ -97,12 +99,16 @@ export function Sidebar({ view, overview, files, rawGraph, depth, onViewChange }
         </button>
         {filesOpen && (
           <div className="file-list">
+            <label className="file-filter">
+              <span>{t("repo.filterFiles")}</span>
+              <input value={fileFilter} onChange={(event) => setFileFilter(event.target.value)} placeholder={t("repo.filterFilesPlaceholder")} />
+            </label>
             {visibleFiles.map((item) => (
               <div className="file-row" key={item.path} title={item.path}>
                 <File size={13} /><code>{item.path}</code><b>{item.nodeCount}</b>
               </div>
             ))}
-            {files.length > visibleFiles.length && <small>{t("repo.moreFiles", { count: files.length - visibleFiles.length })}</small>}
+            {filteredFiles.length > visibleFiles.length && <small>{t("repo.moreFiles", { count: filteredFiles.length - visibleFiles.length })}</small>}
           </div>
         )}
       </section>

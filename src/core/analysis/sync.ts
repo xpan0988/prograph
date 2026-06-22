@@ -73,6 +73,7 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
     if (directory !== "." && !previous.nodes.some((node) => node.kind === "directory" && node.qualifiedName === directory)) return undefined;
   }
   const sourceFiles = changedFiles.filter((file) => /\.(?:ts|tsx|js|jsx|mts|cts|rs)$/.test(file));
+  if (sourceFiles.length !== changedFiles.length) return undefined;
   const partialSnapshot: RepositorySnapshot = {
     ...scan.snapshot,
     files: sourceFiles,

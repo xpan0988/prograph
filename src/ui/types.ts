@@ -1,9 +1,11 @@
-import type { Diagnostic, GraphEdge, GraphNode } from "../core/graph/schema";
+import type { Diagnostic, GraphEdge, GraphNode, GraphScope } from "../core/graph/schema";
 import type { TranslationKey } from "./i18n/en";
 
 export type View = "architecture" | "dependencies" | "symbols" | "framework" | "context" | "affected" | "diagnostics";
 export type ConfidenceLevel = "trusted" | "probable" | "unresolved";
 export type EvidenceMode = "compact" | "standard" | "full";
+export type GraphMode = "code" | "knowledge";
+export type KnowledgeScope = GraphScope;
 export type RepositoryState = "fresh" | "stale" | "missing" | "checking" | "syncing" | "error";
 
 export interface Overview {

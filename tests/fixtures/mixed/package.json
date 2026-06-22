@@ -1,8 +1,16 @@
 {
   "name": "prograph-mixed-fixture",
   "private": true,
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@tauri-apps/api": "^2.0.0",
     "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.0"
   }
 }

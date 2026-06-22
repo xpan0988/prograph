@@ -1,0 +1,17 @@
+{
+  "productName": "ProGraph Fixture",
+  "identifier": "dev.prograph.fixture",
+  "build": {
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Fixture"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'"
+    }
+  }
+}

@@ -5,6 +5,7 @@ import { queryServiceForRepository, type ConfidenceQuery } from "../core/query/q
 import { formatQueryOutput } from "../core/query/output-mode.js";
 import { repositoryStatus } from "../core/analysis/state.js";
 import packageJson from "../../package.json" with { type: "json" };
+import type { GraphScope } from "../core/graph/schema.js";
 
 const contextShape = {
   repository: z.string().optional().describe("Repository path; defaults to the path passed to prograph mcp"),
@@ -15,12 +16,14 @@ const boundedShape = {
   maxNodes: z.number().int().min(1).max(500).optional(),
   includeProbable: z.boolean().optional(),
   includeUnresolved: z.boolean().optional(),
+  scope: z.enum(["code", "code+docs", "code+config", "code+tests", "full"]).optional(),
 };
 
-function confidence(input: { includeProbable?: boolean | undefined; includeUnresolved?: boolean | undefined }): ConfidenceQuery {
+function confidence(input: { includeProbable?: boolean | undefined; includeUnresolved?: boolean | undefined; scope?: GraphScope | undefined }): ConfidenceQuery {
   return {
     ...(input.includeProbable ? { includeProbable: true } : {}),
     ...(input.includeUnresolved ? { includeUnresolved: true } : {}),
+    ...(input.scope ? { scope: input.scope } : {}),
   };
 }
 
@@ -42,14 +45,14 @@ export function createProGraphMcpServer(defaultRepository = ".", defaultIndex?: 
   const repo = (input: { repository?: string | undefined }): string => input.repository ?? defaultRepository;
   const index = (input: { index?: string | undefined }): string | undefined => input.index ?? defaultIndex;
 
-  server.registerTool("get_repository_overview", { description: "Get the indexed repository overview", inputSchema: contextShape }, async (input) =>
-    response(await withQuery(repo(input), index(input), (query) => query.overview())));
+  server.registerTool("get_repository_overview", { description: "Get the indexed repository overview", inputSchema: { ...contextShape, scope: z.enum(["code", "code+docs", "code+config", "code+tests", "full"]).optional() } }, async (input) =>
+    response(await withQuery(repo(input), index(input), (query) => query.overview({ ...(input.scope ? { scope: input.scope } : {}) }))));
   server.registerTool("get_status", { description: "Get repository index freshness", inputSchema: contextShape }, async (input) =>
     response(await repositoryStatus(repo(input), index(input))));
   server.registerTool("find_symbol", {
     description: "Find trusted concrete symbols by name or qualified name",
-    inputSchema: { ...contextShape, query: z.string(), maxNodes: z.number().int().min(1).max(200).optional(), includeUnresolved: z.boolean().optional() },
-  }, async (input) => response(await withQuery(repo(input), index(input), (query) => query.searchSymbols(input.query, input.maxNodes ?? 20, { ...(input.includeUnresolved ? { includeUnresolved: true } : {}) }))));
+    inputSchema: { ...contextShape, query: z.string(), maxNodes: z.number().int().min(1).max(200).optional(), includeUnresolved: z.boolean().optional(), scope: z.enum(["code", "code+docs", "code+config", "code+tests", "full"]).optional() },
+  }, async (input) => response(await withQuery(repo(input), index(input), (query) => query.searchSymbols(input.query, input.maxNodes ?? 20, { ...(input.includeUnresolved ? { includeUnresolved: true } : {}), ...(input.scope ? { scope: input.scope } : {}) }))));
   server.registerTool("get_symbol", {
     description: "Get one symbol by stable graph ID",
     inputSchema: { ...contextShape, id: z.string() },

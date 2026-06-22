@@ -5,8 +5,8 @@ import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { analyzeRepository } from "../src/core/analysis/analyze.js";
 import { DEFAULT_EXCLUDE, loadConfig } from "../src/core/config/config.js";
 import { edgeId, nodeId, validateIdentities } from "../src/core/graph/identity.js";
-import type { GraphNode } from "../src/core/graph/schema.js";
-import { QueryService, queryServiceForRepository } from "../src/core/query/query-service.js";
+import type { GraphEdge, GraphNode } from "../src/core/graph/schema.js";
+import { QueryService, queryServiceForRepository, scopedEdges, scopedNodes } from "../src/core/query/query-service.js";
 import { formatQueryOutput } from "../src/core/query/output-mode.js";
 import { resolveRepositoryRoot, scanRepository } from "../src/core/repository/repository.js";
 import { repositoryStatus } from "../src/core/analysis/state.js";
@@ -18,7 +18,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { appShellClassName } from "../src/ui/layout.js";
 import { errorFingerprint, shouldDisplayError } from "../src/ui/api-client.js";
-import { focusGraph } from "../src/ui/graph/GraphCanvas.js";
+import { focusGraph, nodeLanguage } from "../src/ui/graph/GraphCanvas.js";
 import { detectLanguage, initialLanguage, translate } from "../src/ui/i18n/index.js";
 import { en } from "../src/ui/i18n/en.js";
 import { zhCN } from "../src/ui/i18n/zh-CN.js";
@@ -119,7 +119,7 @@ describe("mixed repository analysis", () => {
       access(path.join(output, "exports/graph.json")),
     ]);
     const exported = JSON.parse(await readFile(path.join(output, "exports/graph.json"), "utf8")) as { schemaVersion: string };
-    expect(exported.schemaVersion).toBe("1.0.0");
+    expect(exported.schemaVersion).toBe("1.1.0");
   });
 
   test("serves symbol search, callers, callees, and bounded neighborhoods from SQLite", () => {
@@ -133,6 +133,101 @@ describe("mixed repository analysis", () => {
       expect(query.frameworkBindings("tauri")).toHaveProperty("nodes");
     } finally {
       query.close();
+    }
+  });
+
+  test("extracts deterministic knowledge overlay artifacts", () => {
+    const nodes = analysis.graph.nodes;
+    expect(nodes).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: "doc_section", name: "Installation", adapter: "markdown" }),
+      expect.objectContaining({ kind: "cli_command", name: "npm run build" }),
+      expect.objectContaining({ kind: "api_surface", name: "GET /api/overview" }),
+      expect.objectContaining({ kind: "configuration", name: "script build", adapter: "packageJson" }),
+      expect.objectContaining({ kind: "configuration", name: "cargo package prograph-mixed-fixture", adapter: "cargoToml" }),
+      expect.objectContaining({ kind: "security_boundary", name: "capability main-window", adapter: "tauriCapability" }),
+      expect.objectContaining({ kind: "test_artifact", file: "test/actions.ts" }),
+    ]));
+    const installation = nodes.find((node) => node.kind === "doc_section" && node.name === "Installation");
+    expect(installation?.metadata).toMatchObject({ graphDomain: "knowledge", artifactKind: "markdown", sourceCategory: "docs", headingDepth: 2 });
+    expect(installation?.startLine).toBeGreaterThan(0);
+  });
+
+  test("links knowledge overlay facts without weakening confidence semantics", () => {
+    const nodes = analysis.graph.nodes;
+    const edges = analysis.graph.edges;
+    const byName = (kind: string, name: string): GraphNode | undefined => nodes.find((node) => node.kind === kind && node.name === name);
+    const npmBuild = byName("cli_command", "npm run build");
+    const scriptBuild = byName("configuration", "script build");
+    const api = byName("api_surface", "GET /api/overview");
+    const serverFile = nodes.find((node) => node.kind === "file" && node.file === "src/server.ts");
+    const capability = byName("security_boundary", "capability main-window");
+    const command = byName("framework_command", "greet");
+    const testArtifact = nodes.find((node) => node.kind === "test_artifact" && node.file === "test/actions.ts");
+    const actionsFile = nodes.find((node) => node.kind === "file" && node.file === "src/actions.ts");
+    expect(edges).toEqual(expect.arrayContaining([
+      expect.objectContaining({ source: npmBuild?.id, target: scriptBuild?.id, kind: "related_to", confidence: "exact", metadata: expect.objectContaining({ extractionMethod: "npm_script_match" }) }),
+      expect.objectContaining({ source: api?.id, target: serverFile?.id, kind: "mentions", confidence: "resolved", metadata: expect.objectContaining({ extractionMethod: "api_route_literal_match" }) }),
+      expect.objectContaining({ source: capability?.id, target: command?.id, kind: "configures", confidence: "resolved", metadata: expect.objectContaining({ extractionMethod: "tauri_permission_match" }) }),
+      expect.objectContaining({ source: testArtifact?.id, target: actionsFile?.id, kind: "tests", confidence: "resolved", metadata: expect.objectContaining({ extractionMethod: "test_import_match" }) }),
+    ]));
+  });
+
+  test("filters code and knowledge scopes through the shared query service", () => {
+    const query = new QueryService(path.join(output, "graph.sqlite"));
+    try {
+      const code = query.architecture(300);
+      expect(code.nodes.some((node) => node.kind === "doc_section")).toBe(false);
+      expect(code.edges.some((edge) => edge.metadata.graphDomain === "knowledge")).toBe(false);
+      const docs = query.architecture(300, { scope: "code+docs" });
+      expect(docs.nodes.some((node) => node.kind === "doc_section")).toBe(true);
+      expect(docs.nodes.some((node) => node.kind === "configuration")).toBe(false);
+      const config = query.architecture(300, { scope: "code+config" });
+      expect(config.nodes.some((node) => node.kind === "configuration" || node.kind === "security_boundary")).toBe(true);
+      const tests = query.architecture(300, { scope: "code+tests" });
+      expect(tests.nodes.some((node) => node.kind === "test_artifact")).toBe(true);
+      const full = query.architecture(500, { scope: "full", includeProbable: true });
+      expect(full.nodes.some((node) => node.kind === "doc_section")).toBe(true);
+      expect(full.nodes.some((node) => node.kind === "configuration")).toBe(true);
+      expect(full.nodes.some((node) => node.kind === "test_artifact")).toBe(true);
+    } finally {
+      query.close();
+    }
+  });
+
+  test("scope filtering tolerates graph entities without metadata", () => {
+    const codeNode = { id: "code", kind: "function", name: "run", qualifiedName: "run", adapter: "test", metadata: undefined } as unknown as GraphNode;
+    const docNode = { id: "doc", kind: "doc_section", name: "Docs", qualifiedName: "README.md#docs", adapter: "test", metadata: undefined } as unknown as GraphNode;
+    const docsCommand = {
+      id: "cmd",
+      kind: "cli_command",
+      name: "npm test",
+      qualifiedName: "README.md#npm-test",
+      adapter: "test",
+      metadata: { graphDomain: "knowledge", sourceCategory: "docs" },
+    } as GraphNode;
+    const edge = { id: "edge", source: "code", target: "doc", kind: "mentions", confidence: "exact", metadata: undefined, evidence: undefined } as unknown as GraphEdge;
+
+    expect(() => scopedNodes([codeNode, docNode, docsCommand], { scope: "code" })).not.toThrow();
+    expect(scopedNodes([codeNode, docNode, docsCommand], { scope: "code" }).map((node) => node.id)).toEqual(["code"]);
+    expect(scopedNodes([codeNode, docNode, docsCommand], { scope: "code+docs" }).map((node) => node.id)).toEqual(["code", "cmd"]);
+    expect(scopedNodes([codeNode, docNode, docsCommand], { scope: "full" }).map((node) => node.id)).toEqual(["code", "doc", "cmd"]);
+    expect(() => scopedEdges([edge], [codeNode, docNode, docsCommand], { scope: "full" })).not.toThrow();
+    expect(scopedEdges([edge], [codeNode, docNode, docsCommand], { scope: "code" })).toHaveLength(0);
+    expect(scopedEdges([edge], [codeNode, docNode, docsCommand], { scope: "full" })).toHaveLength(1);
+  });
+
+  test("keeps knowledge overlay identities stable across repeated analysis", async () => {
+    const secondOutput = await mkdtemp(path.join(tmpdir(), "prograph-knowledge-repeat-"));
+    try {
+      const second = await analyzeRepository(fixture, { output: secondOutput });
+      const firstKnowledgeNodes = analysis.graph.nodes.filter((node) => node.metadata.graphDomain === "knowledge").map((node) => node.id).sort();
+      const secondKnowledgeNodes = second.graph.nodes.filter((node) => node.metadata.graphDomain === "knowledge").map((node) => node.id).sort();
+      const firstKnowledgeEdges = analysis.graph.edges.filter((edge) => edge.metadata.graphDomain === "knowledge").map((edge) => edge.id).sort();
+      const secondKnowledgeEdges = second.graph.edges.filter((edge) => edge.metadata.graphDomain === "knowledge").map((edge) => edge.id).sort();
+      expect(secondKnowledgeNodes).toEqual(firstKnowledgeNodes);
+      expect(secondKnowledgeEdges).toEqual(firstKnowledgeEdges);
+    } finally {
+      await rm(secondOutput, { recursive: true, force: true });
     }
   });
 
@@ -433,6 +528,14 @@ describe("UI layout contract", () => {
   test("uses the full workspace without a selection and opens a bounded inspector class on selection", () => {
     expect(appShellClassName(false)).toBe("app-shell");
     expect(appShellClassName(true)).toBe("app-shell inspector-open");
+  });
+
+  test("classifies graph nodes without metadata defensively", () => {
+    const codeNode = { id: "code", kind: "function", name: "run", qualifiedName: "run", adapter: "test", language: "typescript", metadata: undefined } as unknown as GraphNode;
+    const knowledgeNode = { id: "doc", kind: "doc_section", name: "Docs", qualifiedName: "README.md#docs", adapter: "test", metadata: undefined } as unknown as GraphNode;
+    expect(() => nodeLanguage(codeNode)).not.toThrow();
+    expect(nodeLanguage(codeNode)).toBe("typescript");
+    expect(nodeLanguage(knowledgeNode)).toBeUndefined();
   });
 
   test("anchors panes explicitly and preserves a measurable graph viewport", async () => {

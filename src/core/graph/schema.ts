@@ -1,4 +1,4 @@
-export const GRAPH_SCHEMA_VERSION = "1.0.0";
+export const GRAPH_SCHEMA_VERSION = "1.1.0";
 
 export const NODE_KINDS = [
   "repository",
@@ -18,6 +18,16 @@ export const NODE_KINDS = [
   "framework_event",
   "external_package",
   "unresolved_symbol",
+  "doc_section",
+  "configuration",
+  "api_surface",
+  "cli_command",
+  "test_artifact",
+  "external_service",
+  "security_boundary",
+  "concept",
+  "feature",
+  "workflow",
 ] as const;
 
 export type NodeKind = (typeof NODE_KINDS)[number];
@@ -35,11 +45,22 @@ export const EDGE_KINDS = [
   "invokes",
   "emits",
   "listens",
+  "documents",
+  "explains",
+  "mentions",
+  "configured_by",
+  "configures",
+  "exposes_api",
+  "describes_workflow",
+  "tests",
+  "related_to",
 ] as const;
 
 export type EdgeKind = (typeof EDGE_KINDS)[number];
 export type Confidence = "exact" | "resolved" | "probable" | "unresolved";
 export type DiagnosticSeverity = "error" | "warning" | "info";
+export const GRAPH_SCOPES = ["code", "code+docs", "code+config", "code+tests", "full"] as const;
+export type GraphScope = (typeof GRAPH_SCOPES)[number];
 
 export interface SourceEvidence {
   file?: string;

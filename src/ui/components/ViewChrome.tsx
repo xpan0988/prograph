@@ -26,19 +26,28 @@ export function ViewHeader({ view, nodes, edges, children }: { view: View; nodes
 
 export function ArchitectureLanes(): React.ReactElement {
   const { t } = useI18n();
-  return <div className="lane-labels">{(["graph.entry", "graph.typescript", "graph.bridge", "graph.rust", "graph.external"] as TranslationKey[]).map((item) => <span key={item}>{t(item)}</span>)}</div>;
+  return <div className="lane-labels">{(["domain.frontend", "domain.api", "domain.bridge", "domain.rust", "domain.core", "domain.adapters", "domain.external", "domain.cli", "domain.tests"] as TranslationKey[]).map((item) => <span key={item}>{t(item)}</span>)}</div>;
 }
 
 export function GraphLegend({ languages, onToggle }: { languages: Set<string>; onToggle: (language: string) => void }): React.ReactElement {
   const { t } = useI18n();
   const items: Array<{ id: string; label: TranslationKey }> = [
-    { id: "typescript", label: "graph.typescript" },
-    { id: "rust", label: "graph.rust" },
-    { id: "framework", label: "graph.bridge" },
+    { id: "frontend", label: "domain.frontendShort" },
+    { id: "api", label: "domain.apiShort" },
+    { id: "bridge", label: "domain.bridge" },
+    { id: "rust", label: "domain.rust" },
+    { id: "core", label: "domain.core" },
+    { id: "adapters", label: "domain.adapters" },
+    { id: "cli", label: "domain.cli" },
+    { id: "tests", label: "domain.tests" },
+    { id: "external", label: "domain.externalShort" },
   ];
   return (
     <div className="graph-legend" aria-label={t("graph.legend")}>
       {items.map((item) => <button className={languages.has(item.id) ? "enabled" : ""} key={item.id} onClick={() => onToggle(item.id)}><i className={`dot ${item.id}`} />{t(item.label)}</button>)}
+      <span className="edge-style-sample direct">{t("legend.direct")}</span>
+      <span className="edge-style-sample indirect">{t("legend.indirect")}</span>
+      <span className="edge-style-sample inferred">{t("legend.inferred")}</span>
     </div>
   );
 }

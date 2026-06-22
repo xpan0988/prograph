@@ -8,6 +8,13 @@ import { typescriptAdapter } from "../../adapters/language/typescript/index.js";
 import { rustAdapter } from "../../adapters/language/rust/index.js";
 import { reactAdapter } from "../../adapters/framework/react/index.js";
 import { tauriAdapter } from "../../adapters/framework/tauri/index.js";
+import { markdownAdapter } from "../../adapters/artifact/markdown/index.js";
+import { packageJsonAdapter } from "../../adapters/artifact/package-json/index.js";
+import { cargoTomlAdapter } from "../../adapters/artifact/cargo-toml/index.js";
+import { tauriConfigAdapter } from "../../adapters/artifact/tauri-config/index.js";
+import { tauriCapabilityAdapter } from "../../adapters/artifact/tauri-capability/index.js";
+import { testsAdapter } from "../../adapters/artifact/tests/index.js";
+import { semanticLinkerAdapter } from "../../adapters/overlay/semantic-linker/index.js";
 import type { AdapterResult, FrameworkAdapter, LanguageAdapter, RepositorySnapshot } from "../adapters/contracts.js";
 import { persistGraph } from "../storage/sqlite.js";
 import packageJson from "../../../package.json" with { type: "json" };
@@ -111,6 +118,12 @@ export async function analyzeRepository(input = ".", options: AnalyzeOptions = {
     builder.merge(executed.result);
   }
   for (const adapter of [reactAdapter, tauriAdapter]) {
+    const executed = await runAdapter(adapter, scan.snapshot, builder.result(), true);
+    adapterRuns.push(executed.run);
+    builder.diagnostics.push(...validateIdentities(executed.result.nodes, executed.result.edges));
+    builder.merge(executed.result);
+  }
+  for (const adapter of [markdownAdapter, packageJsonAdapter, cargoTomlAdapter, tauriConfigAdapter, tauriCapabilityAdapter, testsAdapter, semanticLinkerAdapter]) {
     const executed = await runAdapter(adapter, scan.snapshot, builder.result(), true);
     adapterRuns.push(executed.run);
     builder.diagnostics.push(...validateIdentities(executed.result.nodes, executed.result.edges));

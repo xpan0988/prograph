@@ -12,6 +12,13 @@ export const ADAPTER_VERSIONS = {
   rust: "3",
   react: "1",
   tauri: "2",
+  markdown: "1",
+  packageJson: "1",
+  cargoToml: "1",
+  tauriConfig: "1",
+  tauriCapability: "1",
+  tests: "1",
+  semanticLinker: "1",
 } as const;
 
 export interface IndexState {

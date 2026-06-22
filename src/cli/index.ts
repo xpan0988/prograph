@@ -9,7 +9,7 @@ import { syncRepository } from "../core/analysis/sync.js";
 import { watchRepository } from "../core/analysis/watch.js";
 import { queryServiceForRepository, type BoundedQuery, type ConfidenceQuery, type QueryService } from "../core/query/query-service.js";
 import { formatQueryOutput, type OutputMode } from "../core/query/output-mode.js";
-import type { EdgeKind, NodeKind } from "../core/graph/schema.js";
+import type { EdgeKind, GraphScope, NodeKind } from "../core/graph/schema.js";
 import { resolveRepositoryRoot } from "../core/repository/repository.js";
 import { startServer } from "../server/index.js";
 import { startMcpServer } from "../mcp/index.js";
@@ -34,6 +34,7 @@ interface QueryOptions extends FormatOptions {
   maxFiles?: number;
   maxSymbols?: number;
   includeTests?: boolean;
+  scope?: GraphScope;
 }
 
 function addFormat(command: Command): Command {
@@ -48,7 +49,8 @@ function addQueryOptions(command: Command, includeRepo = false): Command {
     .option("--depth <number>", "bounded traversal depth", Number)
     .option("--max-nodes <number>", "maximum returned nodes", Number, 50)
     .option("--edge-kind <kind...>", "include only these edge kinds")
-    .option("--node-kind <kind...>", "include only these node kinds");
+    .option("--node-kind <kind...>", "include only these node kinds")
+    .addOption(new Option("--scope <scope>", "graph scope").choices(["code", "code+docs", "code+config", "code+tests", "full"]).default("code"));
   command
     .addOption(new Option("--mode <mode>", "agent output detail").choices(["compact", "standard", "full"]))
     .option("--max-evidence <number>", "maximum evidence pointers per relationship", Number);
@@ -63,7 +65,8 @@ function addIndex(command: Command): Command {
 function addConfidence(command: Command): Command {
   return command
     .option("--include-probable", "include probable relationships")
-    .option("--include-unresolved", "include probable and unresolved relationships");
+    .option("--include-unresolved", "include probable and unresolved relationships")
+    .addOption(new Option("--scope <scope>", "graph scope").choices(["code", "code+docs", "code+config", "code+tests", "full"]).default("code"));
 }
 
 async function withQuery<T>(repo: string, index: string | undefined, callback: (query: QueryService) => T | Promise<T>): Promise<T> {
@@ -79,6 +82,7 @@ function confidence(options: QueryOptions): ConfidenceQuery {
   return {
     ...(options.includeProbable ? { includeProbable: true } : {}),
     ...(options.includeUnresolved ? { includeUnresolved: true } : {}),
+    ...(options.scope ? { scope: options.scope } : {}),
   };
 }
 
@@ -114,7 +118,19 @@ addFormat(program.command("init [path]", { isDefault: false }).description("crea
   const config = {
     include: ["src/**/*.ts", "src/**/*.tsx", "src-tauri/src/**/*.rs"],
     exclude: ["node_modules/**", "dist/**", "build/**", "target/**", ".git/**"],
-    adapters: { typescript: true, rust: true, react: true, tauri: true },
+    adapters: {
+      typescript: true,
+      rust: true,
+      react: true,
+      tauri: true,
+      markdown: true,
+      packageJson: true,
+      cargoToml: true,
+      tauriConfig: true,
+      tauriCapability: true,
+      tests: true,
+      semanticLinker: true,
+    },
   };
   await writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`);
   writeResult({ configPath }, options.format);
@@ -162,15 +178,15 @@ addIndex(program.command("open [path]").description("serve and open the local vi
   process.stdout.write(`ProGraph opened ${url}\n`);
 });
 
-const simpleQueries: Array<[string, string, (query: QueryService) => unknown]> = [
-  ["overview [path]", "show repository overview", (query) => query.overview()],
-  ["files [path]", "list indexed files", (query) => query.files()],
+const simpleQueries: Array<[string, string, (query: QueryService, options: QueryOptions) => unknown]> = [
+  ["overview [path]", "show repository overview", (query, options) => query.overview({ ...(options.scope ? { scope: options.scope } : {}) })],
+  ["files [path]", "list indexed files", (query, options) => query.files({ ...(options.scope ? { scope: options.scope } : {}) })],
   ["diagnostics [path]", "show diagnostics", (query) => query.diagnostics()],
   ["adapters [path]", "show adapter runs", (query) => query.adapters()],
 ];
 for (const [signature, description, callback] of simpleQueries) {
-  addFormat(addIndex(program.command(signature).description(description))).action(async (input = ".", options: FormatOptions & { index?: string }) => {
-    writeResult(await withQuery(input, options.index, callback), options.format);
+  addFormat(addConfidence(addIndex(program.command(signature).description(description)))).action(async (input = ".", options: QueryOptions & { index?: string }) => {
+    writeResult(await withQuery(input, options.index, (query) => callback(query, options)), options.format);
   });
 }
 
@@ -181,6 +197,7 @@ addFormat(addConfidence(addIndex(program.command("file <file>").description("sho
 addQueryOptions(program.command("symbol <query>").description("search symbols"), true).action(async (search: string, options: QueryOptions) => {
   writeResult(queryOutput(await withQuery(options.repo ?? ".", options.index, (query) => query.searchSymbols(search, options.maxNodes, {
     ...(options.includeUnresolved ? { includeUnresolved: true } : {}),
+    ...(options.scope ? { scope: options.scope } : {}),
   })), options), options.format);
 });
 

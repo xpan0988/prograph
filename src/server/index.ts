@@ -6,6 +6,7 @@ import { queryServiceForRepository, type ConfidenceQuery } from "../core/query/q
 import { formatQueryOutput, type OutputMode } from "../core/query/output-mode.js";
 import { repositoryStatus } from "../core/analysis/state.js";
 import { syncRepository } from "../core/analysis/sync.js";
+import type { GraphScope } from "../core/graph/schema.js";
 
 export interface ServerOptions {
   host?: string;
@@ -24,10 +25,16 @@ function listParam(value: unknown): string[] | undefined {
 }
 
 function confidenceParams(query: Record<string, unknown>): ConfidenceQuery {
+  const selectedScope = scopeParam(query.scope);
   return {
     ...(query.includeProbable === "true" ? { includeProbable: true } : {}),
     ...(query.includeUnresolved === "true" ? { includeUnresolved: true } : {}),
+    ...(selectedScope ? { scope: selectedScope } : {}),
   };
+}
+
+function scopeParam(value: unknown): GraphScope | undefined {
+  return ["code", "code+docs", "code+config", "code+tests", "full"].includes(String(value)) ? String(value) as GraphScope : undefined;
 }
 
 function outputParams(query: Record<string, unknown>): { mode: OutputMode; maxEvidence?: number } {
@@ -46,13 +53,25 @@ export async function startServer(repository = ".", options: ServerOptions = {})
   const host = options.host ?? "127.0.0.1";
   const port = options.port ?? 43117;
   const staticDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../ui");
-  app.get("/api/overview", (_request, response) => response.json(query.overview()));
+  app.get("/api/overview", (request, response) => {
+    const selectedScope = scopeParam(request.query.scope);
+    response.json(query.overview({ ...(selectedScope ? { scope: selectedScope } : {}) }));
+  });
   app.get("/api/status", async (_request, response) => response.json(await repositoryStatus(repository, options.index)));
   app.post("/api/sync", async (_request, response) => response.json(await syncRepository(repository, options.index)));
   app.get("/api/architecture", (request, response) => sendQuery(response, query.architecture(numberParam(request.query.maxNodes, 100), confidenceParams(request.query)), request.query));
-  app.get("/api/files", (_request, response) => response.json(query.files()));
+  app.get("/api/files", (request, response) => {
+    const selectedScope = scopeParam(request.query.scope);
+    response.json(query.files({ ...(selectedScope ? { scope: selectedScope } : {}) }));
+  });
   app.get("/api/files/{*path}", (request, response) => sendQuery(response, query.fileDetails((request.params.path as unknown as string[]).join("/"), confidenceParams(request.query)), request.query));
-  app.get("/api/symbols/search", (request, response) => sendQuery(response, query.searchSymbols(String(request.query.q ?? ""), numberParam(request.query.maxNodes, 50), { includeUnresolved: request.query.includeUnresolved === "true" }), request.query));
+  app.get("/api/symbols/search", (request, response) => {
+    const selectedScope = scopeParam(request.query.scope);
+    sendQuery(response, query.searchSymbols(String(request.query.q ?? ""), numberParam(request.query.maxNodes, 50), {
+      includeUnresolved: request.query.includeUnresolved === "true",
+      ...(selectedScope ? { scope: selectedScope } : {}),
+    }), request.query);
+  });
   app.get("/api/symbols/:id", (request, response) => {
     const symbol = query.symbol(request.params.id);
     if (!symbol) return response.status(404).json({ error: "Symbol not found" });

@@ -15,6 +15,8 @@ repository path
   -> read-only repository scan
   -> language adapters
   -> framework adapters
+  -> deterministic artifact adapters
+  -> semantic overlay linker
   -> identity validation and diagnostics
   -> SQLite canonical store
   -> JSON, manifest, diagnostics, and index-state exports
@@ -51,7 +53,9 @@ A framework adapter:
 - adds or refines framework nodes and edges;
 - preserves confidence, evidence, and framework diagnostics.
 
-Framework logic does not live in the generic graph core.
+Framework and knowledge-overlay logic do not live in the generic graph core.
+
+Artifact adapters are framework-style graph consumers. They run after language/framework adapters so they can reuse existing file and symbol nodes while adding Markdown, package, Cargo, Tauri config, Tauri capability, and test artifacts as knowledge nodes. The semantic linker runs last and only adds deterministic or clearly probable overlay edges.
 
 ## TypeScript Adapter
 
@@ -113,7 +117,11 @@ The graph schema lives in `src/core/graph/schema.ts`.
 
 Nodes include a stable ID, kind, display and qualified names, language, source location, producing adapter, and metadata. Supported first-milestone kinds include repository, directory, file, module, symbols, React components, Rust types, framework commands/events, external packages, and unresolved symbols.
 
+Knowledge Overlay kinds extend the same IR with document sections, configuration, API surfaces, CLI commands, test artifacts, external services, security boundaries, concepts, features, and workflows. Knowledge nodes use `metadata.graphDomain = "knowledge"` plus artifact/source metadata such as `artifactKind`, `sourceCategory`, `stableKey`, `generatedByAdapter`, source location, literal value, and extraction method.
+
 Edges include a stable ID, source, target, kind, confidence, source evidence, and metadata. The same IDs, kinds, confidence values, and evidence appear in SQLite queries, CLI JSON, API responses, exports, and the UI.
+
+Knowledge Overlay edge kinds include documents, explains, mentions, configured_by, configures, exposes_api, describes_workflow, tests, and related_to. Code/compiler relationships keep their existing exact/resolved/probable/unresolved semantics and remain distinguishable from doc/config/test-derived overlay relationships.
 
 ### Deterministic Identities
 
@@ -158,6 +166,8 @@ Current diagnostics cover parser recovery/failure, unreadable files, unresolved 
 
 Indexes cover node ID/name/qualified name/file/kind, edge source/target/kind, and diagnostic severity. Analysis replaces the current graph tables transactionally while retaining the analysis-run history row.
 
+Knowledge Overlay data uses the same generic `nodes`, `edges`, `metadata_json`, and `evidence_json` tables. No separate database or cloud index is required. Schema and adapter version changes mark old indexes stale so they can be rebuilt instead of silently misread.
+
 ## JSON Export And Manifest
 
 `.prograph/exports/graph.json` contains the portable graph IR. `manifest.json` separately records schema and tool versions, repository identity, optional Git commit, enabled adapters, counts, generation time, and analysis duration. `diagnostics.json` provides direct access to structured diagnostics. `state.json` records indexed file hashes, configuration hash, adapter versions, schema version, and Git metadata used by status and sync.
@@ -171,6 +181,8 @@ The JSON export is not the canonical local query store.
 The CLI and local API call this service directly. UI-specific graph logic is limited to visual filtering and deterministic layout; the UI does not duplicate dependency extraction or repository query semantics.
 
 Bounded graph queries cap depth, node count, and selected edges to keep agent output and visual expansion manageable. Graph relationships default to the trusted `exact` and `resolved` confidence levels. Probable and unresolved data require explicit opt-in and remain available in storage, exports, and diagnostics. Default symbol search excludes unresolved symbols.
+
+Graph scope defaults to `code`, matching the original code/framework graph. Optional scopes are `code+docs`, `code+config`, `code+tests`, and `full`. Scope filtering is shared by CLI, MCP, API, and UI paths.
 
 The shared output formatter supports `compact`, `standard`, and `full` representations plus evidence limits. Agent-oriented CLI JSON and MCP results default to compact output; the SQLite graph remains unchanged.
 
@@ -201,6 +213,8 @@ The React UI uses React Flow for interaction and ELK.js for deterministic layere
 - repository hierarchy and adapter status;
 - architecture lanes derived from supported evidence;
 - file, symbol, framework, context, affected, and diagnostic views;
+- Code Graph and Knowledge Graph modes with scope filtering;
+- knowledge node rendering for docs, config, tests, API surfaces, CLI commands, and security boundaries;
 - index freshness, stale warnings, and explicit sync;
 - compact, standard, and full evidence controls;
 - a bounded evidence-first inspector that keeps raw metadata collapsed by default;
@@ -232,5 +246,7 @@ MCP accepts explicit repository or custom-index context and does not maintain a 
 ## Future Adapter Expansion
 
 New language adapters should preserve the graph IR, deterministic identity rules, confidence semantics, and source-evidence requirements. New framework adapters should consume existing language-level graph data and add framework-specific bindings without changing the graph core.
+
+New knowledge adapters should remain deterministic and source-evidence-backed. They must not add telemetry, source uploads, mandatory LLM calls, OCR, PDF/image/video/audio processing, or runtime modification of analyzed repositories.
 
 Near-term priorities are dependency-aware partial invalidation for connected files, broader source verification of conservative Rust resolution, and refinement of bounded context and affected-test ranking.

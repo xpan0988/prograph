@@ -24,11 +24,14 @@ ProGraph currently supports:
 - TypeScript, TSX, JavaScript, and JSX through `ts-morph`;
 - Rust syntax through Tree-sitter;
 - statically identifiable React components, JSX renders, and callback props;
-- statically identifiable Tauri commands, handler registrations, invokes, and named events.
+- statically identifiable Tauri commands, handler registrations, invokes, and named events;
+- a deterministic Knowledge Overlay for Markdown headings, README sections, package/Cargo/Tauri config, Tauri capabilities, API route mentions, CLI commands, test artifacts, and literal doc/config/code references.
 
 TypeScript compiler-backed relationships are marked `resolved` when a unique symbol is available. Rust repository-local module paths, imports, aliases, re-exports, same-module calls, and safely inferred inherent methods may be `resolved`; name-only heuristics remain `probable` or `unresolved`.
 
 ProGraph does not claim to replace rust-analyzer, Cargo, rustc, or the Rust compiler.
+
+The Knowledge Overlay is local-first and deterministic. It does not use cloud services, telemetry, accounts, OCR, PDFs, images, video, Whisper, embeddings, or mandatory LLM calls.
 
 ## Installation
 
@@ -164,7 +167,14 @@ prograph sync /path/to/repository --index ./tmp/external-index
     "typescript": true,
     "rust": true,
     "react": true,
-    "tauri": true
+    "tauri": true,
+    "markdown": true,
+    "packageJson": true,
+    "cargoToml": true,
+    "tauriConfig": true,
+    "tauriCapability": true,
+    "tests": true,
+    "semanticLinker": true
   }
 }
 ```
@@ -209,6 +219,7 @@ prograph symbol run --format json
 prograph neighborhood typescript:function:0123456789abcdef \
   --depth 2 \
   --max-nodes 50 \
+  --scope full \
   --edge-kind calls invokes \
   --format json
 ```
@@ -250,6 +261,8 @@ prograph neighborhood <symbol-id> --include-unresolved --format json
 `--include-unresolved` also includes probable relationships. Low-confidence edges remain stored in SQLite, JSON exports, and diagnostics; default filtering does not remove them from the index.
 
 Default symbol search prioritizes concrete symbols and hides unresolved symbols. Use `--include-unresolved` to inspect unresolved targets explicitly.
+
+Knowledge scope is opt-in for queries. Existing commands default to `--scope code`, which preserves the original code/framework graph view. Use `--scope code+docs`, `--scope code+config`, `--scope code+tests`, or `--scope full` to include overlay nodes and deterministic doc/config/test relationships.
 
 ## Agent Usage Guidance
 
@@ -327,6 +340,7 @@ The default binding is `127.0.0.1:43117`. ProGraph does not expose the server pu
 The bilingual Evidence Workbench provides:
 
 - architecture, dependency, symbol, framework, context, affected, and diagnostic views;
+- Code Graph and Knowledge Graph modes with Code, Code + Docs, Code + Config, Code + Tests, and Full Knowledge scopes;
 - deterministic layered graphs with architecture lanes and selected-neighborhood focus;
 - grouped search, graph-scope, confidence, evidence, and sync controls;
 - a collapsible repository file list;
@@ -363,12 +377,15 @@ GET /api/context
 GET /api/affected
 ```
 
+Graph endpoints accept `scope=code`, `scope=code+docs`, `scope=code+config`, `scope=code+tests`, or `scope=full` where relevant. The default is `scope=code`.
+
 ## Privacy And Isolation
 
 - Analysis, SQLite storage, queries, MCP, and visualization run locally.
 - No telemetry, cloud analysis, accounts, or source uploads are implemented.
 - ProGraph does not edit source, manifests, lockfiles, build scripts, IDE settings, or `.gitignore`.
 - Individual parser failures and uncertain relationships remain visible as structured diagnostics or low-confidence graph edges.
+- The Knowledge Overlay preserves code confidence semantics: exact/resolved compiler or AST-backed code relationships remain separate from doc/config/test-derived overlay relationships.
 
 ## Limitations
 

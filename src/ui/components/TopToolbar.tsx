@@ -1,7 +1,7 @@
 import React from "react";
 import { ArrowRight, ArrowsClockwise, CornersOut, MagnifyingGlass, SlidersHorizontal } from "@phosphor-icons/react";
 import { useI18n } from "../i18n";
-import type { ConfidenceLevel, EvidenceMode } from "../types";
+import type { ConfidenceLevel, EvidenceMode, GraphMode, KnowledgeScope } from "../types";
 
 interface TopToolbarProps {
   query: string;
@@ -9,6 +9,9 @@ interface TopToolbarProps {
   maxNodes: number;
   confidence: ConfidenceLevel;
   evidenceMode: EvidenceMode;
+  graphMode: GraphMode;
+  scope: KnowledgeScope;
+  edgeKind: string;
   syncing: boolean;
   searchInputRef: React.RefObject<HTMLInputElement | null>;
   onQueryChange: (query: string) => void;
@@ -17,6 +20,9 @@ interface TopToolbarProps {
   onMaxNodesChange: (maxNodes: number) => void;
   onConfidenceChange: (confidence: ConfidenceLevel) => void;
   onEvidenceModeChange: (mode: EvidenceMode) => void;
+  onGraphModeChange: (mode: GraphMode) => void;
+  onScopeChange: (scope: KnowledgeScope) => void;
+  onEdgeKindChange: (edgeKind: string) => void;
   onSync: () => void;
   onFit: () => void;
   onReset: () => void;
@@ -42,7 +48,23 @@ export function TopToolbar(props: TopToolbarProps): React.ReactElement {
         </div>
       </form>
       <div className="toolbar-group">
-        <span className="control-caption">{t("toolbar.scope")}</span>
+        <span className="control-caption">{t("toolbar.graph")}</span>
+        <div className="control-row">
+          <select aria-label={t("toolbar.graph")} value={props.graphMode} onChange={(event) => props.onGraphModeChange(event.target.value as GraphMode)}>
+            <option value="code">{t("graphMode.code")}</option>
+            <option value="knowledge">{t("graphMode.knowledgeBeta")}</option>
+          </select>
+          <select aria-label={t("toolbar.scope")} value={props.scope} onChange={(event) => props.onScopeChange(event.target.value as KnowledgeScope)}>
+            <option value="code">{t("scope.code")}</option>
+            <option value="code+docs">{t("scope.docs")}</option>
+            <option value="code+config">{t("scope.config")}</option>
+            <option value="code+tests">{t("scope.tests")}</option>
+            <option value="full">{t("scope.full")}</option>
+          </select>
+        </div>
+      </div>
+      <div className="toolbar-group">
+        <span className="control-caption">{t("toolbar.bounds")}</span>
         <div className="control-row">
           <label><span>{t("toolbar.maxDepth")}</span><select value={props.depth} onChange={(event) => props.onDepthChange(Number(event.target.value))}>{[1, 2, 3, 4, 5].map((item) => <option key={item}>{item}</option>)}</select></label>
           <label><span>{t("toolbar.maxNodes")}</span><select value={props.maxNodes} onChange={(event) => props.onMaxNodesChange(Number(event.target.value))}>{[25, 50, 75, 100, 150].map((item) => <option key={item}>{item}</option>)}</select></label>
@@ -54,6 +76,14 @@ export function TopToolbar(props: TopToolbarProps): React.ReactElement {
           <option value="trusted">{t("confidence.trusted")}</option>
           <option value="probable">{t("confidence.probable")}</option>
           <option value="unresolved">{t("confidence.unresolved")}</option>
+        </select>
+      </div>
+      <div className="toolbar-group">
+        <span className="control-caption">{t("toolbar.edgeKind")}</span>
+        <select aria-label={t("toolbar.edgeKind")} value={props.edgeKind} onChange={(event) => props.onEdgeKindChange(event.target.value)}>
+          <option value="readable">{t("edgeFilter.readable")}</option>
+          <option value="all">{t("edgeFilter.all")}</option>
+          {["imports", "calls", "renders", "invokes", "registers", "emits", "listens", "tests", "contains", "uses_type", "documents", "explains", "mentions", "configured_by", "configures", "exposes_api", "describes_workflow", "related_to"].map((kind) => <option value={kind} key={kind}>{t(`edge.${kind}` as Parameters<typeof t>[0])}</option>)}
         </select>
       </div>
       <div className="toolbar-group">

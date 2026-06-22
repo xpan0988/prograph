@@ -9,6 +9,18 @@ export const DEFAULT_INCLUDE = [
   "**/*.mts",
   "**/*.cts",
   "**/*.rs",
+  "README.md",
+  "**/*.md",
+  "**/package.json",
+  "**/Cargo.toml",
+  "**/tauri.conf.json",
+  "**/src-tauri/capabilities/*.json",
+  "**/src-tauri/capability/*.json",
+  "**/tsconfig.json",
+  "**/jsconfig.json",
+  "**/*.config.json",
+  "**/.eslintrc.json",
+  "**/.prettierrc.json",
 ];
 
 export const DEFAULT_EXCLUDE = [
@@ -27,16 +39,29 @@ export const DEFAULT_EXCLUDE = [
   "**/Cargo/registry/**",
 ];
 
+export type AdapterName =
+  | "typescript"
+  | "rust"
+  | "react"
+  | "tauri"
+  | "markdown"
+  | "packageJson"
+  | "cargoToml"
+  | "tauriConfig"
+  | "tauriCapability"
+  | "tests"
+  | "semanticLinker";
+
 export interface ProGraphConfig {
   include?: string[];
   exclude?: string[];
-  adapters?: Partial<Record<"typescript" | "rust" | "react" | "tauri", boolean>>;
+  adapters?: Partial<Record<AdapterName, boolean>>;
 }
 
 export interface LoadedConfig {
   include: string[];
   exclude: string[];
-  adapters: Record<"typescript" | "rust" | "react" | "tauri", boolean>;
+  adapters: Record<AdapterName, boolean>;
   sourcePath?: string;
 }
 
@@ -44,7 +69,19 @@ export function defaultConfig(): LoadedConfig {
   return {
     include: DEFAULT_INCLUDE,
     exclude: DEFAULT_EXCLUDE,
-    adapters: { typescript: true, rust: true, react: true, tauri: true },
+    adapters: {
+      typescript: true,
+      rust: true,
+      react: true,
+      tauri: true,
+      markdown: true,
+      packageJson: true,
+      cargoToml: true,
+      tauriConfig: true,
+      tauriCapability: true,
+      tests: true,
+      semanticLinker: true,
+    },
   };
 }
 
@@ -69,6 +106,13 @@ export async function loadConfig(repositoryRoot: string): Promise<LoadedConfig> 
       rust: parsed.adapters?.rust ?? true,
       react: parsed.adapters?.react ?? true,
       tauri: parsed.adapters?.tauri ?? true,
+      markdown: parsed.adapters?.markdown ?? true,
+      packageJson: parsed.adapters?.packageJson ?? true,
+      cargoToml: parsed.adapters?.cargoToml ?? true,
+      tauriConfig: parsed.adapters?.tauriConfig ?? true,
+      tauriCapability: parsed.adapters?.tauriCapability ?? true,
+      tests: parsed.adapters?.tests ?? true,
+      semanticLinker: parsed.adapters?.semanticLinker ?? true,
     },
     ...(sourcePath ? { sourcePath } : {}),
   };

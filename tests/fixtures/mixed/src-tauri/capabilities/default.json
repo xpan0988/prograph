@@ -1,0 +1,6 @@
+{
+  "identifier": "main-window",
+  "description": "Fixture capability for tests",
+  "windows": ["main"],
+  "permissions": ["greet"]
+}
