@@ -1,5 +1,7 @@
 # ProGraph Architecture
 
+This document describes the current implementation. The proposed next architecture and migration plan are in [Semantic Core 2.0](semantic-core-2.md); that design is not implemented yet.
+
 ## Goals And Boundaries
 
 ProGraph is an independent installable developer tool. Its graph is the shared data model for human visualization, CLI queries, JSON export, the local API, and MCP stdio tools.
