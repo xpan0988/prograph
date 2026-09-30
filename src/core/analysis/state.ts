@@ -1,3 +1,4 @@
+import { createRequire } from "node:module";
 import path from "node:path";
 import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
@@ -7,11 +8,16 @@ import { GRAPH_SCHEMA_VERSION } from "../graph/schema.js";
 import { resolveRepositoryRoot, scanRepository } from "../repository/repository.js";
 import packageJson from "../../../package.json" with { type: "json" };
 
+const require = createRequire(import.meta.url);
+
 export const ADAPTER_VERSIONS = {
-  typescript: "1",
-  rust: "3",
+  typescript: "2",
+  polyglot: "1",
+  architecture: "1",
+  providers: JSON.stringify(["tree-sitter", "tree-sitter-python", "tree-sitter-java", "tree-sitter-c", "tree-sitter-cpp", "tree-sitter-go", "tree-sitter-c-sharp", "tree-sitter-rust", "ts-morph", "typescript", "yaml", "graphql", "protobufjs"].map(name => [name, require(`${name}/package.json`).version])),
+  rust: "4",
   react: "1",
-  tauri: "2",
+  tauri: "3",
   markdown: "1",
   packageJson: "1",
   cargoToml: "1",
@@ -103,7 +109,7 @@ export async function repositoryStatus(input = ".", index?: string): Promise<Rep
   const [stored, manifest, scan] = await Promise.all([
     readJson<IndexState>(path.join(indexDirectory, "state.json")),
     readJson<AnalysisManifest>(path.join(indexDirectory, "manifest.json")),
-    scanRepository(repositoryRoot),
+    scanRepository(repositoryRoot, indexDirectory),
   ]);
   const currentFiles = fileHashes(scan.snapshot);
   const indexedFiles = stored?.files ?? {};

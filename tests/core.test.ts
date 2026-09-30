@@ -119,7 +119,7 @@ describe("mixed repository analysis", () => {
       access(path.join(output, "exports/graph.json")),
     ]);
     const exported = JSON.parse(await readFile(path.join(output, "exports/graph.json"), "utf8")) as { schemaVersion: string };
-    expect(exported.schemaVersion).toBe("1.1.0");
+    expect(exported.schemaVersion).toBe("1.2.0");
   });
 
   test("serves symbol search, callers, callees, and bounded neighborhoods from SQLite", () => {
@@ -430,6 +430,7 @@ describe("agent queries and freshness", () => {
       const synced = await syncRepository(repository, index);
       expect(synced.incremental).toBe(true);
       expect(synced.filesReanalyzed).toBe(1);
+      expect(synced.manifest?.adapterRuns?.find(run => run.adapter === "typescript")?.metadata?.providers).toBeDefined();
       expect(synced.fallbackReason).toBeUndefined();
       const exported = JSON.parse(await readFile(path.join(index, "exports/graph.json"), "utf8")) as { nodes: GraphNode[] };
       expect(exported.nodes.find((node) => node.name === "value")?.id).toBe(firstId);

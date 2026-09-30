@@ -158,7 +158,9 @@ export class QueryService {
   }
 
   adapters(): unknown[] {
-    return this.database.prepare("SELECT adapter, detected, duration_ms AS durationMs, file_count AS fileCount, node_count AS nodeCount, edge_count AS edgeCount, diagnostic_count AS diagnosticCount FROM adapter_runs ORDER BY adapter").all();
+    const stored = this.database.prepare("SELECT value FROM schema_metadata WHERE key = ?").get("adapterMetadata") as { value: string } | undefined;
+    const metadata = JSON.parse(stored?.value ?? "{}") as Record<string, unknown>;
+    return (this.database.prepare("SELECT adapter, detected, duration_ms AS durationMs, file_count AS fileCount, node_count AS nodeCount, edge_count AS edgeCount, diagnostic_count AS diagnosticCount FROM adapter_runs ORDER BY adapter").all() as Array<{ adapter: string }>).map(run => ({ ...run, metadata: metadata[run.adapter] ?? {} }));
   }
 
   private codeArchitecture(maxNodes: number, options: ConfidenceQuery = {}): { nodes: GraphNode[]; edges: GraphEdge[]; truncated: boolean } {
@@ -451,12 +453,17 @@ export class QueryService {
   }
 
   frameworkBindings(framework?: string, options: ConfidenceQuery = {}): Record<string, unknown> {
-    const nodes = (this.database.prepare("SELECT * FROM nodes WHERE kind IN ('framework_command', 'framework_event') ORDER BY kind, name").all() as NodeRow[]).map(graphNodeFromRow);
-    const selected = framework ? nodes.filter((node) => node.metadata.framework === framework) : nodes;
-    const edges = this.edgesTouching(selected.map((node) => node.id), options);
-    const selectedIds = new Set(selected.map((node) => node.id));
-    const relatedIds = [...new Set(edges.flatMap((edge) => [edge.source, edge.target]).filter((id) => !selectedIds.has(id)))];
-    return { framework: framework ?? "all", nodes: [...selected, ...this.nodesByIds(relatedIds)], edges };
+    const predicate = framework ? " AND (json_extract(metadata_json, '$.framework') = ? OR json_extract(metadata_json, '$.boundary.protocol') = ?)" : "";
+    const rows = this.database.prepare(`SELECT * FROM nodes WHERE kind IN ('boundary', 'framework_command', 'framework_event')${predicate} ORDER BY kind, name LIMIT 201`).all(...(framework ? [framework, framework] : [])) as NodeRow[];
+    const selected = rows.slice(0, 200).map(graphNodeFromRow);
+    const ids = selected.map(node => node.id);
+    const confidences = [...includedConfidences(options)];
+    const placeholders = ids.map(() => "?").join(",");
+    const edgeRows = ids.length ? this.database.prepare(`SELECT * FROM edges WHERE (source IN (${placeholders}) OR target IN (${placeholders})) AND confidence IN (${confidences.map(() => "?").join(",")}) ORDER BY id LIMIT 1001`).all(...ids, ...ids, ...confidences) as EdgeRow[] : [];
+    const edges = edgeRows.slice(0, 1000).map(graphEdgeFromRow);
+    const relatedIds = [...new Set(edges.flatMap(edge => [edge.source, edge.target]).filter(id => !ids.includes(id)))];
+    const nodes = scopedNodes([...selected, ...this.nodesByIds(relatedIds)], options);
+    return { framework: framework ?? "all", nodes, edges: scopedEdges(edges, nodes, options), truncated: rows.length > 200 || edgeRows.length > 1000, bounded: { maxBoundaries: 200, maxEdges: 1000 } };
   }
 
   context(task: string, options: ContextQuery = {}): Record<string, unknown> {

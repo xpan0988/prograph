@@ -9,7 +9,7 @@ import type { Diagnostic, RepositoryMetadata } from "../graph/schema.js";
 import type { RepositorySnapshot } from "../adapters/contracts.js";
 
 const execFileAsync = promisify(execFile);
-const ROOT_MARKERS = [".git", "prograph.config.json", "package.json", "Cargo.toml", "tsconfig.json", "jsconfig.json"];
+const ROOT_MARKERS = [".git", "prograph.config.json", "package.json", "Cargo.toml", "tsconfig.json", "jsconfig.json", "pyproject.toml", "go.mod", "pom.xml", "compile_commands.json"];
 
 async function exists(value: string): Promise<boolean> {
   try {
@@ -55,7 +55,7 @@ export interface ScanResult {
   excludedFileCount: number;
 }
 
-export async function scanRepository(root: string): Promise<ScanResult> {
+export async function scanRepository(root: string, outputDirectory?: string): Promise<ScanResult> {
   const repository = await getRepositoryMetadata(root);
   const diagnostics: Diagnostic[] = [];
   let config;
@@ -72,22 +72,17 @@ export async function scanRepository(root: string): Promise<ScanResult> {
       metadata: {},
     });
   }
+  const relativeOutput = outputDirectory ? path.relative(root, outputDirectory).split(path.sep).join("/") : undefined;
+  const ignore = [...config.exclude, ...(relativeOutput && !relativeOutput.startsWith("../") && relativeOutput !== "." ? [`${relativeOutput}/**`] : [])];
   const files = await fg(config.include, {
     cwd: root,
-    ignore: config.exclude,
+    ignore,
     onlyFiles: true,
     unique: true,
     dot: true,
     followSymbolicLinks: false,
   });
   files.sort();
-  const allCandidateFiles = await fg(config.include, {
-    cwd: root,
-    onlyFiles: true,
-    unique: true,
-    dot: true,
-    followSymbolicLinks: false,
-  });
   const absoluteFiles = new Map<string, string>();
   const fileContents = new Map<string, string>();
   for (const relativeFile of files) {
@@ -108,8 +103,8 @@ export async function scanRepository(root: string): Promise<ScanResult> {
     }
   }
   const metadataFiles = await fg(
-    ["**/package.json", "**/Cargo.toml", "**/tsconfig.json", "**/jsconfig.json", "**/tauri.conf.json", "**/tauri.conf.json5"],
-    { cwd: root, ignore: config.exclude, onlyFiles: true, unique: true, dot: true, followSymbolicLinks: false },
+    ["**/package.json", "**/Cargo.toml", "**/tsconfig.json", "**/jsconfig.json", "**/tauri.conf.json", "**/tauri.conf.json5", "**/pyproject.toml", "**/go.mod", "**/go.sum", "**/pom.xml", "**/*.csproj", "**/*.sln", "**/compile_commands.json"],
+    { cwd: root, ignore, onlyFiles: true, unique: true, dot: true, followSymbolicLinks: false },
   );
   for (const relativeFile of metadataFiles) {
     const normalized = relativeFile.split(path.sep).join("/");
@@ -125,6 +120,6 @@ export async function scanRepository(root: string): Promise<ScanResult> {
   return {
     snapshot: { repository, config, files: [...absoluteFiles.keys()], absoluteFiles, fileContents },
     diagnostics,
-    excludedFileCount: Math.max(0, allCandidateFiles.length - files.length),
+    excludedFileCount: 0,
   };
 }

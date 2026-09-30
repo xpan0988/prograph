@@ -1,0 +1,5 @@
+syntax = "proto3";
+package example;
+message Request { string key = 1; }
+message Reply { string value = 1; }
+service Store { rpc Load(Request) returns (Reply); }

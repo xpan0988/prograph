@@ -55,7 +55,7 @@ function frameworkNode(snapshot: RepositorySnapshot, kind: "framework_command" |
     qualifiedName: `tauri:${kind}:${name}`,
     language: "framework",
     adapter: "tauri",
-    metadata: { framework: "tauri" },
+    metadata: { framework: "tauri", boundary: { protocol: kind === "framework_command" ? "tauri-command" : "tauri-event", namespace: "tauri", operation: name } },
   };
 }
 

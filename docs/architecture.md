@@ -13,7 +13,8 @@ repository path
   -> root resolution
   -> optional configuration
   -> read-only repository scan
-  -> language adapters
+  -> applicable-file language registry
+  -> syntax providers and optional semantic providers
   -> framework adapters
   -> deterministic artifact adapters
   -> semantic overlay linker
@@ -25,7 +26,7 @@ repository path
 
 ### Repository Scanner
 
-The scanner resolves an arbitrary input path to the nearest repository marker and reads supported source files without following symlinks. It also reads relevant repository metadata such as `package.json`, `Cargo.toml`, TypeScript configuration, and Tauri configuration for detection and compiler setup. Metadata files are not counted or parsed as source files.
+The scanner resolves an arbitrary input path to the nearest repository marker and reads supported source files without following symlinks. It also reads relevant repository metadata such as `package.json`, `Cargo.toml`, TypeScript configuration, and Tauri configuration for detection and compiler setup. Metadata files participate in freshness hashing and the scanned-file inventory; language adapters select only applicable source extensions.
 
 Default exclusions prevent analysis of installed packages, Cargo build output, VCS metadata, ProGraph output, vendor directories, and common generated artifacts.
 
@@ -243,10 +244,28 @@ The default page does not render the complete symbol graph.
 
 MCP accepts explicit repository or custom-index context and does not maintain a separate graph model.
 
-## Future Adapter Expansion
+## Polyglot Provider Foundation
 
-New language adapters should preserve the graph IR, deterministic identity rules, confidence semantics, and source-evidence requirements. New framework adapters should consume existing language-level graph data and add framework-specific bindings without changing the graph core.
+`core/adapters/providers.ts` separates syntax extraction from optional semantic resolution. Providers declare ID, version and kind (`syntax`, `compiler`, `lsp`). Semantic providers probe availability, receive a copy of syntax evidence, and add graph contributions; missing/failing providers produce diagnostics and preserve the syntax result. `LanguageAdapter.appliesTo` restricts each language run to applicable source files while retaining shared metadata. Adapter failures are isolated at the pipeline boundary and new parser failures at the file boundary.
 
-New knowledge adapters should remain deterministic and source-evidence-backed. They must not add telemetry, source uploads, mandatory LLM calls, OCR, PDF/image/video/audio processing, or runtime modification of analyzed repositories.
+`createTypescriptAdapter` accepts a semantic provider; its default is the existing ts-morph/compiler-API implementation. This retains compiler behavior and deterministic IDs without assuming a future TypeScript native compiler exposes the same API. No native/LSP TypeScript backend is bundled. Rust retains its existing resolver and records inference provenance separately from compiler resolution.
 
-Near-term priorities are dependency-aware partial invalidation for connected files, broader source verification of conservative Rust resolution, and refinement of bounded context and affected-test ranking.
+The shared Tree-sitter frontend engine has explicit per-language declaration mappings for Python, Java, C, C++, Go and C#. It uses AST fields and source ranges, not regular expressions over source text, for code declarations and call evidence. Imports/types/inheritance remain unresolved targets. Unambiguous same-file bare-name calls may add probable candidates while preserving unresolved evidence. No repository-wide bare-name resolution is performed. Macros are observed, never expanded. Compilation database commands/arguments are metadata and are never executed.
+
+Capabilities cover syntax, symbols, modules, references, calls, types, inheritance, generics, macros and dynamic dispatch. A syntax capability means evidence extraction, not complete language-standard conformance. References/dynamic dispatch remain unsupported for new syntax frontends. Provider status and capability data persist in SQLite schema metadata within the existing graph transaction and flow through QueryService, CLI, MCP, exports and UI overview.
+
+Schema 1.2.0 adds the generic `boundary` node and optional evidence `basis`/`provider` fields. Existing node identity rules are unchanged. Adapter/provider versions, including installed grammar and compiler versions, participate in freshness state. Polyglot/schema edits rebuild conservatively; dependency-aware partial invalidation is deferred.
+
+## Cross-Language Boundaries And Artifacts
+
+`core/graph/boundaries.ts` defines protocol/namespace/operation identity and participant contributions (`invokes`, `implements`, `emits`, `listens`). Namespace is explicit; a matching bare name across languages is insufficient. Protocol contracts include HTTP, GraphQL, gRPC, FFI, JNI, P/Invoke, subprocess, IPC, WebSocket, message and database boundaries. Contract availability does not imply an extractor exists for every protocol.
+
+Tauri command/event nodes keep their IDs and kinds and attach this identity in metadata. The architecture artifact adapter parses OpenAPI JSON/YAML, Protobuf services and GraphQL schemas into generic boundaries. Schema paths supply namespaces, avoiding accidental joins between unrelated APIs. These schemas do not yet bind implementation symbols or generated clients. GitHub workflow and Compose documents are recognized structurally. Arbitrary YAML/JSON is ignored; external schema references are not fetched. SQL/HCL semantics and additional TOML formats are deferred.
+
+Boundary queries are capped at 200 identities and 1,000 edges, with a truncation flag. SQL applies protocol and confidence filtering before limits. Compact output preserves boundary identity and evidence basis. Existing graph traversal limits remain in place; several global architecture/context queries still materialize the graph and are a known scale limit.
+
+## Scale And Validation Boundaries
+
+The scanner does not walk excluded trees a second time for counts. The legacy excluded count is unmeasured and reported as zero. Custom output roots are excluded consistently by analysis/status/sync. Language runs receive applicable files; grammar loading occurs on demand, AST traversal is iterative and compilation contexts are indexed once per frontend. SQLite writes retain the existing transaction and source/target indexes.
+
+Analysis is still memory-resident. There is no million-line benchmark claim, persistent semantic daemon, external tool installation, or arbitrary build-command execution. Tests cover all eight languages in one fixture, provider success/unavailability/failure, recovery diagnostics, deterministic identities, scoped schema identities, existing Rust/Tauri/React behavior and stale-index handling. See README for exact language maturity and unsupported categories.

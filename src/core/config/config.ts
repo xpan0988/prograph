@@ -9,6 +9,8 @@ export const DEFAULT_INCLUDE = [
   "**/*.mts",
   "**/*.cts",
   "**/*.rs",
+  "**/*.{py,pyi,java,c,h,cc,cpp,cxx,hpp,hxx,go,cs,proto,sql,graphql,gql,tf}",
+  "**/*.{yaml,yml,toml,json}",
   "README.md",
   "**/*.md",
   "**/package.json",
@@ -33,6 +35,9 @@ export const DEFAULT_EXCLUDE = [
   "**/.git/**",
   "**/.prograph/**",
   "**/vendor/**",
+  "**/.venv/**",
+  "**/__pycache__/**",
+  "**/obj/**",
   "**/generated/**",
   "**/.generated/**",
   "**/*.generated.*",
@@ -41,6 +46,7 @@ export const DEFAULT_EXCLUDE = [
 
 export type AdapterName =
   | "typescript"
+  | "python" | "java" | "c" | "cpp" | "go" | "csharp" | "architecture"
   | "rust"
   | "react"
   | "tauri"
@@ -71,6 +77,7 @@ export function defaultConfig(): LoadedConfig {
     exclude: DEFAULT_EXCLUDE,
     adapters: {
       typescript: true,
+      python: true, java: true, c: true, cpp: true, go: true, csharp: true, architecture: true,
       rust: true,
       react: true,
       tauri: true,
@@ -102,17 +109,9 @@ export async function loadConfig(repositoryRoot: string): Promise<LoadedConfig> 
     include: parsed.include?.length ? parsed.include : DEFAULT_INCLUDE,
     exclude: [...DEFAULT_EXCLUDE, ...(parsed.exclude ?? [])],
     adapters: {
-      typescript: parsed.adapters?.typescript ?? true,
-      rust: parsed.adapters?.rust ?? true,
-      react: parsed.adapters?.react ?? true,
-      tauri: parsed.adapters?.tauri ?? true,
-      markdown: parsed.adapters?.markdown ?? true,
-      packageJson: parsed.adapters?.packageJson ?? true,
-      cargoToml: parsed.adapters?.cargoToml ?? true,
-      tauriConfig: parsed.adapters?.tauriConfig ?? true,
-      tauriCapability: parsed.adapters?.tauriCapability ?? true,
-      tests: parsed.adapters?.tests ?? true,
-      semanticLinker: parsed.adapters?.semanticLinker ?? true,
+      ...defaultConfig().adapters,
+      ...parsed.adapters,
+
     },
     ...(sourcePath ? { sourcePath } : {}),
   };

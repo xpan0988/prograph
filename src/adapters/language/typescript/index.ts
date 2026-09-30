@@ -1,3 +1,6 @@
+import { ts } from "ts-morph";
+import type { SemanticProvider } from "../../../core/adapters/providers.js";
+import { capabilities } from "../../../core/adapters/providers.js";
 import path from "node:path";
 import {
   ArrowFunction,
@@ -137,7 +140,7 @@ function createProject(snapshot: RepositorySnapshot): Project {
   return project;
 }
 
-export const typescriptAdapter: LanguageAdapter = {
+export const compilerApiAdapter: LanguageAdapter = {
   name: "typescript",
   async detect(snapshot) {
     return snapshot.config.adapters.typescript && snapshot.files.some((file) => TYPESCRIPT_EXTENSIONS.has(path.extname(file)));
@@ -407,3 +410,30 @@ export const typescriptAdapter: LanguageAdapter = {
 export function isTypeScriptFile(file: string): boolean {
   return TYPESCRIPT_EXTENSIONS.has(path.extname(file));
 }
+
+/** Bundled compiler API provider. No dependency on a future TypeScript native API. */
+export const typescriptCompilerProvider: SemanticProvider = {
+  descriptor: { id: "ts-morph/compiler-api", version: ts.version, kind: "compiler" },
+  async probe() { return { ...this.descriptor, available: true }; },
+  async resolve(snapshot) { return compilerApiAdapter.analyze(snapshot); },
+};
+export function createTypescriptAdapter(provider: SemanticProvider = typescriptCompilerProvider): LanguageAdapter {
+  return {
+    ...compilerApiAdapter,
+    version: "2",
+    appliesTo: file => TYPESCRIPT_EXTENSIONS.has(path.extname(file)),
+    async analyze(snapshot) {
+      let status = await provider.probe(snapshot);
+      const result = status.available ? await provider.resolve(snapshot, emptyAdapterResult()) : emptyAdapterResult();
+      if (result.diagnostics.some(d => d.code === "typescript-project-failure")) status = { ...status, available: false };
+      if (!status.available) result.diagnostics.push({ code: "semantic-provider-unavailable", severity: "warning", message: status.reason ?? "TypeScript semantic provider unavailable", adapter: "typescript", metadata: {} });
+      for (const edge of result.edges) for (const evidence of edge.evidence) {
+        evidence.provider = provider.descriptor.id;
+        evidence.basis = edge.confidence === "resolved" ? provider.descriptor.kind === "lsp" ? "lsp" : "compiler" : edge.confidence === "unresolved" ? "unresolved" : "syntax";
+      }
+      result.metadata = { ...result.metadata, providers: [status], semanticProviderAvailable: status.available, capabilities: capabilities(status.available ? { syntax: "syntax", symbols: "semantic", modules: "semantic", calls: "semantic", references: "semantic", types: "semantic" } : {}) };
+      return result;
+    },
+  };
+}
+export const typescriptAdapter = createTypescriptAdapter();

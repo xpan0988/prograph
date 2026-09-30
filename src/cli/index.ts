@@ -241,6 +241,10 @@ addFormat(addConfidence(addIndex(program.command("cycles [path]").description("f
   writeResult(await withQuery(input, options.index, (query) => query.cycles(confidence(options))), options.format);
 });
 
+addFormat(addConfidence(addIndex(program.command("boundaries [path]").description("show bounded cross-language boundary evidence")))).action(async (input = ".", options: QueryOptions) => {
+  writeResult(await withQuery(input, options.index, (query) => query.frameworkBindings(undefined, confidence(options))), options.format);
+});
+
 const framework = program.command("framework").description("framework-specific queries");
 addFormat(addConfidence(addIndex(framework.command("tauri [path]").description("show Tauri commands and events")))).action(async (input = ".", options: QueryOptions) => {
   writeResult(await withQuery(input, options.index, (query) => query.frameworkBindings("tauri", confidence(options))), options.format);

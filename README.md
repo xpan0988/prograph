@@ -1,8 +1,8 @@
 # ProGraph
 
-> **Status:** Stable self-use release. ProGraph is in maintenance mode. New development should be driven by real usage issues rather than feature parity.
+> **Status:** Local-first polyglot code and architecture intelligence. Analysis quality is reported per provider and relationship.
 
-ProGraph is a standalone, local-first repository visualization and code-intelligence tool. It analyzes a source repository into one evidence-backed graph that serves both the interactive human UI and compact machine-readable CLI or MCP queries.
+ProGraph is a standalone, local-first polyglot code and architecture intelligence engine. It analyzes a source repository into one evidence-backed graph that serves both the interactive human UI and compact machine-readable CLI or MCP queries.
 
 ```text
 Source repository
@@ -22,7 +22,9 @@ ProGraph does not modify analyzed source files. Its default repository-local out
 ProGraph currently supports:
 
 - TypeScript, TSX, JavaScript, and JSX through `ts-morph`;
-- Rust syntax through Tree-sitter;
+- Rust syntax and conservative repository-local resolution through Tree-sitter;
+- Python, Java, C, C++, Go, and C# declarations, modules, imports, calls, annotations/types and inheritance evidence through real Tree-sitter frontends;
+- OpenAPI JSON/YAML operations, Protobuf RPC methods, GraphQL schema fields, and selected GitHub Actions/Compose configuration;
 - statically identifiable React components, JSX renders, and callback props;
 - statically identifiable Tauri commands, handler registrations, invokes, and named events;
 - a deterministic Knowledge Overlay for Markdown headings, README sections, package/Cargo/Tauri config, Tauri capabilities, API route mentions, CLI commands, test artifacts, and literal doc/config/code references.
@@ -38,7 +40,7 @@ The Knowledge Overlay is local-first and deterministic. It does not use cloud se
 ProGraph is currently maintained as a local self-use tool.
 
 ```bash
-cd /Users/xiyuanpan/prograph
+cd /Users/prograph
 npm install
 npm run build
 npm link
@@ -408,34 +410,46 @@ Unresolved targets are scoped to their source owner. Common low-value method nam
 
 Exact call-site names remain available in edge evidence.
 
-## Maintenance Mode
+## Language And Provider Capabilities
 
-ProGraph is considered complete for its current self-use scope:
+| Frontend | Implemented level | Relationship limits |
+| --- | --- | --- |
+| TypeScript / TSX / JavaScript / JSX | Bundled ts-morph / TypeScript compiler API | Unique compiler symbols are resolved; existing React extraction retained |
+| Rust | Tree-sitter plus existing local resolver | Proven local bindings resolved; heuristics probable; no rust-analyzer |
+| Python | Syntax declarations, modules, classes/methods, decorators, annotations, inheritance, imports/calls | Same-file bare calls may have probable candidates; unresolved call evidence retained |
+| Java | Syntax packages, classes/interfaces, records/enums, constructors/methods, annotations, inheritance, imports/calls/types | No JVM classpath or overload resolution |
+| C | Syntax translation units, includes, structs/enums/unions, typedefs, declarations/definitions and preprocessor evidence | Compilation database contexts recorded, never executed; no preprocessing/type resolution |
+| C++ | C infrastructure plus namespaces, classes, inheritance, templates and methods | No template instantiation or receiver resolution; `.h` defaults to C, use `.hpp` for C++ headers |
+| Go | Syntax packages, imports, functions/methods, structs/interfaces, embedding and generic declarations | No go/types or gopls resolution |
+| C# | Syntax namespaces, records/classes/structs/interfaces, constructors/methods, attributes and generics | No Roslyn binding or overload resolution |
 
-```text
-TypeScript
-TSX
-JavaScript
-JSX
-React
-Rust
-Tauri
-CLI
-MCP
-local visualization
-incremental status and sync
-context and affected guidance
+The six new frontends do **not** claim compiler-grade symbol references or dynamic dispatch. Import and type-use targets remain unresolved; same-file bare-call candidates are only probable. Capability categories independently report `syntax`, `heuristic`, `semantic`, or `unsupported`. These are distinct from edge confidence (`exact`, `resolved`, `probable`, `unresolved`). The syntax presence of a call never makes its target resolved.
+
+The policy is latest-stable-first, backward-tolerant. Installed grammar versions are recorded in provider metadata and invalidate stale indexes. Parsing is recovery-tolerant, but this release does not certify every Python 3.14, Java 25, C23, C++23 or modern C# feature. Recovered syntax produces diagnostics. The TypeScript compiler dependency remains compatible with the existing engine; there is no claim of TypeScript 7 native support.
+
+```bash
+prograph adapters . --format json
+prograph overview . --format json
+prograph boundaries . --format json
+prograph callees <symbol-id> --include-probable --include-unresolved --format json
 ```
 
-Future development should be limited to:
+`adapters` and repository overview expose provider versions, availability, capability categories, applicable file counts and timing. MCP `get_repository_overview` exposes the same data; `get_framework_bindings` accepts boundary protocols such as `http` or `grpc`. Compact edge evidence retains provider and resolution basis. The UI includes all supported languages and shows syntax/semantic provider status.
 
-- confirmed correctness defects;
-- regressions found through real repository use;
-- targeted Rust resolution improvements;
-- practical UI or performance issues;
-- dependency-aware incremental invalidation when needed.
+Configuration can disable new adapters independently:
 
-Avoid feature-parity work, speculative language support, public-product infrastructure, or broad redesigns unless the usage scope changes.
+```json
+{
+  "exclude": ["**/third_party/**"],
+  "adapters": { "python": true, "java": true, "c": true, "cpp": true, "go": true, "csharp": true, "architecture": true }
+}
+```
+
+OpenAPI, GraphQL and Protobuf identity nodes use a protocol, schema-file namespace and operation. They establish schema evidence, not automatic matching to generated clients or handlers. Tauri retains its existing matching and IDs and now exposes the same boundary identity metadata. Other protocols have a reusable typed contribution contract, but no automatic HTTP, FFI, JNI, P/Invoke, subprocess or queue matching is claimed.
+
+SQL and HCL files are discovered but not semantically extracted yet. Existing Cargo TOML and package/Tauri JSON extraction remains available. Arbitrary JSON/YAML does not create graph nodes. Kotlin, Swift and other future language frontends are not implemented.
+
+New polyglot and schema changes use conservative full rebuilds; unchanged indexes are reused. Existing isolated TS/Rust incremental behavior remains available. Excluded directories are no longer traversed just to count files (`excludedFileCount` is a compatibility field reported as zero, not a measured count). Custom in-repository output directories are excluded from scanning. Analysis still retains source and graph data in memory; million-line performance and global query memory usage are not certified.
 
 ## Development
 

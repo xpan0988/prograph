@@ -88,7 +88,7 @@ export function createProGraphMcpServer(defaultRepository = ".", defaultIndex?: 
     inputSchema: boundedShape,
   }, async (input) => response(await withQuery(repo(input), index(input), (query) => query.cycles(confidence(input)).slice(0, input.maxNodes ?? 50))));
   server.registerTool("get_framework_bindings", {
-    description: "Get trusted framework bindings",
+    description: "Get bounded framework and cross-language boundary evidence; framework may be tauri or a protocol such as http, grpc, graphql",
     inputSchema: { ...boundedShape, framework: z.string().optional() },
   }, async (input) => response(await withQuery(repo(input), index(input), (query) => query.frameworkBindings(input.framework ?? undefined, confidence(input)))));
   server.registerTool("get_context", {

@@ -234,6 +234,7 @@ export const zhCN: Record<TranslationKey, string> = {
   "node.struct": "结构体",
   "node.enum": "枚举",
   "node.trait": "特征",
+  "node.boundary": "跨语言边界",
   "node.framework_command": "框架命令",
   "node.framework_event": "框架事件",
   "node.external_package": "外部包",

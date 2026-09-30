@@ -39,12 +39,13 @@ async function readJson<T>(file: string): Promise<T | undefined> {
   }
 }
 
-function adapterRunsFor(graph: GraphData, enabledAdapters: string[], fileCount: number): AdapterRun[] {
+function adapterRunsFor(graph: GraphData, enabledAdapters: string[], previous: AdapterRun[] = []): AdapterRun[] {
   return enabledAdapters.map((adapter) => ({
     adapter,
     detected: true,
     durationMs: 0,
-    fileCount,
+    fileCount: graph.nodes.filter(node => node.kind === "file" && node.adapter === adapter).length,
+    metadata: previous.find(run => run.adapter === adapter)?.metadata ?? {},
     nodeCount: graph.nodes.filter((node) => node.adapter === adapter).length,
     edgeCount: graph.edges.filter((edge) => edge.evidence.some((item) => item.adapter === adapter)).length,
     diagnosticCount: graph.diagnostics.filter((item) => item.adapter === adapter).length,
@@ -61,10 +62,12 @@ function identityChanges(previous: Array<{ id: string }>, current: Array<{ id: s
 }
 
 async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphData, previousManifest: AnalysisManifest, started: number): Promise<SyncResult | undefined> {
+  // Polyglot/module and boundary invalidation is conservative until dependency closure is proven.
+  if (previousManifest.enabledAdapters.some(adapter => ["python", "java", "c", "cpp", "go", "csharp", "architecture"].includes(adapter))) return undefined;
   const changedFiles = [...status.addedFiles, ...status.modifiedFiles];
   const affectedFiles = new Set([...changedFiles, ...status.deletedFiles]);
   if (changedFiles.length + status.deletedFiles.length === 0 || changedFiles.length > 10) return undefined;
-  const scan = await scanRepository(status.repositoryRoot);
+  const scan = await scanRepository(status.repositoryRoot, status.indexDirectory);
   if (changedFiles.some((file) => frameworkRelevant(file, scan.snapshot.fileContents.get(file) ?? ""))) return undefined;
   const removedIds = new Set(previous.nodes.filter((node) => node.file && affectedFiles.has(node.file)).map((node) => node.id));
   if (previous.edges.some((edge) => removedIds.has(edge.source) !== removedIds.has(edge.target))) return undefined;
@@ -101,7 +104,9 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
   };
   const manifestBase: AnalysisManifest = { ...previousManifest };
   delete manifestBase.gitCommit;
+  const adapterRuns = adapterRunsFor(graph, previousManifest.enabledAdapters, previousManifest.adapterRuns);
   const manifest: AnalysisManifest = {
+    adapterRuns,
     ...manifestBase,
     toolVersion: packageJson.version,
     repositoryRoot: status.repositoryRoot,
@@ -118,7 +123,7 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
   const nodeChanges = identityChanges(previous.nodes, graph.nodes);
   const edgeChanges = identityChanges(previous.edges, graph.edges);
   await mkdir(path.join(status.indexDirectory, "exports"), { recursive: true });
-  await persistGraph(status.indexDirectory, graph, manifest, adapterRunsFor(graph, manifest.enabledAdapters, scan.snapshot.files.length));
+  await persistGraph(status.indexDirectory, graph, manifest, adapterRuns);
   await Promise.all([
     writeFile(path.join(status.indexDirectory, "exports", "graph.json"), `${JSON.stringify(graph, null, 2)}\n`),
     writeFile(path.join(status.indexDirectory, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`),

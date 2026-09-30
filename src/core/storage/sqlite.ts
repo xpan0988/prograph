@@ -82,6 +82,7 @@ export async function persistGraph(outputDirectory: string, graph: GraphData, ma
       const meta = database.prepare("INSERT INTO schema_metadata (key, value) VALUES (?, ?)");
       meta.run("schemaVersion", graph.schemaVersion);
       meta.run("toolVersion", manifest.toolVersion);
+      meta.run("adapterMetadata", JSON.stringify(Object.fromEntries(adapterRuns.map(run => [run.adapter, run.metadata ?? {}]))));
       const repo = database.prepare("INSERT INTO repository_metadata (key, value) VALUES (?, ?)");
       repo.run("root", graph.repository.root);
       repo.run("identity", graph.repository.identity);

@@ -125,7 +125,7 @@ export function nodeLanguage(node: GraphNode): string | undefined {
   if (graphDomainOf(node) === "knowledge") return "knowledge";
   if (node.language) return node.language;
   if (node.kind === "react_component") return "typescript";
-  if (node.kind === "framework_command" || node.kind === "framework_event") return "framework";
+  if (node.kind === "boundary" || node.kind === "framework_command" || node.kind === "framework_event") return "framework";
   if (node.file?.endsWith(".rs")) return "rust";
   if (node.file && /\.(?:ts|tsx|js|jsx|mts|cts)$/.test(node.file)) return "typescript";
   return undefined;
@@ -147,7 +147,7 @@ export function architectureLane(node: GraphNode): ArchitectureLane {
   if (/(^|\/)(src\/cli|src\/mcp)\//.test(lowered)) return "cli";
   if (/(^|\/)(src\/core|src\/lib|src\/shared|src\/types|src\/utils|domain|graph|query|storage|analysis)\//.test(lowered)) return "core";
   if (node.kind === "repository" || node.kind === "directory") return "core";
-  if (node.kind === "api_surface") return "api";
+  if (node.kind === "api_surface" || node.kind === "boundary") return "api";
   if (node.kind === "cli_command") return "cli";
   if (node.kind === "test_artifact") return "tests";
   return "other";

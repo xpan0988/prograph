@@ -1,6 +1,7 @@
-export const GRAPH_SCHEMA_VERSION = "1.1.0";
+export const GRAPH_SCHEMA_VERSION = "1.2.0";
 
 export const NODE_KINDS = [
+  "boundary",
   "repository",
   "directory",
   "file",
@@ -72,6 +73,8 @@ export interface SourceEvidence {
   matchedSyntax?: string;
   bindingName?: string;
   resolutionMethod?: string;
+  basis?: "syntax" | "compiler" | "lsp" | "inference" | "unresolved";
+  provider?: string;
 }
 
 export interface GraphNode {
@@ -125,6 +128,7 @@ export interface RepositoryMetadata {
 }
 
 export interface AdapterRun {
+  metadata?: Record<string, unknown>;
   adapter: string;
   detected: boolean;
   durationMs: number;
@@ -135,6 +139,7 @@ export interface AdapterRun {
 }
 
 export interface AnalysisManifest {
+  adapterRuns?: AdapterRun[];
   schemaVersion: string;
   toolVersion: string;
   repositoryRoot: string;

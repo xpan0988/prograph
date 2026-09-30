@@ -1,3 +1,5 @@
+import { createRequire } from "node:module";
+import { capabilities } from "../../../core/adapters/providers.js";
 import path from "node:path";
 import Parser from "tree-sitter";
 import Rust from "tree-sitter-rust";
@@ -202,8 +204,10 @@ function diagnosticForCall(graph: GraphBuilder, file: string, callNode: SyntaxNo
   });
 }
 
-export const rustAdapter: LanguageAdapter = {
+const rustSyntaxAdapter: LanguageAdapter = {
   name: "rust",
+  version: "4",
+  appliesTo: file => file.endsWith(".rs"),
   async detect(snapshot) {
     return snapshot.config.adapters.rust && rustFiles(snapshot).length > 0;
   },
@@ -507,5 +511,18 @@ export const rustAdapter: LanguageAdapter = {
       });
     }
     return graph.result({ moduleCount: new Set(definitions.map((item) => moduleKey(item.modulePath))).size, unresolvedNodePolicy: "scoped-and-common-method-aggregated" });
+  },
+};
+
+export const rustAdapter: LanguageAdapter = {
+  ...rustSyntaxAdapter,
+  async analyze(snapshot) {
+    const result = await rustSyntaxAdapter.analyze(snapshot);
+    for (const edge of result.edges) for (const evidence of edge.evidence) {
+      evidence.provider = "tree-sitter-rust";
+      evidence.basis = edge.confidence === "exact" ? "syntax" : edge.confidence === "unresolved" ? "unresolved" : "inference";
+    }
+    result.metadata = { ...result.metadata, providers: [{ id: "tree-sitter-rust", version: createRequire(import.meta.url)("tree-sitter-rust/package.json").version, kind: "syntax", available: true }], semanticProviderAvailable: false, capabilities: capabilities({ syntax: "syntax", symbols: "syntax", modules: "heuristic", references: "heuristic", calls: "heuristic", types: "heuristic", inheritance: "syntax", macros: "syntax" }) };
+    return result;
   },
 };

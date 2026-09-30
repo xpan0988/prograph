@@ -1,0 +1,2 @@
+type Query { item(key: ID!): Item }
+type Item { key: ID!, value: String }

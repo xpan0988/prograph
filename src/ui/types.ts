@@ -13,7 +13,7 @@ export interface Overview {
   counts: { files: number; nodes: number; edges: number; diagnostics: number };
   nodesByKind: Array<{ kind: string; count: number }>;
   edgesByKind: Array<{ kind: string; count: number }>;
-  adapters: Array<{ adapter: string; detected: number; durationMs: number; nodeCount: number; edgeCount: number; diagnosticCount: number }>;
+  adapters: Array<{ metadata?: { providers?: Array<{ id: string; kind: string; available: boolean }>; capabilities?: Record<string, string> }; adapter: string; detected: number; durationMs: number; nodeCount: number; edgeCount: number; diagnosticCount: number }>;
 }
 
 export interface GraphResult {

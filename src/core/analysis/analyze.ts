@@ -1,3 +1,5 @@
+import { architectureAdapter } from "../../adapters/artifact/architecture/index.js";
+import { polyglotAdapters } from "../../adapters/language/polyglot/index.js";
 import path from "node:path";
 import { mkdir, writeFile } from "node:fs/promises";
 import { GraphBuilder } from "../graph/builder.js";
@@ -70,10 +72,13 @@ function baseGraph(snapshot: RepositorySnapshot): AdapterResult {
 }
 
 async function runAdapter(adapter: LanguageAdapter | FrameworkAdapter, snapshot: RepositorySnapshot, graph: AdapterResult, framework: boolean): Promise<{ result: AdapterResult; run: AdapterRun }> {
+  const applicable = !framework && (adapter as LanguageAdapter).appliesTo;
+  if (applicable) snapshot = { ...snapshot, files: snapshot.files.filter(applicable) };
   const started = performance.now();
   let detected = false;
   let result: AdapterResult = { nodes: [], edges: [], diagnostics: [], metadata: {} };
   try {
+    if (snapshot.config.adapters[adapter.name as keyof typeof snapshot.config.adapters] === false) return { result, run: { adapter: adapter.name, detected: false, durationMs: 0, fileCount: 0, nodeCount: 0, edgeCount: 0, diagnosticCount: 0 } };
     detected = framework
       ? await (adapter as FrameworkAdapter).detect(snapshot, graph)
       : await (adapter as LanguageAdapter).detect(snapshot);
@@ -93,6 +98,7 @@ async function runAdapter(adapter: LanguageAdapter | FrameworkAdapter, snapshot:
     result,
     run: {
       adapter: adapter.name,
+      metadata: { version: (adapter as LanguageAdapter).version, capabilities: (adapter as LanguageAdapter).capabilities, ...result.metadata },
       detected,
       durationMs: Math.round(performance.now() - started),
       fileCount: detected ? snapshot.files.length : 0,
@@ -106,12 +112,12 @@ async function runAdapter(adapter: LanguageAdapter | FrameworkAdapter, snapshot:
 export async function analyzeRepository(input = ".", options: AnalyzeOptions = {}): Promise<AnalysisResult> {
   const started = performance.now();
   const root = await resolveRepositoryRoot(input);
-  const scan = await scanRepository(root);
+  const scan = await scanRepository(root, options.output ? path.resolve(options.output) : undefined);
   const builder = new GraphBuilder();
   builder.merge(baseGraph(scan.snapshot));
   builder.diagnostics.push(...scan.diagnostics);
   const adapterRuns: AdapterRun[] = [];
-  for (const adapter of [typescriptAdapter, rustAdapter]) {
+  for (const adapter of [typescriptAdapter, rustAdapter, ...polyglotAdapters]) {
     const executed = await runAdapter(adapter, scan.snapshot, builder.result(), false);
     adapterRuns.push(executed.run);
     builder.diagnostics.push(...validateIdentities(executed.result.nodes, executed.result.edges));
@@ -123,13 +129,15 @@ export async function analyzeRepository(input = ".", options: AnalyzeOptions = {
     builder.diagnostics.push(...validateIdentities(executed.result.nodes, executed.result.edges));
     builder.merge(executed.result);
   }
-  for (const adapter of [markdownAdapter, packageJsonAdapter, cargoTomlAdapter, tauriConfigAdapter, tauriCapabilityAdapter, testsAdapter, semanticLinkerAdapter]) {
+  for (const adapter of [architectureAdapter, markdownAdapter, packageJsonAdapter, cargoTomlAdapter, tauriConfigAdapter, tauriCapabilityAdapter, testsAdapter, semanticLinkerAdapter]) {
     const executed = await runAdapter(adapter, scan.snapshot, builder.result(), true);
     adapterRuns.push(executed.run);
     builder.diagnostics.push(...validateIdentities(executed.result.nodes, executed.result.edges));
     builder.merge(executed.result);
   }
   builder.diagnostics.push(...validateIdentities([...builder.nodes.values()], [...builder.edges.values()]));
+  const repositoryNode = [...builder.nodes.values()].find(node => node.kind === "repository");
+  if (repositoryNode) repositoryNode.metadata.analysis = adapterRuns.map(({ adapter, detected, metadata }) => ({ adapter, detected, ...metadata }));
   const graph: GraphData = {
     schemaVersion: GRAPH_SCHEMA_VERSION,
     repository: scan.snapshot.repository,
@@ -145,6 +153,7 @@ export async function analyzeRepository(input = ".", options: AnalyzeOptions = {
     repositoryIdentity: scan.snapshot.repository.identity,
     ...(scan.snapshot.repository.gitCommit ? { gitCommit: scan.snapshot.repository.gitCommit } : {}),
     generatedAt: new Date().toISOString(),
+    adapterRuns,
     enabledAdapters: adapterRuns.filter((run) => run.detected).map((run) => run.adapter),
     scannedFileCount: scan.snapshot.files.length,
     excludedFileCount: scan.excludedFileCount,

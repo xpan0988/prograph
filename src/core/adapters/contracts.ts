@@ -18,6 +18,9 @@ export interface AdapterResult {
 
 export interface LanguageAdapter {
   name: string;
+  version?: string;
+  appliesTo?(file: string): boolean;
+  capabilities?: import("./providers.js").Capabilities;
   detect(snapshot: RepositorySnapshot): Promise<boolean>;
   analyze(snapshot: RepositorySnapshot): Promise<AdapterResult>;
 }

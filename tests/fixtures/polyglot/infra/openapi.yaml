@@ -1,0 +1,8 @@
+openapi: 3.1.0
+info: {title: Store, version: '1'}
+paths:
+  /items:
+    get:
+      operationId: load
+      responses:
+        '200': {description: OK}

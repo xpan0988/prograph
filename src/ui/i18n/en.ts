@@ -232,6 +232,7 @@ export const en = {
   "node.struct": "struct",
   "node.enum": "enum",
   "node.trait": "trait",
+  "node.boundary": "boundary",
   "node.framework_command": "framework command",
   "node.framework_event": "framework event",
   "node.external_package": "external package",

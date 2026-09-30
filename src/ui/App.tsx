@@ -37,7 +37,7 @@ const GRAPH_MODE_VALUES: GraphMode[] = ["code", "knowledge"];
 const SCOPE_VALUES: KnowledgeScope[] = ["code", "code+docs", "code+config", "code+tests", "full"];
 const EDGE_KIND_VALUES = ["readable", "all", "contains", "imports", "calls", "renders", "uses_type", "invokes", "registers", "emits", "listens", "documents", "explains", "mentions", "configured_by", "configures", "exposes_api", "describes_workflow", "tests", "related_to"];
 const DEFAULT_READABLE_EDGE_KINDS = new Set(["imports", "calls", "renders", "invokes", "registers", "emits", "listens"]);
-const DEFAULT_LANGUAGES = ["typescript", "rust", "framework", "frontend", "api", "bridge", "core", "adapters", "cli", "tests", "external", "knowledge", "other"];
+const DEFAULT_LANGUAGES = ["typescript", "rust", "python", "java", "c", "cpp", "go", "csharp", "framework", "frontend", "api", "bridge", "core", "adapters", "cli", "tests", "external", "knowledge", "other"];
 
 interface UiPreferences {
   view: View;

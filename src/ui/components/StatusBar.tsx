@@ -27,7 +27,7 @@ export function StatusBar({ state, overview, diagnostics, graph }: StatusBarProp
   return (
     <footer className="statusbar" aria-live="polite">
       <div className={`status-chip state-${state}`}><StateIcon state={state} /><strong>{t(`status.${state}`)}</strong></div>
-      <div className="status-chip"><span>{t("status.adapters")}</span>{overview?.adapters.filter((adapter) => adapter.detected).map((adapter) => <code key={adapter.adapter}>{adapter.adapter}</code>)}</div>
+      <div className="status-chip"><span>{t("status.adapters")}</span>{overview?.adapters.filter((adapter) => adapter.detected).map((adapter) => <code key={adapter.adapter} title={JSON.stringify(adapter.metadata ?? {})}>{adapter.adapter}{adapter.metadata?.providers?.some(provider => provider.available && provider.kind !== "syntax") ? " · semantic" : adapter.metadata?.providers ? " · syntax" : ""}</code>)}</div>
       <div className="status-chip"><span>{t("status.diagnostics")}</span><b className="severity-error"><XCircle size={12} />{errors}</b><b className="severity-warning"><Warning size={12} />{warnings}</b><b><Info size={12} />{info}</b></div>
       <div className="status-chip"><span>{t("toolbar.scope")}</span><strong>{t("status.scope", { nodes: graph.nodes.length, edges: graph.edges.length })}</strong></div>
       <div className="status-chip status-tail"><strong>{t("status.generated", { duration })}</strong></div>

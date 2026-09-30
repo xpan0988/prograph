@@ -17,6 +17,8 @@ function isGraphEdge(value: Record<string, unknown>): boolean {
 
 function evidencePointer(evidence: SourceEvidence): Record<string, unknown> {
   return {
+    ...(evidence.basis ? { basis: evidence.basis } : {}),
+    ...(evidence.provider ? { provider: evidence.provider } : {}),
     ...(evidence.file ? { file: evidence.file } : {}),
     ...(evidence.line !== undefined ? { line: evidence.line } : {}),
     ...(evidence.column !== undefined ? { column: evidence.column } : {}),
@@ -25,7 +27,7 @@ function evidencePointer(evidence: SourceEvidence): Record<string, unknown> {
 
 function uiMetadata(metadata: Record<string, unknown> | undefined): Record<string, unknown> | undefined {
   if (!metadata) return undefined;
-  const allowed = ["uiGranularity", "symbolCount", "incomingCount", "outgoingCount", "containedSymbols", "aggregated", "edgeKinds", "underlyingEdgeCount", "underlyingEdges"];
+  const allowed = ["boundary","uiGranularity", "symbolCount", "incomingCount", "outgoingCount", "containedSymbols", "aggregated", "edgeKinds", "underlyingEdgeCount", "underlyingEdges"];
   const picked = Object.fromEntries(allowed.flatMap((key) => key in metadata ? [[key, metadata[key]]] : []));
   return Object.keys(picked).length ? picked : undefined;
 }
@@ -34,6 +36,7 @@ function formatNode(node: GraphNode, mode: OutputMode): Record<string, unknown> 
   if (mode === "full") return { ...node };
   const metadata = mode === "standard" ? uiMetadata(node.metadata) : undefined;
   return {
+    ...(node.metadata.boundary ? { boundary: node.metadata.boundary } : {}),
     id: node.id,
     name: node.name,
     kind: node.kind,
