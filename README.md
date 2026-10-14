@@ -17,6 +17,8 @@ Source repository
 
 ProGraph does not modify analyzed source files. Its default repository-local output is `.prograph/`, and it never adds that directory to `.gitignore`.
 
+Semantic Core Step 1 adds a separate `semantic.sqlite` foundation with TypeScript symbol/occurrence navigation, independent claims, provenance and published snapshots. Use `prograph semantic find <exact-name> --repo . --format json`, then `semantic definition`, `references`, `callers` or `callees` with the returned semantic key. Existing graph workflows keep schema `1.2.0`. Coverage is partial; full Core 2.0 and precise polyglot migration are pending. See the [Step 1 engineering report](docs/semantic-core-step1.md) for API details, measured storage/publication costs and unmet scale gates.
+
 ## Supported Analysis
 
 ProGraph currently supports:

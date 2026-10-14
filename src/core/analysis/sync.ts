@@ -5,10 +5,11 @@ import type { AdapterResult, RepositorySnapshot } from "../adapters/contracts.js
 import { analyzeRepository } from "./analyze.js";
 import { createIndexState, repositoryStatus, writeIndexState, type RepositoryStatus } from "./state.js";
 import { scanRepository } from "../repository/repository.js";
-import { typescriptAdapter } from "../../adapters/language/typescript/index.js";
+import { typescriptAdapter, isTypeScriptFile } from "../../adapters/language/typescript/index.js";
 import { rustAdapter } from "../../adapters/language/rust/index.js";
 import { persistGraph } from "../storage/sqlite.js";
 import packageJson from "../../../package.json" with { type: "json" };
+import { indexSemanticFoundation } from "../semantic/typescript.js";
 
 export interface SyncResult {
   statusBefore: RepositoryStatus;
@@ -102,12 +103,18 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
     edges: [...previous.edges.filter((edge) => !removedIds.has(edge.source) && !removedIds.has(edge.target)), ...partialEdges],
     diagnostics: [...previous.diagnostics.filter((item) => !item.file || !affectedFiles.has(item.file)), ...results.flatMap((result) => result.diagnostics)],
   };
+  // The isolated path retains root telemetry; source additions/deletions must refresh its inventory count.
+  const repositoryNode = graph.nodes.find(node => node.kind === "repository");
+  if (repositoryNode && Array.isArray(repositoryNode.metadata.analysis)) {
+    repositoryNode.metadata = { ...repositoryNode.metadata, analysis: repositoryNode.metadata.analysis.map((entry: Record<string, unknown>) =>
+      entry.adapter === "typescript" ? { ...entry, projectFileCount: scan.snapshot.files.filter(isTypeScriptFile).length } : entry) };
+  }
   const manifestBase: AnalysisManifest = { ...previousManifest };
   delete manifestBase.gitCommit;
   const adapterRuns = adapterRunsFor(graph, previousManifest.enabledAdapters, previousManifest.adapterRuns);
   const manifest: AnalysisManifest = {
-    adapterRuns,
     ...manifestBase,
+    adapterRuns,
     toolVersion: packageJson.version,
     repositoryRoot: status.repositoryRoot,
     repositoryIdentity: scan.snapshot.repository.identity,
@@ -123,6 +130,17 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
   const nodeChanges = identityChanges(previous.nodes, graph.nodes);
   const edgeChanges = identityChanges(previous.edges, graph.edges);
   await mkdir(path.join(status.indexDirectory, "exports"), { recursive: true });
+  // Preserve the qualified legacy isolated-file path; the new slice still replaces its whole project.
+  const semanticStarted = performance.now();
+  try {
+    const semantic = await indexSemanticFoundation(scan.snapshot, graph, path.join(status.indexDirectory, "semantic.sqlite"));
+    manifest.semanticCore = { format: 2, status: semantic.coverage.status === "unavailable" ? "unavailable" : "partial", snapshot: semantic.snapshot, context: semantic.context, durationMs: semantic.durationMs };
+  } catch (error) {
+    manifest.semanticCore = { format: 2, status: "failed", durationMs: Math.round(performance.now() - semanticStarted), reason: String(error) };
+    graph.diagnostics.push({ code: "semantic-foundation-failure", severity: "warning", message: String(error), adapter: "semantic-core", metadata: { previousSnapshotIsHistorical: true } });
+  }
+  manifest.diagnosticCount = graph.diagnostics.length;
+  manifest.analysisDuration = Math.round(performance.now() - started);
   await persistGraph(status.indexDirectory, graph, manifest, adapterRuns);
   await Promise.all([
     writeFile(path.join(status.indexDirectory, "exports", "graph.json"), `${JSON.stringify(graph, null, 2)}\n`),

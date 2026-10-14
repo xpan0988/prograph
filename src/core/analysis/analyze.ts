@@ -21,6 +21,7 @@ import type { AdapterResult, FrameworkAdapter, LanguageAdapter, RepositorySnapsh
 import { persistGraph } from "../storage/sqlite.js";
 import packageJson from "../../../package.json" with { type: "json" };
 import { createIndexState, writeIndexState } from "./state.js";
+import { indexSemanticFoundation } from "../semantic/typescript.js";
 
 export interface AnalyzeOptions {
   output?: string;
@@ -163,6 +164,16 @@ export async function analyzeRepository(input = ".", options: AnalyzeOptions = {
     analysisDuration: Math.round(performance.now() - started),
   };
   await mkdir(path.join(outputDirectory, "exports"), { recursive: true });
+  const semanticStarted = performance.now();
+  try {
+    const semantic = await indexSemanticFoundation(scan.snapshot, graph, path.join(outputDirectory, "semantic.sqlite"));
+    manifest.semanticCore = { format: 2, status: semantic.coverage.status === "unavailable" ? "unavailable" : "partial", snapshot: semantic.snapshot, context: semantic.context, durationMs: semantic.durationMs };
+  } catch (error) {
+    manifest.semanticCore = { format: 2, status: "failed", durationMs: Math.round(performance.now() - semanticStarted), reason: String(error) };
+    graph.diagnostics.push({ code: "semantic-foundation-failure", severity: "warning", message: String(error), adapter: "semantic-core", metadata: { previousSnapshotIsHistorical: true } });
+    manifest.diagnosticCount = graph.diagnostics.length;
+  }
+  manifest.analysisDuration = Math.round(performance.now() - started);
   await persistGraph(outputDirectory, graph, manifest, adapterRuns);
   await Promise.all([
     writeFile(path.join(outputDirectory, "exports", "graph.json"), `${JSON.stringify(graph, null, 2)}\n`),

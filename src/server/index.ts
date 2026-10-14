@@ -7,6 +7,7 @@ import { formatQueryOutput, type OutputMode } from "../core/query/output-mode.js
 import { repositoryStatus } from "../core/analysis/state.js";
 import { syncRepository } from "../core/analysis/sync.js";
 import type { GraphScope } from "../core/graph/schema.js";
+import { semanticQueryForRepository, type SemanticOperation } from "../core/semantic/query.js";
 
 export interface ServerOptions {
   host?: string;
@@ -58,6 +59,17 @@ export async function startServer(repository = ".", options: ServerOptions = {})
     response.json(query.overview({ ...(selectedScope ? { scope: selectedScope } : {}) }));
   });
   app.get("/api/status", async (_request, response) => response.json(await repositoryStatus(repository, options.index)));
+  app.get("/api/semantic/:operation", async (request, response) => {
+    let semantic: Awaited<ReturnType<typeof semanticQueryForRepository>> | undefined;
+    try {
+      semantic = await semanticQueryForRepository(repository, options.index);
+      response.json(semantic.execute(request.params.operation as SemanticOperation, String(request.query.input ?? ""), {
+        limit: numberParam(request.query.limit, 50), ...(typeof request.query.cursor === "string" ? { cursor: request.query.cursor } : {}),
+        maxBytes: numberParam(request.query.maxBytes, 32768), ...(request.query.snapshot !== undefined ? { snapshot: Number(request.query.snapshot) } : {}),
+      }));
+    } catch (error) { response.status(409).json({ error: String(error), semanticAvailable: false, legacyAvailable: true }); }
+    finally { semantic?.close(); }
+  });
   app.post("/api/sync", async (_request, response) => response.json(await syncRepository(repository, options.index)));
   app.get("/api/architecture", (request, response) => sendQuery(response, query.architecture(numberParam(request.query.maxNodes, 100), confidenceParams(request.query)), request.query));
   app.get("/api/files", (request, response) => {

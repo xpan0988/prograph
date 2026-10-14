@@ -1,6 +1,6 @@
 # ProGraph Architecture
 
-This document describes the current implementation. The proposed next architecture and migration plan are in [Semantic Core 2.0](semantic-core-2.md); that design is not implemented yet.
+This document describes the current implementation. [Semantic Core 2.0](semantic-core-2.md) owns the target architecture. Its foundation and TypeScript vertical slice are implemented additively; [the Step 1 engineering report](semantic-core-step1.md) owns the shipped semantic behavior, storage decisions, measurements and limitations. The remaining redesign is not implemented.
 
 ## Goals And Boundaries
 
@@ -22,9 +22,12 @@ repository path
   -> semantic overlay linker
   -> identity validation and diagnostics
   -> SQLite canonical store
+  -> additive semantic.sqlite: TS facts/claims, owned runs, supported calls, published snapshots
   -> JSON, manifest, diagnostics, and index-state exports
   -> CLI, localhost API/UI, and MCP stdio queries
 ```
+
+During this compatibility period, `graph.sqlite` keeps schema `1.2.0` and remains authoritative for legacy CLI/MCP/API/UI behavior. `semantic.sqlite` declares Format 2 / schema `2.0.0-step1` and serves additive `semantic` CLI commands, `query_semantic` MCP and `/api/semantic/:operation` routes. Those operations use indexed bounded navigation and communicate partial coverage and snapshot-only freshness. The two stores do not form one atomic all-domain publication; default activation and precise polyglot ingestion are deferred.
 
 ### Repository Scanner
 

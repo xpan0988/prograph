@@ -15,6 +15,7 @@ import { startServer } from "../server/index.js";
 import { startMcpServer } from "../mcp/index.js";
 import { writeResult, type OutputFormat } from "./output.js";
 import packageJson from "../../package.json" with { type: "json" };
+import { semanticQueryForRepository, type SemanticOperation } from "../core/semantic/query.js";
 
 interface FormatOptions {
   format: OutputFormat;
@@ -244,6 +245,26 @@ addFormat(addConfidence(addIndex(program.command("cycles [path]").description("f
 addFormat(addConfidence(addIndex(program.command("boundaries [path]").description("show bounded cross-language boundary evidence")))).action(async (input = ".", options: QueryOptions) => {
   writeResult(await withQuery(input, options.index, (query) => query.frameworkBindings(undefined, confidence(options))), options.format);
 });
+
+const semanticCommand = program.command("semantic").description("Semantic Core Step 1 snapshot navigation (TypeScript slice)");
+for (const operation of ["status", "find", "definition", "references", "callers", "callees", "occurrence", "explain"] as const) {
+  addFormat(addIndex(semanticCommand.command(`${operation} [input]`).description(`Semantic ${operation}`)))
+    .option("--repo <path>", "repository path", ".")
+    .option("--limit <number>", "bounded result page", Number, 50)
+    .option("--cursor <cursor>", "snapshot-bound continuation")
+    .option("--snapshot <number>", "retained snapshot", Number)
+    .option("--max-bytes <number>", "bounded JSON response budget", Number, 32768)
+    .action(async (input = "", options: FormatOptions & { repo: string; index?: string; limit: number; cursor?: string; snapshot?: number; maxBytes: number }) => {
+      const query = await semanticQueryForRepository(options.repo, options.index);
+      try {
+        const result = query.execute(operation as SemanticOperation, input, { limit: options.limit, maxBytes: options.maxBytes, ...(options.cursor ? { cursor: options.cursor } : {}), ...(options.snapshot !== undefined ? { snapshot: options.snapshot } : {}) });
+        // Keep the semantic JSON transport within the query's byte budget; indentation adds unbounded overhead.
+        if (options.format === "json") process.stdout.write(`${JSON.stringify(result)}\n`);
+        else writeResult(result, options.format);
+      }
+      finally { query.close(); }
+    });
+}
 
 const framework = program.command("framework").description("framework-specific queries");
 addFormat(addConfidence(addIndex(framework.command("tauri [path]").description("show Tauri commands and events")))).action(async (input = ".", options: QueryOptions) => {

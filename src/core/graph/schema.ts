@@ -139,6 +139,7 @@ export interface AdapterRun {
 }
 
 export interface AnalysisManifest {
+  semanticCore?: { format: number; status: "partial" | "unavailable" | "failed"; snapshot?: number; context?: string; durationMs: number; reason?: string };
   adapterRuns?: AdapterRun[];
   schemaVersion: string;
   toolVersion: string;

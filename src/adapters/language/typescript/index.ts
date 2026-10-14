@@ -119,7 +119,7 @@ function makeSymbolNode(
   };
 }
 
-function createProject(snapshot: RepositorySnapshot): Project {
+export function createProject(snapshot: RepositorySnapshot): Project {
   const tsconfig = ["tsconfig.json", "jsconfig.json"].find((item) => snapshot.fileContents.has(item));
   const project = new Project({
     ...(tsconfig ? { tsConfigFilePath: path.join(snapshot.repository.root, tsconfig) } : {}),

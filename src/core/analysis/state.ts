@@ -7,10 +7,12 @@ import type { RepositorySnapshot } from "../adapters/contracts.js";
 import { GRAPH_SCHEMA_VERSION } from "../graph/schema.js";
 import { resolveRepositoryRoot, scanRepository } from "../repository/repository.js";
 import packageJson from "../../../package.json" with { type: "json" };
+import { SEMANTIC_SCHEMA_VERSION, TYPESCRIPT_SEMANTIC_VERSION } from "../semantic/model.js";
 
 const require = createRequire(import.meta.url);
 
 export const ADAPTER_VERSIONS = {
+  semanticCore: `${SEMANTIC_SCHEMA_VERSION}/${TYPESCRIPT_SEMANTIC_VERSION}`,
   typescript: "2",
   polyglot: "1",
   architecture: "1",

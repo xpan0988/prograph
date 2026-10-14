@@ -1,0 +1,654 @@
+{
+  "baseline": "c61f293e5a20404d5c9c4932f2ad31c6d13fbfcb",
+  "scope": "Step 1 Phase A; synthetic storage, not LOC qualification",
+  "final": [
+    {
+      "workload": "synthetic occurrence navigation, 1% static calls, 1000 caller identities, batch 1000; not a source-code corpus",
+      "count": 100000,
+      "environment": {
+        "node": "v25.9.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M5",
+        "cpuCount": 10,
+        "memoryBytes": 17179869184,
+        "sqlite": "3.53.1"
+      },
+      "startedAt": "2026-09-30T18:51:43.989Z",
+      "implementationDigests": {
+        "model": "041916d01617d48566045c5321f67bc666f8c442343d9384e625841ae4c41ca0",
+        "store": "f0d81d2a468286982931a60ba63137fd4eaac2e4aae425c4d5218201343218f8",
+        "schema": "4fe69d910148722a46f5a8eedfc9626101787aed3fe697210529fb562b5c49e4",
+        "query": "58cac3019ddc379908aa9b3195d3b9e861c689e1897d3876caf4fdf7b43bb993",
+        "coordinates": "43dd45ab7e0ec0e4d500bfffaeaaee8cb35f88b2f356cf8650b091ee9afba603"
+      },
+      "writeMs": 6088,
+      "callSites": 1000,
+      "publicationMs": 303.082,
+      "counts": {
+        "entities": 102002,
+        "occurrences": 101001,
+        "facts": 104002,
+        "claims": 104002,
+        "provenance": 2,
+        "groups": 1000,
+        "supports": 3000,
+        "navigation": 104002,
+        "calls": 1000
+      },
+      "queryPlans": {
+        "references": [
+          {
+            "id": 6,
+            "parent": 0,
+            "notused": 46,
+            "detail": "SEARCH sc_navigation USING COVERING INDEX sc_nav_object (snapshot=? AND relation=? AND object=? AND occurrence>?)"
+          }
+        ],
+        "callers": [
+          {
+            "id": 6,
+            "parent": 0,
+            "notused": 46,
+            "detail": "SEARCH sc_calls USING COVERING INDEX sc_calls_callee (snapshot=? AND callee=? AND caller>?)"
+          }
+        ],
+        "occurrence": [
+          {
+            "id": 3,
+            "parent": 0,
+            "notused": 53,
+            "detail": "SEARCH sc_navigation USING COVERING INDEX sc_nav_occurrence (snapshot=? AND occurrence=?)"
+          }
+        ]
+      },
+      "databaseBytes": 149860352,
+      "queries": {
+        "definition": {
+          "firstReadMs": 0.583,
+          "warmMedianMs": 0.06,
+          "warmP95Ms": 0.151,
+          "returned": 1,
+          "bytes": 1680,
+          "work": {
+            "candidateRows": 1,
+            "supportRows": 0,
+            "metadataRows": 2,
+            "returnedRows": 1,
+            "globalGraphMaterialized": false
+          }
+        },
+        "references": {
+          "firstReadMs": 1.168,
+          "warmMedianMs": 1.062,
+          "warmP95Ms": 1.114,
+          "returned": 48,
+          "bytes": 31954,
+          "work": {
+            "candidateRows": 51,
+            "supportRows": 0,
+            "metadataRows": 2,
+            "returnedRows": 48,
+            "globalGraphMaterialized": false
+          }
+        },
+        "callers": {
+          "firstReadMs": 0.166,
+          "warmMedianMs": 0.109,
+          "warmP95Ms": 0.114,
+          "returned": 50,
+          "bytes": 11972,
+          "work": {
+            "candidateRows": 51,
+            "supportRows": 0,
+            "metadataRows": 2,
+            "returnedRows": 50,
+            "globalGraphMaterialized": false
+          }
+        },
+        "callees": {
+          "firstReadMs": 0.059,
+          "warmMedianMs": 0.047,
+          "warmP95Ms": 0.051,
+          "returned": 1,
+          "bytes": 1223,
+          "work": {
+            "candidateRows": 1,
+            "supportRows": 0,
+            "metadataRows": 2,
+            "returnedRows": 1,
+            "globalGraphMaterialized": false
+          }
+        }
+      },
+      "layoutExperimentMs": 246,
+      "layoutBytes": {
+        "flat_support": 31592448,
+        "json_occ": 27381760,
+        "normalized_occ": 2646016,
+        "provenance": 4096,
+        "sqlite_autoindex_support_group_1": 4096,
+        "sqlite_schema": 4096,
+        "support_group": 4096,
+        "support_ref": 892928
+      },
+      "supportExperiment": {
+        "shape": "all rows share one 2-claim AND + selector; upper bound on reuse benefit, not realistic per-callsite reuse",
+        "uniqueProductionGroups": 1000,
+        "productionSupportAtoms": 3000
+      },
+      "totalMs": 6753,
+      "maxRssKiB": 154480
+    },
+    {
+      "workload": "synthetic occurrence navigation, 1% static calls, 1000 caller identities, batch 1000; not a source-code corpus",
+      "count": 1000000,
+      "environment": {
+        "node": "v25.9.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M5",
+        "cpuCount": 10,
+        "memoryBytes": 17179869184,
+        "sqlite": "3.53.1"
+      },
+      "startedAt": "2026-09-30T18:53:26.863Z",
+      "implementationDigests": {
+        "model": "041916d01617d48566045c5321f67bc666f8c442343d9384e625841ae4c41ca0",
+        "store": "f0d81d2a468286982931a60ba63137fd4eaac2e4aae425c4d5218201343218f8",
+        "schema": "4fe69d910148722a46f5a8eedfc9626101787aed3fe697210529fb562b5c49e4",
+        "query": "58cac3019ddc379908aa9b3195d3b9e861c689e1897d3876caf4fdf7b43bb993",
+        "coordinates": "43dd45ab7e0ec0e4d500bfffaeaaee8cb35f88b2f356cf8650b091ee9afba603"
+      },
+      "writeMs": 197133,
+      "callSites": 10000,
+      "publicationMs": 4634.643,
+      "counts": {
+        "entities": 1002002,
+        "occurrences": 1001001,
+        "facts": 1022002,
+        "claims": 1022002,
+        "provenance": 2,
+        "groups": 10000,
+        "supports": 30000,
+        "navigation": 1022002,
+        "calls": 1000
+      },
+      "queryPlans": {
+        "references": [
+          {
+            "id": 6,
+            "parent": 0,
+            "notused": 46,
+            "detail": "SEARCH sc_navigation USING COVERING INDEX sc_nav_object (snapshot=? AND relation=? AND object=? AND occurrence>?)"
+          }
+        ],
+        "callers": [
+          {
+            "id": 6,
+            "parent": 0,
+            "notused": 46,
+            "detail": "SEARCH sc_calls USING COVERING INDEX sc_calls_callee (snapshot=? AND callee=? AND caller>?)"
+          }
+        ],
+        "occurrence": [
+          {
+            "id": 3,
+            "parent": 0,
+            "notused": 53,
+            "detail": "SEARCH sc_navigation USING COVERING INDEX sc_nav_occurrence (snapshot=? AND occurrence=?)"
+          }
+        ]
+      },
+      "databaseBytes": 1486422016,
+      "queries": {
+        "definition": {
+          "firstReadMs": 0.776,
+          "warmMedianMs": 0.058,
+          "warmP95Ms": 0.116,
+          "returned": 1,
+          "bytes": 1684,
+          "work": {
+            "candidateRows": 1,
+            "supportRows": 0,
+            "metadataRows": 2,
+            "returnedRows": 1,
+            "globalGraphMaterialized": false
+          }
+        },
+        "references": {
+          "firstReadMs": 1.243,
+          "warmMedianMs": 1.064,
+          "warmP95Ms": 1.112,
+          "returned": 48,
+          "bytes": 31954,
+          "work": {
+            "candidateRows": 51,
+            "supportRows": 0,
+            "metadataRows": 2,
+            "returnedRows": 48,
+            "globalGraphMaterialized": false
+          }
+        },
+        "callers": {
+          "firstReadMs": 0.191,
+          "warmMedianMs": 0.109,
+          "warmP95Ms": 0.13,
+          "returned": 50,
+          "bytes": 12022,
+          "work": {
+            "candidateRows": 51,
+            "supportRows": 0,
+            "metadataRows": 2,
+            "returnedRows": 50,
+            "globalGraphMaterialized": false
+          }
+        },
+        "callees": {
+          "firstReadMs": 0.056,
+          "warmMedianMs": 0.047,
+          "warmP95Ms": 0.054,
+          "returned": 1,
+          "bytes": 1224,
+          "work": {
+            "candidateRows": 1,
+            "supportRows": 0,
+            "metadataRows": 2,
+            "returnedRows": 1,
+            "globalGraphMaterialized": false
+          }
+        }
+      },
+      "layoutExperimentMs": 2437,
+      "layoutBytes": {
+        "flat_support": 315875328,
+        "json_occ": 273756160,
+        "normalized_occ": 27119616,
+        "provenance": 4096,
+        "sqlite_autoindex_support_group_1": 4096,
+        "sqlite_schema": 4096,
+        "support_group": 4096,
+        "support_ref": 9035776
+      },
+      "supportExperiment": {
+        "shape": "all rows share one 2-claim AND + selector; upper bound on reuse benefit, not realistic per-callsite reuse",
+        "uniqueProductionGroups": 10000,
+        "productionSupportAtoms": 30000
+      },
+      "totalMs": 205484,
+      "maxRssKiB": 293104
+    }
+  ],
+  "exploratory": [
+    {
+      "workload": "synthetic occurrence navigation, 1% static calls, 1000 caller identities, batch 1000; not a source-code corpus",
+      "count": 100000,
+      "environment": {
+        "node": "v25.9.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M5",
+        "sqlite": "3.53.1"
+      },
+      "startedAt": "2026-09-30T18:38:00.910Z",
+      "writeMs": 5994,
+      "callSites": 1000,
+      "publicationMs": 300.132,
+      "counts": {
+        "entities": 102002,
+        "occurrences": 101001,
+        "facts": 104002,
+        "claims": 104002,
+        "provenance": 2,
+        "groups": 1000,
+        "supports": 3000,
+        "navigation": 104002,
+        "calls": 1000
+      },
+      "queryPlans": {
+        "references": [
+          {
+            "id": 6,
+            "parent": 0,
+            "notused": 46,
+            "detail": "SEARCH sc_navigation USING COVERING INDEX sc_nav_object (snapshot=? AND relation=? AND object=? AND occurrence>?)"
+          }
+        ],
+        "callers": [
+          {
+            "id": 6,
+            "parent": 0,
+            "notused": 46,
+            "detail": "SEARCH sc_calls USING COVERING INDEX sc_calls_callee (snapshot=? AND callee=? AND caller>?)"
+          }
+        ],
+        "occurrence": [
+          {
+            "id": 3,
+            "parent": 0,
+            "notused": 53,
+            "detail": "SEARCH sc_navigation USING COVERING INDEX sc_nav_occurrence (snapshot=? AND occurrence=?)"
+          }
+        ]
+      },
+      "databaseBytes": 149860352,
+      "queries": {
+        "definition": {
+          "firstReadMs": 0.516,
+          "warmMedianMs": 0.06,
+          "warmP95Ms": 0.109,
+          "returned": 1,
+          "bytes": 1518,
+          "work": {
+            "candidateRows": 1,
+            "returnedRows": 1,
+            "globalGraphMaterialized": false
+          }
+        },
+        "references": {
+          "firstReadMs": 1.126,
+          "warmMedianMs": 1.054,
+          "warmP95Ms": 1.131,
+          "returned": 49,
+          "bytes": 32433,
+          "work": {
+            "candidateRows": 51,
+            "returnedRows": 49,
+            "globalGraphMaterialized": false
+          }
+        },
+        "callers": {
+          "firstReadMs": 0.163,
+          "warmMedianMs": 0.108,
+          "warmP95Ms": 0.115,
+          "returned": 50,
+          "bytes": 11810,
+          "work": {
+            "candidateRows": 51,
+            "returnedRows": 50,
+            "globalGraphMaterialized": false
+          }
+        },
+        "callees": {
+          "firstReadMs": 0.058,
+          "warmMedianMs": 0.047,
+          "warmP95Ms": 0.051,
+          "returned": 1,
+          "bytes": 1061,
+          "work": {
+            "candidateRows": 1,
+            "returnedRows": 1,
+            "globalGraphMaterialized": false
+          }
+        }
+      },
+      "layoutExperimentMs": 230,
+      "layoutBytes": {
+        "flat_support": 31592448,
+        "json_occ": 27381760,
+        "normalized_occ": 2646016,
+        "provenance": 4096,
+        "sqlite_autoindex_support_group_1": 4096,
+        "sqlite_schema": 4096,
+        "support_group": 4096,
+        "support_ref": 892928
+      },
+      "supportExperiment": {
+        "shape": "all rows share one 2-claim AND + selector; upper bound on reuse benefit, not realistic per-callsite reuse",
+        "uniqueProductionGroups": 1000,
+        "productionSupportAtoms": 3000
+      },
+      "totalMs": 6637,
+      "maxRssKiB": 155072
+    },
+    {
+      "workload": "synthetic occurrence navigation, 1% static calls, 1000 caller identities, batch 1000; not a source-code corpus",
+      "count": 1000000,
+      "environment": {
+        "node": "v25.9.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M5",
+        "sqlite": "3.53.1"
+      },
+      "startedAt": "2026-09-30T18:39:01.544Z",
+      "writeMs": 174294,
+      "callSites": 10000,
+      "publicationMs": 12801.497,
+      "counts": {
+        "entities": 1002002,
+        "occurrences": 1001001,
+        "facts": 1022002,
+        "claims": 1022002,
+        "provenance": 2,
+        "groups": 10000,
+        "supports": 30000,
+        "navigation": 1022002,
+        "calls": 1000
+      },
+      "queryPlans": {
+        "references": [
+          {
+            "id": 6,
+            "parent": 0,
+            "notused": 46,
+            "detail": "SEARCH sc_navigation USING COVERING INDEX sc_nav_object (snapshot=? AND relation=? AND object=? AND occurrence>?)"
+          }
+        ],
+        "callers": [
+          {
+            "id": 6,
+            "parent": 0,
+            "notused": 46,
+            "detail": "SEARCH sc_calls USING COVERING INDEX sc_calls_callee (snapshot=? AND callee=? AND caller>?)"
+          }
+        ],
+        "occurrence": [
+          {
+            "id": 3,
+            "parent": 0,
+            "notused": 53,
+            "detail": "SEARCH sc_navigation USING COVERING INDEX sc_nav_occurrence (snapshot=? AND occurrence=?)"
+          }
+        ]
+      },
+      "databaseBytes": 1486422016,
+      "queries": {
+        "definition": {
+          "firstReadMs": 1.143,
+          "warmMedianMs": 0.059,
+          "warmP95Ms": 0.134,
+          "returned": 1,
+          "bytes": 1522,
+          "work": {
+            "candidateRows": 1,
+            "returnedRows": 1,
+            "globalGraphMaterialized": false
+          }
+        },
+        "references": {
+          "firstReadMs": 1.139,
+          "warmMedianMs": 1.069,
+          "warmP95Ms": 1.09,
+          "returned": 49,
+          "bytes": 32433,
+          "work": {
+            "candidateRows": 51,
+            "returnedRows": 49,
+            "globalGraphMaterialized": false
+          }
+        },
+        "callers": {
+          "firstReadMs": 0.549,
+          "warmMedianMs": 0.108,
+          "warmP95Ms": 0.128,
+          "returned": 50,
+          "bytes": 11860,
+          "work": {
+            "candidateRows": 51,
+            "returnedRows": 50,
+            "globalGraphMaterialized": false
+          }
+        },
+        "callees": {
+          "firstReadMs": 0.059,
+          "warmMedianMs": 0.046,
+          "warmP95Ms": 0.049,
+          "returned": 1,
+          "bytes": 1062,
+          "work": {
+            "candidateRows": 1,
+            "returnedRows": 1,
+            "globalGraphMaterialized": false
+          }
+        }
+      },
+      "layoutExperimentMs": 2621,
+      "layoutBytes": {
+        "flat_support": 315875328,
+        "json_occ": 273756160,
+        "normalized_occ": 27119616,
+        "provenance": 4096,
+        "sqlite_autoindex_support_group_1": 4096,
+        "sqlite_schema": 4096,
+        "support_group": 4096,
+        "support_ref": 9035776
+      },
+      "supportExperiment": {
+        "shape": "all rows share one 2-claim AND + selector; upper bound on reuse benefit, not realistic per-callsite reuse",
+        "uniqueProductionGroups": 10000,
+        "productionSupportAtoms": 30000
+      },
+      "totalMs": 194157,
+      "maxRssKiB": 305696
+    }
+  ],
+  "recovery": {
+    "node": "v25.9.0",
+    "probes": [
+      {
+        "point": "before-seal",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "before-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "during-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "after-publish",
+        "exitCode": 57,
+        "activeSnapshot": 2,
+        "visible": [
+          "other"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      }
+    ],
+    "corruption": {
+      "refused": true,
+      "unchanged": true
+    }
+  },
+  "protocol": {
+    "warmSamples": 30,
+    "osCacheEvicted": false,
+    "singleRuns": true,
+    "provenanceAndSupports": "isolated equal-information micro-layout; excluded identity and snapshot overhead",
+    "concurrency": "exploratory 1M overlapped self-analysis initially; final 1M overlapped later tests briefly",
+    "rss": "whole process maxRSS in KiB, includes isolated layout experiment; no compiler provider"
+  },
+  "validation": {
+    "tests": {
+      "files": 3,
+      "total": 69,
+      "legacy": 54,
+      "semantic": 15,
+      "status": "passed"
+    },
+    "build": "passed",
+    "typecheck": "passed",
+    "lint": "passed (typecheck alias)",
+    "browser": {
+      "provider": "Codex in-app browser",
+      "url": "http://127.0.0.1:43119",
+      "views": [
+        "architecture",
+        "symbols",
+        "SemanticStore inspector"
+      ],
+      "consoleErrors": [],
+      "uiSourceChanged": false
+    },
+    "git": "working tree on main above baseline; not committed",
+    "cli": {
+      "findItems": 1,
+      "referenceItems": 2,
+      "referenceBytes": 3393,
+      "snapshotPinned": true,
+      "work": {
+        "candidateRows": 12,
+        "supportRows": 0,
+        "metadataRows": 3,
+        "returnedRows": 2,
+        "globalGraphMaterialized": false
+      },
+      "transportBytes": 3394
+    },
+    "whitespace": "git diff --check passed"
+  },
+  "self": {
+    "baseline": "c61f293e5a20404d5c9c4932f2ad31c6d13fbfcb",
+    "corpus": "ProGraph working tree plus existing mixed-language fixtures",
+    "scanned": 118,
+    "nodes": 3642,
+    "edges": 8004,
+    "workflowElapsedMs": 8543,
+    "manifestSemantic": {
+      "format": 2,
+      "status": "partial",
+      "snapshot": 1,
+      "context": "sc2:context:620a7e48e1bbf2b303770ac672e86d7ee58fb80b4a3fe41182df4ce7bcc347cb",
+      "durationMs": 6172
+    },
+    "semanticBytes": 105189376,
+    "noOpSync": {
+      "ms": 22,
+      "filesReanalyzed": 0,
+      "stale": false
+    },
+    "definitionItems": 1,
+    "referencesItems": 12,
+    "findEvidence": {
+      "key": "sc2:symbol:ba84ab2ae250b010f7491537ea2d6d01c9afb2dee8919805456f2a1a38cb2145",
+      "name": "SemanticStore",
+      "qualified_name": "src/core/semantic/store.ts::SemanticStore",
+      "kind": "ClassDeclaration",
+      "file": "src/core/semantic/store.ts",
+      "evidenceClaim": "sc2:claim:81f83ef259a60bd33fd9614f1d1b5aaa363eb8a076a9e49dab94f96634714c49",
+      "confidence": "exact"
+    }
+  }
+}

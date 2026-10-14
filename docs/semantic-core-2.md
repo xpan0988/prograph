@@ -1,12 +1,12 @@
 # ProGraph Semantic Core 2.0
 
-**Status:** Proposed engineering design; no Semantic Core 2.0 implementation is claimed.
+**Status:** Target engineering design. The additive foundation and TypeScript vertical slice are implemented in Step 1; [semantic-core-step1.md](semantic-core-step1.md) distinguishes shipped behavior, verified evidence, unmet scale gates and deferred work. The complete architecture is not implemented.
 
 **Review date:** 1 October 2026.
 
 **Repository baseline:** HEAD `7417ba0be1f7e5e46df51e48d406d79db1921c59`; graph schema `1.2.0`; package `0.3.0`.
 
-**Authority:** Current source is authoritative for implemented behavior. This document owns the proposed architecture; [architecture.md](architecture.md) continues to describe the current implementation.
+**Authority:** Current source is authoritative for implemented behavior. This document owns the target architecture; [architecture.md](architecture.md) and the Step 1 report describe the current implementation. The baseline assessment and research below record the original design investigation; their untested-proposal statements are historical and are superseded only by explicit Step 1 measurements.
 
 The baseline was inspected directly, with ProGraph used selectively for navigation. Existing tests were read as contracts, not treated as newly executed evidence. External references below are primary project documentation/specifications consulted on the review date. Indexer integrations, storage estimates, and performance targets in this document are untested proposals. No compiler, external indexer, large-repository benchmark, or experimental prototype was run for this design.
 
