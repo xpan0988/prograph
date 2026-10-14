@@ -1,6 +1,6 @@
 # Semantic Core 2.0 — Step 1 engineering report
 
-**Scope:** Foundation and TypeScript vertical slice, starting at `c61f293e5a20404d5c9c4932f2ad31c6d13fbfcb`. This is the implementation of the Phase A gate in [semantic-core-2.md](semantic-core-2.md), with minimal ownership and publication introduced immediately. Step 2 has not started. The attached continuation prompt describes Step 2; its all-language/default-activation acceptance criteria are not claimed here.
+**Scope:** Foundation and TypeScript vertical slice, starting at `c61f293e5a20404d5c9c4932f2ad31c6d13fbfcb`. This is the implementation of the Phase A gate in [semantic-core-2.md](semantic-core-2.md), with minimal ownership and publication introduced immediately. This report records the Step 1 milestone; [Step 2](semantic-core-step2.md) now proceeds separately. The attached continuation prompt describes Step 2; its all-language/default-activation acceptance criteria are not claimed here.
 
 **Versions:** Package remains `0.3.0`; legacy graph schema remains `1.2.0`. The additive semantic database declares Format `2`, storage schema `2.0.0-step1`, common predicate version `1`, TypeScript mapping version `1`, call projection version `1`. This is a provisional physical schema, not a stable external interchange contract.
 

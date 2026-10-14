@@ -1,51 +1,31 @@
 import path from "node:path";
 import { readFile } from "node:fs/promises";
-import { ts } from "ts-morph";
-import { createProject, isTypeScriptFile } from "../../adapters/language/typescript/index.js";
+import { Project, ts } from "ts-morph";
+import { isTypeScriptFile } from "../../adapters/language/typescript/index.js";
 import type { RepositorySnapshot } from "../adapters/contracts.js";
 import type { GraphData } from "../graph/schema.js";
 import { canonical, digest, semanticKey, TYPESCRIPT_SEMANTIC_VERSION, type FactInput, type Provenance } from "./model.js";
 import { SourceCoordinates } from "./coordinates.js";
 import { SemanticStore } from "./store.js";
+import { discoverProjects, type ProjectUnit } from "./projects.js";
+import { executePasses } from "./passes.js";
+import { retainProviders } from "./provider-runs.js";
 
 export interface SemanticIndexResult { snapshot: number; context: string; inputFingerprint: string; coverage: Record<string, unknown>; durationMs: number }
 
-export async function indexSemanticFoundation(snapshot: RepositorySnapshot, graph: GraphData, filename: string): Promise<SemanticIndexResult> {
+async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUnit, store: SemanticStore): Promise<{ runs: number[]; context: string; inputFingerprint: string; coverage: Record<string, unknown> }> {
   const started = performance.now();
-  const selected = snapshot.files.filter(isTypeScriptFile);
-  const project = snapshot.config.adapters.typescript && selected.length ? createProject(snapshot) : undefined;
+  const selected = unit.sources;
+  const project = new Project({ skipAddingFilesFromTsConfig: true, compilerOptions: unit.compilerOptions ?? {} });
+  project.addSourceFilesAtPaths(selected.map(file => snapshot.absoluteFiles.get(file)!).filter(Boolean));
   const program = project?.getProgram().compilerObject;
-  const store = new SemanticStore(filename);
-  const parent = store.activeSnapshot();
-  const context = semanticKey("context", [snapshot.repository.identity, "typescript-root-project", snapshot.fileContents.get("tsconfig.json") ?? snapshot.fileContents.get("jsconfig.json") ?? "inferred", ts.version]);
-  const inputFingerprint = digest(canonical({ repository: [...snapshot.fileContents].map(([file, text]) => [file, digest(text)]).sort(), compiler: program?.getSourceFiles().map(source => [source.fileName, digest(source.text)]).sort() ?? [] }));
+  const context = unit.context;
+  const inputFingerprint = digest(canonical({ plan: unit.fingerprint, compiler: program.getSourceFiles().map(source => [source.fileName, digest(source.text)]).sort() }));
   const provenance: Provenance = { provider: "typescript/compiler-api", version: `${ts.version}/${TYPESCRIPT_SEMANTIC_VERSION}`, basis: "compiler", method: "compiler-binding", context, inputFingerprint };
-  const run = store.begin("typescript/root", context, inputFingerprint);
-  const bridge = store.begin("legacy/full", "legacy", inputFingerprint);
-  const projection = store.begin("typescript/call-projection-v1", context, inputFingerprint);
-  const projectionProvenance: Provenance = { ...provenance, provider: "call-projection", version: "1", method: "call-site-and-compiler-target" };
-  const calls: Array<{ owner: string; target: string; occurrence: string; site: string; binding: string }> = [];
-  let occurrenceCount = 0; let unresolved = 0;
-  let coverage: Record<string, unknown> = { language: "typescript", provider: provenance.provider, symbols: "partial", definitions: "partial", references: "partial", calls: "partial", projectMode: "root-tsconfig-compatibility", gaps: ["Root project only; full project/build discovery is Step 2", "Static targets do not enumerate runtime dispatch"] };
+  const run = store.begin(unit.key, context, inputFingerprint);
+  let occurrenceCount = 0; let unresolved = 0; let compilerErrors = 0; let externalImports = 0;
+  let coverage: Record<string, unknown> = { language: "typescript", provider: provenance.provider, mappingVersion: TYPESCRIPT_SEMANTIC_VERSION, symbols: "partial", definitions: "partial", references: "partial", calls: "partial", project: unit.project, projectMode: unit.options.mode, gaps: [...unit.gaps, "Static targets do not enumerate runtime dispatch"] };
   try {
-    // Legacy data is explicitly bridged; it is never used as compiler semantic evidence.
-    const bridgeProvenance: Provenance = { provider: "legacy-graph", version: graph.schemaVersion, basis: "syntax", method: "compatibility-bridge", context: "legacy", inputFingerprint };
-    for (let offset = 0; offset < graph.nodes.length; offset += 1000) store.batch(bridge, () => {
-      for (const original of graph.nodes.slice(offset, offset + 1000)) {
-        const node = JSON.parse(JSON.stringify(original)) as typeof original;
-        const key = `legacy:${node.id}:${digest(canonical(node))}`;
-        store.addEntity(key, "artifact", node);
-        store.addFact(bridge, { predicate: "legacy.Node", context: "legacy", subject: key, value: { node }, confidence: "exact", provenance: bridgeProvenance });
-      }
-    });
-    for (let offset = 0; offset < graph.edges.length; offset += 1000) store.batch(bridge, () => {
-      for (const original of graph.edges.slice(offset, offset + 1000)) {
-        const edge = JSON.parse(JSON.stringify(original)) as typeof original;
-        const key = `legacy:${edge.id}:${digest(canonical(edge))}`;
-        store.addEntity(key, "artifact", edge);
-        store.addFact(bridge, { predicate: "legacy.Relation", context: "legacy", subject: key, value: { edge }, confidence: edge.confidence, provenance: bridgeProvenance });
-      }
-    });
     if (program) {
       const checker = program.getTypeChecker();
       const symbols = new Map<ts.Symbol, string>();
@@ -67,6 +47,9 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
           else if (ts.isBlock(current) && !ts.isFunctionLike(current.parent)) ancestry.push(`<block@${current.getStart()}>`);
           current = current.parent;
         }
+        // JS inferred properties can be declared by `this.x = ...` BinaryExpressions;
+        // their owner ancestry alone would collapse x and y into the same identity.
+        if (d && !(d as ts.NamedDeclaration).name) ancestry.unshift(symbol.getName());
         const qualified = `${file}::${ancestry.reverse().join("::") || symbol.getName()}`;
         // Local bindings with the same spelling in distinct blocks retain a location discriminator.
         const local = d && (ts.isParameter(d) || ts.isVariableDeclaration(d) || ts.isBindingElement(d));
@@ -98,6 +81,7 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
       for (const file of selected) {
         const source = program.getSourceFile(snapshot.absoluteFiles.get(file)!)!;
         const errors = program.getSemanticDiagnostics(source).filter(d => d.category === ts.DiagnosticCategory.Error && d.start !== undefined);
+        compilerErrors += errors.length;
         for (const error of errors) store.diagnostic(run, `typescript-${error.code}`, ts.flattenDiagnosticMessageText(error.messageText, "\n"));
         const coordinates = new SourceCoordinates(file, source.text); const bytes = Buffer.byteLength(source.text);
         const nodes: ts.Node[] = []; const walk = (node: ts.Node) => { nodes.push(node); ts.forEachChild(node, walk); }; walk(source);
@@ -119,6 +103,7 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
                 const o = coordinates.range(named.name.getStart(source), named.name.getEnd(), context, "definition"); store.addOccurrence(o, bytes); occurrenceCount++;
                 const declaration = store.addFact(run, { predicate: "common.Declaration", context, subject: target, occurrence: o.key, value: { signature: node.getText(source).slice(0, 512) }, confidence: "exact", provenance });
                 declarationClaims.set(target, declaration);
+                if (ts.isFunctionLike(node)) store.addFact(run, { predicate: "typescript.Signature", context, subject: target, occurrence: o.key, value: { syntaxKind: ts.SyntaxKind[node.kind], signature: node.getText(source).slice(0, 1024), compilerVersion: ts.version }, confidence: "exact", provenance });
                 store.addFact(run, { predicate: "common.Definition", context, subject: target, object: target, occurrence: o.key, value: { hasBody: "body" in node && !!node.body }, confidence: "exact", provenance });
                 if (ts.isFunctionLike(node)) scopes.set(node, target);
               }
@@ -150,6 +135,7 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
               }
             }
             if (ts.isImportDeclaration(node)) {
+              if (ts.isStringLiteral(node.moduleSpecifier) && !node.moduleSpecifier.text.startsWith(".")) externalImports++;
               const symbol = originalSymbol(node.moduleSpecifier); const o = coordinates.range(node.moduleSpecifier.getStart(source), node.moduleSpecifier.getEnd(), context, "import"); store.addOccurrence(o, bytes);
               if (symbol) store.addFact(run, { predicate: "common.Import", context, subject: module, object: ensure(symbol), occurrence: o.key, value: { specifier: node.moduleSpecifier.getText(source) }, confidence: "resolved", provenance });
               else { unresolved++; store.diagnostic(run, "unresolved-import", node.moduleSpecifier.getText(source)); }
@@ -165,7 +151,6 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
               if (symbol && declaration && !hasErrorType && !erroneous) {
                 const target = ensure(symbol, declaration);
                 const binding = store.addFact(run, { predicate: "common.CallTarget", context, subject: caller, object: target, occurrence: o.key, value: { dispatch: "static", signature: checker.signatureToString(signature!).slice(0, 512) }, confidence: "resolved", provenance });
-                calls.push({ owner: caller, target, occurrence: o.key, site, binding });
               } else { unresolved++; store.diagnostic(run, "unresolved-call", node.expression.getText(source)); }
             }
             if (ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node)) {
@@ -176,19 +161,80 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
         });
       }
       // This foundation is project-granular and records the whole source inventory as a selector.
-      store.batch(run, () => { for (const [file, text] of snapshot.fileContents) store.input(run, file, digest(text)); for (const [file, hash] of inputFiles) store.input(run, `compiler:${relative(file)}`, hash); store.selector(run, `typescript:${context}:inventory`, inputFingerprint); });
+      store.batch(run, () => { for (const file of selected) store.input(run, `source:${file}`, digest(snapshot.fileContents.get(file)!)); for (const [file, hash] of Object.entries(unit.inputs)) store.input(run, `physical:${file}`, hash); for (const [file, hash] of inputFiles) store.input(run, `${bundledLibraries.has(file) ? "bundled" : "physical"}:${file}`, hash); store.input(run, "inventory", unit.fingerprint); store.selector(run, `typescript:${context}:inventory`, inputFingerprint); });
       // Verify loaded compiler dependencies too; missing/changing ambient inputs cannot be called fresh.
       for (const [file, hash] of inputFiles) if (!bundledLibraries.has(file) && digest(await readFile(file)) !== hash) throw new Error(`Compiler input changed during extraction: ${relative(file)}`);
-      coverage = { ...coverage, status: "partial", sourceFiles: selected.length, occurrences: occurrenceCount, unresolved, gaps: [...coverage.gaps as string[], "Declarations/references from supported compiler AST forms; not an exhaustive native type index"] };
+      coverage = { ...coverage, status: "partial", sourceFiles: selected.length, occurrences: occurrenceCount, unresolved, compilerErrors, externalImports, gaps: [...coverage.gaps as string[], "Declarations/references from supported compiler AST forms; not an exhaustive native type index"] };
     } else coverage = { language: "typescript", status: "unavailable", gaps: ["TypeScript adapter disabled or no applicable sources"] };
     // No source/config edit during the second pass may be silently published.
-    for (const [file, text] of snapshot.fileContents) if (digest(await readFile(snapshot.absoluteFiles.get(file)!)) !== digest(text)) throw new Error(`Repository input changed during semantic indexing: ${file}`);
-    for (let offset = 0; offset < calls.length; offset += 1000) store.batch(projection, () => {
-      for (const call of calls.slice(offset, offset + 1000)) store.addFact(projection, { predicate: "common.CallSummary", context, subject: call.owner, object: call.target, occurrence: call.occurrence, confidence: "resolved", provenance: projectionProvenance,
-        supports: [[{ claim: call.site }, { claim: call.binding }, { selector: `typescript:${context}:inventory`, digest: inputFingerprint }]] });
-    });
-    store.seal(run, coverage); store.seal(bridge, { status: "legacy", schema: graph.schemaVersion, gaps: ["Legacy facts have no safe per-file ownership; whole-run replacement only"] }); store.seal(projection, { status: "partial", pass: "call-projection", version: "1" });
-    const published = store.publish([run, bridge, projection], parent);
-    return { snapshot: published, context, inputFingerprint, coverage, durationMs: Math.round(performance.now() - started) };
+    for (const file of selected) if (digest(await readFile(snapshot.absoluteFiles.get(file)!)) !== digest(snapshot.fileContents.get(file)!)) throw new Error(`Repository input changed during semantic indexing: ${file}`);
+    for (const [file, hash] of Object.entries(unit.inputs)) if (digest(await readFile(file)) !== hash) throw Error(`Project configuration changed during extraction: ${file}`);
+    store.seal(run, coverage);
+    const projections = executePasses(store, run, unit.key, provenance, `typescript:${context}:inventory`);
+    return { runs: [run, ...projections], context, inputFingerprint, coverage };
+  } catch (error) { store.diagnostic(run, "provider-failure", String(error)); throw error; }
+}
+
+async function reusableUnit(store: SemanticStore, snapshot: RepositorySnapshot, unit: ProjectUnit, previous: Map<string, number>): Promise<number[] | undefined> {
+  const run = previous.get(unit.key); const pass = previous.get(`${unit.key}/pass:call-summary@1`);
+  if (!run || !pass) return undefined;
+  const row = store.sql("SELECT context,coverage_json FROM sc_runs WHERE id=?").get(run) as { context: string; coverage_json: string };
+  const coverage = JSON.parse(row.coverage_json) as Record<string, unknown>;
+  // Until module-search negative dependencies are qualified, only closed, error-free local units reuse.
+  if (row.context !== unit.context || coverage.mappingVersion !== TYPESCRIPT_SEMANTIC_VERSION || coverage.unresolved !== 0 || coverage.compilerErrors !== 0 || coverage.externalImports !== 0) return undefined;
+  const inputs = store.sql("SELECT resource,digest FROM sc_inputs WHERE run=?").all(run) as Array<{ resource: string; digest: string }>;
+  if (!inputs.some(input => input.resource === "inventory" && input.digest === unit.fingerprint)) return undefined;
+  for (const input of inputs) {
+    if (input.resource.startsWith("source:")) { const text = snapshot.fileContents.get(input.resource.slice(7)); if (text === undefined || digest(text) !== input.digest) return undefined; }
+    else if (input.resource.startsWith("physical:")) {
+      const file = input.resource.slice(9);
+      if (file.includes("/node_modules/") || !file.startsWith(`${snapshot.repository.root}/`)) return undefined;
+      try { if (digest(await readFile(file)) !== input.digest) return undefined; } catch { return undefined; }
+    }
+  }
+  return [run, pass];
+}
+
+export async function indexSemanticFoundation(snapshot: RepositorySnapshot, graph: GraphData, filename: string): Promise<SemanticIndexResult> {
+  const started = performance.now(); const plan = discoverProjects(snapshot);
+  if (plan.diagnostics.some(message => message.startsWith("Invalid TypeScript project")) && !plan.units.some(unit => unit.language === "typescript" && unit.project !== "<inferred>")) throw Error(plan.diagnostics.join("; "));
+  const store = new SemanticStore(filename); const parent = store.activeSnapshot();
+  const previous = new Map((parent ? store.sql("SELECT partition_key,run FROM sc_partitions WHERE snapshot=?").all(parent) : [] as unknown[]) .map(value => { const row = value as { partition_key: string; run: number }; return [row.partition_key, row.run] as const; }));
+  const inputFingerprint = digest(canonical([...snapshot.fileContents].map(([file, text]) => [file, digest(text)]).sort()));
+  const bridge = store.begin("legacy/full", "legacy", inputFingerprint); const runs: number[] = []; const outcomes: Record<string, unknown>[] = [];
+  try {
+    const provenance: Provenance = { provider: "legacy-graph", version: graph.schemaVersion, basis: "syntax", method: "compatibility-bridge", context: "legacy", inputFingerprint };
+    for (const [predicate, values] of [["legacy.Node", graph.nodes], ["legacy.Relation", graph.edges]] as const) {
+      for (let offset = 0; offset < values.length; offset += 1000) store.batch(bridge, () => {
+        for (const original of values.slice(offset, offset + 1000)) {
+          const value = JSON.parse(JSON.stringify(original)) as typeof original; const key = `legacy:${value.id}:${digest(canonical(value))}`;
+          store.addEntity(key, "artifact", value);
+          const payload = predicate === "legacy.Node" ? { node: value } : { edge: value };
+          // Legacy metadata/evidence can exceed common fact quotas. Preserve its complete immutable
+          // artifact and graph.sqlite record; carry a bounded reference instead of failing all semantics.
+          const boundedPayload = Buffer.byteLength(canonical(payload)) <= 65536 ? payload : { legacyId: value.id, payloadEntity: key, payloadBytes: Buffer.byteLength(canonical(value)), payloadStorage: "sc_entities.canonical" };
+          store.addFact(bridge, { predicate, context: "legacy", subject: key, value: boundedPayload, confidence: "confidence" in value ? value.confidence : "exact", provenance });
+        }
+      });
+    }
+    store.seal(bridge, { status: "legacy", schema: graph.schemaVersion, gaps: ["Whole legacy partition replacement"] }); runs.push(bridge);
+    for (const unit of plan.units) {
+      const discoveryGaps = [...unit.gaps, ...plan.diagnostics.slice(0, 4).map(message => message.slice(0, 256))];
+      const run = store.begin(`context/${unit.key}`, unit.context, unit.fingerprint);
+      store.batch(run, () => {
+        const key = semanticKey("project", [snapshot.repository.identity, unit.key]); store.addEntity(key, "artifact", { key, kind: "project" });
+        store.addFact(run, { predicate: "context.Project", context: unit.context, subject: key, value: { unit: unit.key, project: unit.project, language: unit.language, options: unit.options, sourceCount: unit.sources.length, fingerprint: unit.fingerprint, gaps: discoveryGaps }, confidence: "exact", provenance: { provider: "project-discovery", version: "1", basis: "syntax", method: "read-only-project-context", context: unit.context, inputFingerprint: unit.fingerprint } });
+      });
+      store.seal(run, { status: "partial", language: unit.language, gaps: discoveryGaps }); runs.push(run);
+      if (unit.language === "typescript" && snapshot.config.adapters.typescript && unit.sources.length) {
+        const reused = await reusableUnit(store, snapshot, unit, previous);
+        if (reused) { runs.push(...reused); outcomes.push({ status: "partial", project: unit.project, reused: true }); }
+        else { const indexed = await indexTypeScriptUnit(snapshot, unit, store); runs.push(...indexed.runs); outcomes.push(indexed.coverage); }
+      }
+    }
+    const nativeRuns = await retainProviders(store, snapshot, parent); runs.push(...nativeRuns);
+    const snapshotId = store.publish(runs, parent);
+    const tsUnits = plan.units.filter(unit => unit.language === "typescript");
+    return { snapshot: snapshotId, context: (tsUnits.find(unit => unit.key === "typescript/root") ?? tsUnits[0])?.context ?? "none", inputFingerprint, coverage: { status: outcomes.length || nativeRuns.length ? "partial" : "unavailable", projects: tsUnits.length, units: outcomes, reusedUnits: outcomes.filter(outcome => outcome.reused).length, retainedNativeRuns: nativeRuns.length }, durationMs: Math.round(performance.now() - started) };
   } finally { store.close(); }
 }

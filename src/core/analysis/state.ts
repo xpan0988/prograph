@@ -7,12 +7,13 @@ import type { RepositorySnapshot } from "../adapters/contracts.js";
 import { GRAPH_SCHEMA_VERSION } from "../graph/schema.js";
 import { resolveRepositoryRoot, scanRepository } from "../repository/repository.js";
 import packageJson from "../../../package.json" with { type: "json" };
-import { SEMANTIC_SCHEMA_VERSION, TYPESCRIPT_SEMANTIC_VERSION } from "../semantic/model.js";
+import { SEMANTIC_SCHEMA_VERSION, TYPESCRIPT_SEMANTIC_VERSION, CLANG_SEMANTIC_VERSION, SCIP_SEMANTIC_VERSION } from "../semantic/model.js";
+import { recordedInputStatus, type RecordedInputStatus } from "../semantic/provider-runs.js";
 
 const require = createRequire(import.meta.url);
 
 export const ADAPTER_VERSIONS = {
-  semanticCore: `${SEMANTIC_SCHEMA_VERSION}/${TYPESCRIPT_SEMANTIC_VERSION}`,
+  semanticCore: `${SEMANTIC_SCHEMA_VERSION}/ts:${TYPESCRIPT_SEMANTIC_VERSION}/clang:${CLANG_SEMANTIC_VERSION}/scip:${SCIP_SEMANTIC_VERSION}`,
   typescript: "2",
   polyglot: "1",
   architecture: "1",
@@ -58,6 +59,8 @@ export interface RepositoryStatus {
   configChanged: boolean;
   adapterVersionsChanged: boolean;
   schemaChanged: boolean;
+  semanticInputsChanged?: boolean;
+  semanticInputs?: RecordedInputStatus;
   stale: boolean;
   state: "fresh" | "stale" | "missing";
 }
@@ -121,7 +124,9 @@ export async function repositoryStatus(input = ".", index?: string): Promise<Rep
   const configChanged = stored ? stored.configHash !== configHash(scan.snapshot) : false;
   const adapterVersionsChanged = stored ? JSON.stringify(stored.adapterVersions) !== JSON.stringify(ADAPTER_VERSIONS) : false;
   const schemaChanged = stored ? stored.schemaVersion !== GRAPH_SCHEMA_VERSION : false;
-  const stale = !stored || addedFiles.length > 0 || modifiedFiles.length > 0 || deletedFiles.length > 0 || configChanged || adapterVersionsChanged || schemaChanged;
+  const semanticInputs = await recordedInputStatus(path.join(indexDirectory, "semantic.sqlite"), scan.snapshot, new Set([...addedFiles, ...modifiedFiles, ...deletedFiles]));
+  const semanticInputsChanged = semanticInputs.additionalChanges > 0;
+  const stale = !stored || addedFiles.length > 0 || modifiedFiles.length > 0 || deletedFiles.length > 0 || configChanged || adapterVersionsChanged || schemaChanged || semanticInputsChanged;
   return {
     repositoryRoot,
     indexDirectory,
@@ -139,6 +144,8 @@ export async function repositoryStatus(input = ".", index?: string): Promise<Rep
     configChanged,
     adapterVersionsChanged,
     schemaChanged,
+    semanticInputsChanged,
+    semanticInputs,
     stale,
     state: stored ? stale ? "stale" : "fresh" : "missing",
   };

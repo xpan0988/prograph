@@ -10,6 +10,18 @@ import type { RepositorySnapshot } from "../adapters/contracts.js";
 
 const execFileAsync = promisify(execFile);
 const ROOT_MARKERS = [".git", "prograph.config.json", "package.json", "Cargo.toml", "tsconfig.json", "jsconfig.json", "pyproject.toml", "go.mod", "pom.xml", "compile_commands.json"];
+const METADATA_FILES = ["**/package.json", "**/package-lock.json", "**/Cargo.toml", "**/Cargo.lock", "**/tsconfig*.json", "**/jsconfig*.json", "**/tauri.conf.json", "**/tauri.conf.json5", "**/pyproject.toml", "**/pyrightconfig.json", "**/go.mod", "**/go.work", "**/go.sum", "**/pom.xml", "**/build.gradle", "**/build.gradle.kts", "**/*.csproj", "**/*.sln", "**/compile_commands.json"];
+
+/** Filename-only streaming inventory for interchange: never hydrate the repository's source text. */
+export async function repositoryInputPaths(root: string, outputDirectory: string, maxFiles: number): Promise<string[]> {
+  const config = await loadConfig(root);
+  const relativeOutput = path.relative(root, outputDirectory).split(path.sep).join("/");
+  const ignore = [...config.exclude, ...(!relativeOutput.startsWith("../") && relativeOutput !== "." ? [`${relativeOutput}/**`] : [])];
+  const files = new Set<string>();
+  const stream = fg.stream([...config.include, ...METADATA_FILES], { cwd: root, ignore, onlyFiles: true, unique: true, dot: true, followSymbolicLinks: false });
+  for await (const file of stream) { files.add(String(file).split(path.sep).join("/")); if (files.size > maxFiles) throw Error("Repository input catalogue exceeds file quota"); }
+  return [...files].sort();
+}
 
 async function exists(value: string): Promise<boolean> {
   try {
@@ -103,7 +115,7 @@ export async function scanRepository(root: string, outputDirectory?: string): Pr
     }
   }
   const metadataFiles = await fg(
-    ["**/package.json", "**/Cargo.toml", "**/tsconfig.json", "**/jsconfig.json", "**/tauri.conf.json", "**/tauri.conf.json5", "**/pyproject.toml", "**/go.mod", "**/go.sum", "**/pom.xml", "**/*.csproj", "**/*.sln", "**/compile_commands.json"],
+    METADATA_FILES,
     { cwd: root, ignore, onlyFiles: true, unique: true, dot: true, followSymbolicLinks: false },
   );
   for (const relativeFile of metadataFiles) {

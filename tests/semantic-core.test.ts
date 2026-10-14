@@ -198,6 +198,7 @@ describe("TypeScript semantic vertical slice", () => {
     try {
       const legacy = await fetch(`http://127.0.0.1:${port}/api/overview`); expect(legacy.status).toBe(200);
       const semantic = await fetch(`http://127.0.0.1:${port}/api/semantic/find?input=target`); expect(semantic.status).toBe(200); expect((await semantic.json() as { items: unknown[] }).items).toHaveLength(1);
+      const contexts = await fetch(`http://127.0.0.1:${port}/api/semantic/context?limit=1`); expect(contexts.status).toBe(200); expect((await contexts.json() as { items: unknown[] }).items).toHaveLength(1);
       const invalid = await fetch(`http://127.0.0.1:${port}/api/semantic/invalid`); expect(invalid.status).toBe(409);
     } finally { await new Promise<void>((resolve, reject) => server.close(e => e ? reject(e) : resolve())); }
   }, 60000);
@@ -232,6 +233,8 @@ describe("TypeScript semantic vertical slice", () => {
       const result = await client.callTool({ name: "query_semantic", arguments: { operation: "find", input: "target", limit: 1 } });
       const payload = JSON.parse((result.content as Array<{ text: string }>)[0]!.text) as { items: unknown[]; format: number };
       expect(payload.format).toBe(2); expect(payload.items).toHaveLength(1);
+      const contexts = await client.callTool({ name: "query_semantic", arguments: { operation: "context", limit: 1 } });
+      expect(JSON.parse((contexts.content as Array<{ text: string }>)[0]!.text).items).toHaveLength(1);
       expect((await client.callTool({ name: "get_repository_overview", arguments: {} })).isError).not.toBe(true);
     } finally { await client.close(); await server.close(); }
   }, 60000);

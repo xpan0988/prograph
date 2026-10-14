@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { createHash } from "node:crypto";
 import { SEMANTIC_SQL } from "./schema.js";
-import { canonical, semanticKey, PREDICATES, SEMANTIC_FORMAT_VERSION, SEMANTIC_SCHEMA_VERSION, validateFact,
+import { canonical, semanticKey, PREDICATES, SEMANTIC_FORMAT_VERSION, SEMANTIC_SCHEMA_VERSION, READABLE_SEMANTIC_SCHEMAS, validateFact,
   type EntityKind, type FactInput, type OccurrenceInput, type SemanticSymbol, type SupportAlternative } from "./model.js";
 
 export interface PublicationHooks {
@@ -19,11 +19,11 @@ export class SemanticStore {
       if (exists) {
         const format = this.db.prepare("SELECT value FROM sc_meta WHERE key='format'").get() as { value: string } | undefined;
         const schema = this.db.prepare("SELECT value FROM sc_meta WHERE key='schema'").get() as { value: string } | undefined;
-        if (format?.value !== String(SEMANTIC_FORMAT_VERSION) || schema?.value !== SEMANTIC_SCHEMA_VERSION) throw new Error("Unsupported Semantic Core storage/schema version; preserve this database and rebuild separately");
+        if (format?.value !== String(SEMANTIC_FORMAT_VERSION) || !READABLE_SEMANTIC_SCHEMAS.includes(schema?.value as typeof READABLE_SEMANTIC_SCHEMAS[number])) throw new Error("Unsupported Semantic Core storage/schema version; preserve this database and rebuild separately");
       }
       this.db.exec(SEMANTIC_SQL);
       this.sql("INSERT OR IGNORE INTO sc_meta VALUES('format',?)").run(String(SEMANTIC_FORMAT_VERSION));
-      this.sql("INSERT OR IGNORE INTO sc_meta VALUES('schema',?)").run(SEMANTIC_SCHEMA_VERSION);
+      this.sql("INSERT INTO sc_meta VALUES('schema',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(SEMANTIC_SCHEMA_VERSION);
     } catch (error) { this.db.close(); throw error; }
   }
   sql(query: string): Database.Statement {
@@ -200,7 +200,7 @@ export class SemanticStore {
       measure("membership");
       // Removing a supporting claim invalidates an AND; another valid OR alternative survives.
       const prune = this.sql(`DELETE FROM sc_active WHERE snapshot=? AND claim IN (
-        SELECT c.id FROM sc_claims c JOIN sc_active a ON a.claim=c.id AND a.snapshot=? WHERE c.support_group IS NOT NULL
+        SELECT c.id FROM sc_claims c INDEXED BY sc_claim_supported CROSS JOIN sc_active a ON a.claim=c.id AND a.snapshot=? WHERE c.support_group IS NOT NULL
         AND NOT EXISTS(SELECT 1 FROM sc_supports s WHERE s.group_id=c.support_group GROUP BY s.alternative HAVING SUM(
           CASE WHEN s.input_claim IS NOT NULL THEN CASE WHEN EXISTS(SELECT 1 FROM sc_active x WHERE x.snapshot=? AND x.claim=s.input_claim) THEN 0 ELSE 1 END
           ELSE CASE WHEN EXISTS(SELECT 1 FROM sc_run_selectors rs JOIN sc_partitions p ON p.run=rs.run WHERE p.snapshot=? AND rs.key=s.selector AND rs.digest=s.expected) THEN 0 ELSE 1 END END)=0))`);
@@ -212,6 +212,7 @@ export class SemanticStore {
       this.sql(`INSERT INTO sc_navigation SELECT ?,CASE f.predicate ${relation} END,f.subject,f.object,f.occurrence,c.id,c.confidence FROM sc_active a JOIN sc_claims c ON c.id=a.claim JOIN sc_facts f ON f.id=c.fact WHERE a.snapshot=?`).run(id, id);
       measure("navigation");
       this.sql(`INSERT INTO sc_visible_symbols SELECT DISTINCT ?,s.entity,s.name FROM sc_symbols s JOIN sc_navigation n ON n.subject=s.entity WHERE n.snapshot=? AND n.relation='declaration'`).run(id, id);
+      this.sql(`INSERT INTO sc_context_lookup SELECT ?,n.claim,f.context FROM sc_navigation n JOIN sc_claims c ON c.id=n.claim JOIN sc_facts f ON f.id=c.fact WHERE n.snapshot=? AND n.relation='project-context'`).run(id, id);
       measure("symbols");
       // Unique static binding conflicts are excluded; unresolved observations stay inspectable.
       this.sql(`INSERT INTO sc_calls SELECT ?,n.subject,n.object,COUNT(DISTINCT n.occurrence),CASE WHEN MIN(CASE n.confidence WHEN 'exact' THEN 0 ELSE 1 END)=0 THEN 'exact' ELSE 'resolved' END,MIN(n.claim)

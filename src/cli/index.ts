@@ -15,7 +15,10 @@ import { startServer } from "../server/index.js";
 import { startMcpServer } from "../mcp/index.js";
 import { writeResult, type OutputFormat } from "./output.js";
 import packageJson from "../../package.json" with { type: "json" };
-import { semanticQueryForRepository, type SemanticOperation } from "../core/semantic/query.js";
+import { semanticQueryForRepository, SEMANTIC_OPERATIONS, type SemanticOperation } from "../core/semantic/query.js";
+import { importScip, type ScipManifest } from "../core/semantic/scip-import.js";
+import { indexClang } from "../core/semantic/clang.js";
+import { readFile, stat } from "node:fs/promises";
 
 interface FormatOptions {
   format: OutputFormat;
@@ -246,8 +249,19 @@ addFormat(addConfidence(addIndex(program.command("boundaries [path]").descriptio
   writeResult(await withQuery(input, options.index, (query) => query.frameworkBindings(undefined, confidence(options))), options.format);
 });
 
-const semanticCommand = program.command("semantic").description("Semantic Core Step 1 snapshot navigation (TypeScript slice)");
-for (const operation of ["status", "find", "definition", "references", "callers", "callees", "occurrence", "explain"] as const) {
+const semanticCommand = program.command("semantic").description("Semantic Core snapshot navigation and verified interchange");
+addFormat(addIndex(semanticCommand.command("index-clang <unit>").description("Explicit syntax-only Clang extraction for an arguments-array compilation unit")))
+  .option("--repo <path>", "repository path", ".")
+  .action(async (unit: string, options: FormatOptions & { repo: string; index?: string }) => writeResult(await indexClang(options.repo, unit, options.index), options.format));
+addFormat(addIndex(semanticCommand.command("import-scip <artifact>").description("Import a source-verified SCIP artifact without running its indexer")))
+  .requiredOption("--manifest <path>", "source digest and producer sidecar")
+  .option("--repo <path>", "repository path", ".")
+  .action(async (artifact: string, options: FormatOptions & { manifest: string; repo: string; index?: string }) => {
+    if ((await stat(options.manifest)).size > 16777216) throw Error("SCIP sidecar exceeds 16 MiB");
+    const manifest = JSON.parse(await readFile(options.manifest, "utf8")) as ScipManifest;
+    writeResult(await importScip(options.repo, artifact, manifest, options.index), options.format);
+  });
+for (const operation of SEMANTIC_OPERATIONS) {
   addFormat(addIndex(semanticCommand.command(`${operation} [input]`).description(`Semantic ${operation}`)))
     .option("--repo <path>", "repository path", ".")
     .option("--limit <number>", "bounded result page", Number, 50)

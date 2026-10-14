@@ -4,6 +4,7 @@ import { evidenceOf, metadataOf } from "../../core/graph/metadata";
 import type { GraphEdge, GraphNode } from "../../core/graph/schema";
 import { useI18n } from "../i18n";
 import type { TranslationKey } from "../i18n/en";
+import { SemanticEvidence } from "./SemanticEvidence";
 
 interface InspectorProps {
   node: GraphNode;
@@ -178,6 +179,7 @@ export function Inspector({ node, nodes, edges, selectedEdge, onEdgeSelect, onCl
           </div>
         ) : <p className="muted-copy">{t("inspector.noSymbols")}</p>}
       </section>
+      <SemanticEvidence key={node.id} name={node.name} />
       <details className="metadata-section">
         <summary>{t("inspector.metadata")}</summary>
         <div><span>{t("inspector.stableId")}</span><CopyButton value={node.id} /><code>{node.id}</code></div>

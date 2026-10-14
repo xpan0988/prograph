@@ -1,0 +1,1374 @@
+{
+  "recordedAt": "2026-10-14T17:08:35.542898+00:00",
+  "status": "validated Step 2 project-aware ingestion milestone; full Semantic Core 2.0 acceptance unmet",
+  "sourceRevision": {
+    "baseCommit": "6870c1fd32133b7da8aab844b5eab65a225af347",
+    "branch": "codex/semantic-core-upgrade",
+    "workingTree": true,
+    "sourceDigests": {
+      "src/core/semantic/clang.ts": "daa0afdf4166f149539f06b59614b84954b1f4dee6538ad5877d6db786e7fefa",
+      "src/core/semantic/coordinates.ts": "0884a2d5953c6a87e842e2305e7c90ec4b35e241db8ef4c25702fed035204782",
+      "src/core/semantic/inputs.ts": "65e33ff1b39ccab16e68df358426491b0f08703ca472921fde54054f6e53274c",
+      "src/core/semantic/model.ts": "e8e14e51a4bfab50304629c719976feab2ac334669e1bb254c264b1f07e1f7bd",
+      "src/core/semantic/passes.ts": "01b8651933768c2dfcc5e7ff1906978d03996cae99163d58a8cab826a39d923f",
+      "src/core/semantic/projects.ts": "3ba9c68a4135658caf0dd74c58e0dc071e60bf51949721b8b182255b11b9d71e",
+      "src/core/semantic/provider-runs.ts": "69d76e258ed5d1a4c1f0464aa6a392786a44518e402f818026ff446a2209653f",
+      "src/core/semantic/query.ts": "044a977a7a5cef9332e66048fd3aae38fb8bb579ef8362a0862664b3b760fa79",
+      "src/core/semantic/schema.ts": "7bd1e596bf79c9e98e79851b9726f43a41e132bb34c01eb48f7bb17042ad49dc",
+      "src/core/semantic/scip-import.ts": "8815e998d328fb5537c7fe1c3e5dfb83673951aa98a11a6ba0c0cb65c0dfc225",
+      "src/core/semantic/scip-symbol.ts": "4a8718bba975f5ca9998d906ae089cf537c06c7a8d8dd890b8a3ffcd7684d08e",
+      "src/core/semantic/scip-wire.ts": "52f70b171c59dbb0b43a665311a22e631970b197ec2ade624c1640f7d5ac7884",
+      "src/core/semantic/store.ts": "2682eb958b8c4c054d39ed59067563abf02f08fedc84e24e45f100de0bb9f81a",
+      "src/core/semantic/typescript.ts": "72f622f6f7b606efa55a3c6e13872baeaf651703d0ba8c2a312665c2fdfa5b22",
+      "src/core/repository/repository.ts": "272ab5315d0c49afa8c6fab5ef137a8b4eb1fb12160047cadff2643bfa5d5c47",
+      "src/core/analysis/state.ts": "e01092c965f4a07277c6ed6cee33f65fe79528c509bfeee02265f8c583c7b3e5",
+      "src/core/analysis/sync.ts": "47e784af11b019e46fee2bab8df265b375089c5db4da08382cfea480c9f8f324",
+      "src/cli/index.ts": "188cad62a9c66464463812797539db39b3d2300b6a34c8f04902fb33205a2516",
+      "src/mcp/index.ts": "d35cec294d68615da3541128a083759f35865a4551574e6196e680d64edef55d",
+      "src/ui/components/Inspector.tsx": "c6346560d9113466714bed699a23c35ec7346df78915c89ab34eff1452b36d8a",
+      "src/ui/components/SemanticEvidence.tsx": "4290c66f09a3c5b105e6331f0e36768b495fa82ea18058677d52cd9b11586253",
+      "tests/semantic-ingestion.test.ts": "31f764c90b6a2a2ef8c3330cbd43776a1fa17578c435eb0cd470b2b1f5702b25",
+      "tests/semantic-core.test.ts": "545b4964146741a775f4d5ac2ee3707d428bfc75d397a3365833b279d667c1ec",
+      "tests/core.test.ts": "8373aefe50bf7323e366754b04a8dd59846ae8d3828c63fac89649a2625a2c2b",
+      "scripts/scip-benchmark.mjs": "57671769e318cd838cf8880b4832acf129c1eeec8388bed1deba03bce1c3e382",
+      "scripts/semantic-real-repository.mjs": "7da61ac377213d86cb606a0e7f3caa21db42e144f1b2b50512c557acb6827deb"
+    }
+  },
+  "tooling": {
+    "node": "v25.9.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cpuCount": 10,
+    "memoryBytes": 17179869184,
+    "sqlite": "3.53.1",
+    "semanticCompiler": "5.9.2",
+    "typescriptTypecheck": "5.9.3",
+    "ts-morph": "27.0.2",
+    "better-sqlite3": "12.10.0",
+    "protobufjs": "8.8.0",
+    "vitest": "4.1.8",
+    "vite": "7.3.5",
+    "package": "0.3.0",
+    "legacySchema": "1.2.0",
+    "semanticSchema": "2.0.0-step2.1",
+    "mappingVersions": {
+      "typescript": "2",
+      "clang": "2",
+      "scip": "2",
+      "call-summary": "1"
+    }
+  },
+  "methodology": {
+    "durability": "WAL, synchronous=FULL; publication includes selected membership, support eligibility, full navigation/index construction and committed pointer",
+    "syntheticFoundation": "unchanged Step 1 workload, 1% static call sites, normalized support and original counts; sealing is measured separately",
+    "syntheticScip": "generator and importer are separate processes; 100k occurrences per document, unique line anchors, native plus common claims, zero fabricated calls; no actual Python semantic producer or LOC qualification",
+    "queries": "30 reference samples, warm OS cache; not cold-start or hard SQLite-deadline qualification",
+    "concurrency": "expensive benchmark/test jobs were sequential for final trials; ordinary lightweight source/evidence inspection continued; ambient desktop activity was not experimentally controlled",
+    "trialCount": "individual characterized runs, no statistical throughput or extrapolation claim",
+    "sourceRevisions": "real repository source inventories and per-run compiled implementation digests are authoritative; reported Git HEAD is advisory for dirty trees and nested packages",
+    "oneSecondPublicationTarget": "unmet; benchmark contract and correctness/durability requirements preserved",
+    "unmeasured": [
+      "cold reads",
+      "1M/10M LOC compiler qualification",
+      "10M/50M occurrence sweep",
+      "large no-op/edit/high-fanout header timing sweep",
+      "all-provider randomized oracle",
+      "physical power loss",
+      "disk exhaustion",
+      "export-failure injection",
+      "Linux/Windows qualification",
+      "worker hard deadlines"
+    ]
+  },
+  "foundation1m": {
+    "workload": "synthetic occurrence navigation, 1% static calls, 1000 caller identities, batch 1000; not a source-code corpus",
+    "count": 1000000,
+    "environment": {
+      "node": "v25.9.0",
+      "platform": "darwin",
+      "arch": "arm64",
+      "cpu": "Apple M5",
+      "cpuCount": 10,
+      "memoryBytes": 17179869184,
+      "sqlite": "3.53.1"
+    },
+    "startedAt": "2026-10-14T11:56:52.969Z",
+    "implementationDigests": {
+      "model": "3a9cb3187a780d0faddbdf44c5b3471e961147b9d556554f57dc098b70e8dacc",
+      "store": "cb5aae153abc1208d6aacf9fe67a90f37cfeb512dbc74acf76b054cfe0404638",
+      "schema": "88317fdba7b8b7d2604c1370769cacb5f0622b7b6b4458b7ab3f78ac6b4c0dc2",
+      "query": "c596e08c8681464adbe603eb1b1d643ef46aee76ae91a84d0cfeb3bef5ed9ec2",
+      "coordinates": "5b3be893f67280bd1989b5c985eebde9bff6f9e328eafb3dbd2ad08aaad814b3"
+    },
+    "sqlitePragmas": {
+      "journal_mode": "wal",
+      "synchronous": 2,
+      "wal_autocheckpoint": 1000,
+      "cache_size": -16000
+    },
+    "writeMs": 160942,
+    "callSites": 10000,
+    "sealMs": 1223.574,
+    "publicationMs": 8453.184,
+    "publicationStagesMs": {
+      "content-key": 0.108,
+      "membership": 423.225,
+      "support-eligibility": 12.703,
+      "navigation": 5950.683,
+      "symbols": 1.189,
+      "call-summary": 25.821,
+      "pointer-and-commit": 2039.317
+    },
+    "counts": {
+      "entities": 1002002,
+      "occurrences": 1001001,
+      "facts": 1022002,
+      "claims": 1022002,
+      "provenance": 2,
+      "groups": 10000,
+      "supports": 30000,
+      "navigation": 1022002,
+      "calls": 1000
+    },
+    "queryPlans": {
+      "references": [
+        {
+          "id": 6,
+          "parent": 0,
+          "notused": 46,
+          "detail": "SEARCH sc_navigation USING COVERING INDEX sc_nav_object (snapshot=? AND relation=? AND object=? AND occurrence>?)"
+        }
+      ],
+      "callers": [
+        {
+          "id": 6,
+          "parent": 0,
+          "notused": 46,
+          "detail": "SEARCH sc_calls USING COVERING INDEX sc_calls_callee (snapshot=? AND callee=? AND caller>?)"
+        }
+      ],
+      "occurrence": [
+        {
+          "id": 3,
+          "parent": 0,
+          "notused": 53,
+          "detail": "SEARCH sc_navigation USING COVERING INDEX sc_nav_occurrence (snapshot=? AND occurrence=?)"
+        }
+      ]
+    },
+    "databaseBytes": 1554948096,
+    "queries": {
+      "definition": {
+        "firstReadMs": 3.119,
+        "warmMedianMs": 0.06,
+        "warmP95Ms": 0.122,
+        "returned": 1,
+        "bytes": 1686,
+        "work": {
+          "candidateRows": 1,
+          "supportRows": 0,
+          "metadataRows": 2,
+          "returnedRows": 1,
+          "globalGraphMaterialized": false
+        }
+      },
+      "references": {
+        "firstReadMs": 1.38,
+        "warmMedianMs": 1.076,
+        "warmP95Ms": 1.124,
+        "returned": 48,
+        "bytes": 31956,
+        "work": {
+          "candidateRows": 51,
+          "supportRows": 0,
+          "metadataRows": 2,
+          "returnedRows": 48,
+          "globalGraphMaterialized": false
+        }
+      },
+      "callers": {
+        "firstReadMs": 0.831,
+        "warmMedianMs": 0.111,
+        "warmP95Ms": 0.131,
+        "returned": 50,
+        "bytes": 12024,
+        "work": {
+          "candidateRows": 51,
+          "supportRows": 0,
+          "metadataRows": 2,
+          "returnedRows": 50,
+          "globalGraphMaterialized": false
+        }
+      },
+      "callees": {
+        "firstReadMs": 0.058,
+        "warmMedianMs": 0.048,
+        "warmP95Ms": 0.052,
+        "returned": 1,
+        "bytes": 1226,
+        "work": {
+          "candidateRows": 1,
+          "supportRows": 0,
+          "metadataRows": 2,
+          "returnedRows": 1,
+          "globalGraphMaterialized": false
+        }
+      }
+    },
+    "layoutExperimentMs": 3167,
+    "layoutBytes": {
+      "flat_support": 315875328,
+      "json_occ": 273756160,
+      "normalized_occ": 27119616,
+      "provenance": 4096,
+      "sqlite_autoindex_support_group_1": 4096,
+      "sqlite_schema": 4096,
+      "support_group": 4096,
+      "support_ref": 9035776
+    },
+    "supportExperiment": {
+      "shape": "all rows share one 2-claim AND + selector; upper bound on reuse benefit, not realistic per-callsite reuse",
+      "uniqueProductionGroups": 10000,
+      "productionSupportAtoms": 30000
+    },
+    "totalMs": 175729,
+    "maxRssKiB": 310544
+  },
+  "scipFinal": [
+    {
+      "workload": "synthetic streamed SCIP, 100k occurrences/document, one symbol, unique line anchors, definition + references/highlighting; no compiler or LOC qualification",
+      "count": 100000,
+      "documents": 1,
+      "artifactBytes": 6283689,
+      "startedAt": "2026-10-14T16:31:10.238Z",
+      "environment": {
+        "node": "v25.9.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M5",
+        "memoryBytes": 17179869184
+      },
+      "implementationDigests": {
+        "scip-import": "a75a815f8b87f4f466a69b9f1720e37b37b1fd914a9e7d1209ddb9f7c168dc15",
+        "scip-wire": "a4f373d495b762274b9e54225d939da7a8c198f8986fe70bb4474da42436b6e1",
+        "store": "cb5aae153abc1208d6aacf9fe67a90f37cfeb512dbc74acf76b054cfe0404638",
+        "schema": "88317fdba7b8b7d2604c1370769cacb5f0622b7b6b4458b7ab3f78ac6b4c0dc2",
+        "query": "c596e08c8681464adbe603eb1b1d643ef46aee76ae91a84d0cfeb3bef5ed9ec2",
+        "coordinates": "6b2f51f083a5622d4d1ad2334692f003386f6afc80d1ffaddb996470034aa388",
+        "inputs": "c91a0471790dc593a906ce5c230fa8149be93f65c679f052b324be985f82cdd5"
+      },
+      "snapshot": 1,
+      "context": "sc2:context:1e6f226af79cc74c120089b887ba6eeae11010be5c20ba32c6df096cd596ced7",
+      "status": "partial",
+      "accepted": 1,
+      "rejected": 0,
+      "occurrences": 100000,
+      "calls": "unsupported",
+      "durationMs": 15936,
+      "publicationMs": 481.988,
+      "publicationStagesMs": {
+        "content-key": 0.116,
+        "membership": 47.433,
+        "support-eligibility": 0.113,
+        "navigation": 395.359,
+        "symbols": 0.135,
+        "call-summary": 0.062,
+        "pointer-and-commit": 38.703
+      },
+      "sqlitePragmas": {
+        "journal_mode": "wal",
+        "synchronous": 2
+      },
+      "limits": {
+        "maxIndexBytes": 10737418240,
+        "maxDocumentBytes": 16777216,
+        "maxSourceBytes": 8388608,
+        "maxOccurrencesPerDocument": 100000,
+        "maxRelationshipsPerSymbol": 1024,
+        "maxDocuments": 100000,
+        "batch": 500
+      },
+      "protocolDigest": "b38021b65ef90cbbf6af9c829ff75192859ad9b5da05439ef154bea4ceb2bf03",
+      "counts": {
+        "occurrences": 100000,
+        "facts": 200003,
+        "claims": 200003,
+        "navigation": 200003,
+        "provenance": 1,
+        "calls": 0
+      },
+      "integrity": "ok",
+      "databaseBytes": 300331008,
+      "maxRssKiB": 405168,
+      "query": {
+        "firstReadMs": 1.389,
+        "warmP95Ms": 1.198,
+        "bytes": 32433,
+        "work": {
+          "candidateRows": 51,
+          "supportRows": 0,
+          "metadataRows": 2,
+          "returnedRows": 38,
+          "globalGraphMaterialized": false
+        }
+      },
+      "callsCreated": 0
+    },
+    {
+      "workload": "synthetic streamed SCIP, 100k occurrences/document, one symbol, unique line anchors, definition + references/highlighting; no compiler or LOC qualification",
+      "count": 1000000,
+      "documents": 10,
+      "artifactBytes": 62835900,
+      "startedAt": "2026-10-14T16:47:00.158Z",
+      "environment": {
+        "node": "v25.9.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M5",
+        "memoryBytes": 17179869184
+      },
+      "implementationDigests": {
+        "scip-import": "a75a815f8b87f4f466a69b9f1720e37b37b1fd914a9e7d1209ddb9f7c168dc15",
+        "scip-wire": "a4f373d495b762274b9e54225d939da7a8c198f8986fe70bb4474da42436b6e1",
+        "store": "cb5aae153abc1208d6aacf9fe67a90f37cfeb512dbc74acf76b054cfe0404638",
+        "schema": "88317fdba7b8b7d2604c1370769cacb5f0622b7b6b4458b7ab3f78ac6b4c0dc2",
+        "query": "c596e08c8681464adbe603eb1b1d643ef46aee76ae91a84d0cfeb3bef5ed9ec2",
+        "coordinates": "6b2f51f083a5622d4d1ad2334692f003386f6afc80d1ffaddb996470034aa388",
+        "inputs": "c91a0471790dc593a906ce5c230fa8149be93f65c679f052b324be985f82cdd5"
+      },
+      "snapshot": 1,
+      "context": "sc2:context:61bfb7842c8a1f4f6be58d92d1b9df28d9518391299eb4ec5860cf9b4bc4ed63",
+      "status": "partial",
+      "accepted": 10,
+      "rejected": 0,
+      "occurrences": 1000000,
+      "calls": "unsupported",
+      "durationMs": 522316,
+      "publicationMs": 16768.147,
+      "publicationStagesMs": {
+        "content-key": 0.163,
+        "membership": 3446.125,
+        "support-eligibility": 0.171,
+        "navigation": 12678.943,
+        "symbols": 0.64,
+        "call-summary": 0.053,
+        "pointer-and-commit": 641.98
+      },
+      "sqlitePragmas": {
+        "journal_mode": "wal",
+        "synchronous": 2
+      },
+      "limits": {
+        "maxIndexBytes": 10737418240,
+        "maxDocumentBytes": 16777216,
+        "maxSourceBytes": 8388608,
+        "maxOccurrencesPerDocument": 100000,
+        "maxRelationshipsPerSymbol": 1024,
+        "maxDocuments": 100000,
+        "batch": 500
+      },
+      "protocolDigest": "b38021b65ef90cbbf6af9c829ff75192859ad9b5da05439ef154bea4ceb2bf03",
+      "counts": {
+        "occurrences": 1000000,
+        "facts": 2000012,
+        "claims": 2000012,
+        "navigation": 2000012,
+        "provenance": 1,
+        "calls": 0
+      },
+      "integrity": "ok",
+      "databaseBytes": 3023015936,
+      "maxRssKiB": 624528,
+      "query": {
+        "firstReadMs": 4.066,
+        "warmP95Ms": 1.24,
+        "bytes": 31868,
+        "work": {
+          "candidateRows": 51,
+          "supportRows": 0,
+          "metadataRows": 9,
+          "returnedRows": 35,
+          "globalGraphMaterialized": false
+        }
+      },
+      "callsCreated": 0
+    }
+  ],
+  "scipCharacterization": [
+    {
+      "scope": "initial importer and eligibility scan, before partial supported-claim index and subsequent hardening",
+      "measurement": {
+        "workload": "synthetic streamed SCIP, 100k occurrences/document, one symbol, unique line anchors, definition + references/highlighting; no compiler or LOC qualification",
+        "count": 1000000,
+        "documents": 10,
+        "artifactBytes": 62835900,
+        "startedAt": "2026-10-14T11:19:58.125Z",
+        "environment": {
+          "node": "v25.9.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "cpu": "Apple M5",
+          "memoryBytes": 17179869184
+        },
+        "implementationDigests": {
+          "scip-import": "29dbc799a5240c9cc1b3c5d608e7c21d43bee4149c9178405e959247334141ce",
+          "scip-wire": "fd3351291de784f85c9e7347cddc917beee7528bb4017beacfa0d31f1ac88595",
+          "store": "5c8a90940e40d371c4ea6f9595e7e6718597021d6e2273dcf24d08273c6c6fb6",
+          "schema": "6d9c31da573ca002d54aa575b6ef49637965a6bec86a83b4483b2ed082bcb3fe",
+          "query": "6b71a3e7354853a281f6e0793d83a18748113826549581d44db98a900ae3e3c5",
+          "coordinates": "5b3be893f67280bd1989b5c985eebde9bff6f9e328eafb3dbd2ad08aaad814b3",
+          "inputs": "e0473178c4a3c36f6339fb9353a5130327b8598e1cf33e28741221d1a90d5341"
+        },
+        "snapshot": 1,
+        "context": "sc2:context:d905e8664fb400ce5c96c8fb38fbd87db65b6a9b9a63e390cf0b385e8a587547",
+        "status": "partial",
+        "accepted": 10,
+        "rejected": 0,
+        "occurrences": 1000000,
+        "calls": "unsupported",
+        "durationMs": 512333,
+        "publicationMs": 20024.695,
+        "publicationStagesMs": {
+          "content-key": 0.168,
+          "membership": 3618.873,
+          "support-eligibility": 2783.019,
+          "navigation": 12900.742,
+          "symbols": 0.37,
+          "call-summary": 0.053,
+          "pointer-and-commit": 721.388
+        },
+        "sqlitePragmas": {
+          "journal_mode": "wal",
+          "synchronous": 2
+        },
+        "limits": {
+          "maxIndexBytes": 10737418240,
+          "maxDocumentBytes": 16777216,
+          "maxSourceBytes": 8388608,
+          "maxOccurrencesPerDocument": 100000,
+          "maxDocuments": 100000,
+          "batch": 500
+        },
+        "protocolDigest": "b38021b65ef90cbbf6af9c829ff75192859ad9b5da05439ef154bea4ceb2bf03",
+        "counts": {
+          "occurrences": 1000000,
+          "facts": 2000011,
+          "claims": 2000011,
+          "navigation": 2000011,
+          "provenance": 1,
+          "calls": 0
+        },
+        "integrity": "ok",
+        "databaseBytes": 3025448960,
+        "maxRssKiB": 647536,
+        "query": {
+          "firstReadMs": 13.62,
+          "warmP95Ms": 1.799,
+          "bytes": 31942,
+          "work": {
+            "candidateRows": 51,
+            "supportRows": 0,
+            "metadataRows": 9,
+            "returnedRows": 35,
+            "globalGraphMaterialized": false
+          }
+        },
+        "callsCreated": 0
+      }
+    },
+    {
+      "scope": "supported-claim partial index plus cooperative batching; before filename-only inventory and final mapping hardening",
+      "measurement": {
+        "workload": "synthetic streamed SCIP, 100k occurrences/document, one symbol, unique line anchors, definition + references/highlighting; no compiler or LOC qualification",
+        "count": 1000000,
+        "documents": 10,
+        "artifactBytes": 62835900,
+        "startedAt": "2026-10-14T11:44:41.931Z",
+        "environment": {
+          "node": "v25.9.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "cpu": "Apple M5",
+          "memoryBytes": 17179869184
+        },
+        "implementationDigests": {
+          "scip-import": "61f0bb900fd4bfa0a5b318e7be9ec200654f7ad5b8c314ddc7580569f41a1f62",
+          "scip-wire": "cb2baf288fd956ab298255e97c939fd09bc14567c087fa9f69f044c6c15bedd3",
+          "store": "cb5aae153abc1208d6aacf9fe67a90f37cfeb512dbc74acf76b054cfe0404638",
+          "schema": "88317fdba7b8b7d2604c1370769cacb5f0622b7b6b4458b7ab3f78ac6b4c0dc2",
+          "query": "c596e08c8681464adbe603eb1b1d643ef46aee76ae91a84d0cfeb3bef5ed9ec2",
+          "coordinates": "5b3be893f67280bd1989b5c985eebde9bff6f9e328eafb3dbd2ad08aaad814b3",
+          "inputs": "e0473178c4a3c36f6339fb9353a5130327b8598e1cf33e28741221d1a90d5341"
+        },
+        "snapshot": 1,
+        "context": "sc2:context:5ed5a1ca2b0bbebde19fd2cf079a6b9428364fb00cdbe11048752fb172cc7540",
+        "status": "partial",
+        "accepted": 10,
+        "rejected": 0,
+        "occurrences": 1000000,
+        "calls": "unsupported",
+        "durationMs": 578092,
+        "publicationMs": 17417.001,
+        "publicationStagesMs": {
+          "content-key": 0.173,
+          "membership": 3574.463,
+          "support-eligibility": 0.129,
+          "navigation": 13255.508,
+          "symbols": 0.295,
+          "call-summary": 0.062,
+          "pointer-and-commit": 586.29
+        },
+        "sqlitePragmas": {
+          "journal_mode": "wal",
+          "synchronous": 2
+        },
+        "limits": {
+          "maxIndexBytes": 10737418240,
+          "maxDocumentBytes": 16777216,
+          "maxSourceBytes": 8388608,
+          "maxOccurrencesPerDocument": 100000,
+          "maxRelationshipsPerSymbol": 1024,
+          "maxDocuments": 100000,
+          "batch": 500
+        },
+        "protocolDigest": "b38021b65ef90cbbf6af9c829ff75192859ad9b5da05439ef154bea4ceb2bf03",
+        "counts": {
+          "occurrences": 1000000,
+          "facts": 2000011,
+          "claims": 2000011,
+          "navigation": 2000011,
+          "provenance": 1,
+          "calls": 0
+        },
+        "integrity": "ok",
+        "databaseBytes": 3025747968,
+        "maxRssKiB": 608528,
+        "query": {
+          "firstReadMs": 11.626,
+          "warmP95Ms": 1.201,
+          "bytes": 31868,
+          "work": {
+            "candidateRows": 51,
+            "supportRows": 0,
+            "metadataRows": 9,
+            "returnedRows": 35,
+            "globalGraphMaterialized": false
+          }
+        },
+        "callsCreated": 0
+      }
+    },
+    {
+      "scope": "filename-only inventory and strict wire validation; before final physical-line/mapping-version hardening",
+      "measurement": {
+        "workload": "synthetic streamed SCIP, 100k occurrences/document, one symbol, unique line anchors, definition + references/highlighting; no compiler or LOC qualification",
+        "count": 1000000,
+        "documents": 10,
+        "artifactBytes": 62835900,
+        "startedAt": "2026-10-14T15:54:10.462Z",
+        "environment": {
+          "node": "v25.9.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "cpu": "Apple M5",
+          "memoryBytes": 17179869184
+        },
+        "implementationDigests": {
+          "scip-import": "a8883c9d31fb2476a2efb58ca9f88e4ba44fdd9d19b0fffc08e2e3593f7ec214",
+          "scip-wire": "a4f373d495b762274b9e54225d939da7a8c198f8986fe70bb4474da42436b6e1",
+          "store": "cb5aae153abc1208d6aacf9fe67a90f37cfeb512dbc74acf76b054cfe0404638",
+          "schema": "88317fdba7b8b7d2604c1370769cacb5f0622b7b6b4458b7ab3f78ac6b4c0dc2",
+          "query": "c596e08c8681464adbe603eb1b1d643ef46aee76ae91a84d0cfeb3bef5ed9ec2",
+          "coordinates": "5b3be893f67280bd1989b5c985eebde9bff6f9e328eafb3dbd2ad08aaad814b3",
+          "inputs": "c91a0471790dc593a906ce5c230fa8149be93f65c679f052b324be985f82cdd5"
+        },
+        "snapshot": 1,
+        "context": "sc2:context:5c9908046aae89613ff95fe09f206ca40024691cf40d7d6dab5fd639ce87b0ca",
+        "status": "partial",
+        "accepted": 10,
+        "rejected": 0,
+        "occurrences": 1000000,
+        "calls": "unsupported",
+        "durationMs": 549038,
+        "publicationMs": 15741.203,
+        "publicationStagesMs": {
+          "content-key": 0.175,
+          "membership": 3282.191,
+          "support-eligibility": 0.109,
+          "navigation": 11685.768,
+          "symbols": 0.552,
+          "call-summary": 0.059,
+          "pointer-and-commit": 772.277
+        },
+        "sqlitePragmas": {
+          "journal_mode": "wal",
+          "synchronous": 2
+        },
+        "limits": {
+          "maxIndexBytes": 10737418240,
+          "maxDocumentBytes": 16777216,
+          "maxSourceBytes": 8388608,
+          "maxOccurrencesPerDocument": 100000,
+          "maxRelationshipsPerSymbol": 1024,
+          "maxDocuments": 100000,
+          "batch": 500
+        },
+        "protocolDigest": "b38021b65ef90cbbf6af9c829ff75192859ad9b5da05439ef154bea4ceb2bf03",
+        "counts": {
+          "occurrences": 1000000,
+          "facts": 2000012,
+          "claims": 2000012,
+          "navigation": 2000012,
+          "provenance": 1,
+          "calls": 0
+        },
+        "integrity": "ok",
+        "databaseBytes": 3022913536,
+        "maxRssKiB": 543392,
+        "query": {
+          "firstReadMs": 9.6,
+          "warmP95Ms": 1.239,
+          "bytes": 31868,
+          "work": {
+            "candidateRows": 51,
+            "supportRows": 0,
+            "metadataRows": 9,
+            "returnedRows": 35,
+            "globalGraphMaterialized": false
+          }
+        },
+        "callsCreated": 0
+      }
+    }
+  ],
+  "realRepositories": [
+    {
+      "scope": "final source including inspector reset, native mapping hardened; facts still partial",
+      "measurement": {
+        "repository": {
+          "root": "/Users/xiyuanpan/prograph",
+          "identity": "52f21d49288e74c1",
+          "gitCommit": "6870c1fd32133b7da8aab844b5eab65a225af347"
+        },
+        "startedAt": "2026-10-14T17:05:08.611Z",
+        "elapsedMs": 18613,
+        "sourceFiles": 105,
+        "sourceLines": 11509,
+        "sourceInventoryDigest": "c684fa335bb3eadf0c9c520109780fb30b752b2d69f46918eb90ca825864e2ef",
+        "legacy": {
+          "schema": "1.2.0",
+          "nodes": 4406,
+          "edges": 10081,
+          "diagnostics": 1853
+        },
+        "semantic": {
+          "format": 2,
+          "status": "partial",
+          "snapshot": 1,
+          "context": "sc2:context:11a3f7933db9c8d36cdea290e45ac73960d19c020f65d93b9e2fbe306d84a0bb",
+          "durationMs": 16123
+        },
+        "unitTimings": [
+          {
+            "partition": "legacy/full",
+            "stageAndSealMs": 667.043
+          },
+          {
+            "partition": "context/typescript/project:tests/fixtures/mixed/tsconfig.json",
+            "stageAndSealMs": 0.261
+          },
+          {
+            "partition": "typescript/project:tests/fixtures/mixed/tsconfig.json",
+            "stageAndSealMs": 90.777
+          },
+          {
+            "partition": "typescript/project:tests/fixtures/mixed/tsconfig.json/pass:call-summary@1",
+            "stageAndSealMs": 0.876
+          },
+          {
+            "partition": "context/typescript/root",
+            "stageAndSealMs": 0.261
+          },
+          {
+            "partition": "typescript/root",
+            "stageAndSealMs": 5912.944
+          },
+          {
+            "partition": "typescript/root/pass:call-summary@1",
+            "stageAndSealMs": 620.499
+          },
+          {
+            "partition": "context/typescript/project:tsconfig.node.json",
+            "stageAndSealMs": 0.315
+          },
+          {
+            "partition": "typescript/project:tsconfig.node.json",
+            "stageAndSealMs": 4585.399
+          },
+          {
+            "partition": "typescript/project:tsconfig.node.json/pass:call-summary@1",
+            "stageAndSealMs": 419.853
+          },
+          {
+            "partition": "context/typescript/project:tsconfig.ui.json",
+            "stageAndSealMs": 0.233
+          },
+          {
+            "partition": "typescript/project:tsconfig.ui.json",
+            "stageAndSealMs": 1681.587
+          },
+          {
+            "partition": "typescript/project:tsconfig.ui.json/pass:call-summary@1",
+            "stageAndSealMs": 89.751
+          },
+          {
+            "partition": "context/rust/project:tests/fixtures/malformed/Cargo.toml",
+            "stageAndSealMs": 0.272
+          },
+          {
+            "partition": "context/rust/project:tests/fixtures/mixed/src-tauri/Cargo.toml",
+            "stageAndSealMs": 0.183
+          },
+          {
+            "partition": "context/rust/project:tests/fixtures/rust-quality/Cargo.toml",
+            "stageAndSealMs": 0.199
+          },
+          {
+            "partition": "context/rust/project:tests/fixtures/rust-verified-misses/Cargo.toml",
+            "stageAndSealMs": 0.288
+          }
+        ],
+        "units": [
+          {
+            "key": "typescript/project:tests/fixtures/mixed/tsconfig.json",
+            "language": "typescript",
+            "context": "sc2:context:ad83a1a0faf148c8f2767c2a379a927f86783ef10dcc330e74d801fb6d0aa558",
+            "sources": 3,
+            "gaps": []
+          },
+          {
+            "key": "typescript/root",
+            "language": "typescript",
+            "context": "sc2:context:11a3f7933db9c8d36cdea290e45ac73960d19c020f65d93b9e2fbe306d84a0bb",
+            "sources": 77,
+            "gaps": []
+          },
+          {
+            "key": "typescript/project:tsconfig.node.json",
+            "language": "typescript",
+            "context": "sc2:context:20207264d2bb102623963038c54b9e301275478885fd4301b39ec73e0fd1eddc",
+            "sources": 48,
+            "gaps": []
+          },
+          {
+            "key": "typescript/project:tsconfig.ui.json",
+            "language": "typescript",
+            "context": "sc2:context:a6b01cc8cbff852bdfce71306069083a485dbf98bbca30fa40a300d57727ddc0",
+            "sources": 19,
+            "gaps": []
+          },
+          {
+            "key": "rust/project:tests/fixtures/malformed/Cargo.toml",
+            "language": "rust",
+            "context": "sc2:context:9854a54c6813c398ec5964b18f65975cf2cbfd45d7c42a1fbdc4cffaabb0529f",
+            "sources": 1,
+            "gaps": [
+              "Manifest observed; interpreter/classpath/SDK/features/tags/targets are not compiler-qualified by discovery alone"
+            ]
+          },
+          {
+            "key": "rust/project:tests/fixtures/mixed/src-tauri/Cargo.toml",
+            "language": "rust",
+            "context": "sc2:context:aaf4500cf28175d8e94ebe72e9ae1bf5e16eb7b3f407b2cfae9c8f707a0a871a",
+            "sources": 3,
+            "gaps": [
+              "Manifest observed; interpreter/classpath/SDK/features/tags/targets are not compiler-qualified by discovery alone"
+            ]
+          },
+          {
+            "key": "rust/project:tests/fixtures/rust-quality/Cargo.toml",
+            "language": "rust",
+            "context": "sc2:context:fb600635629e66c6dc835f4b1af99992372713f93f9936d7c265ba65e152aa0a",
+            "sources": 8,
+            "gaps": [
+              "Manifest observed; interpreter/classpath/SDK/features/tags/targets are not compiler-qualified by discovery alone"
+            ]
+          },
+          {
+            "key": "rust/project:tests/fixtures/rust-verified-misses/Cargo.toml",
+            "language": "rust",
+            "context": "sc2:context:992910e6fbb27e031a7b2f46adae2797d093eee76c31d9d2bd2b19cfbcc66e54",
+            "sources": 8,
+            "gaps": [
+              "Manifest observed; interpreter/classpath/SDK/features/tags/targets are not compiler-qualified by discovery alone"
+            ]
+          }
+        ],
+        "counts": {
+          "occurrences": 75175,
+          "facts": 125731,
+          "claims": 125731,
+          "navigation": 125731,
+          "calls": 7555
+        },
+        "queries": [
+          {
+            "name": "SemanticStore",
+            "ms": 1.213,
+            "symbols": 2,
+            "definitions": 1,
+            "references": 5,
+            "work": {
+              "candidateRows": 6,
+              "supportRows": 0,
+              "metadataRows": 9,
+              "returnedRows": 5,
+              "globalGraphMaterialized": false
+            }
+          },
+          {
+            "name": "indexClang",
+            "ms": 0.63,
+            "symbols": 2,
+            "definitions": 1,
+            "references": 5,
+            "work": {
+              "candidateRows": 6,
+              "supportRows": 0,
+              "metadataRows": 9,
+              "returnedRows": 5,
+              "globalGraphMaterialized": false
+            }
+          },
+          {
+            "name": "invoke",
+            "ms": 0.099,
+            "symbols": 0,
+            "definitions": 0,
+            "references": 0,
+            "work": {
+              "candidateRows": 0,
+              "supportRows": 0,
+              "metadataRows": 9,
+              "returnedRows": 0,
+              "globalGraphMaterialized": false
+            }
+          }
+        ],
+        "integrity": "ok",
+        "databaseBytes": 232853504,
+        "maxRssKiB": 1289008,
+        "implementationDigests": {
+          "typescript": "56212b7d10c2025395cf62c8c3dec29164f30d33ba892254be8951d765f1fb5e",
+          "projects": "0fd87bb5664c78bfcf28e2bd95821223ee5f8670c22bc46d8c610947674f955d",
+          "passes": "0e19b6b32396d82be22f18ffd22be5b6e2f35673941503b61941684d5d551de5",
+          "provider-runs": "142e045330375d1cff313faf000d40a33db5b36e60fc63f2881142da5862bf39",
+          "store": "cb5aae153abc1208d6aacf9fe67a90f37cfeb512dbc74acf76b054cfe0404638",
+          "schema": "88317fdba7b8b7d2604c1370769cacb5f0622b7b6b4458b7ab3f78ac6b4c0dc2"
+        }
+      }
+    },
+    {
+      "scope": "installed protobufjs 8.8.0 with observed source inventory; Git commit is parent ProGraph HEAD, not an upstream protobufjs pin; prior mapping/retention hardening revision",
+      "measurement": {
+        "repository": {
+          "root": "/Users/xiyuanpan/prograph/node_modules/protobufjs",
+          "identity": "c8fbcefd11e4a1f9",
+          "gitCommit": "6870c1fd32133b7da8aab844b5eab65a225af347"
+        },
+        "startedAt": "2026-10-14T11:39:48.272Z",
+        "elapsedMs": 4238,
+        "sourceFiles": 69,
+        "sourceLines": 18742,
+        "sourceInventoryDigest": "8d8f976a182204eca1429a56f97efde4e9d30a577352153be21413c83d667b7f",
+        "legacy": {
+          "schema": "1.2.0",
+          "nodes": 2231,
+          "edges": 4369,
+          "diagnostics": 787
+        },
+        "semantic": {
+          "format": 2,
+          "status": "partial",
+          "snapshot": 1,
+          "context": "sc2:context:8032f22cb98396a75944ef9412bc9d6042e1d44238610a70a3281b839c22ec10",
+          "durationMs": 3342
+        },
+        "unitTimings": [
+          {
+            "partition": "legacy/full",
+            "stageAndSealMs": 234.643
+          },
+          {
+            "partition": "context/typescript/root",
+            "stageAndSealMs": 0.314
+          },
+          {
+            "partition": "typescript/root",
+            "stageAndSealMs": 273.631
+          },
+          {
+            "partition": "typescript/root/pass:call-summary@1",
+            "stageAndSealMs": 0.663
+          },
+          {
+            "partition": "context/typescript/project:<inferred>",
+            "stageAndSealMs": 0.234
+          },
+          {
+            "partition": "typescript/project:<inferred>",
+            "stageAndSealMs": 2250.211
+          },
+          {
+            "partition": "typescript/project:<inferred>/pass:call-summary@1",
+            "stageAndSealMs": 137.13
+          }
+        ],
+        "units": [
+          {
+            "key": "typescript/root",
+            "language": "typescript",
+            "context": "sc2:context:8032f22cb98396a75944ef9412bc9d6042e1d44238610a70a3281b839c22ec10",
+            "sources": 16,
+            "gaps": []
+          },
+          {
+            "key": "typescript/project:<inferred>",
+            "language": "typescript",
+            "context": "sc2:context:ef83623b9dfdbf210e8e4be2cb1b8d8b8409044ed3a64a06fdc679c58ed9e2ad",
+            "sources": 53,
+            "gaps": [
+              "Sources outside compiler-config selection use an explicit inferred unit"
+            ]
+          }
+        ],
+        "counts": {
+          "occurrences": 22897,
+          "facts": 38302,
+          "claims": 38302,
+          "navigation": 38302,
+          "calls": 1532
+        },
+        "queries": [
+          {
+            "name": "Root",
+            "ms": 1.212,
+            "symbols": 5,
+            "definitions": 3,
+            "references": 5,
+            "work": {
+              "candidateRows": 6,
+              "supportRows": 0,
+              "metadataRows": 7,
+              "returnedRows": 5,
+              "globalGraphMaterialized": false
+            }
+          },
+          {
+            "name": "Type",
+            "ms": 0.685,
+            "symbols": 5,
+            "definitions": 5,
+            "references": 5,
+            "work": {
+              "candidateRows": 6,
+              "supportRows": 0,
+              "metadataRows": 7,
+              "returnedRows": 5,
+              "globalGraphMaterialized": false
+            }
+          },
+          {
+            "name": "parse",
+            "ms": 0.337,
+            "symbols": 3,
+            "definitions": 2,
+            "references": 0,
+            "work": {
+              "candidateRows": 0,
+              "supportRows": 0,
+              "metadataRows": 7,
+              "returnedRows": 0,
+              "globalGraphMaterialized": false
+            }
+          }
+        ],
+        "integrity": "ok",
+        "databaseBytes": 70127616,
+        "maxRssKiB": 653600,
+        "implementationDigests": {
+          "typescript": "9e3d57acf3aaaec747e155857359674825b79bb78666ca97ea81afa5176dd399",
+          "projects": "0fd87bb5664c78bfcf28e2bd95821223ee5f8670c22bc46d8c610947674f955d",
+          "passes": "0e19b6b32396d82be22f18ffd22be5b6e2f35673941503b61941684d5d551de5",
+          "provider-runs": "16832ccdda89f1640cf222b355a7d5299d18e917566105b8bd6078e83f8b771d",
+          "store": "cb5aae153abc1208d6aacf9fe67a90f37cfeb512dbc74acf76b054cfe0404638",
+          "schema": "88317fdba7b8b7d2604c1370769cacb5f0622b7b6b4458b7ab3f78ac6b4c0dc2"
+        }
+      }
+    },
+    {
+      "scope": "available mixed-language Pastey source; Rust remains conservative legacy analysis, not native compiler indexing; prior mapping/retention hardening revision",
+      "measurement": {
+        "repository": {
+          "root": "/Users/xiyuanpan/Pastey",
+          "identity": "0992c561ba19ab05",
+          "gitCommit": "eaf2e1eb0ba3b0001eb91a1a58cb8e48ae44942c"
+        },
+        "startedAt": "2026-10-14T11:41:58.936Z",
+        "elapsedMs": 38983,
+        "sourceFiles": 232,
+        "sourceLines": 156563,
+        "sourceInventoryDigest": "18bc11d12e127ecbacb1e6423eade212dde7db90491e023d1b16053656e68a78",
+        "legacy": {
+          "schema": "1.2.0",
+          "nodes": 35970,
+          "edges": 69570,
+          "diagnostics": 42311
+        },
+        "semantic": {
+          "format": 2,
+          "status": "partial",
+          "snapshot": 1,
+          "context": "sc2:context:0e4ee4930014e8d8cbd134a9b4674f63a0eed5b77a043493382f641064cacdf4",
+          "durationMs": 17073
+        },
+        "unitTimings": [
+          {
+            "partition": "legacy/full",
+            "stageAndSealMs": 8039.566
+          },
+          {
+            "partition": "context/typescript/root",
+            "stageAndSealMs": 0.738
+          },
+          {
+            "partition": "typescript/root",
+            "stageAndSealMs": 4546.685
+          },
+          {
+            "partition": "typescript/root/pass:call-summary@1",
+            "stageAndSealMs": 277.149
+          },
+          {
+            "partition": "context/typescript/project:tsconfig.node.json",
+            "stageAndSealMs": 0.26
+          },
+          {
+            "partition": "typescript/project:tsconfig.node.json",
+            "stageAndSealMs": 46.477
+          },
+          {
+            "partition": "typescript/project:tsconfig.node.json/pass:call-summary@1",
+            "stageAndSealMs": 0.907
+          },
+          {
+            "partition": "context/typescript/project:<inferred>",
+            "stageAndSealMs": 0.711
+          },
+          {
+            "partition": "typescript/project:<inferred>",
+            "stageAndSealMs": 1922.697
+          },
+          {
+            "partition": "typescript/project:<inferred>/pass:call-summary@1",
+            "stageAndSealMs": 146.315
+          },
+          {
+            "partition": "context/rust/project:docs/research/native-nat-traversal-poc/Cargo.toml",
+            "stageAndSealMs": 0.244
+          },
+          {
+            "partition": "context/rust/project:src-tauri/Cargo.toml",
+            "stageAndSealMs": 0.223
+          },
+          {
+            "partition": "context/rust/project:src-tauri/crates/codex-utils-absolute-path/Cargo.toml",
+            "stageAndSealMs": 0.192
+          },
+          {
+            "partition": "context/rust/project:src-tauri/crates/codex-utils-pty/Cargo.toml",
+            "stageAndSealMs": 0.272
+          },
+          {
+            "partition": "context/rust/project:src-tauri/crates/codex-utils-string/Cargo.toml",
+            "stageAndSealMs": 0.227
+          },
+          {
+            "partition": "context/rust/project:src-tauri/crates/windows-codex-sandbox/Cargo.toml",
+            "stageAndSealMs": 0.183
+          }
+        ],
+        "units": [
+          {
+            "key": "typescript/root",
+            "language": "typescript",
+            "context": "sc2:context:0e4ee4930014e8d8cbd134a9b4674f63a0eed5b77a043493382f641064cacdf4",
+            "sources": 54,
+            "gaps": [
+              "Referenced projects are separate units; emitted declaration build outputs must already exist"
+            ]
+          },
+          {
+            "key": "typescript/project:tsconfig.node.json",
+            "language": "typescript",
+            "context": "sc2:context:93bf9beb008028331805fae08cfd87a7463a9ad497f55cd2df47a491ef351f13",
+            "sources": 1,
+            "gaps": []
+          },
+          {
+            "key": "typescript/project:<inferred>",
+            "language": "typescript",
+            "context": "sc2:context:bb1f7dec4221009e4e597512fb211a678074dbbbbfa39bdb8f8197c7b4563204",
+            "sources": 16,
+            "gaps": [
+              "Sources outside compiler-config selection use an explicit inferred unit"
+            ]
+          },
+          {
+            "key": "rust/project:docs/research/native-nat-traversal-poc/Cargo.toml",
+            "language": "rust",
+            "context": "sc2:context:e0175121ea747eeca9fab6e5af67adc49b81247bdd5c1c54cce8cb8981485000",
+            "sources": 1,
+            "gaps": [
+              "Manifest observed; interpreter/classpath/SDK/features/tags/targets are not compiler-qualified by discovery alone"
+            ]
+          },
+          {
+            "key": "rust/project:src-tauri/Cargo.toml",
+            "language": "rust",
+            "context": "sc2:context:3527fe763fb1a84490725569cc96bb51e852890ad87673902bf8fd5cd2f571af",
+            "sources": 158,
+            "gaps": [
+              "Manifest observed; interpreter/classpath/SDK/features/tags/targets are not compiler-qualified by discovery alone"
+            ]
+          },
+          {
+            "key": "rust/project:src-tauri/crates/codex-utils-absolute-path/Cargo.toml",
+            "language": "rust",
+            "context": "sc2:context:376ceb6e9678e17389b5c5e5ed6b2ccdab403fca7271f765e3a178992aea9de9",
+            "sources": 2,
+            "gaps": [
+              "Manifest observed; interpreter/classpath/SDK/features/tags/targets are not compiler-qualified by discovery alone"
+            ]
+          },
+          {
+            "key": "rust/project:src-tauri/crates/codex-utils-pty/Cargo.toml",
+            "language": "rust",
+            "context": "sc2:context:ac2fee6d72c9985fb50de083a5c63f8f1f18dff275aacfd13cc478df32673ea4",
+            "sources": 18,
+            "gaps": [
+              "Manifest observed; interpreter/classpath/SDK/features/tags/targets are not compiler-qualified by discovery alone"
+            ]
+          },
+          {
+            "key": "rust/project:src-tauri/crates/codex-utils-string/Cargo.toml",
+            "language": "rust",
+            "context": "sc2:context:eef1ca13378cb0ba5f208e38c9c1f9e97861e9967ddbba5a89da51c479e0b6ee",
+            "sources": 4,
+            "gaps": [
+              "Manifest observed; interpreter/classpath/SDK/features/tags/targets are not compiler-qualified by discovery alone"
+            ]
+          },
+          {
+            "key": "rust/project:src-tauri/crates/windows-codex-sandbox/Cargo.toml",
+            "language": "rust",
+            "context": "sc2:context:e6d8bcdd3e3207122ef839232a684ddd1272db62410d877e11c539a3759e7bc1",
+            "sources": 71,
+            "gaps": [
+              "Manifest observed; interpreter/classpath/SDK/features/tags/targets are not compiler-qualified by discovery alone"
+            ]
+          }
+        ],
+        "counts": {
+          "occurrences": 35940,
+          "facts": 157548,
+          "claims": 157548,
+          "navigation": 157548,
+          "calls": 3343
+        },
+        "queries": [
+          {
+            "name": "invoke",
+            "ms": 0.605,
+            "symbols": 0,
+            "definitions": 0,
+            "references": 0,
+            "work": {
+              "candidateRows": 0,
+              "supportRows": 0,
+              "metadataRows": 9,
+              "returnedRows": 0,
+              "globalGraphMaterialized": false
+            }
+          },
+          {
+            "name": "App",
+            "ms": 0.535,
+            "symbols": 1,
+            "definitions": 1,
+            "references": 2,
+            "work": {
+              "candidateRows": 2,
+              "supportRows": 0,
+              "metadataRows": 9,
+              "returnedRows": 2,
+              "globalGraphMaterialized": false
+            }
+          },
+          {
+            "name": "return_to_origin",
+            "ms": 0.107,
+            "symbols": 0,
+            "definitions": 0,
+            "references": 0,
+            "work": {
+              "candidateRows": 0,
+              "supportRows": 0,
+              "metadataRows": 9,
+              "returnedRows": 0,
+              "globalGraphMaterialized": false
+            }
+          }
+        ],
+        "integrity": "ok",
+        "databaseBytes": 335486976,
+        "maxRssKiB": 1487984,
+        "implementationDigests": {
+          "typescript": "d7ee0408b7a81b07ec63bdb12a727ca2363738029e527c8a084fa45512250f72",
+          "projects": "0fd87bb5664c78bfcf28e2bd95821223ee5f8670c22bc46d8c610947674f955d",
+          "passes": "0e19b6b32396d82be22f18ffd22be5b6e2f35673941503b61941684d5d551de5",
+          "provider-runs": "16832ccdda89f1640cf222b355a7d5299d18e917566105b8bd6078e83f8b771d",
+          "store": "cb5aae153abc1208d6aacf9fe67a90f37cfeb512dbc74acf76b054cfe0404638",
+          "schema": "88317fdba7b8b7d2604c1370769cacb5f0622b7b6b4458b7ab3f78ac6b4c0dc2"
+        }
+      }
+    }
+  ],
+  "recovery": {
+    "node": "v25.9.0",
+    "probes": [
+      {
+        "point": "before-seal",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "before-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "during-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "after-publish",
+        "exitCode": 57,
+        "activeSnapshot": 2,
+        "visible": [
+          "other"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      }
+    ],
+    "corruption": {
+      "refused": true,
+      "unchanged": true
+    }
+  },
+  "validation": {
+    "tests": {
+      "success": true,
+      "total": 101,
+      "passed": 101,
+      "failed": 0,
+      "pending": 0,
+      "startedAtEpochMs": 1791996413550,
+      "command": "npm test -- --reporter=default --reporter=json --outputFile=/private/tmp/prograph-step2-tests.json",
+      "files": [
+        {
+          "file": "tests/core.test.ts",
+          "status": "passed",
+          "tests": 41
+        },
+        {
+          "file": "tests/polyglot.test.ts",
+          "status": "passed",
+          "tests": 13
+        },
+        {
+          "file": "tests/semantic-core.test.ts",
+          "status": "passed",
+          "tests": 17
+        },
+        {
+          "file": "tests/semantic-ingestion.test.ts",
+          "status": "passed",
+          "tests": 30
+        }
+      ]
+    },
+    "build": {
+      "passed": true,
+      "command": "npm run build"
+    },
+    "typecheckAndLint": {
+      "passed": true,
+      "command": "npm run lint",
+      "scope": "node and UI TypeScript; lint is the package typecheck alias"
+    },
+    "ui": {
+      "passed": true,
+      "target": "built local UI, custom recorded self index, Chinese locale",
+      "browserConsoleErrors": [],
+      "scenarios": [
+        "search and inspect SemanticStore",
+        "explicit project variant selection",
+        "bounded definition/reference samples and partial/freshness/truncation notices",
+        "same-named analyze nodes: previous selection/evidence clears before new selection",
+        "correct new cargoTomlAdapter definition evidence"
+      ],
+      "proof": [
+        "semantic-core-step2-ui.png",
+        "semantic-core-step2-inspector-reset.png"
+      ],
+      "scope": "native core tests ran before the final one-line inspector identity-reset fix; final build/typecheck and browser regression validated that UI-only fix; source-freshness notices were preserved"
+    }
+  },
+  "providerExperiment": {
+    "package": "@sourcegraph/scip-python",
+    "version": "0.6.6",
+    "tarballSha256": "be8e0a1ec180423c60e9f2c2672c208f49a35ab690ac0f8f1259e4223dbd6e42",
+    "result": "failed before indexing; no semantic index produced or qualified",
+    "observedError": "TypeError: Cannot assign to read only property 'resolve' of object '#<Object>'",
+    "cause": "bundled @yarnpkg/fslib mutates Node path.resolve under Node 25 permission mode",
+    "restrictions": [
+      "OS network deny",
+      "OS process-fork deny",
+      "OS user-directory reads deny",
+      "OS writes restricted to disposable corpus and devices",
+      "Node permissions restricting filesystem access and process spawning"
+    ],
+    "isolationProfile": "(version 1)\n(allow default)\n(deny network*)\n(deny signal)\n(deny process-fork)\n(deny file-read* (subpath \"/Users\") (subpath \"/System/Volumes/Data/Users\"))\n(deny file-write* (require-all (require-not (subpath \"/private/tmp/prograph-python-corpus\")) (require-not (subpath \"/dev\"))))\n",
+    "relaxedForSuccess": false
+  },
+  "acceptanceAudit": "../semantic-core-step2.md#step-2-acceptance-audit"
+}

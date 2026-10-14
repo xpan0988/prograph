@@ -633,6 +633,7 @@ test("recovers from malformed Rust source", async () => {
   const malformedOutput = await mkdtemp(path.join(tmpdir(), "prograph-malformed-"));
   try {
     const result = await analyzeRepository(path.resolve("tests/fixtures/malformed"), { output: malformedOutput });
+    expect(result.graph.repository.root).toBe(path.resolve("tests/fixtures/malformed"));
     expect(result.graph.nodes.some((node) => node.name === "still_visible")).toBe(true);
     expect(result.graph.diagnostics.some((diagnostic) => diagnostic.code === "rust-parser-error-node")).toBe(true);
   } finally {

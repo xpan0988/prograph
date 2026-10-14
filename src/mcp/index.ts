@@ -6,7 +6,7 @@ import { formatQueryOutput } from "../core/query/output-mode.js";
 import { repositoryStatus } from "../core/analysis/state.js";
 import packageJson from "../../package.json" with { type: "json" };
 import type { GraphScope } from "../core/graph/schema.js";
-import { semanticQueryForRepository } from "../core/semantic/query.js";
+import { semanticQueryForRepository, SEMANTIC_OPERATIONS } from "../core/semantic/query.js";
 
 const contextShape = {
   repository: z.string().optional().describe("Repository path; defaults to the path passed to prograph mcp"),
@@ -46,8 +46,8 @@ export function createProGraphMcpServer(defaultRepository = ".", defaultIndex?: 
   const repo = (input: { repository?: string | undefined }): string => input.repository ?? defaultRepository;
   const index = (input: { index?: string | undefined }): string | undefined => input.index ?? defaultIndex;
   server.registerTool("query_semantic", {
-    description: "Bounded Semantic Core Step 1 TypeScript navigation; returns snapshot, coverage and evidence; legacy workflows remain separate",
-    inputSchema: { ...contextShape, operation: z.enum(["status", "find", "definition", "references", "callers", "callees", "occurrence", "explain"]), input: z.string().max(1024).optional(), limit: z.number().int().min(1).max(200).optional(), cursor: z.string().max(1024).optional(), snapshot: z.number().int().positive().optional(), maxBytes: z.number().int().min(4096).max(131072).optional() },
+    description: "Bounded Semantic Core navigation, project/native details; returns snapshot, coverage and evidence; legacy workflows remain compatible",
+    inputSchema: { ...contextShape, operation: z.enum(SEMANTIC_OPERATIONS), input: z.string().max(1024).optional(), limit: z.number().int().min(1).max(200).optional(), cursor: z.string().max(1024).optional(), snapshot: z.number().int().positive().optional(), maxBytes: z.number().int().min(4096).max(131072).optional() },
   }, async (input) => {
     const query = await semanticQueryForRepository(repo(input), index(input));
     try { return { content: [{ type: "text" as const, text: JSON.stringify(query.execute(input.operation, input.input ?? "", { limit: input.limit ?? 50, maxBytes: input.maxBytes ?? 32768, ...(input.cursor ? { cursor: input.cursor } : {}), ...(input.snapshot !== undefined ? { snapshot: input.snapshot } : {}) })) }] }; }

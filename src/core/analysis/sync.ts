@@ -189,7 +189,7 @@ export async function syncRepository(input = ".", index?: string): Promise<SyncR
     readJson<GraphData>(path.join(statusBefore.indexDirectory, "exports", "graph.json")),
     readJson<AnalysisManifest>(path.join(statusBefore.indexDirectory, "manifest.json")),
   ]);
-  if (previous && previousManifest && !statusBefore.schemaChanged && !statusBefore.adapterVersionsChanged && !statusBefore.configChanged) {
+  if (previous && previousManifest && !statusBefore.schemaChanged && !statusBefore.adapterVersionsChanged && !statusBefore.configChanged && !statusBefore.semanticInputsChanged) {
     const incremental = await tryIsolatedIncremental(statusBefore, previous, previousManifest, started);
     if (incremental) return incremental;
   }
@@ -199,6 +199,8 @@ export async function syncRepository(input = ".", index?: string): Promise<SyncR
       ? "adapter version changed"
       : statusBefore.configChanged
         ? "configuration changed"
+        : statusBefore.semanticInputsChanged
+          ? "recorded semantic dependency input changed"
         : "changed files have dependency, framework, or unresolved relationships requiring a full adapter rebuild";
   const analysis = await analyzeRepository(statusBefore.repositoryRoot, { output: statusBefore.indexDirectory });
   const statusAfter = await repositoryStatus(statusBefore.repositoryRoot, statusBefore.indexDirectory);

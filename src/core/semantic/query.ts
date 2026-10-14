@@ -2,26 +2,31 @@ import path from "node:path";
 import { readFileSync, statSync } from "node:fs";
 import Database from "better-sqlite3";
 import { resolveRepositoryRoot } from "../repository/repository.js";
-import { canonical, digest, SEMANTIC_FORMAT_VERSION, SEMANTIC_SCHEMA_VERSION } from "./model.js";
+import { canonical, digest, SEMANTIC_FORMAT_VERSION, READABLE_SEMANTIC_SCHEMAS } from "./model.js";
 
-export type SemanticOperation = "status" | "find" | "definition" | "references" | "callers" | "callees" | "occurrence" | "explain";
+export const SEMANTIC_OPERATIONS = ["status", "find", "definition", "references", "callers", "callees", "occurrence", "explain", "context", "native", "relationships"] as const;
+export type SemanticOperation = typeof SEMANTIC_OPERATIONS[number];
 export interface SemanticQueryOptions { limit?: number; cursor?: string; snapshot?: number; maxBytes?: number }
 interface Cursor { snapshot: number; query: string; after: number }
 interface NavigationRow { occurrence: number; claim_id: number; confidence: string; key: string; path: string; digest: string; start_byte: number; end_byte: number; line: number; column_num: number; end_line: number; end_column: number; role: string; provenance_json: string; claim_key: string; symbol_key: string; name: string; qualified_name: string }
 
 export class SemanticQuery {
   readonly db: Database.Database;
+  private readonly schema: string;
+  private readonly hasContexts: boolean;
   constructor(filename: string, private readonly manifestPath?: string) {
     this.db = new Database(filename, { readonly: true, fileMustExist: true });
     try {
       const format = this.db.prepare("SELECT value FROM sc_meta WHERE key='format'").get() as { value: string } | undefined;
       const schema = this.db.prepare("SELECT value FROM sc_meta WHERE key='schema'").get() as { value: string } | undefined;
-      if (format?.value !== String(SEMANTIC_FORMAT_VERSION) || schema?.value !== SEMANTIC_SCHEMA_VERSION) throw new Error("Unsupported semantic index format/schema");
+      if (format?.value !== String(SEMANTIC_FORMAT_VERSION) || !READABLE_SEMANTIC_SCHEMAS.includes(schema?.value as typeof READABLE_SEMANTIC_SCHEMAS[number])) throw new Error("Unsupported semantic index format/schema");
+      this.schema = schema!.value;
+      this.hasContexts = !!this.db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='sc_context_lookup'").get();
     } catch (error) { this.db.close(); throw error; }
   }
   close(): void { this.db.close(); }
   execute(operation: SemanticOperation, input = "", options: SemanticQueryOptions = {}): Record<string, unknown> {
-    if (!["status", "find", "definition", "references", "callers", "callees", "occurrence", "explain"].includes(operation)) throw new Error("Unknown semantic operation");
+    if (!(SEMANTIC_OPERATIONS as readonly string[]).includes(operation)) throw new Error("Unknown semantic operation");
     if (input.length > 1024) throw new Error("Semantic input exceeds 1024 characters");
     const limit = Math.max(1, Math.min(200, Number.isFinite(options.limit) ? Math.floor(options.limit!) : 50));
     const maxBytes = Math.max(4096, Math.min(131072, Number.isFinite(options.maxBytes) ? Math.floor(options.maxBytes!) : 32768));
@@ -59,7 +64,9 @@ export class SemanticQuery {
           latestAttempt = attempt ? { status: attempt.status, snapshot: attempt.snapshot ?? null, reason: attempt.reason ? String(attempt.reason).slice(0, 320) : null, matchesSnapshot: attempt.snapshot === snapshot } : { status: "not-recorded" };
         }
       } catch { latestAttempt = { status: "manifest-unavailable" }; } }
-      const base = { snapshot, activeSnapshot: Number(active?.value), format: SEMANTIC_FORMAT_VERSION, schema: SEMANTIC_SCHEMA_VERSION, variant: relevant[0]?.context ?? null, scope: "code", coverage, gaps,
+      if (operation === "context" && !this.hasContexts) gaps.push("Project contexts unavailable in this Step 1 index; analyze/sync upgrades the additive semantic schema");
+      const variants = new Set(relevant.map(partition => partition.context));
+      const base = { snapshot, activeSnapshot: Number(active?.value), format: SEMANTIC_FORMAT_VERSION, schema: this.schema, variant: !coverageTruncated && variants.size === 1 ? relevant[0]?.context ?? null : null, scope: "code", coverage, gaps,
         latestAttempt, semanticFreshness: "snapshot-only; source freshness unchecked", coverageTruncated,
         evidencePolicy: "sample claim per occurrence or relation; independent claims retained",
         columnEncoding: "utf-16", byteEncoding: "utf-8", truncated: false, limits: { maxItems: limit, maxBytes, maxCandidateRows: operation === "explain" || operation === "occurrence" ? 1 : limit + 1, maxSupportRows: 201, maxMetadataRows: 9 }, work: { candidateRows: 0, supportRows: 0, metadataRows: partitions.length, returnedRows: 0, globalGraphMaterialized: false } };
@@ -73,7 +80,7 @@ export class SemanticQuery {
         rows = page.map(p => ({ page_key: p.id, partition: p.partition_key, context: p.context, inputFingerprint: p.input_fingerprint, legacy: p.partition_key === "legacy/full" })); examined = rows.length;
       } else if (operation === "find") {
         if (input.length > 256) throw new Error("Symbol query exceeds 256 characters");
-        const items = this.db.prepare(`SELECT s.entity AS page_key,e.key,s.name,s.qualified_name,s.kind,s.file FROM sc_visible_symbols v JOIN sc_symbols s ON s.entity=v.entity JOIN sc_entities e ON e.id=s.entity
+        const items = this.db.prepare(`SELECT s.entity AS page_key,e.key,s.name,s.qualified_name,s.kind,s.file,s.context AS variant FROM sc_visible_symbols v JOIN sc_symbols s ON s.entity=v.entity JOIN sc_entities e ON e.id=s.entity
           WHERE v.snapshot=? AND v.name=? AND v.entity>? ORDER BY v.entity LIMIT ?`).all(snapshot, input, after, limit + 1) as Array<Record<string, unknown>>;
         rows = items; examined = items.length;
         for (const item of rows) {
@@ -93,6 +100,22 @@ export class SemanticQuery {
           const { value_json, ...detail } = claim;
           rows = [{ ...detail, provenance: JSON.parse(String(claim.provenance)), value: JSON.parse(String(value_json)), supports: supports.slice(0, 200), supportTruncated: supports.length > 200 }]; examined = 1; supportRows = supports.length;
         }
+      } else if (operation === "context" || operation === "native" || operation === "relationships") {
+        const target = this.db.prepare("SELECT e.id,s.context FROM sc_entities e LEFT JOIN sc_symbols s ON s.entity=e.id WHERE e.key=?").get(input) as { id: number; context?: string } | undefined;
+        if (operation === "context" && this.hasContexts) {
+          const context = target?.context ?? input;
+          const selection = context ? "v.context=? AND" : "";
+          rows = this.db.prepare(`SELECT v.claim AS page_key,c.key AS evidenceClaim,c.confidence,f.value_json,p.json AS provenance
+            FROM sc_context_lookup v JOIN sc_claims c ON c.id=v.claim JOIN sc_facts f ON f.id=c.fact JOIN sc_provenance p ON p.id=c.provenance
+            WHERE v.snapshot=? AND ${selection} v.claim>? ORDER BY v.claim LIMIT ?`).all(snapshot, ...(context ? [context] : []), after, limit + 1) as Array<Record<string, unknown>>;
+        } else if (operation !== "context" && target) {
+          const condition = operation === "relationships" ? "n.relation='native-relationship'" : "n.relation IN ('native-symbol','native-signature','native-relationship','native-occurrence','native-declaration')";
+          rows = this.db.prepare(`SELECT n.claim AS page_key,c.key AS evidenceClaim,n.confidence,f.predicate,f.value_json,p.json AS provenance,e.key AS target
+            FROM sc_navigation n JOIN sc_claims c ON c.id=n.claim JOIN sc_facts f ON f.id=c.fact JOIN sc_provenance p ON p.id=c.provenance LEFT JOIN sc_entities e ON e.id=n.object
+            WHERE n.snapshot=? AND n.subject=? AND ${condition} AND n.claim>? ORDER BY n.claim LIMIT ?`).all(snapshot, target.id, after, limit + 1) as Array<Record<string, unknown>>;
+        }
+        examined = rows.length;
+        rows = rows.map(row => { const { value_json, ...detail } = row; return { ...detail, value: JSON.parse(String(value_json)), provenance: JSON.parse(String(row.provenance)) }; });
       } else if (operation === "callers" || operation === "callees") {
         const target = this.db.prepare("SELECT id FROM sc_entities WHERE key=?").get(input) as { id: number } | undefined;
         if (target) {

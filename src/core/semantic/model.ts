@@ -2,8 +2,11 @@ import { createHash } from "node:crypto";
 import type { Confidence } from "../graph/schema.js";
 
 export const SEMANTIC_FORMAT_VERSION = 2;
-export const SEMANTIC_SCHEMA_VERSION = "2.0.0-step1";
-export const TYPESCRIPT_SEMANTIC_VERSION = "1";
+export const SEMANTIC_SCHEMA_VERSION = "2.0.0-step2.1";
+export const READABLE_SEMANTIC_SCHEMAS = ["2.0.0-step1", SEMANTIC_SCHEMA_VERSION] as const;
+export const TYPESCRIPT_SEMANTIC_VERSION = "2";
+export const CLANG_SEMANTIC_VERSION = "2";
+export const SCIP_SEMANTIC_VERSION = "2";
 export const CALL_PROJECTION_VERSION = "1";
 
 /** Canonical JSON is a persisted identity contract, independent of insertion order. */
@@ -75,6 +78,12 @@ export const PREDICATES = {
   "common.CallTarget": { version: 1, relation: "calltarget", unique: true },
   "common.CallSummary": { version: 1, relation: "calls", unique: false },
   "common.Facet": { version: 1, relation: "facet", unique: false },
+  "context.Project": { version: 1, relation: "project-context", unique: false },
+  "typescript.Signature": { version: 1, relation: "native-signature", unique: false },
+  "scip.SymbolInformation": { version: 1, relation: "native-symbol", unique: false },
+  "scip.Relationship": { version: 1, relation: "native-relationship", unique: false },
+  "scip.Occurrence": { version: 1, relation: "native-occurrence", unique: false },
+  "cxx.Declaration": { version: 1, relation: "native-declaration", unique: false },
   "legacy.Node": { version: 1, relation: "legacy-node", unique: false },
   "legacy.Relation": { version: 1, relation: "legacy-relation", unique: false },
 } as const;
