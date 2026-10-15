@@ -1,0 +1,165 @@
+{
+  "format": 1,
+  "runId": 38772009937,
+  "attempt": 1,
+  "commit": "0d6c2fb752c47493d111a1d09af82a7c7399851e",
+  "url": "https://github.com/xpan0988/prograph/actions/runs/38772009937",
+  "conclusion": "success",
+  "createdAt": "2026-10-15T16:48:04Z",
+  "updatedAt": "2026-10-15T16:55:52Z",
+  "jobs": [
+    {
+      "id": 116549964316,
+      "name": "regression (24)",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T16:48:47Z",
+          "completedAt": "2026-10-15T16:53:55Z"
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T16:53:55Z",
+          "completedAt": "2026-10-15T16:55:30Z"
+        },
+        {
+          "name": "Complete Node and UI build",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T16:55:30Z",
+          "completedAt": "2026-10-15T16:55:46Z"
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T16:55:46Z",
+          "completedAt": "2026-10-15T16:55:46Z"
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T16:55:46Z",
+          "completedAt": "2026-10-15T16:55:46Z"
+        }
+      ],
+      "testsPassed": 149,
+      "testsSkipped": 0,
+      "realProducers": [
+        "rust-analyzer",
+        "scip-python",
+        "scip-go",
+        "scip-java",
+        "scip-dotnet"
+      ],
+      "finalLogsInspected": true
+    },
+    {
+      "id": 116549964744,
+      "name": "regression (22)",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T16:48:57Z",
+          "completedAt": "2026-10-15T16:51:28Z"
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T16:51:28Z",
+          "completedAt": "2026-10-15T16:53:09Z"
+        },
+        {
+          "name": "Complete Node and UI build",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T16:53:09Z",
+          "completedAt": "2026-10-15T16:53:27Z"
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T16:53:27Z",
+          "completedAt": "2026-10-15T16:53:27Z"
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T16:53:27Z",
+          "completedAt": "2026-10-15T16:53:27Z"
+        }
+      ],
+      "testsPassed": 149,
+      "testsSkipped": 0,
+      "realProducers": [
+        "rust-analyzer",
+        "scip-python",
+        "scip-go",
+        "scip-java",
+        "scip-dotnet"
+      ],
+      "finalLogsInspected": true
+    },
+    {
+      "id": 116549964969,
+      "name": "regression (20)",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T16:50:02Z",
+          "completedAt": "2026-10-15T16:51:59Z"
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T16:51:59Z",
+          "completedAt": "2026-10-15T16:53:24Z"
+        },
+        {
+          "name": "Complete Node and UI build",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T16:53:24Z",
+          "completedAt": "2026-10-15T16:53:40Z"
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T16:53:40Z",
+          "completedAt": "2026-10-15T16:53:40Z"
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T16:53:40Z",
+          "completedAt": "2026-10-15T16:53:40Z"
+        }
+      ],
+      "testsPassed": 149,
+      "testsSkipped": 0,
+      "realProducers": [
+        "rust-analyzer",
+        "scip-python",
+        "scip-go",
+        "scip-java",
+        "scip-dotnet"
+      ],
+      "finalLogsInspected": true
+    }
+  ],
+  "nodeVersions": {
+    "20": "20.20.2",
+    "22": "22.23.3",
+    "24": "24.21.0"
+  },
+  "evidence": "All three decoded job logs contain the final 149-passed/zero-skipped five-real-provider/build/four-recovery/corruption-refusal verifier line.",
+  "priorFailure": {
+    "runId": 38770669823,
+    "commit": "418552dbc9b2885d45bd828de7d47c742ce66155",
+    "conclusion": "failure",
+    "cause": "Hosted JDK has a symlink outside its receipt root; bootstrap refused before qualification. Replaced with an upstream digest-pinned closed JDK, retaining the check."
+  }
+}
