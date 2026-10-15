@@ -1,0 +1,158 @@
+{
+  "repository": {
+    "root": "/Users/xiyuanpan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pxfm-0.1.29",
+    "identity": "780ee2d723e51c7b"
+  },
+  "startedAt": "2026-10-15T08:39:44.876Z",
+  "elapsedMs": 7138,
+  "sourceFiles": 259,
+  "sourceLines": 103239,
+  "sourceInventoryDigest": "c44a46921c00875191b2ca3043dc110a62afc2455b978c5fe6c735e8d9755591",
+  "legacy": {
+    "schema": "1.2.0",
+    "nodes": 5691,
+    "edges": 18407,
+    "diagnostics": 8409
+  },
+  "semantic": {
+    "format": 2,
+    "status": "unavailable",
+    "snapshot": 1,
+    "context": "none",
+    "durationMs": 103
+  },
+  "unitTimings": [
+    {
+      "partition": "analysis/source",
+      "stageAndSealMs": 1775.809
+    },
+    {
+      "partition": "analysis/pass:framework-react@1",
+      "stageAndSealMs": 1.282
+    },
+    {
+      "partition": "analysis/pass:framework-tauri@1",
+      "stageAndSealMs": 2.991
+    },
+    {
+      "partition": "analysis/pass:schema-contracts@1",
+      "stageAndSealMs": 0.37
+    },
+    {
+      "partition": "analysis/pass:documentation@1",
+      "stageAndSealMs": 2.342
+    },
+    {
+      "partition": "analysis/pass:package-config@1",
+      "stageAndSealMs": 0.186
+    },
+    {
+      "partition": "analysis/pass:cargo-config@1",
+      "stageAndSealMs": 0.984
+    },
+    {
+      "partition": "analysis/pass:tauri-config@1",
+      "stageAndSealMs": 0.185
+    },
+    {
+      "partition": "analysis/pass:tauri-capabilities@1",
+      "stageAndSealMs": 0.172
+    },
+    {
+      "partition": "analysis/pass:test-relevance@1",
+      "stageAndSealMs": 72.044
+    },
+    {
+      "partition": "analysis/pass:knowledge-links@1",
+      "stageAndSealMs": 35.54
+    },
+    {
+      "partition": "analysis/pass:boundary-binding@1",
+      "stageAndSealMs": 1.346
+    },
+    {
+      "partition": "analysis/pass:dependency-projection@1",
+      "stageAndSealMs": 510.899
+    },
+    {
+      "partition": "context/rust/project:Cargo.toml",
+      "stageAndSealMs": 0.543
+    }
+  ],
+  "units": [
+    {
+      "key": "rust/project:Cargo.toml",
+      "language": "rust",
+      "context": "sc2:context:1c1cd04d3b641d5f47ce56af1e98fbb35d39497c0f03398c6eba35ef8899c446",
+      "sources": 259,
+      "gaps": [
+        "Manifest observed; interpreter/classpath/SDK/features/tags/targets are not compiler-qualified by discovery alone"
+      ]
+    }
+  ],
+  "counts": {
+    "occurrences": 0,
+    "facts": 39792,
+    "claims": 39792,
+    "navigation": 39792,
+    "calls": 0
+  },
+  "queries": [
+    {
+      "name": "SemanticStore",
+      "ms": 0.595,
+      "symbols": 0,
+      "definitions": 0,
+      "references": 0,
+      "work": {
+        "candidateRows": 0,
+        "supportRows": 0,
+        "metadataRows": 9,
+        "returnedRows": 0,
+        "globalGraphMaterialized": false
+      }
+    },
+    {
+      "name": "indexClang",
+      "ms": 0.127,
+      "symbols": 0,
+      "definitions": 0,
+      "references": 0,
+      "work": {
+        "candidateRows": 0,
+        "supportRows": 0,
+        "metadataRows": 9,
+        "returnedRows": 0,
+        "globalGraphMaterialized": false
+      }
+    },
+    {
+      "name": "invoke",
+      "ms": 0.111,
+      "symbols": 0,
+      "definitions": 0,
+      "references": 0,
+      "work": {
+        "candidateRows": 0,
+        "supportRows": 0,
+        "metadataRows": 9,
+        "returnedRows": 0,
+        "globalGraphMaterialized": false
+      }
+    }
+  ],
+  "integrity": "ok",
+  "databaseBytes": 74260480,
+  "maxRssKiB": 674304,
+  "implementationDigests": {
+    "typescript": "d923a7d94a918929edd4ac59d83c6ac3f126ad97588a2277b88fba2ed5b847dc",
+    "projects": "0fd87bb5664c78bfcf28e2bd95821223ee5f8670c22bc46d8c610947674f955d",
+    "passes": "0d93497b35e0cfe26dcb234f2be08ea008ca4d4ac9d06ef3c580438fea33960f",
+    "analysis-passes": "d1714de2fe0e1e499f12baf7917a15892d192de6fe8f9ed27dc9189b95270411",
+    "boundary-pass": "29089d8d7ca7016fc8a9b388628b80f293cf60a1021cf0285a8b2aab1947bc4d",
+    "owned-projection": "eac12791a6c435c52282d05e3c73c1cadefb45a18912637d5d9fc169c51b2ae6",
+    "provider-runs": "cb1dbcace26247be9a3b4b6b3d7c328a9fad0ac903d282c2d178dcd3122d6cfd",
+    "store": "d2ea2607587423b51984e6c440d5ff5c0a5f14060628e7895c4e5b9d213e95bd",
+    "schema": "43f6aee2ebbcef36eaf2d9e7e8c4818caf1814402fb157987ea3741b9fb63d49"
+  }
+}
