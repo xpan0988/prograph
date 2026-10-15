@@ -1,6 +1,6 @@
 import path from "node:path";
 import type { RepositorySnapshot } from "../adapters/contracts.js";
-import { canonical, digest, CLANG_SEMANTIC_VERSION, SCIP_SEMANTIC_VERSION } from "./model.js";
+import { canonical, digest, CLANG_SEMANTIC_VERSION, SCIP_SEMANTIC_VERSION, RUST_PROVIDER_VERSION } from "./model.js";
 import { SemanticStore } from "./store.js";
 import { digestFile } from "./inputs.js";
 import { repositoryInputPaths } from "../repository/repository.js";
@@ -67,7 +67,8 @@ export async function retainProviders(store: SemanticStore, snapshot: Repository
     for (const row of group) {
       if (!passSuffix.test(row.partition_key)) {
         const run = store.sql("SELECT coverage_json FROM sc_runs WHERE id=?").get(row.run) as { coverage_json: string };
-        if ((JSON.parse(run.coverage_json) as { mappingVersion?: string }).mappingVersion !== (row.partition_key.startsWith("clang/") ? CLANG_SEMANTIC_VERSION : SCIP_SEMANTIC_VERSION)) eligible = false;
+        const coverage = JSON.parse(run.coverage_json) as { mappingVersion?: string; executionVersion?: string };
+        if (coverage.mappingVersion !== (row.partition_key.startsWith("clang/") ? CLANG_SEMANTIC_VERSION : SCIP_SEMANTIC_VERSION) || coverage.executionVersion && coverage.executionVersion !== RUST_PROVIDER_VERSION) eligible = false;
       }
       const inputs = store.sql("SELECT resource,digest FROM sc_inputs WHERE run=?").all(row.run) as Array<{ resource: string; digest: string }>;
       for (const input of inputs) {

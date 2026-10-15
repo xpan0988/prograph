@@ -27,7 +27,7 @@ repository path
   -> CLI, localhost API/UI, and MCP stdio queries
 ```
 
-During this compatibility period, `graph.sqlite` keeps schema `1.2.0` and remains authoritative for legacy CLI/MCP/API/UI behavior. `semantic.sqlite` declares Format 2 / schema `2.0.0-step1` and serves additive `semantic` CLI commands, `query_semantic` MCP and `/api/semantic/:operation` routes. Those operations use indexed bounded navigation and communicate partial coverage and snapshot-only freshness. The two stores do not form one atomic all-domain publication; default activation and precise polyglot ingestion are deferred.
+During this compatibility period, `graph.sqlite` keeps schema `1.2.0` and remains authoritative for legacy CLI/MCP/API/UI behavior. `semantic.sqlite` declares Format 2 / schema `2.0.0-step2.2` and serves additive `semantic` CLI commands, `query_semantic` MCP and `/api/semantic/:operation` routes. Those operations use indexed bounded navigation and communicate partial coverage and snapshot-only freshness. The two stores do not form one atomic all-domain publication; default activation and full precise polyglot qualification remain deferred.
 
 ### Repository Scanner
 
@@ -277,6 +277,6 @@ Analysis is still memory-resident. There is no million-line benchmark claim, per
 
 ## Additive Semantic Core implementation
 
-The [Step 1 closure](semantic-core-step1.md) and [Step 2 implementation record](semantic-core-step2.md) own implemented semantic behavior and measured acceptance status. Legacy graph schema `1.2.0` and workflows remain available. `semantic.sqlite` format 2 now provides project-aware TypeScript facts, explicit verified SCIP import, opt-in bounded Clang extraction, owned call passes and SQL occurrence navigation. Native facts and build inputs remain separate from legacy node/edge projections. Recorded compiler dependencies supplement status/sync freshness; external tools are never launched by discovery or sync.
+The [Step 1 closure](semantic-core-step1.md) and [Step 2 implementation record](semantic-core-step2.md) own implemented semantic behavior and measured acceptance status. Legacy graph schema `1.2.0` and workflows remain available. `semantic.sqlite` format 2 now provides project-aware TypeScript facts, explicit verified SCIP import, opt-in bounded Clang extraction, explicit pinned Rust navigation, owned call passes and SQL occurrence navigation. Native facts and build inputs remain separate from legacy node/edge projections. Recorded compiler dependencies supplement status/sync freshness; external tools are never launched by discovery or sync.
 
-Full default activation, other precise language backends, semantic boundary/framework conversion, work-bounded legacy query migration, projection deltas/worker isolation and complete reachability GC are still unfinished. Native Clang/SCIP mapping is versioned and incomplete. The one-second publication target is unmet. This additive milestone is not acceptance of the complete Semantic Core 2.0 architecture.
+Full default activation, other precise language backends, semantic boundary/framework conversion, work-bounded legacy query migration, projection deltas/worker isolation and complete reachability GC are still unfinished. Native Clang/SCIP mapping and the restricted Rust runner are versioned and incomplete. The one-second publication target is unmet. This additive milestone is not acceptance of the complete Semantic Core 2.0 architecture.

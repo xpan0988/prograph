@@ -16,7 +16,7 @@ import { importScip, type ScipManifest } from "../src/core/semantic/scip-import.
 import { scipType, validateDocumentSize } from "../src/core/semantic/scip-wire.js";
 import { parseScipSymbol } from "../src/core/semantic/scip-symbol.js";
 import { SourceCoordinates } from "../src/core/semantic/coordinates.js";
-import { digest } from "../src/core/semantic/model.js";
+import { digest, SEMANTIC_SCHEMA_VERSION } from "../src/core/semantic/model.js";
 import { indexClang } from "../src/core/semantic/clang.js";
 import { inventoryFromDisk, semanticInventory } from "../src/core/semantic/provider-runs.js";
 import { existsSync } from "node:fs";
@@ -98,6 +98,31 @@ test("mid-document range failure cannot publish earlier successful batches", asy
   const root = await temporary(); const broken = doc(); broken.occurrences.push({ symbol: global, range: [99, 0, 6], symbol_roles: 0 } as typeof broken.occurrences[number]);
   const input = await artifact(root, [broken]); const result = await importScip(root, input.filename, input.manifest, undefined, { batch: 1 }); expect(result).toMatchObject({ accepted: 0, rejected: 1 });
   const q = await semanticQueryForRepository(root); try { expect(q.execute("find", "target").items).toHaveLength(0); } finally { q.close(); }
+});
+test("explicit advisory policy diagnoses enclosing errors without relaxing primary ranges", async () => {
+  const root = await temporary(); const data = doc() as Record<string, unknown>;
+  (data.occurrences as Array<Record<string, unknown>>)[0]!.enclosing_range = [0, 7, 8];
+  const input = await artifact(root, [data]);
+  expect(await importScip(root, input.filename, input.manifest)).toMatchObject({ accepted: 0, rejected: 1 });
+  expect(await importScip(root, input.filename, { ...input.manifest, enclosingPolicy: "diagnose" })).toMatchObject({ accepted: 1, rejected: 0 });
+  const q = await semanticQueryForRepository(root);
+  try {
+    const target = (q.execute("find", "target").items as Array<{ key: string }>)[0]!.key;
+    expect(q.execute("definition", target).items).toHaveLength(1);
+    expect(q.execute("native", target).items).toEqual(expect.arrayContaining([expect.objectContaining({ value: expect.objectContaining({ enclosingStatus: "invalid-advisory-excluded", enclosing: null, reportedEnclosing: [0, 7, 8] }) })]));
+  } finally { q.close(); }
+  (data.occurrences as Array<Record<string, unknown>>)[0]!.range = [99, 0, 6];
+  const broken = await artifact(root, [data]);
+  expect(await importScip(root, broken.filename, { ...broken.manifest, enclosingPolicy: "diagnose" })).toMatchObject({ accepted: 0, rejected: 1 });
+});
+test("explicit document prefix maps nested producer roots without joining unrelated files", async () => {
+  const root = await temporary(); const input = await artifact(root, [doc()]);
+  await mkdir(path.join(root, "nested")); await writeFile(path.join(root, "nested/a.py"), "target()\n");
+  await writeFile(path.join(root, "a.py"), "wrong()\n");
+  expect(await importScip(root, input.filename, { ...input.manifest, documentPathPrefix: "nested", sources: { "nested/a.py": digest("target()\n") } })).toMatchObject({ accepted: 1 });
+  const q = await semanticQueryForRepository(root);
+  try { const target = (q.execute("find", "target").items as Array<{ key: string }>)[0]!.key; expect(q.execute("definition", target).items).toMatchObject([{ file: "nested/a.py" }]); } finally { q.close(); }
+  await expect(importScip(root, input.filename, { ...input.manifest, documentPathPrefix: "../escape" })).rejects.toThrow("Invalid SCIP source path");
 });
 test("malformed framing leaves the active snapshot intact, including a truncated document", async () => {
   const root = await temporary(); const input = await artifact(root, [doc()]); const first = await importScip(root, input.filename, input.manifest);
@@ -200,7 +225,12 @@ test("old semantic schema remains readable and upgrades additively on writer ope
   const file = path.join(root, ".prograph/semantic.sqlite"); const store = new SemanticStore(file); store.db.prepare("UPDATE sc_meta SET value='2.0.0-step1' WHERE key='schema'").run(); const snapshot = store.activeSnapshot(); store.close();
   const old = new SemanticStore(file); old.db.exec("DROP TABLE sc_context_lookup"); old.db.prepare("UPDATE sc_meta SET value='2.0.0-step1' WHERE key='schema'").run(); old.close();
   const query = new SemanticQuery(file); try { expect(query.execute("status")).toMatchObject({ snapshot, schema: "2.0.0-step1" }); expect(query.execute("context").items).toEqual([]); expect(String(query.execute("context").gaps)).toContain("unavailable"); } finally { query.close(); }
-  const upgraded = new SemanticStore(file); try { expect(upgraded.activeSnapshot()).toBe(snapshot); expect(upgraded.db.prepare("SELECT value FROM sc_meta WHERE key='schema'").get()).toEqual({ value: "2.0.0-step2.1" }); } finally { upgraded.close(); }
+  const upgraded = new SemanticStore(file); try { expect(upgraded.activeSnapshot()).toBe(snapshot); expect(upgraded.db.prepare("SELECT value FROM sc_meta WHERE key='schema'").get()).toEqual({ value: SEMANTIC_SCHEMA_VERSION }); } finally { upgraded.close(); }
+  const prior = new SemanticStore(file); prior.db.prepare("UPDATE sc_meta SET value='2.0.0-step2.1' WHERE key='schema'").run(); prior.close();
+  const before = await readFile(file); const reader = new SemanticQuery(file);
+  try { expect(reader.execute("status")).toMatchObject({ snapshot, schema: "2.0.0-step2.1" }); } finally { reader.close(); }
+  expect(await readFile(file)).toEqual(before);
+  const writer = new SemanticStore(file); try { expect(writer.activeSnapshot()).toBe(snapshot); expect(writer.db.prepare("SELECT value FROM sc_meta WHERE key='schema'").get()).toEqual({ value: SEMANTIC_SCHEMA_VERSION }); } finally { writer.close(); }
 });
 test("nested wire object quotas are checked before protobuf expands messages", () => {
   const bytes = scipType("Document").encode(scipType("Document").fromObject({ symbols: [{ symbol: global, relationships: Array.from({ length: 1100 }, () => ({ symbol: global })) }] })).finish();

@@ -18,6 +18,7 @@ import packageJson from "../../package.json" with { type: "json" };
 import { semanticQueryForRepository, SEMANTIC_OPERATIONS, type SemanticOperation } from "../core/semantic/query.js";
 import { importScip, type ScipManifest } from "../core/semantic/scip-import.js";
 import { indexClang } from "../core/semantic/clang.js";
+import { indexRust, type RustOptions } from "../core/semantic/rust.js";
 import { readFile, stat } from "node:fs/promises";
 
 interface FormatOptions {
@@ -73,6 +74,15 @@ function addConfidence(command: Command): Command {
     .addOption(new Option("--scope <scope>", "graph scope").choices(["code", "code+docs", "code+config", "code+tests", "full"]).default("code"));
 }
 
+async function withCancellation<T>(execute: (signal: AbortSignal) => Promise<T>): Promise<T> {
+  const controller = new AbortController(); const abort = () => controller.abort();
+  process.once("SIGINT", abort); process.once("SIGTERM", abort);
+  try {
+    return await execute(controller.signal);
+  } finally {
+    process.removeListener("SIGINT", abort); process.removeListener("SIGTERM", abort);
+  }
+}
 async function withQuery<T>(repo: string, index: string | undefined, callback: (query: QueryService) => T | Promise<T>): Promise<T> {
   const query = await queryServiceForRepository(repo, index);
   try {
@@ -250,6 +260,18 @@ addFormat(addConfidence(addIndex(program.command("boundaries [path]").descriptio
 });
 
 const semanticCommand = program.command("semantic").description("Semantic Core snapshot navigation and verified interchange");
+addFormat(addIndex(semanticCommand.command("index-rust <manifest>").description("Explicit pinned offline Rust workspace navigation in an isolated source copy")))
+  .option("--repo <path>", "repository path", ".")
+  .requiredOption("--analyzer <path>", "absolute rust-analyzer executable")
+  .requiredOption("--analyzer-sha256 <digest>", "pinned analyzer binary SHA-256")
+  .requiredOption("--toolchain <path>", "absolute directory containing cargo and rustc")
+  .option("--features <feature...>", "explicit Cargo feature selection")
+  .option("--no-default-features", "disable default Cargo features")
+  .option("--target <triple>", "explicit Rust target triple")
+  .option("--timeout-ms <number>", "total provider deadline before publication", Number, 120000)
+  .action(async (manifest: string, options: FormatOptions & RustOptions & { repo: string; index?: string; defaultFeatures?: boolean }) => {
+    writeResult(await withCancellation(signal => indexRust(options.repo, manifest, { ...options, noDefaultFeatures: options.defaultFeatures === false, signal }, options.index)), options.format);
+  });
 addFormat(addIndex(semanticCommand.command("index-clang <unit>").description("Explicit syntax-only Clang extraction for an arguments-array compilation unit")))
   .option("--repo <path>", "repository path", ".")
   .action(async (unit: string, options: FormatOptions & { repo: string; index?: string }) => writeResult(await indexClang(options.repo, unit, options.index), options.format));
