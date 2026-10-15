@@ -27,14 +27,19 @@ jobs:
           curl --fail --location --retry 3 https://github.com/rust-lang/rust-analyzer/releases/download/2026-10-12/rust-analyzer-x86_64-unknown-linux-gnu.gz --output "$RUNNER_TEMP/rust-analyzer.gz"
           echo '040cab4e2abc490fadd95c3f6cbc60b941a78761dbc3acf0ec66fd7a97f31db3  '"$RUNNER_TEMP/rust-analyzer.gz" | sha256sum --check
           gzip --decompress --stdout "$RUNNER_TEMP/rust-analyzer.gz" > "$RUNNER_TEMP/rust-analyzer"
+          echo 'fd89304c85f6c1996b036ea8f2c9ad9d3e25a197dbd713661c7fe51ec9dc8e49  '"$RUNNER_TEMP/rust-analyzer" | sha256sum --check
           chmod +x "$RUNNER_TEMP/rust-analyzer"
+          "$RUNNER_TEMP/rust-analyzer" --version
           echo "PROGRAPH_TEST_RUST_ANALYZER=$RUNNER_TEMP/rust-analyzer" >> "$GITHUB_ENV"
       - run: npm run lint
       - name: Complete tests, including actual Rust producer
         run: npm test -- --reporter=default --reporter=json --outputFile=semantic-test-results.json
-      - run: npm run build
+      - name: Complete Node and UI build
+        run: npm run build
       - name: Transaction and process recovery probes
         run: node scripts/semantic-recovery.mjs semantic-recovery-results.json
+      - name: Require executed qualification and recovery evidence
+        run: node scripts/verify-ci-evidence.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

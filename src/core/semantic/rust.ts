@@ -7,6 +7,7 @@ import { boundedInput, digestFile } from "./inputs.js";
 import { canonical, digest, RUST_PROVIDER_VERSION } from "./model.js";
 import { importScip, type ScipManifest } from "./scip-import.js";
 import { runProviderProcess } from "./process.js";
+import { qualifyRustAnalyzer } from "./rust-qualification.js";
 
 export { RUST_PROVIDER_VERSION } from "./model.js";
 export const RUST_PROVIDER_CAPABILITIES = { symbols: "partial", definitions: "partial", references: "partial", calls: "unsupported", types: "reported-signatures", traits: "reported-symbols", associatedItems: "reported-symbols", macros: "unqualified", dynamicDispatch: "unsupported" } as const;
@@ -85,7 +86,7 @@ export async function indexRust(repository: string, manifestFile: string, option
     const result = await runProviderProcess(executable, args, cwd, env, { timeoutMs: remaining, maxOutputBytes: 4 * 1024 ** 2, ...(options.signal ? { signal: options.signal } : {}) }); stages[name] = +result.durationMs.toFixed(3); return result;
   };
   const analyzerVersion = (await run("analyzer-probe", options.analyzer, ["--version"])).stdout.trim();
-  if (!/^rust-analyzer 0\.3\.3081(?:-standalone)? \(2ad81e72b7 2026-10-11\)$/.test(analyzerVersion)) throw Error("Rust runner currently qualifies only rust-analyzer release 2026-10-12 (2ad81e72b7)");
+  const analyzerQualification = qualifyRustAnalyzer(analyzerVersion, options.analyzerSha256);
   const rustcVersion = (await run("rustc-probe", rustc, ["-vV"])).stdout.trim(); const cargoVersion = (await run("cargo-probe", cargo, ["--version"])).stdout.trim();
   const target = options.target ?? rustcVersion.match(/^host: (.+)$/m)?.[1]; if (!target) throw Error("Rust compiler host target unavailable");
   const selectedManifest = path.join(sourceRoot, manifest);
@@ -111,7 +112,7 @@ export async function indexRust(repository: string, manifestFile: string, option
   const artifact = path.join(runDirectory, "index.scip");
   const extracted = await run("semantic-producer", options.analyzer, ["scip", metadata.workspace_root, "--output", artifact, "--config-path", configFile, "--exclude-vendored-libraries", "--num-threads", "1"]);
   if ((await stat(artifact)).size > 64 * 1024 ** 2) throw Error("Rust SCIP artifact exceeds 64 MiB");
-  const environment = { provider: "rust-analyzer", analyzerVersion, analyzerSha256: options.analyzerSha256, cargoVersion, rustcVersion, target, cfg, features, noDefaultFeatures: !!options.noDefaultFeatures, lockDigest,
+  const environment = { provider: "rust-analyzer", analyzerVersion, analyzerQualification, analyzerSha256: options.analyzerSha256, cargoVersion, rustcVersion, target, cfg, features, noDefaultFeatures: !!options.noDefaultFeatures, lockDigest,
     packages: [...closure].sort().map(id => { const pkg = byId.get(id)!; return { name: pkg.name, version: pkg.version, manifest: path.relative(sourceRoot, pkg.manifest_path).split(path.sep).join("/"), features: [...(nodes.get(id)?.features ?? [])].sort(), targets: pkg.targets.map(t => ({ kinds: t.kind, source: path.relative(sourceRoot, t.src_path).split(path.sep).join("/") })) }; }), capabilities: RUST_PROVIDER_CAPABILITIES,
     gaps: ["Rust sysroot semantic sources, external normal dependencies, build scripts and proc macros are not qualified", "SCIP supplies navigation/signatures, not call targets, borrow checking or trait obligations", "Enclosing ranges are advisory and invalid values are diagnosed; primary ranges remain strict", "Explicit pinned toolchain; no rustup installations or source repository writes"], sourceFiles: files.length, sourceBytes, compilerChecked: true };
   const identity = digest(canonical([RUST_PROVIDER_VERSION, prefix, features, !!options.noDefaultFeatures, target]));

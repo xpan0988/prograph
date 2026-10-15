@@ -8,7 +8,24 @@ import { semanticQueryForRepository } from "../src/core/semantic/query.js";
 import { digest } from "../src/core/semantic/model.js";
 import { analyzeRepository } from "../src/core/analysis/analyze.js";
 import { repositoryStatus } from "../src/core/analysis/state.js";
+import { qualifyRustAnalyzer, RUST_ANALYZER_RELEASE } from "../src/core/semantic/rust-qualification.js";
 const roots: string[] = [];
+test("release qualification accepts platform displays and binds missing revision to exact artifact", () => {
+  const mac = RUST_ANALYZER_RELEASE.artifacts["darwin:arm64"].executableSha256;
+  const linux = RUST_ANALYZER_RELEASE.artifacts["linux:x64"].executableSha256;
+  expect(qualifyRustAnalyzer("rust-analyzer 0.3.3081-standalone (2ad81e72b7 2026-10-11)", mac, "darwin", "arm64")).toMatchObject({ revisionEvidence: "embedded-and-pinned-artifact" });
+  for (const text of ["rust-analyzer 0.3.3081-standalone", "rust-analyzer 0.3.3081", "rust-analyzer 0.3.3081 (2ad81e72b7)", "rust-analyzer 0.3.3081-standalone (unknown commit)", "rust-analyzer  0.3.3081-standalone (2ad81e72b7e978cb800dffe1bcce5c9f98032acf 2026-10-11)\n"]) {
+    expect(qualifyRustAnalyzer(text, linux, "linux", "x64")).toMatchObject({ semanticVersion: "0.3.3081", artifact: "rust-analyzer-x86_64-unknown-linux-gnu.gz" });
+  }
+  expect(qualifyRustAnalyzer("rust-analyzer 0.3.3081-standalone", linux, "linux", "x64")).toMatchObject({ observedRevision: null, revisionEvidence: "pinned-release-artifact" });
+});
+test("release qualification rejects wrong version, revision, date, artifact and platform", () => {
+  const linux = RUST_ANALYZER_RELEASE.artifacts["linux:x64"].executableSha256;
+  for (const text of ["rust-analyzer 0.3.3082-standalone", "rust-analyzer 0.3.3081-next", "rust-analyzer 0.3.3081 (deadbeef00 2026-10-11)", "rust-analyzer 0.3.3081 (2ad81e72b7 2026-10-10)", "other 0.3.3081", "rust-analyzer 0.3.3081 (2ad81e72b7 deadbeef00)"]) expect(() => qualifyRustAnalyzer(text, linux, "linux", "x64")).toThrow();
+  expect(() => qualifyRustAnalyzer("rust-analyzer 0.3.3081", "0".repeat(64), "linux", "x64")).toThrow("artifact");
+  expect(() => qualifyRustAnalyzer("rust-analyzer 0.3.3081", linux, "darwin", "arm64")).toThrow("artifact");
+  expect(() => qualifyRustAnalyzer("rust-analyzer 0.3.3081", linux, "linux", "arm64")).toThrow("artifact");
+});
 afterEach(async () => { for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true }); });
 async function fixture() {
   const root = await mkdtemp(path.join(os.tmpdir(), "prograph-rust-provider-")); roots.push(root);
