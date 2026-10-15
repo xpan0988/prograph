@@ -47,7 +47,7 @@ if (process.argv[2] === '--import') {
     await new Promise((resolve,reject)=> { const child=spawn(process.execPath,[new URL(import.meta.url).pathname,'--import',root],{stdio:'inherit'}); child.on('error',reject); child.on('close',code=>code===0?resolve():reject(Error(`Importer exited ${code}`))); });
     const report = { workload:'synthetic streamed SCIP, 100k occurrences/document, one symbol, unique line anchors, definition + references/highlighting; no compiler or LOC qualification', count, documents, artifactBytes, startedAt,
       environment:{node:process.version,platform:process.platform,arch:process.arch,cpu:os.cpus()[0]?.model,memoryBytes:os.totalmem()},
-      implementationDigests:Object.fromEntries(await Promise.all(['scip-import','scip-wire','store','schema','query','coordinates','inputs'].map(async name=>[name,digest(await readFile(new URL(`../dist/core/semantic/${name}.js`,import.meta.url)))]))),
+      implementationDigests:Object.fromEntries(await Promise.all(['scip-import','scip-wire','store','schema','query','publication','read','model','coordinates','inputs'].map(async name=>[name,digest(await readFile(new URL(`../dist/core/semantic/${name}.js`,import.meta.url)))]))),
       ...JSON.parse(await readFile(path.join(root,'result.json'),'utf8')) };
     if (output) await writeFile(output,`${JSON.stringify(report,null,2)}\n`); process.stdout.write(`${JSON.stringify(report,null,2)}\n`);
   } finally { if(process.env.PROGRAPH_BENCH_KEEP==='1') process.stderr.write(`retained disposable corpus: ${root}\n`); else await rm(root,{recursive:true,force:true}); }

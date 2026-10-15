@@ -16,7 +16,7 @@ const started = performance.now();
 const report = { workload: 'synthetic occurrence navigation, 1% static calls, 1000 caller identities, batch 1000; not a source-code corpus', count,
   environment: { node: process.version, platform: process.platform, arch: process.arch, cpu: os.cpus()[0]?.model, cpuCount: os.cpus().length, memoryBytes: os.totalmem(), sqlite: new Database(':memory:').prepare('select sqlite_version() as version').get().version },
   startedAt: new Date().toISOString() };
-report.implementationDigests = Object.fromEntries(await Promise.all(['model','store','schema','query','coordinates'].map(async name => [name, digest(await readFile(new URL(`../dist/core/semantic/${name}.js`, import.meta.url)))])));
+report.implementationDigests = Object.fromEntries(await Promise.all(['model','store','schema','query','publication','read','coordinates'].map(async name => [name, digest(await readFile(new URL(`../dist/core/semantic/${name}.js`, import.meta.url)))])));
 function measured(operation) { const start = performance.now(); const result = operation(); return { ms: +(performance.now() - start).toFixed(3), result }; }
 try {
   const filename = path.join(root, 'semantic.sqlite'); const publicationStages = {};
@@ -74,6 +74,10 @@ try {
     callers: store.db.prepare('EXPLAIN QUERY PLAN SELECT caller FROM sc_calls WHERE snapshot=? AND callee=? AND caller>? ORDER BY caller LIMIT ?').all(published.result, store.entity('hub'), 0, 51),
     occurrence: store.db.prepare('EXPLAIN QUERY PLAN SELECT 1 FROM sc_navigation WHERE snapshot=? AND occurrence=? LIMIT 1').all(published.result, store.entity(occurrence(1, 'reference').key)),
   };
+  report.callSiteOracle = store.db.prepare('SELECT SUM(site_count) AS sites,COUNT(*) AS pairs FROM sc_calls WHERE snapshot=?').get(published.result);
+  if (report.callSiteOracle.sites !== callSites || report.callSiteOracle.pairs !== Math.min(callSites, 1000)) throw Error('Full synthetic static-call aggregate oracle mismatch');
+  report.integrity = store.db.pragma('integrity_check', { simple: true }); report.foreignKeyViolations = store.db.pragma('foreign_key_check');
+  if (report.integrity !== 'ok' || report.foreignKeyViolations.length || store.db.pragma('synchronous', { simple: true }) !== 2) throw Error('Storage integrity/durability failure');
   store.db.pragma('wal_checkpoint(TRUNCATE)'); store.close(); report.databaseBytes = (await stat(filename)).size;
   const query = new SemanticQuery(filename); report.queries = {};
   for (const [operation, input] of [['definition','hub'],['references','hub'],['callers','hub'],['callees','caller-0']]) {

@@ -1,0 +1,348 @@
+{
+  "startedAt": "2026-10-15T14:26:03.054Z",
+  "source": {
+    "filename": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-scip-bench-bpTuoQ/.prograph/semantic.sqlite",
+    "sha256": "8be76d5ebda5f685ddc8d3f78999942492f640f39ed5e653de18d228ec949c6a"
+  },
+  "environment": {
+    "node": "v25.9.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "memoryBytes": 17179869184
+  },
+  "methodology": "Online backup of validated SCIP facts. Setup deterministically reshards existing immutable claims into <=2000-claim owners with identical context/fingerprint and copied physical inputs/selectors; no fact/support/provenance is altered. This is a storage workload, not a claim that the original provider can reindex those shards. Original ownership and reshaped ownership both receive a complete first publication from empty projections with the current physical schema. Complete first publication and 3 serial replacements each of 1/10/100 full shards use the production publisher, WAL/FULL, all indexes, support checks and commit. Replacements validate every fact through addFact under a changed synthetic input fingerprint; staging/seal time is reported separately. No pointer-only timing, cache eviction or compiler/LOC claim. Full ownership EXCEPT oracles and pinned history are checked outside timing. High-fanout supports use synthetic derived dependency facts and alternate proofs. Source bytes remain unchanged.",
+  "pragmas": {
+    "journal_mode": "wal",
+    "synchronous": 2,
+    "foreign_keys": 1,
+    "wal_autocheckpoint": 1000,
+    "cache_size": -16000
+  },
+  "originalOwnershipFirst": {
+    "snapshot": 1,
+    "totalMs": 20115.638,
+    "stages": {
+      "content-key": 0.726,
+      "membership": 1458.583,
+      "support-eligibility": 0.195,
+      "navigation": 17394.969,
+      "symbols": 0.009,
+      "call-summary": 0.608,
+      "pointer-and-commit": 1260.462
+    },
+    "pending": 2000012,
+    "eligible": 2000012
+  },
+  "originalOwnershipPartitions": 11,
+  "setupMs": 9014.477,
+  "partitions": 1011,
+  "occurrences": 1000000,
+  "first": {
+    "snapshot": 1,
+    "totalMs": 20919.31,
+    "stages": {
+      "content-key": 1.981,
+      "membership": 1398.152,
+      "support-eligibility": 0.106,
+      "navigation": 18588.304,
+      "symbols": 0.023,
+      "call-summary": 0.524,
+      "pointer-and-commit": 930.169
+    },
+    "pending": 2000012,
+    "eligible": 2000012
+  },
+  "baselineClaims": 2000012,
+  "noOp": {
+    "snapshot": 2,
+    "totalMs": 19.048,
+    "stages": {
+      "content-key": 1.95,
+      "membership": 16.591,
+      "support-eligibility": 0.047,
+      "navigation": 0.181,
+      "symbols": 0.002,
+      "call-summary": 0.047,
+      "pointer-and-commit": 0.209
+    },
+    "pending": 0,
+    "eligible": 0
+  },
+  "replacements": [
+    {
+      "partitions": 1,
+      "trial": 0,
+      "replacedClaims": 2000,
+      "expectedVisibleClaims": 2000013,
+      "stagingAndSealMs": 576.326,
+      "snapshot": 3,
+      "totalMs": 11.086,
+      "stages": {
+        "content-key": 1.338,
+        "membership": 3.178,
+        "support-eligibility": 0.052,
+        "navigation": 5.669,
+        "symbols": 0.001,
+        "call-summary": 0.317,
+        "pointer-and-commit": 0.519
+      },
+      "pending": 4000,
+      "eligible": 2001,
+      "fullOwnershipOracle": true,
+      "historicalSnapshotRetained": true
+    },
+    {
+      "partitions": 1,
+      "trial": 1,
+      "replacedClaims": 2000,
+      "expectedVisibleClaims": 2000013,
+      "stagingAndSealMs": 291.545,
+      "snapshot": 4,
+      "totalMs": 11.063,
+      "stages": {
+        "content-key": 1.573,
+        "membership": 2.719,
+        "support-eligibility": 0.051,
+        "navigation": 5.804,
+        "symbols": 0.001,
+        "call-summary": 0.33,
+        "pointer-and-commit": 0.57
+      },
+      "pending": 4000,
+      "eligible": 2000,
+      "fullOwnershipOracle": true,
+      "historicalSnapshotRetained": true
+    },
+    {
+      "partitions": 1,
+      "trial": 2,
+      "replacedClaims": 2000,
+      "expectedVisibleClaims": 2000013,
+      "stagingAndSealMs": 274.836,
+      "snapshot": 5,
+      "totalMs": 10.832,
+      "stages": {
+        "content-key": 1.255,
+        "membership": 2.643,
+        "support-eligibility": 0.046,
+        "navigation": 5.864,
+        "symbols": 0.001,
+        "call-summary": 0.369,
+        "pointer-and-commit": 0.641
+      },
+      "pending": 4000,
+      "eligible": 2000,
+      "fullOwnershipOracle": true,
+      "historicalSnapshotRetained": true
+    },
+    {
+      "partitions": 10,
+      "trial": 0,
+      "replacedClaims": 20000,
+      "expectedVisibleClaims": 2000013,
+      "stagingAndSealMs": 3734.175,
+      "snapshot": 6,
+      "totalMs": 159.213,
+      "stages": {
+        "content-key": 36.896,
+        "membership": 24.238,
+        "support-eligibility": 3.583,
+        "navigation": 81.805,
+        "symbols": 0.004,
+        "call-summary": 9.682,
+        "pointer-and-commit": 2.984
+      },
+      "pending": 40000,
+      "eligible": 20000,
+      "fullOwnershipOracle": true,
+      "historicalSnapshotRetained": true
+    },
+    {
+      "partitions": 10,
+      "trial": 1,
+      "replacedClaims": 20000,
+      "expectedVisibleClaims": 2000013,
+      "stagingAndSealMs": 3754.527,
+      "snapshot": 7,
+      "totalMs": 194.661,
+      "stages": {
+        "content-key": 5.026,
+        "membership": 20.8,
+        "support-eligibility": 4.941,
+        "navigation": 83.085,
+        "symbols": 0.004,
+        "call-summary": 17.326,
+        "pointer-and-commit": 63.459
+      },
+      "pending": 40000,
+      "eligible": 20000,
+      "fullOwnershipOracle": true,
+      "historicalSnapshotRetained": true
+    },
+    {
+      "partitions": 10,
+      "trial": 2,
+      "replacedClaims": 20000,
+      "expectedVisibleClaims": 2000013,
+      "stagingAndSealMs": 3610.989,
+      "snapshot": 8,
+      "totalMs": 184.011,
+      "stages": {
+        "content-key": 3.838,
+        "membership": 21.678,
+        "support-eligibility": 4.349,
+        "navigation": 89.094,
+        "symbols": 0.006,
+        "call-summary": 19.417,
+        "pointer-and-commit": 45.604
+      },
+      "pending": 40000,
+      "eligible": 20000,
+      "fullOwnershipOracle": true,
+      "historicalSnapshotRetained": true
+    },
+    {
+      "partitions": 100,
+      "trial": 0,
+      "replacedClaims": 200000,
+      "expectedVisibleClaims": 2000013,
+      "stagingAndSealMs": 31736.684,
+      "snapshot": 9,
+      "totalMs": 1658.367,
+      "stages": {
+        "content-key": 3.793,
+        "membership": 252.152,
+        "support-eligibility": 88.532,
+        "navigation": 939.929,
+        "symbols": 0.005,
+        "call-summary": 100.584,
+        "pointer-and-commit": 273.335
+      },
+      "pending": 400000,
+      "eligible": 200000,
+      "fullOwnershipOracle": true,
+      "historicalSnapshotRetained": true
+    },
+    {
+      "partitions": 100,
+      "trial": 1,
+      "replacedClaims": 200000,
+      "expectedVisibleClaims": 2000013,
+      "stagingAndSealMs": 25715.338,
+      "snapshot": 10,
+      "totalMs": 1635.076,
+      "stages": {
+        "content-key": 2.962,
+        "membership": 227.399,
+        "support-eligibility": 68.232,
+        "navigation": 923.519,
+        "symbols": 0.005,
+        "call-summary": 149.343,
+        "pointer-and-commit": 263.595
+      },
+      "pending": 400000,
+      "eligible": 200000,
+      "fullOwnershipOracle": true,
+      "historicalSnapshotRetained": true
+    },
+    {
+      "partitions": 100,
+      "trial": 2,
+      "replacedClaims": 200000,
+      "expectedVisibleClaims": 2000013,
+      "stagingAndSealMs": 25690.439,
+      "snapshot": 11,
+      "totalMs": 1579.569,
+      "stages": {
+        "content-key": 2.478,
+        "membership": 224.109,
+        "support-eligibility": 74.456,
+        "navigation": 956.256,
+        "symbols": 0.005,
+        "call-summary": 121.217,
+        "pointer-and-commit": 201.033
+      },
+      "pending": 400000,
+      "eligible": 200000,
+      "fullOwnershipOracle": true,
+      "historicalSnapshotRetained": true
+    }
+  ],
+  "fanout": {
+    "derived": 100000,
+    "initial": {
+      "snapshot": 12,
+      "totalMs": 341.333,
+      "stages": {
+        "content-key": 3.938,
+        "membership": 46.249,
+        "support-eligibility": 41.668,
+        "navigation": 219.369,
+        "symbols": 0.006,
+        "call-summary": 12.287,
+        "pointer-and-commit": 17.798
+      },
+      "pending": 100000,
+      "eligible": 100000
+    },
+    "oneSupportRemoved": {
+      "snapshot": 13,
+      "totalMs": 264.874,
+      "stages": {
+        "content-key": 1.287,
+        "membership": 105.743,
+        "support-eligibility": 75.107,
+        "navigation": 57.646,
+        "symbols": 0.003,
+        "call-summary": 17.745,
+        "pointer-and-commit": 7.331
+      },
+      "pending": 102000,
+      "eligible": 50000
+    },
+    "alternativeSurvivors": 50000,
+    "lastSupportRemoved": {
+      "snapshot": 14,
+      "totalMs": 169.163,
+      "stages": {
+        "content-key": 1.314,
+        "membership": 51.582,
+        "support-eligibility": 46.836,
+        "navigation": 31.516,
+        "symbols": 0.002,
+        "call-summary": 29.307,
+        "pointer-and-commit": 8.587
+      },
+      "pending": 52000,
+      "eligible": 0
+    },
+    "lastSupportSurvivors": 0
+  },
+  "integrity": "ok",
+  "foreignKeyViolations": [],
+  "storageDefinition": [
+    {
+      "name": "sc_call_epochs",
+      "sql": "CREATE TABLE sc_call_epochs(caller INTEGER NOT NULL REFERENCES sc_entities(id),callee INTEGER NOT NULL REFERENCES sc_entities(id),first INTEGER NOT NULL,last INTEGER,site_count INTEGER NOT NULL,confidence TEXT NOT NULL,sample_claim INTEGER NOT NULL REFERENCES sc_claims(id),PRIMARY KEY(caller,callee,first),CHECK(last IS NULL OR last>first))"
+    },
+    {
+      "name": "sc_claim_navigation",
+      "sql": "CREATE TABLE sc_claim_navigation(claim INTEGER PRIMARY KEY REFERENCES sc_claims(id),relation TEXT NOT NULL,subject INTEGER NOT NULL REFERENCES sc_entities(id),object INTEGER REFERENCES sc_entities(id),occurrence INTEGER REFERENCES sc_occurrences(entity),confidence TEXT NOT NULL,context TEXT)"
+    },
+    {
+      "name": "sc_visibility",
+      "sql": "CREATE TABLE sc_visibility(claim INTEGER NOT NULL REFERENCES sc_claims(id),first INTEGER NOT NULL,last INTEGER,PRIMARY KEY(claim,first),CHECK(last IS NULL OR last>first))"
+    }
+  ],
+  "databaseBytes": 3313590272,
+  "maxRssKiB": 563168,
+  "implementationDigests": {
+    "publication": "fff06bd6cd61c18ad71c28e520369f038c1b848da8e291460c973c14670a81d1",
+    "store": "2e94fa9285161c83ce4dc72e9c4b614fecc1bd9c43835239402ac2db409f9b16",
+    "schema": "4f73f565c56ccea10d02285794cfd81eee754ae10f2ca0b8d2d6dbd975bd39be",
+    "read": "aa5c2d54fd7407096f9b2dbfc33af7288296095b0243dd70800654e0e1293b98",
+    "query": "3f3cf85e33004c9edd4a6f2adf05739f8af4c5c4bb1e1652573548d64bb646a8",
+    "model": "4101eccc4cf7ba1f3500735f9023eea28ec43461638ec816337070111f429976"
+  }
+}

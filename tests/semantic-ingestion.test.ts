@@ -223,7 +223,7 @@ test("call pass uses indexed targets, respects ownership and cannot strengthen c
 test("old semantic schema remains readable and upgrades additively on writer open", async () => {
   const root = await temporary(); const input = await artifact(root, [doc()]); await importScip(root, input.filename, input.manifest);
   const file = path.join(root, ".prograph/semantic.sqlite"); const store = new SemanticStore(file); store.db.prepare("UPDATE sc_meta SET value='2.0.0-step1' WHERE key='schema'").run(); const snapshot = store.activeSnapshot(); store.close();
-  const old = new SemanticStore(file); old.db.exec("DROP TABLE sc_context_lookup"); old.db.prepare("UPDATE sc_meta SET value='2.0.0-step1' WHERE key='schema'").run(); old.close();
+  const old = new SemanticStore(file); old.db.exec("DROP VIEW sc_context_lookup"); old.db.prepare("UPDATE sc_meta SET value='2.0.0-step1' WHERE key='schema'").run(); old.close();
   const query = new SemanticQuery(file); try { expect(query.execute("status")).toMatchObject({ snapshot, schema: "2.0.0-step1" }); expect(query.execute("context").items).toEqual([]); expect(String(query.execute("context").gaps)).toContain("unavailable"); } finally { query.close(); }
   const upgraded = new SemanticStore(file); try { expect(upgraded.activeSnapshot()).toBe(snapshot); expect(upgraded.db.prepare("SELECT value FROM sc_meta WHERE key='schema'").get()).toEqual({ value: SEMANTIC_SCHEMA_VERSION }); } finally { upgraded.close(); }
   const prior = new SemanticStore(file); prior.db.prepare("UPDATE sc_meta SET value='2.0.0-step2.1' WHERE key='schema'").run(); prior.close();

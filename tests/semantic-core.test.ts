@@ -170,7 +170,7 @@ describe("TypeScript semantic vertical slice", () => {
       expect(callers).toEqual(expect.arrayContaining([expect.objectContaining({ name: "caller", site_count: 2 }), expect.objectContaining({ name: "nested", site_count: 1 })]));
       expect(callers.some(c => c.name === "referenceOnly")).toBe(false); expect(callers.some(c => c.name === "callback")).toBe(false);
       const first = q.execute("references", target.key, { limit: 1 }); const second = q.execute("references", target.key, { limit: 1, cursor: String(first.nextCursor) });
-      expect(second.snapshot).toBe(first.snapshot); expect(second.items).not.toEqual(first.items); expect(first.work).toMatchObject({ candidateRows: 2, globalGraphMaterialized: false });
+      expect(second.snapshot).toBe(first.snapshot); expect(second.items).not.toEqual(first.items); expect(first.work).toMatchObject({ candidateRows: 4, globalGraphMaterialized: false });
       expect(() => q.execute("references", "wrong", { cursor: String(first.nextCursor) })).toThrow("Cursor");
       const ref = (refs.items as Array<{ occurrence: string; evidenceClaim: string }>)[0]!;
       expect(q.execute("occurrence", ref.occurrence).items).toHaveLength(1); expect(q.execute("explain", ref.evidenceClaim).items).toHaveLength(1);
