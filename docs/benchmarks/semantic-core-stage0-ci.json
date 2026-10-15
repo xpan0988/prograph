@@ -1,0 +1,348 @@
+{
+  "stage": 0,
+  "workflowRun": {
+    "id": 38701368306,
+    "url": "https://github.com/xpan0988/prograph/actions/runs/38701368306",
+    "headSha": "b32070fe0fa78e31f7802ff8ae217447503f0814",
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "createdAt": "2026-10-15T07:49:34Z",
+    "updatedAt": "2026-10-15T07:52:30Z"
+  },
+  "previousFailure": {
+    "runId": 38695388472,
+    "sha": "65d5432514129c4d87e896ea66171ed8bdb7a272",
+    "reason": "Complete display-string regex rejected pinned Linux binary lacking commit/date display; build/recovery skipped"
+  },
+  "observedLinuxDisplay": "rust-analyzer 0.3.3081-standalone",
+  "jobs": [
+    {
+      "id": 116310089145,
+      "name": "regression (20)",
+      "nodeVersion": "20.20.2",
+      "url": "https://github.com/xpan0988/prograph/actions/runs/38701368306/job/116310089145",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-15T07:49:37Z",
+      "completedAt": "2026-10-15T07:52:29Z",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 21,
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 22,
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 23,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "tests": {
+        "passed": 118,
+        "skipped": 0,
+        "realRustProducer": true
+      },
+      "recovery": {
+        "processProbes": 4,
+        "corruptionRefused": true,
+        "integrity": "ok"
+      }
+    },
+    {
+      "id": 116310089525,
+      "name": "regression (24)",
+      "nodeVersion": "24.21.0",
+      "url": "https://github.com/xpan0988/prograph/actions/runs/38701368306/job/116310089525",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-15T07:49:38Z",
+      "completedAt": "2026-10-15T07:51:00Z",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 21,
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 22,
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 23,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "tests": {
+        "passed": 118,
+        "skipped": 0,
+        "realRustProducer": true
+      },
+      "recovery": {
+        "processProbes": 4,
+        "corruptionRefused": true,
+        "integrity": "ok"
+      }
+    },
+    {
+      "id": 116310089620,
+      "name": "regression (22)",
+      "nodeVersion": "22.23.3",
+      "url": "https://github.com/xpan0988/prograph/actions/runs/38701368306/job/116310089620",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-15T07:49:37Z",
+      "completedAt": "2026-10-15T07:51:05Z",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 21,
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 22,
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 23,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "tests": {
+        "passed": 118,
+        "skipped": 0,
+        "realRustProducer": true
+      },
+      "recovery": {
+        "processProbes": 4,
+        "corruptionRefused": true,
+        "integrity": "ok"
+      }
+    }
+  ],
+  "local": {
+    "node": "25.9.0",
+    "passed": 118,
+    "skipped": 0,
+    "build": "passed",
+    "typecheck": "passed",
+    "recoveryProbes": 4,
+    "evidenceVerifier": "passed"
+  }
+}
