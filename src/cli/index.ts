@@ -10,6 +10,7 @@ import { syncRepository } from "../core/analysis/sync.js";
 import { watchRepository } from "../core/analysis/watch.js";
 import { type BoundedQuery, type ConfidenceQuery } from "../core/query/query-service.js";
 import { isolatedQueryForRepository, isolatedSemanticRead, type AsyncQueryClient } from "../core/query/isolation.js";
+import { indexManagedProject, toolReceipt } from "../core/semantic/managed-scip.js";
 import { formatQueryOutput, type OutputMode } from "../core/query/output-mode.js";
 import type { EdgeKind, GraphScope, NodeKind } from "../core/graph/schema.js";
 import { resolveRepositoryRoot } from "../core/repository/repository.js";
@@ -257,6 +258,14 @@ addFormat(addConfidence(addIndex(program.command("boundaries [path]").descriptio
 });
 
 const semanticCommand = program.command("semantic").description("Semantic Core snapshot navigation and verified interchange");
+addFormat(semanticCommand.command("tool-receipt <path>").description("Hash an explicit immutable semantic tool or SDK directory"))
+  .action(async (file: string, options: FormatOptions) => { const receipt = await toolReceipt(path.resolve(file)); writeResult({ path: path.resolve(file), sha256: receipt.sha256, files: receipt.files, bytes: receipt.bytes }, options.format); });
+addFormat(addIndex(semanticCommand.command("index-project <configuration>").description("Explicit pinned Python/Go/Java/C# SCIP production from a declared compiler context")))
+  .option("--repo <path>", "repository path", ".")
+  .option("--timeout-ms <number>", "total provider deadline before publication", Number, 300000)
+  .action(async (configuration: string, options: FormatOptions & { repo: string; index?: string; timeoutMs: number }) => {
+    writeResult(await withCancellation(signal => indexManagedProject(options.repo, configuration, options.index, { timeoutMs: options.timeoutMs, signal })), options.format);
+  });
 addFormat(addIndex(semanticCommand.command("index-rust <manifest>").description("Explicit pinned offline Rust workspace navigation in an isolated source copy")))
   .option("--repo <path>", "repository path", ".")
   .requiredOption("--analyzer <path>", "absolute rust-analyzer executable")

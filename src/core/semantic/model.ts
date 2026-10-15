@@ -4,10 +4,11 @@ import type { Confidence } from "../graph/schema.js";
 export const SEMANTIC_FORMAT_VERSION = 2;
 export const SEMANTIC_SCHEMA_VERSION = "2.0.0-step2.4";
 export const READABLE_SEMANTIC_SCHEMAS = ["2.0.0-step1", "2.0.0-step2.1", "2.0.0-step2.2", "2.0.0-step2.3", SEMANTIC_SCHEMA_VERSION] as const;
-export const RUST_PROVIDER_VERSION = "rust-scip-runner-3";
+export const RUST_PROVIDER_VERSION = "rust-scip-runner-4";
+export const MANAGED_SCIP_VERSION = "managed-scip-1";
 export const TYPESCRIPT_SEMANTIC_VERSION = "2";
 export const CLANG_SEMANTIC_VERSION = "2";
-export const SCIP_SEMANTIC_VERSION = "2";
+export const SCIP_SEMANTIC_VERSION = "3";
 export const CALL_PROJECTION_VERSION = "1";
 
 /** Canonical JSON is a persisted identity contract, independent of insertion order. */
@@ -84,6 +85,7 @@ export const PREDICATES = {
   "scip.SymbolInformation": { version: 1, relation: "native-symbol", unique: false },
   "scip.Relationship": { version: 1, relation: "native-relationship", unique: false },
   "scip.Occurrence": { version: 1, relation: "native-occurrence", unique: false },
+  "scip.SourceRole": { version: 1, relation: "native-declaration", unique: false },
   "cxx.Declaration": { version: 1, relation: "native-declaration", unique: false },
   "legacy.Node": { version: 1, relation: "legacy-node", unique: false },
   "legacy.Relation": { version: 1, relation: "legacy-relation", unique: false },

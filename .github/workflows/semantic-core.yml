@@ -32,6 +32,28 @@ jobs:
           "$RUNNER_TEMP/rust-analyzer" --version
           echo "PROGRAPH_TEST_RUST_ANALYZER=$RUNNER_TEMP/rust-analyzer" >> "$GITHUB_ENV"
       - run: npm run lint
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.9'
+          cache: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-dotnet@v4
+        env:
+          DOTNET_INSTALL_DIR: ${{ runner.temp }}/semantic-dotnet
+        with:
+          dotnet-version: '10.0.402'
+      - name: Install pinned mainstream semantic qualification tools
+        env:
+          DOTNET_INSTALL_DIR: ${{ runner.temp }}/semantic-dotnet
+        run: |
+          npm run build:node
+          node scripts/install-semantic-producers.mjs "$RUNNER_TEMP/semantic-producers"
       - name: Complete tests, including actual Rust producer
         run: npm test -- --reporter=default --reporter=json --outputFile=semantic-test-results.json
       - name: Complete Node and UI build
@@ -47,3 +69,4 @@ jobs:
           path: |
             semantic-test-results.json
             semantic-recovery-results.json
+            ${{ runner.temp }}/semantic-producers/receipt.json

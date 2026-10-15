@@ -100,6 +100,8 @@ export class SemanticQuery {
         rows = read.symbols(input, after, limit + 1).map(item => ({
           page_key: item.entity,
           ...this.db.prepare(`SELECT e.key,s.name,s.qualified_name,s.kind,s.file,s.context AS variant FROM sc_symbols s JOIN sc_entities e ON e.id=s.entity WHERE s.entity=?`).get(item.entity) as object,
+          // Package-scoped SCIP identity is immutable; display the selected declaration's actual file.
+          ...this.db.prepare("SELECT src.path AS file FROM sc_occurrences o JOIN sc_sources src ON src.id=o.source WHERE o.entity=?").get(item.evidence.occurrence) as object,
           ...this.db.prepare("SELECT key AS evidenceClaim,confidence FROM sc_claims WHERE id=?").get(item.evidence.claim) as object,
         })); examined = rows.length;
       } else if (operation === "occurrence") {

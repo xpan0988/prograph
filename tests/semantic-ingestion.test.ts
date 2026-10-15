@@ -80,6 +80,16 @@ test("inference-backed SCIP targets cannot become compiler-resolved bindings", a
   const q = await semanticQueryForRepository(root);
   try { const target = (q.execute("find", "target").items as Array<{ key: string }>)[0]!.key; expect(q.execute("references", target).items).toMatchObject([{ confidence: "probable" }]); expect(q.execute("relationships", target).items).toMatchObject([{ confidence: "probable" }]); } finally { q.close(); }
 });
+test("external document-local metadata is rejected by default or diagnosed and excluded explicitly", async () => {
+  const root = await temporary(); const input = await artifact(root, [doc()], field(3, "SymbolInformation", { symbol: "local 1" }));
+  await expect(importScip(root, input.filename, input.manifest)).rejects.toThrow("document-local");
+  const result = await importScip(root, input.filename, { ...input.manifest, externalLocalPolicy: "diagnose" });
+  expect(result).toMatchObject({ accepted: 1, rejected: 0, excludedExternalLocals: 1 });
+  const q = await semanticQueryForRepository(root); try { expect(q.execute("find", "target").items).toHaveLength(1); expect(q.execute("find", "local 1").items).toHaveLength(0); } finally { q.close(); }
+  const related = await artifact(root, [doc()], field(3, "SymbolInformation", { symbol: global, relationships: [{ symbol: "local 9", is_implementation: true }] }));
+  await expect(importScip(root, related.filename, related.manifest)).rejects.toThrow("document-local");
+  expect(await importScip(root, related.filename, { ...related.manifest, externalLocalPolicy: "diagnose" })).toMatchObject({ excludedExternalLocals: 1 });
+});
 test("document-local symbols do not unify across files; repeat import is idempotent", async () => {
   const root = await temporary(); const input = await artifact(root, [doc("a.py", true), doc("b.py", true)]);
   await importScip(root, input.filename, input.manifest); const q = await semanticQueryForRepository(root);

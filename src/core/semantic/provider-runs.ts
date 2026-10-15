@@ -1,6 +1,6 @@
 import path from "node:path";
 import type { RepositorySnapshot } from "../adapters/contracts.js";
-import { canonical, digest, CLANG_SEMANTIC_VERSION, SCIP_SEMANTIC_VERSION, RUST_PROVIDER_VERSION } from "./model.js";
+import { canonical, digest, CLANG_SEMANTIC_VERSION, SCIP_SEMANTIC_VERSION, RUST_PROVIDER_VERSION, MANAGED_SCIP_VERSION } from "./model.js";
 import { SemanticStore } from "./store.js";
 import { digestFile } from "./inputs.js";
 import { repositoryInputPaths } from "../repository/repository.js";
@@ -69,7 +69,7 @@ export async function retainProviders(store: SemanticStore, snapshot: Repository
       if (!passSuffix.test(row.partition_key)) {
         const run = store.sql("SELECT coverage_json FROM sc_runs WHERE id=?").get(row.run) as { coverage_json: string };
         const coverage = JSON.parse(run.coverage_json) as { mappingVersion?: string; executionVersion?: string };
-        if (coverage.mappingVersion !== (row.partition_key.startsWith("clang/") ? CLANG_SEMANTIC_VERSION : SCIP_SEMANTIC_VERSION) || coverage.executionVersion && coverage.executionVersion !== RUST_PROVIDER_VERSION) eligible = false;
+        if (coverage.mappingVersion !== (row.partition_key.startsWith("clang/") ? CLANG_SEMANTIC_VERSION : SCIP_SEMANTIC_VERSION) || coverage.executionVersion && ![RUST_PROVIDER_VERSION, MANAGED_SCIP_VERSION].includes(coverage.executionVersion)) eligible = false;
       }
       const inputs = store.sql("SELECT resource,digest FROM sc_inputs WHERE run=?").all(row.run) as Array<{ resource: string; digest: string }>;
       for (const input of inputs) {
@@ -82,9 +82,14 @@ export async function retainProviders(store: SemanticStore, snapshot: Repository
       for (const row of group) {
         if (!row.partition_key.includes("/pass:")) retained.push(row.run);
         else if (row.partition_key.endsWith("/pass:call-summary@1")) {
-          const partition = row.partition_key.replace(passSuffix, ""); const input = group.find(candidate => candidate.partition_key === partition);
+          const partition = row.partition_key.replace(passSuffix, ""); const input = group.find(candidate => candidate.partition_key === `${partition}/pass:scip-native@1`) ?? group.find(candidate => candidate.partition_key === partition);
           if (!input) throw Error("Retained pass has no native owner");
           retained.push(...qualifiedCallProjection(store, input.run, partition, row.run));
+        } else if (row.partition_key.endsWith("/pass:scip-native@1")) {
+          const run = store.sql("SELECT coverage_json FROM sc_runs WHERE id=?").get(row.run) as { coverage_json: string };
+          const coverage = JSON.parse(run.coverage_json) as Record<string, unknown>;
+          if (coverage.configurationFingerprint !== "scip-ast-bound-static-1") throw Error("Retained native pass version is incompatible");
+          retained.push(row.run);
         } else throw Error("Retained provider has an unrecognized pass contract");
       }
     }

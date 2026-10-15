@@ -8,9 +8,11 @@ import { canonical, digest, RUST_PROVIDER_VERSION } from "./model.js";
 import { importScip, type ScipManifest } from "./scip-import.js";
 import { runProviderProcess } from "./process.js";
 import { qualifyRustAnalyzer } from "./rust-qualification.js";
+import { deriveScipNative } from "./scip-native.js";
+import { inventoryFromDisk } from "./provider-runs.js";
 
 export { RUST_PROVIDER_VERSION } from "./model.js";
-export const RUST_PROVIDER_CAPABILITIES = { symbols: "partial", definitions: "partial", references: "partial", calls: "unsupported", types: "reported-signatures", traits: "reported-symbols", associatedItems: "reported-symbols", macros: "unqualified", dynamicDispatch: "unsupported" } as const;
+export const RUST_PROVIDER_CAPABILITIES = { symbols: "partial", definitions: "partial", references: "partial", imports: "partial", calls: "partial-declared-static-targets", types: "reported-signatures", traits: "reported-symbols", associatedItems: "reported-symbols", macros: "unqualified", dynamicDispatch: "unsupported" } as const;
 export interface RustOptions {
   analyzer: string;
   analyzerSha256: string;
@@ -40,6 +42,7 @@ export async function indexRust(repository: string, manifestFile: string, option
   if (features.length > 128 || features.some(feature => !/^[A-Za-z0-9_][A-Za-z0-9_./+-]{0,255}$/.test(feature)) || options.target && !/^[A-Za-z0-9_-]{1,128}$/.test(options.target)) throw Error("Unsupported Rust feature/target selection");
   if (await digestFile(options.analyzer) !== options.analyzerSha256) throw Error("Rust analyzer digest mismatch");
   const root = await resolveRepositoryRoot(repository); const directory = path.resolve(index?.endsWith(".sqlite") ? path.dirname(index) : index ?? path.join(root, ".prograph"));
+  const initialInventory = await inventoryFromDisk(root, directory, 200000, options.signal);
   const scan = await scanRepository(root, directory);
   const manifest = path.relative(root, path.resolve(root, manifestFile)).split(path.sep).join("/");
   if (manifest.startsWith("../") || !scan.snapshot.fileContents.has(manifest) || !manifest.endsWith("Cargo.toml")) throw Error("Selected Rust manifest is not in the repository inventory");
@@ -125,10 +128,12 @@ export async function indexRust(repository: string, manifestFile: string, option
   const verify = async (signal?: AbortSignal) => {
     signal?.throwIfAborted(); if (performance.now() - started > timeout) throw Error("Rust provider total deadline exceeded before publication");
     for (const [resource, expected] of Object.entries(inputs)) { const file = resource.startsWith("source:") ? path.join(root, resource.slice(7)) : resource.slice(9); if (await digestFile(file, 10 * 1024 ** 3, signal) !== expected) throw Error(`Rust recorded input changed: ${resource}`); }
+    if ((await inventoryFromDisk(root, directory, 200000, signal)).inventory !== initialInventory.inventory) throw Error("Rust source/config inventory changed during production");
     signal?.throwIfAborted(); if (performance.now() - started > timeout) throw Error("Rust provider total deadline exceeded before publication");
   };
   await verify(options.signal);
   const imported = await importScip(root, artifact, sidecar, directory, { maxIndexBytes: 64 * 1024 ** 2, maxDocuments: 1000 }, options.signal,
-    { version: RUST_PROVIDER_VERSION, environment, inputs, diagnostics: [compiler.stderr, extracted.stderr].filter(Boolean).map(message => message.slice(0, 2048)), verify });
-  return { ...imported, provider: "rust-analyzer", capabilities: RUST_PROVIDER_CAPABILITIES, environment, executionDirectory: runDirectory, stagesMs: stages, totalMs: Math.round(performance.now() - started) };
+    { version: RUST_PROVIDER_VERSION, environment, inputs, diagnostics: [compiler.stderr, extracted.stderr].filter(Boolean).map(message => message.slice(0, 2048)), requireAllDocuments: true, verify,
+      derive: (store, documents, ctx, fingerprint) => deriveScipNative(store, documents, root, "rust", ctx, fingerprint, options.signal) });
+  return { ...imported, calls: "partial-declared-static-targets", provider: "rust-analyzer", capabilities: RUST_PROVIDER_CAPABILITIES, environment, executionDirectory: runDirectory, stagesMs: stages, totalMs: Math.round(performance.now() - started) };
 }

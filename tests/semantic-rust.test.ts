@@ -1,4 +1,5 @@
-import { afterEach, expect, test } from "vitest";
+import { afterEach, expect, test, vi } from "vitest";
+import { writeFileSync } from "node:fs";
 import { mkdtemp, mkdir, writeFile, readFile, rm, stat } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -9,6 +10,7 @@ import { digest } from "../src/core/semantic/model.js";
 import { analyzeRepository } from "../src/core/analysis/analyze.js";
 import { repositoryStatus } from "../src/core/analysis/state.js";
 import { qualifyRustAnalyzer, RUST_ANALYZER_RELEASE } from "../src/core/semantic/rust-qualification.js";
+import { SemanticStore } from "../src/core/semantic/store.js";
 const roots: string[] = [];
 test("release qualification accepts platform displays and binds missing revision to exact artifact", () => {
   const mac = RUST_ANALYZER_RELEASE.artifacts["darwin:arm64"].executableSha256;
@@ -62,12 +64,24 @@ test("Rust binary pin failure preserves legacy behavior and does not invoke a pr
   expect((await repositoryStatus(root)).state).toBe("fresh");
 });
 const analyzer = process.env.PROGRAPH_TEST_RUST_ANALYZER; const toolchain = process.env.PROGRAPH_TEST_RUST_TOOLCHAIN;
+test.skipIf(!analyzer || !toolchain)("a source addition during actual producer ingestion cannot publish stale negative lookups", async () => {
+  const root = await fixture(); const options = { analyzer: analyzer!, analyzerSha256: digest(await readFile(analyzer!)), toolchain: toolchain! };
+  const baseline = await indexRust(root, "native/Cargo.toml", options);
+  const seal = SemanticStore.prototype.seal; let injected = false;
+  const hook = vi.spyOn(SemanticStore.prototype, "seal").mockImplementation(function(this: SemanticStore, run: number, coverage: Record<string, unknown>) {
+    if (!injected && coverage.mappingVersion) { injected = true; writeFileSync(path.join(root, "native/src/added.rs"), "pub fn added() {}\n"); }
+    seal.call(this, run, coverage);
+  });
+  try { await expect(indexRust(root, "native/Cargo.toml", options)).rejects.toThrow("inventory changed"); } finally { hook.mockRestore(); }
+  expect(injected).toBe(true); const store = new SemanticStore(path.join(root, ".prograph/semantic.sqlite"));
+  try { expect(store.activeSnapshot()).toBe(baseline.snapshot); } finally { store.close(); }
+});
 test.skipIf(!analyzer || !toolchain)("real Rust producer qualifies traits, path dependencies, feature variants and stable navigation", async () => {
   const root = await fixture(); const options = { analyzer: analyzer!, analyzerSha256: digest(await readFile(analyzer!)), toolchain: toolchain! };
   const original = await readFile(path.join(root, "native/src/lib.rs"));
   await analyzeRepository(root);
   const first = await indexRust(root, "native/Cargo.toml", options);
-  expect(first).toMatchObject({ accepted: 2, rejected: 0, calls: "unsupported", environment: { compilerChecked: true } });
+  expect(first).toMatchObject({ accepted: 2, rejected: 0, calls: "partial-declared-static-targets", environment: { compilerChecked: true } });
   let q = await semanticQueryForRepository(root); let defaultTargets: string[];
   try {
     defaultTargets = (q.execute("find", "target").items as Array<{ key: string }>).map(item => item.key); expect(defaultTargets).toHaveLength(2);
@@ -77,7 +91,8 @@ test.skipIf(!analyzer || !toolchain)("real Rust producer qualifies traits, path 
     expect(q.execute("references", value).items.length).toBeGreaterThan(0);
     expect(q.execute("native", value).items).toEqual(expect.arrayContaining([expect.objectContaining({ value: expect.objectContaining({ signature: expect.stringContaining("Value") }) })]));
     expect(q.execute("find", "selected").items).toHaveLength(0);
-    expect(q.execute("context", value).items).toMatchObject([{ value: { documentPathPrefix: "native", execution: { environment: { capabilities: { calls: "unsupported" } } } } }]);
+    expect(defaultTargets.some(key => (q.execute("callees", key).items as unknown[]).length > 0)).toBe(true);
+    expect(q.execute("context", value).items).toMatchObject([{ value: { documentPathPrefix: "native", execution: { environment: { capabilities: { calls: "partial-declared-static-targets" } } } } }]);
   } finally { q.close(); }
   await indexRust(root, "native/Cargo.toml", { ...options, features: ["extra"] });
   q = await semanticQueryForRepository(root);
