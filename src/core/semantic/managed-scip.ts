@@ -36,7 +36,7 @@ export async function toolReceipt(filename: string, signal?: AbortSignal): Promi
   const root = await realpath(filename); const inputs: Record<string, string> = {}; const entries: unknown[] = []; let bytes = 0; let files = 0;
   const visit = async (file: string): Promise<void> => {
     signal?.throwIfAborted(); const info = await lstat(file); const relative = path.relative(root, file).split(path.sep).join("/");
-    if (info.isSymbolicLink()) { const link = await readlink(file); let target: string; try { target = await realpath(file); } catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; target = path.resolve(path.dirname(file), link); } if (target !== root && !target.startsWith(`${root}${path.sep}`)) throw Error("Tool symlink escapes receipt root"); entries.push([relative, "link", link]); return; }
+    if (info.isSymbolicLink()) { const link = await readlink(file); let target: string; try { target = await realpath(file); } catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; target = path.resolve(path.dirname(file), link); } if (target !== root && !target.startsWith(`${root}${path.sep}`)) throw Error(`Tool symlink escapes receipt root: ${file} -> ${target}`); entries.push([relative, "link", link]); return; }
     if (info.isDirectory()) { for (const child of (await readdir(file)).sort()) await visit(path.join(file, child)); return; }
     if (!info.isFile() || ++files > 40000 || (bytes += info.size) > 3 * 1024 ** 3) throw Error("Tool receipt exceeds 40000 files / 3 GiB");
     const hash = await digestFile(file, 512 * 1024 ** 2, signal); inputs[`physical:${file}`] = hash; entries.push([relative, hash]);

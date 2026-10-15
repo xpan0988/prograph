@@ -116,13 +116,23 @@
     }
   },
   "implementation": {
-    "model": "9810f17babb73e80d64c520a4fab5d622070dceb2f0cad176ad2a0c284b7615a",
-    "managed-scip": "18590479d7cbc8e2b36ed348ee7c6d6e9cc4dbcd5828499171f2727e045c3ad0",
-    "scip-native": "f4aa26969b8c52e69db6fe7fce53e2ee3039d3096bd62da345d84c4e59b8f260",
+    "model": "3065e5b33b69ee97dc75b662f46bfd05f51678c1e72e4d28a8c59f6dd813364d",
+    "managed-scip": "e86c9390cc85337008cc4ec8ef6dff4dfd62a6adf5ab34fae7ae3180659644af",
+    "scip-native": "591dbb6712785479cbc50b69d2b219c913eab610c34c358de629995cefc677a8",
     "scip-dialects": "e6170d7dcdf5d7bd2cf92e5d6b2b4de3bcafd1fce8add8813c417955d767d947",
     "scip-import": "92b657d6e8dc2744877d8f4eaf7bb9d1e0c8a6cf79b829979f4c1138f775f721",
     "provider-runs": "ae475d9d5597c565681fb3999594609d71a9c4382c27bc30c2bd8677c93ade5a",
     "query": "91248cab4bd29ed1dafbe5108003def4eb8b2aef7f621af065e32d83897a2565",
-    "rust": "f0828c7535549a23b893eabad784aed1d055c72fa6a4a234bbe74f722327e724"
-  }
+    "rust": "f0828c7535549a23b893eabad784aed1d055c72fa6a4a234bbe74f722327e724",
+    "passes": "2337c734b16ebd9b889bcc5d7c709cfc2578330b94334cc6550d402a3a87fbe8"
+  },
+  "providerRuntime": {
+    "rust": "rust-scip-runner-5",
+    "managed": "managed-scip-1",
+    "scipMapping": "3"
+  },
+  "validationNotes": [
+    "Full 149-test run includes actual Rust LSP provenance assertions; final receipt-root error-message detail was subsequently typechecked",
+    "Linux JDK archive authenticated locally: 542 members, 205 internal symlinks, zero external symlinks; execution requires Linux CI"
+  ]
 }

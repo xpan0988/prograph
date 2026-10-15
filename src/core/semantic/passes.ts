@@ -97,5 +97,6 @@ export function qualifiedCallProjection(store: SemanticStore, input: number, par
   const row = store.sql("SELECT context,input_fingerprint FROM sc_runs WHERE id=? AND state='sealed'").get(input) as { context: string; input_fingerprint: string };
   const selector = store.sql("SELECT key FROM sc_run_selectors WHERE run=? AND digest=? ORDER BY key LIMIT 1").get(input, row.input_fingerprint) as { key: string } | undefined;
   if (!selector) throw Error("Cannot qualify call pass without its native input selector");
-  return executePasses(store, input, partition, { provider: "pass:call-summary", version: callPass.version, basis: "compiler", method: "supported-fact-projection", context: row.context, inputFingerprint: row.input_fingerprint }, selector.key);
+  const origin = store.sql("SELECT p.json FROM sc_owned o JOIN sc_claims c ON c.id=o.claim JOIN sc_facts f ON f.id=c.fact JOIN sc_provenance p ON p.id=c.provenance WHERE o.run=? AND f.predicate='common.CallSite' LIMIT 1").get(input) as { json: string } | undefined;
+  return executePasses(store, input, partition, { provider: "pass:call-summary", version: callPass.version, basis: origin ? (JSON.parse(origin.json) as Provenance).basis : "unresolved", method: "supported-fact-projection", context: row.context, inputFingerprint: row.input_fingerprint }, selector.key);
 }

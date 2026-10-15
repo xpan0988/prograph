@@ -4,7 +4,7 @@ import type { Confidence } from "../graph/schema.js";
 export const SEMANTIC_FORMAT_VERSION = 2;
 export const SEMANTIC_SCHEMA_VERSION = "2.0.0-step2.4";
 export const READABLE_SEMANTIC_SCHEMAS = ["2.0.0-step1", "2.0.0-step2.1", "2.0.0-step2.2", "2.0.0-step2.3", SEMANTIC_SCHEMA_VERSION] as const;
-export const RUST_PROVIDER_VERSION = "rust-scip-runner-4";
+export const RUST_PROVIDER_VERSION = "rust-scip-runner-5";
 export const MANAGED_SCIP_VERSION = "managed-scip-1";
 export const TYPESCRIPT_SEMANTIC_VERSION = "2";
 export const CLANG_SEMANTIC_VERSION = "2";

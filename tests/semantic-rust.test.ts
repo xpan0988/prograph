@@ -91,7 +91,9 @@ test.skipIf(!analyzer || !toolchain)("real Rust producer qualifies traits, path 
     expect(q.execute("references", value).items.length).toBeGreaterThan(0);
     expect(q.execute("native", value).items).toEqual(expect.arrayContaining([expect.objectContaining({ value: expect.objectContaining({ signature: expect.stringContaining("Value") }) })]));
     expect(q.execute("find", "selected").items).toHaveLength(0);
-    expect(defaultTargets.some(key => (q.execute("callees", key).items as unknown[]).length > 0)).toBe(true);
+    const calls = defaultTargets.flatMap(key => q.execute("callees", key).items as Array<{ evidenceClaim: string }>);
+    expect(calls.length).toBeGreaterThan(0);
+    expect(calls.every(call => (q.execute("explain", call.evidenceClaim).items as Array<{ provenance: { basis: string } }>)[0]!.provenance.basis === "lsp")).toBe(true);
     expect(q.execute("context", value).items).toMatchObject([{ value: { documentPathPrefix: "native", execution: { environment: { capabilities: { calls: "partial-declared-static-targets" } } } } }]);
   } finally { q.close(); }
   await indexRust(root, "native/Cargo.toml", { ...options, features: ["extra"] });

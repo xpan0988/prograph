@@ -60,7 +60,10 @@ export async function deriveScipNative(store: SemanticStore, runs: number[], roo
       const defs = at(name, true).filter(o => /\([^)]*\)\.$/.test(o.raw)); if (defs.length === 1) owners.set(n.id, defs[0]!);
     }
     const selector = `scip-native:${unit.partition_key}:${context}`;
-    const provenance: Provenance = { provider: "pass:scip-native", version: "1", basis: "compiler", method: "compiler-binding-and-source-role", context, inputFingerprint: fingerprint };
+    const origin = store.sql("SELECT p.json FROM sc_owned o JOIN sc_claims c ON c.id=o.claim JOIN sc_facts f ON f.id=c.fact JOIN sc_provenance p ON p.id=c.provenance WHERE o.run=? AND f.predicate='scip.Occurrence' LIMIT 1").get(input) as { json: string } | undefined;
+    const basis: Provenance["basis"] = origin ? (JSON.parse(origin.json) as Provenance).basis : "unresolved";
+    if (origin && basis !== "compiler" && basis !== "lsp") throw Error("Native declared targets require compiler/typechecker bindings");
+    const provenance: Provenance = { provider: "pass:scip-native", version: "1", basis, method: "compiler-binding-and-source-role", context, inputFingerprint: fingerprint };
     const pass: FactPass = {
       id: "scip-native", version: "1", configurationFingerprint: "scip-ast-bound-static-1", reads: ["scip.Occurrence", "scip.SymbolInformation", "scip.Relationship"], writes: ["common.Import", "common.CallSite", "common.CallTarget", "scip.SourceRole"], dependencies: [],
       requiredCapabilities: ["verified-source", "compiler-bindings"], inputDomains: ["scip", language], selectorDependencies: ["producer-context", "document-source"], negativeDependencies: ["same-range-compiler-target-set"], ownershipShard: "scip-document", invalidation: "indexing-unit-and-selectors", coverageBehavior: "partial-declared-static-targets-no-runtime-dispatch", bounds: { batch: 500, maxRows: 500000 },

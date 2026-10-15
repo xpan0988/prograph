@@ -27,12 +27,17 @@ for (const [name, url, hash] of [
 ]) plugins.push(await receipt(await download(name, `https://repo.maven.apache.org/maven2/${url}`, hash)));
 const nuget = await download('scip-dotnet.nupkg', 'https://api.nuget.org/v3-flatcontainer/scip-dotnet/0.2.14/scip-dotnet.0.2.14.nupkg', 'e2d183fe39b9a56cb8bb2ed2d8b96828fb5434c6db084002bf8a5c6009391b52');
 const dotnetRoot = path.join(root, 'scip-dotnet'); await mkdir(dotnetRoot); execFileSync('unzip', ['-q', nuget, '-d', dotnetRoot]);
+// Hosted JDK caches can contain links into mutable system directories. Use the
+// authenticated upstream SDK archive; the runtime receipt keeps rejecting escapes.
+const jdkTar = await download('jdk.tgz', 'https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jdk_x64_linux_hotspot_21.0.12.1_1.tar.gz', 'ce79869e1307ed8ee1e2baa86a412b1eb5b75d10a01006d788a6f968bcfaee94');
+const jdkRoot = path.join(root, 'jdk'); await mkdir(jdkRoot); execFileSync('tar', ['-xzf', jdkTar, '-C', jdkRoot]);
+const jdkHome = path.join(jdkRoot, 'jdk-21.0.12.1+1');
 const base = { format: 1, root: '.', package: { name: 'prograph-probe', version: '0.1.0' } };
 const goSdk = execFileSync('go', ['env', 'GOROOT'], { env: { ...process.env, GOROOT: '' }, encoding: 'utf8' }).trim();
 const profiles = {
   python: { ...base, id: 'python', language: 'python', runtime: await receipt(path.dirname(path.dirname(process.execPath)), 'bin/node'), producer: await receipt(path.join(pythonRoot, 'package'), 'index.js'), python: { interpreter: await receipt(process.env.pythonLocation, 'bin/python3'), version: '3.11' } },
   go: { ...base, id: 'go', language: 'go', package: { name: 'example.org/prographprobe', version: '0.1.0' }, runtime: await receipt(goSdk, 'bin/go'), producer: await receipt(path.join(goRoot, 'scip-go')), go: { os: 'linux', arch: 'amd64' } },
-  java: { ...base, id: 'java', language: 'java', runtime: await receipt(process.env.JAVA_HOME, 'bin/java'), producer: await receipt(java), java: { release: 17, plugins } },
+  java: { ...base, id: 'java', language: 'java', runtime: await receipt(jdkHome, 'bin/java'), producer: await receipt(java), java: { release: 17, plugins } },
   csharp: { ...base, id: 'csharp', language: 'csharp', runtime: await receipt(process.env.DOTNET_INSTALL_DIR, 'dotnet'), producer: await receipt(path.join(dotnetRoot, 'tools/net10.0/any'), 'scip-dotnet.dll'), csharp: { projects: [{ file: 'Probe.csproj', targetFramework: 'net10.0', assembly: 'Probe', sources: ['Foo.cs'] }] } },
 };
 const output = path.join(root, 'profiles.json'); await writeFile(output, JSON.stringify(profiles, null, 2));

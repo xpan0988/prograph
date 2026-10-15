@@ -39,10 +39,6 @@ jobs:
         with:
           go-version: '1.26.9'
           cache: false
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
       - uses: actions/setup-dotnet@v4
         env:
           DOTNET_INSTALL_DIR: ${{ runner.temp }}/semantic-dotnet
