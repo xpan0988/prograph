@@ -89,3 +89,9 @@ test.skipIf(!analyzer || !toolchain)("Rust build scripts are refused without eff
   await expect(stat(path.join(root, "native/UNEXPECTED_BUILD"))).rejects.toMatchObject({ code: "ENOENT" });
   const after = await semanticQueryForRepository(root); try { expect(after.execute("status").snapshot).toBe(snapshot); } finally { after.close(); }
 }, 30000);
+test.skipIf(!analyzer || !toolchain)("custom output ancestors cannot supply undeclared Cargo configuration", async () => {
+  const root = await fixture(); const output = await mkdtemp(path.join(os.tmpdir(), "prograph-rust-ambient-")); roots.push(output);
+  await mkdir(path.join(output, ".cargo")); await writeFile(path.join(output, ".cargo/config.toml"), '[build]\nrustc-wrapper="/unqualified-wrapper"\n');
+  await expect(indexRust(root, "native/Cargo.toml", { analyzer: analyzer!, analyzerSha256: digest(await readFile(analyzer!)), toolchain: toolchain! }, output)).rejects.toThrow("ambient Cargo configuration");
+  await expect(stat(path.join(output, "semantic.sqlite"))).rejects.toMatchObject({ code: "ENOENT" });
+});

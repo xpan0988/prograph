@@ -16,7 +16,7 @@
     {
       "corpus": "fallible",
       "evidence": {
-        "startedAt": "2026-10-15T00:18:13.457Z",
+        "startedAt": "2026-10-15T00:29:05.424Z",
         "repository": {
           "root": "/Users/xiyuanpan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fallible-iterator-0.3.0",
           "identity": "899fd9f142e2b774"
@@ -26,26 +26,26 @@
         "sourceLines": 3287,
         "sourceInventoryDigest": "2039520311e1886d26caede4dbbed02c97802e65adb53d27abe53de363a21163",
         "sourceUnchanged": true,
-        "elapsedMs": 1020.616,
+        "elapsedMs": 825.791,
         "result": {
           "snapshot": 1,
-          "context": "sc2:context:dfed51d0fc770054bc18641649fbf7ea692fab9ad068ad7c1b4c19829485685c",
+          "context": "sc2:context:7040f7de1d5944d5a2f8b1fcda1084aeee9f524b380aa24c9a1cc787dd51d3b2",
           "status": "partial",
           "documents": 2,
           "accepted": 2,
           "rejected": 0,
           "occurrences": 4452,
           "calls": "unsupported",
-          "durationMs": 465,
-          "publicationMs": 25.421,
+          "durationMs": 467,
+          "publicationMs": 25.237,
           "publicationStagesMs": {
-            "content-key": 0.127,
-            "membership": 2.463,
-            "support-eligibility": 0.054,
-            "navigation": 19.92,
-            "symbols": 0.839,
-            "call-summary": 0.06,
-            "pointer-and-commit": 1.899
+            "content-key": 0.123,
+            "membership": 2.347,
+            "support-eligibility": 0.049,
+            "navigation": 20.032,
+            "symbols": 0.785,
+            "call-summary": 0.05,
+            "pointer-and-commit": 1.789
           },
           "sqlitePragmas": {
             "journal_mode": "wal",
@@ -170,18 +170,18 @@
             "sourceBytes": 86668,
             "compilerChecked": true
           },
-          "executionDirectory": "/private/tmp/prograph-rust-fallible-final2/providers/rust/7ed918fa-95e0-46ba-b071-cea478286e49",
+          "executionDirectory": "/private/tmp/prograph-rust-fallible-runner2/providers/rust/2493bfd3-a717-4b06-9315-2969480cde8d",
           "stagesMs": {
-            "analyzer-probe": 4.979,
-            "rustc-probe": 67.884,
-            "cargo-probe": 6.486,
-            "lock": 7.511,
-            "metadata": 40.803,
-            "compiler-check": 223.349,
-            "target-cfg": 8.248,
-            "semantic-producer": 95.487
+            "analyzer-probe": 4.931,
+            "rustc-probe": 7.946,
+            "cargo-probe": 6.124,
+            "lock": 7.262,
+            "metadata": 25.677,
+            "compiler-check": 129.393,
+            "target-cfg": 8.23,
+            "semantic-producer": 87.292
           },
-          "totalMs": 1020
+          "totalMs": 826
         },
         "failure": null,
         "database": {
@@ -192,14 +192,14 @@
             "navigation": 11657,
             "calls": 0
           },
-          "bytes": 18030592,
+          "bytes": 18042880,
           "integrity": "ok",
           "query": {
             "name": "FallibleIterator",
             "matched": 1,
             "definitions": 1,
             "references": 20,
-            "warmReferencesP95Ms": 0.61
+            "warmReferencesP95Ms": 0.589
           }
         },
         "runtime": {
@@ -207,11 +207,11 @@
           "platform": "darwin",
           "arch": "arm64",
           "cpu": "Apple M5",
-          "parentMaxRssKiB": 164096,
+          "parentMaxRssKiB": 195328,
           "memoryScope": "Node process only; excludes Cargo/rust-analyzer child peak RSS"
         },
         "implementationDigests": {
-          "rust": "28cc1548eac97998d434a26b082bbf1654dfd541e5abd4c0f1f18172cfe1ce65",
+          "rust": "41eccd0a1aadbc85f37b1739d06f05753225dc19ae174650f04b377c45ffbc67",
           "process": "9cb2ee720123eafb36f58c3b3ce76e49102f0c0e7b278686efe00abfab228e8e",
           "scip-import": "3831e7f91d81b964a730b3a441398b393734244f7b6f495333395511cd1a1448",
           "provider-runs": "08ad5c6aa5fb23bb69b2aa7eca1911e3899321638e3ab1dd12e54c73accfc0a7",
@@ -222,7 +222,7 @@
     {
       "corpus": "pxfm",
       "evidence": {
-        "startedAt": "2026-10-15T00:15:43.739Z",
+        "startedAt": "2026-10-15T00:28:34.871Z",
         "repository": {
           "root": "/Users/xiyuanpan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pxfm-0.1.29",
           "identity": "780ee2d723e51c7b"
@@ -232,26 +232,26 @@
         "sourceLines": 103239,
         "sourceInventoryDigest": "6cecebbcb28df91009dc4ea738b4d57c4fc59143cf80dd6e7886bcf14f07a320",
         "sourceUnchanged": true,
-        "elapsedMs": 18933.616,
+        "elapsedMs": 18739.075,
         "result": {
           "snapshot": 1,
-          "context": "sc2:context:646ef9e924d3c3a6c75b4ad47628428ee143e9953f217a3422c82ac9f914cc69",
+          "context": "sc2:context:2dc79142043918598f20da496441f8ff98fbb3d9bbe3533a036ba0ab90f01a1a",
           "status": "partial",
           "documents": 259,
           "accepted": 259,
           "rejected": 0,
           "occurrences": 82388,
           "calls": "unsupported",
-          "durationMs": 17020,
-          "publicationMs": 528.089,
+          "durationMs": 16925,
+          "publicationMs": 527.819,
           "publicationStagesMs": {
-            "content-key": 0.588,
-            "membership": 45.337,
-            "support-eligibility": 0.094,
-            "navigation": 419.82,
-            "symbols": 9.323,
-            "call-summary": 0.059,
-            "pointer-and-commit": 52.795
+            "content-key": 0.697,
+            "membership": 45.617,
+            "support-eligibility": 0.104,
+            "navigation": 418.765,
+            "symbols": 9.677,
+            "call-summary": 0.068,
+            "pointer-and-commit": 52.801
           },
           "sqlitePragmas": {
             "journal_mode": "wal",
@@ -373,17 +373,17 @@
             "sourceBytes": 3806190,
             "compilerChecked": true
           },
-          "executionDirectory": "/private/tmp/prograph-rust-pxfm-final/providers/rust/dd31663b-47b3-4a62-b867-30cb7072a60a",
+          "executionDirectory": "/private/tmp/prograph-rust-pxfm-runner2/providers/rust/aa3bf47b-fa82-4609-87b3-d4431dcdfc86",
           "stagesMs": {
-            "analyzer-probe": 5.235,
-            "rustc-probe": 65.991,
-            "cargo-probe": 6.698,
-            "metadata": 40.578,
-            "compiler-check": 817.956,
-            "target-cfg": 8.896,
-            "semantic-producer": 799.537
+            "analyzer-probe": 5.187,
+            "rustc-probe": 7.5,
+            "cargo-probe": 8.429,
+            "metadata": 26.917,
+            "compiler-check": 769.152,
+            "target-cfg": 8.764,
+            "semantic-producer": 813.27
           },
-          "totalMs": 18933
+          "totalMs": 18739
         },
         "failure": null,
         "database": {
@@ -394,14 +394,14 @@
             "navigation": 190591,
             "calls": 0
           },
-          "bytes": 296210432,
+          "bytes": 296271872,
           "integrity": "ok",
           "query": {
             "name": "fma",
             "matched": 5,
             "definitions": 1,
             "references": 20,
-            "warmReferencesP95Ms": 0.639
+            "warmReferencesP95Ms": 0.669
           }
         },
         "runtime": {
@@ -409,11 +409,11 @@
           "platform": "darwin",
           "arch": "arm64",
           "cpu": "Apple M5",
-          "parentMaxRssKiB": 324560,
+          "parentMaxRssKiB": 338304,
           "memoryScope": "Node process only; excludes Cargo/rust-analyzer child peak RSS"
         },
         "implementationDigests": {
-          "rust": "28cc1548eac97998d434a26b082bbf1654dfd541e5abd4c0f1f18172cfe1ce65",
+          "rust": "41eccd0a1aadbc85f37b1739d06f05753225dc19ae174650f04b377c45ffbc67",
           "process": "9cb2ee720123eafb36f58c3b3ce76e49102f0c0e7b278686efe00abfab228e8e",
           "scip-import": "3831e7f91d81b964a730b3a441398b393734244f7b6f495333395511cd1a1448",
           "provider-runs": "08ad5c6aa5fb23bb69b2aa7eca1911e3899321638e3ab1dd12e54c73accfc0a7",
@@ -424,7 +424,7 @@
     {
       "corpus": "itoa",
       "evidence": {
-        "startedAt": "2026-10-15T00:16:57.780Z",
+        "startedAt": "2026-10-15T00:29:06.413Z",
         "repository": {
           "root": "/Users/xiyuanpan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/itoa-1.0.18",
           "identity": "5ccf1ae99487391b"
@@ -434,20 +434,20 @@
         "sourceLines": 578,
         "sourceInventoryDigest": "48c4b4aeec4188550b7082d0a14708d0d4eab42c026775141a25450fc5c6b3b7",
         "sourceUnchanged": true,
-        "elapsedMs": 133.886,
+        "elapsedMs": 101.884,
         "result": null,
-        "failure": "Error: Provider exit: exit 101: error: no matching package named `criterion` found\nlocation searched: crates.io index\nrequired by package `itoa v1.0.18 (/private/tmp/prograph-rust-itoa-final/providers/rust/400eac66-9a15-4ab5-88ff-4d142bf651db/source)`\nAs a reminder, you're using offline mode (--offline) which can sometimes cause surprising resolution failures, if this error is too confusing you may wish to retry without `--offline`.\n",
+        "failure": "Error: Provider exit: exit 101: error: no matching package named `criterion` found\nlocation searched: crates.io index\nrequired by package `itoa v1.0.18 (/private/tmp/prograph-rust-itoa-runner2/providers/rust/b120dd99-7afd-4504-ba0d-44442c7d849f/source)`\nAs a reminder, you're using offline mode (--offline) which can sometimes cause surprising resolution failures, if this error is too confusing you may wish to retry without `--offline`.\n",
         "database": null,
         "runtime": {
           "node": "v25.9.0",
           "platform": "darwin",
           "arch": "arm64",
           "cpu": "Apple M5",
-          "parentMaxRssKiB": 99168,
+          "parentMaxRssKiB": 109712,
           "memoryScope": "Node process only; excludes Cargo/rust-analyzer child peak RSS"
         },
         "implementationDigests": {
-          "rust": "28cc1548eac97998d434a26b082bbf1654dfd541e5abd4c0f1f18172cfe1ce65",
+          "rust": "41eccd0a1aadbc85f37b1739d06f05753225dc19ae174650f04b377c45ffbc67",
           "process": "9cb2ee720123eafb36f58c3b3ce76e49102f0c0e7b278686efe00abfab228e8e",
           "scip-import": "3831e7f91d81b964a730b3a441398b393734244f7b6f495333395511cd1a1448",
           "provider-runs": "08ad5c6aa5fb23bb69b2aa7eca1911e3899321638e3ab1dd12e54c73accfc0a7",
@@ -458,18 +458,18 @@
     {
       "corpus": "pastey",
       "evidence": {
-        "startedAt": "2026-10-15T00:17:08.484Z",
+        "startedAt": "2026-10-15T00:29:06.679Z",
         "repository": {
           "root": "/Users/xiyuanpan/Pastey",
           "identity": "0992c561ba19ab05",
-          "gitCommit": "bf71c81926e0e61c3d76e18664140e1d93b44197"
+          "gitCommit": "f20d3b96e7870ac6e9888b896d9879c33db5f144"
         },
         "manifest": "src-tauri/Cargo.toml",
         "sourceFiles": 160,
         "sourceLines": 141435,
         "sourceInventoryDigest": "cc71be286ea2484669c739c101aa9ce78adef0110018d63c57361ade1caf776d",
         "sourceUnchanged": true,
-        "elapsedMs": 398.894,
+        "elapsedMs": 444.123,
         "result": null,
         "failure": "Error: Managed Rust build scripts/proc macros are unsupported; no build executed",
         "database": null,
@@ -478,11 +478,11 @@
           "platform": "darwin",
           "arch": "arm64",
           "cpu": "Apple M5",
-          "parentMaxRssKiB": 161264,
+          "parentMaxRssKiB": 160832,
           "memoryScope": "Node process only; excludes Cargo/rust-analyzer child peak RSS"
         },
         "implementationDigests": {
-          "rust": "28cc1548eac97998d434a26b082bbf1654dfd541e5abd4c0f1f18172cfe1ce65",
+          "rust": "41eccd0a1aadbc85f37b1739d06f05753225dc19ae174650f04b377c45ffbc67",
           "process": "9cb2ee720123eafb36f58c3b3ce76e49102f0c0e7b278686efe00abfab228e8e",
           "scip-import": "3831e7f91d81b964a730b3a441398b393734244f7b6f495333395511cd1a1448",
           "provider-runs": "08ad5c6aa5fb23bb69b2aa7eca1911e3899321638e3ab1dd12e54c73accfc0a7",
@@ -498,7 +498,7 @@
     "note": "This milestone does not change publication algorithms or rerun the 1M publication workload."
   },
   "validation": {
-    "restrictedRustTests": 6,
+    "restrictedRustTests": 7,
     "additionalScipTests": 2,
     "localActualProducerEnabled": true,
     "ci": "Configured Ubuntu 24.04 Node20/22/24 with pinned actual Rust producer; not yet executed on GitHub",
@@ -509,5 +509,6 @@
       "No automatic failed-archive GC/resumption",
       "Rust environment driver libraries/SDK fingerprinting incomplete"
     ]
-  }
+  },
+  "runnerVersion": "rust-scip-runner-2"
 }

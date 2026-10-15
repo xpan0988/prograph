@@ -55,6 +55,14 @@ export async function indexRust(repository: string, manifestFile: string, option
   await mkdir(directory, { recursive: true });
   const runDirectory = path.join(await realpath(directory), "providers", "rust", randomUUID()); const sourceRoot = path.join(runDirectory, "source"); const cargoHome = path.join(runDirectory, "cargo-home");
   await mkdir(sourceRoot, { recursive: true }); await mkdir(cargoHome);
+  // Cargo also searches cwd ancestors outside CARGO_HOME (including custom index parents).
+  for (let parent = sourceRoot;; parent = path.dirname(parent)) {
+    for (const name of ["config", "config.toml"]) {
+      try { await stat(path.join(parent, ".cargo", name)); throw Error("Managed Rust ambient Cargo configuration is not qualified"); }
+      catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; }
+    }
+    if (path.dirname(parent) === parent) break;
+  }
   // Reuse only cache directories, never credential/config files; networking stays offline.
   for (const name of ["registry", "git"]) { const cache = path.join(os.homedir(), ".cargo", name); try { await stat(cache); await symlink(cache, path.join(cargoHome, name), "dir"); } catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; } }
   const inputs: Record<string, string> = {}; const sources: Record<string, string> = {}; const buildInputs: Record<string, string> = {}; let sourceBytes = 0;
