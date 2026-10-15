@@ -320,7 +320,7 @@ Measured historical comparisons use an SQLite online backup, preserve original i
 
 Offline preparation took 250 ms / 1,457 ms respectively, with 223,024 / 450,528 KiB process peak RSS. Completed query-process peaks fell from 330,848 to 147,472 KiB and from 701,712 to 167,376 KiB; the timed-out process's RSS is unavailable. These runs contain no compiler process. Isolated overview medians were 61.740 / 61.856 ms including fresh-worker startup; that overhead dominates tiny cached reads but remains comfortably within the tested deadline. Framework summary core latency increased on these small result sets; its bounded behavior, isolation and preserved semantics were prioritized. A pool is deferred until an observed concurrency/latency need justifies additional cancellation/recovery state. No million-LOC, cold-cache or 10M-LOC qualification follows from these graph sizes.
 
-Linux Node 20/22/24 acceptance is pending the Stage 2 implementation push; the local gate above is complete.
+Stage 2 is accepted for this bounded read surface. Commit `39f8aa7d` passed [Linux run 38717897160, attempt 1](https://github.com/xpan0988/prograph/actions/runs/38717897160): Node 20/22/24 jobs `116364955211`, `116364955111`, `116364955337`, respectively, all passed 132 tests, actual Rust qualification, complete build, four recovery probes and the evidence verifier. No required step was skipped; per-job verifier logs were inspected. [CI receipt](benchmarks/semantic-core-stage2-ci.json).
 
 ## Step 2 acceptance audit
 
