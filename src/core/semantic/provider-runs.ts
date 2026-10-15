@@ -6,6 +6,7 @@ import { digestFile } from "./inputs.js";
 import { repositoryInputPaths } from "../repository/repository.js";
 import Database from "better-sqlite3";
 import { READABLE_SEMANTIC_SCHEMAS, SEMANTIC_FORMAT_VERSION } from "./model.js";
+import { qualifiedCallProjection } from "./passes.js";
 const semanticInput = (file: string) => /\.(?:[cm]?tsx?|jsx?|pyi?|rs|c|h|cpp|cc|cxx|hpp|hxx|java|go|cs|proto|gql|graphql)$/.test(file) || /(?:package(?:-lock)?\.json|tsconfig[^/]*\.json|jsconfig[^/]*\.json|Cargo\.(?:toml|lock)|go\.(?:mod|work|sum)|pyproject\.toml|pyrightconfig\.json|pom\.xml|build\.gradle(?:\.kts)?|compile_commands\.json|\.csproj|\.sln)$/.test(file);
 const passSuffix = /\/pass:[A-Za-z0-9._-]+@[A-Za-z0-9._-]+$/;
 interface Inventory { root: string; inventory: string }
@@ -77,7 +78,16 @@ export async function retainProviders(store: SemanticStore, snapshot: Repository
         if (filename) { try { if (await digestFile(filename) !== input.digest) eligible = false; } catch { eligible = false; } }
       }
     }
-    if (eligible && hasInventory) retained.push(...group.map(row => row.run));
+    if (eligible && hasInventory) {
+      for (const row of group) {
+        if (!row.partition_key.includes("/pass:")) retained.push(row.run);
+        else if (row.partition_key.endsWith("/pass:call-summary@1")) {
+          const partition = row.partition_key.replace(passSuffix, ""); const input = group.find(candidate => candidate.partition_key === partition);
+          if (!input) throw Error("Retained pass has no native owner");
+          retained.push(...qualifiedCallProjection(store, input.run, partition, row.run));
+        } else throw Error("Retained provider has an unrecognized pass contract");
+      }
+    }
   }
   return retained;
 }

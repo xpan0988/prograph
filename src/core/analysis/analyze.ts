@@ -1,4 +1,3 @@
-import { architectureAdapter } from "../../adapters/artifact/architecture/index.js";
 import { polyglotAdapters } from "../../adapters/language/polyglot/index.js";
 import path from "node:path";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -8,19 +7,12 @@ import { GRAPH_SCHEMA_VERSION, type AdapterRun, type AnalysisManifest, type Grap
 import { resolveRepositoryRoot, scanRepository } from "../repository/repository.js";
 import { typescriptAdapter } from "../../adapters/language/typescript/index.js";
 import { rustAdapter } from "../../adapters/language/rust/index.js";
-import { reactAdapter } from "../../adapters/framework/react/index.js";
-import { tauriAdapter } from "../../adapters/framework/tauri/index.js";
-import { markdownAdapter } from "../../adapters/artifact/markdown/index.js";
-import { packageJsonAdapter } from "../../adapters/artifact/package-json/index.js";
-import { cargoTomlAdapter } from "../../adapters/artifact/cargo-toml/index.js";
-import { tauriConfigAdapter } from "../../adapters/artifact/tauri-config/index.js";
-import { tauriCapabilityAdapter } from "../../adapters/artifact/tauri-capability/index.js";
-import { testsAdapter } from "../../adapters/artifact/tests/index.js";
-import { semanticLinkerAdapter } from "../../adapters/overlay/semantic-linker/index.js";
-import type { AdapterResult, FrameworkAdapter, LanguageAdapter, RepositorySnapshot } from "../adapters/contracts.js";
+import type { AdapterResult, RepositorySnapshot } from "../adapters/contracts.js";
 import { persistGraph } from "../storage/sqlite.js";
 import packageJson from "../../../package.json" with { type: "json" };
 import { createIndexState, writeIndexState } from "./state.js";
+import { runAdapter } from "./adapter-run.js";
+import { deriveOwnedAnalysis } from "../semantic/analysis-passes.js";
 import { indexSemanticFoundation } from "../semantic/typescript.js";
 
 export interface AnalyzeOptions {
@@ -72,43 +64,6 @@ function baseGraph(snapshot: RepositorySnapshot): AdapterResult {
   return graph.result();
 }
 
-async function runAdapter(adapter: LanguageAdapter | FrameworkAdapter, snapshot: RepositorySnapshot, graph: AdapterResult, framework: boolean): Promise<{ result: AdapterResult; run: AdapterRun }> {
-  const applicable = !framework && (adapter as LanguageAdapter).appliesTo;
-  if (applicable) snapshot = { ...snapshot, files: snapshot.files.filter(applicable) };
-  const started = performance.now();
-  let detected = false;
-  let result: AdapterResult = { nodes: [], edges: [], diagnostics: [], metadata: {} };
-  try {
-    if (snapshot.config.adapters[adapter.name as keyof typeof snapshot.config.adapters] === false) return { result, run: { adapter: adapter.name, detected: false, durationMs: 0, fileCount: 0, nodeCount: 0, edgeCount: 0, diagnosticCount: 0 } };
-    detected = framework
-      ? await (adapter as FrameworkAdapter).detect(snapshot, graph)
-      : await (adapter as LanguageAdapter).detect(snapshot);
-    if (detected) {
-      result = framework ? await (adapter as FrameworkAdapter).analyze(snapshot, graph) : await (adapter as LanguageAdapter).analyze(snapshot);
-    }
-  } catch (error) {
-    result.diagnostics.push({
-      code: "adapter-failure",
-      severity: "error",
-      message: `Adapter ${adapter.name} failed: ${String(error)}`,
-      adapter: adapter.name,
-      metadata: {},
-    });
-  }
-  return {
-    result,
-    run: {
-      adapter: adapter.name,
-      metadata: { version: (adapter as LanguageAdapter).version, capabilities: (adapter as LanguageAdapter).capabilities, ...result.metadata },
-      detected,
-      durationMs: Math.round(performance.now() - started),
-      fileCount: detected ? snapshot.files.length : 0,
-      nodeCount: result.nodes.length,
-      edgeCount: result.edges.length,
-      diagnosticCount: result.diagnostics.length,
-    },
-  };
-}
 
 export async function analyzeRepository(input = ".", options: AnalyzeOptions = {}): Promise<AnalysisResult> {
   const started = performance.now();
@@ -124,18 +79,10 @@ export async function analyzeRepository(input = ".", options: AnalyzeOptions = {
     builder.diagnostics.push(...validateIdentities(executed.result.nodes, executed.result.edges));
     builder.merge(executed.result);
   }
-  for (const adapter of [reactAdapter, tauriAdapter]) {
-    const executed = await runAdapter(adapter, scan.snapshot, builder.result(), true);
-    adapterRuns.push(executed.run);
-    builder.diagnostics.push(...validateIdentities(executed.result.nodes, executed.result.edges));
-    builder.merge(executed.result);
-  }
-  for (const adapter of [architectureAdapter, markdownAdapter, packageJsonAdapter, cargoTomlAdapter, tauriConfigAdapter, tauriCapabilityAdapter, testsAdapter, semanticLinkerAdapter]) {
-    const executed = await runAdapter(adapter, scan.snapshot, builder.result(), true);
-    adapterRuns.push(executed.run);
-    builder.diagnostics.push(...validateIdentities(executed.result.nodes, executed.result.edges));
-    builder.merge(executed.result);
-  }
+  const outputDirectory = path.resolve(options.output ?? path.join(root, ".prograph"));
+  await mkdir(outputDirectory, { recursive: true });
+  const owned = await deriveOwnedAnalysis(scan.snapshot, builder.result(), path.join(outputDirectory, "semantic.sqlite"));
+  builder.merge(owned.result); adapterRuns.push(...owned.adapterRuns);
   builder.diagnostics.push(...validateIdentities([...builder.nodes.values()], [...builder.edges.values()]));
   const repositoryNode = [...builder.nodes.values()].find(node => node.kind === "repository");
   if (repositoryNode) repositoryNode.metadata.analysis = adapterRuns.map(({ adapter, detected, metadata }) => ({ adapter, detected, ...metadata }));
@@ -146,7 +93,6 @@ export async function analyzeRepository(input = ".", options: AnalyzeOptions = {
     edges: [...builder.edges.values()],
     diagnostics: builder.diagnostics,
   };
-  const outputDirectory = path.resolve(options.output ?? path.join(root, ".prograph"));
   const manifest: AnalysisManifest = {
     schemaVersion: GRAPH_SCHEMA_VERSION,
     toolVersion: packageJson.version,
@@ -166,7 +112,7 @@ export async function analyzeRepository(input = ".", options: AnalyzeOptions = {
   await mkdir(path.join(outputDirectory, "exports"), { recursive: true });
   const semanticStarted = performance.now();
   try {
-    const semantic = await indexSemanticFoundation(scan.snapshot, graph, path.join(outputDirectory, "semantic.sqlite"));
+    const semantic = await indexSemanticFoundation(scan.snapshot, graph, path.join(outputDirectory, "semantic.sqlite"), owned);
     manifest.semanticCore = { format: 2, status: semantic.coverage.status === "unavailable" ? "unavailable" : "partial", snapshot: semantic.snapshot, context: semantic.context, durationMs: semantic.durationMs };
   } catch (error) {
     manifest.semanticCore = { format: 2, status: "failed", durationMs: Math.round(performance.now() - semanticStarted), reason: String(error) };

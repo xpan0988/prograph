@@ -127,6 +127,19 @@ export class SemanticStore {
       if (occurrence) ensureKind(occurrence, "occurrence");
       if (occurrence && (this.sql("SELECT context FROM sc_occurrences WHERE entity=?").get(occurrence) as { context: string }).context !== fact.context) throw new Error("Occurrence context mismatch");
     }
+    if (fact.predicate.startsWith("boundary.")) {
+      ensureKind(subject, fact.predicate === "boundary.Operation" ? "artifact" : "symbol");
+      if (object) ensureKind(object, fact.predicate === "boundary.Path" ? "symbol" : "artifact");
+      if (object && fact.predicate !== "boundary.Path") {
+        const identity = JSON.parse((this.sql("SELECT canonical FROM sc_entities WHERE id=?").get(object) as { canonical: string }).canonical) as Record<string, unknown>;
+        if (!["protocol", "namespace", "operation"].every(field => typeof identity[field] === "string" && identity[field])) throw Error("Expected boundary operation endpoint");
+      }
+      if (occurrence) {
+        ensureKind(occurrence, "occurrence");
+        const evidence = this.sql("SELECT context,role FROM sc_occurrences WHERE entity=?").get(occurrence) as { context: string; role: string };
+        if (evidence.context !== fact.context || evidence.role !== "call") throw Error("Expected call occurrence in boundary context");
+      }
+    }
     const value = canonical(fact.value ?? {});
     const logical = semanticKey("logical", [fact.predicate, PREDICATES[fact.predicate].version, fact.context, fact.subject, fact.occurrence ?? null]);
     const key = semanticKey("fact", [logical, fact.object ?? null, value]);

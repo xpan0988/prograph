@@ -1,3 +1,5 @@
+import path from "node:path";
+import type { RepositorySnapshot } from "../adapters/contracts.js";
 import { nodeId, withEdgeId } from "./identity.js";
 import type { Confidence, GraphNode, GraphEdge, SourceEvidence } from "./schema.js";
 
@@ -18,4 +20,18 @@ export function boundaryNode(repositoryIdentity: string, identity: BoundaryIdent
 export function boundaryContribution(repositoryIdentity: string, observation: BoundaryObservation, adapter: string): { node: GraphNode; edge: GraphEdge } {
   const node = boundaryNode(repositoryIdentity, observation.identity, adapter);
   return { node, edge: withEdgeId({ source: observation.participant, target: node.id, kind: observation.role, confidence: observation.confidence, evidence: observation.evidence, metadata: { boundary: observation.identity } }) };
+}
+
+export function tauriRoots(snapshot: RepositorySnapshot): string[] {
+  const roots = new Set<string>();
+  const configs = [...snapshot.fileContents.keys()].filter(file => /tauri\.conf\.(json|json5)$/.test(file));
+  for (const [file, source] of snapshot.fileContents) {
+    if (configs.includes(file) || !configs.length && file.endsWith("Cargo.toml") && /^\s*tauri(?:-build)?\s*=/m.test(source)) {
+      const directory = path.posix.dirname(file); roots.add(path.posix.basename(directory) === "src-tauri" ? path.posix.dirname(directory) : directory);
+    }
+  }
+  return [...roots].sort((a, b) => b.length - a.length || a.localeCompare(b));
+}
+export function tauriScope(roots: string[], file: string): string {
+  return roots.find(root => root === "." || file.startsWith(`${root}/`)) ?? (roots.length <= 1 ? roots[0] ?? "." : `unbound:${path.posix.dirname(file)}`);
 }

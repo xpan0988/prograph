@@ -1,22 +1,31 @@
 import { SemanticStore } from "./store.js";
 import type { Predicate, Provenance } from "./model.js";
 
-export interface FactPass {
+export interface PassContract {
   id: string;
   version: string;
   reads: Predicate[];
   writes: Predicate[];
   dependencies: string[];
+  configurationFingerprint: string;
+  requiredCapabilities: string[];
+  inputDomains: string[];
+  selectorDependencies: string[];
+  negativeDependencies: string[];
+  ownershipShard: string;
+  coverageBehavior: string;
   invalidation: "indexing-unit-and-selectors";
   bounds: { batch: number; maxRows: number };
+}
+export interface FactPass extends PassContract {
   execute(store: SemanticStore, input: number, output: number, provenance: Provenance, selector: string, dependencies: ReadonlyMap<string, number>): void;
 }
 /** Validate the pass DAG before starting any output run. Providers do not mutate base facts. */
-export function orderPasses(passes: FactPass[]): FactPass[] {
+export function orderPasses<T extends { id: string; dependencies: string[] }>(passes: T[]): T[] {
   const byId = new Map(passes.map(pass => [pass.id, pass]));
   if (byId.size !== passes.length) throw Error("Duplicate pass ID");
-  const active = new Set<string>(); const done = new Set<string>(); const ordered: FactPass[] = [];
-  const visit = (pass: FactPass) => {
+  const active = new Set<string>(); const done = new Set<string>(); const ordered: T[] = [];
+  const visit = (pass: T) => {
     if (active.has(pass.id)) throw Error(`Pass dependency cycle: ${pass.id}`);
     if (done.has(pass.id)) return;
     active.add(pass.id);
@@ -37,6 +46,8 @@ export const CALL_PASS_SQL = `SELECT c.id AS site_id,tc.id AS target_id,c.key AS
 
 export const callPass: FactPass = {
   id: "call-summary", version: "1", reads: ["common.CallSite", "common.CallTarget"], writes: ["common.CallSummary"], dependencies: [],
+  configurationFingerprint: "static-target-policy-1", requiredCapabilities: ["callsite", "static-calltarget"], inputDomains: ["native-semantic"],
+  selectorDependencies: ["indexing-unit-inputs"], negativeDependencies: ["calltarget-candidate-set"], ownershipShard: "indexing-unit", coverageBehavior: "partial-static-targets",
   invalidation: "indexing-unit-and-selectors", bounds: { batch: 1000, maxRows: 1000000 },
   execute(store, input, output, provenance, selector) {
     let site = 0; let target = 0; let total = 0;
@@ -59,10 +70,32 @@ export function executePasses(store: SemanticStore, input: number, partition: st
   if (state?.state !== "sealed") throw Error("Pass input must be sealed");
   const runs: number[] = []; const completed = new Map<string, number>();
   for (const pass of orderPasses(passes)) {
+    const contract = passContract(pass);
     const run = store.begin(`${partition}/pass:${pass.id}@${pass.version}`, provenance.context, provenance.inputFingerprint);
     const dependencies = new Map(pass.dependencies.map(id => [id, completed.get(id)!]));
     pass.execute(store, input, run, { ...provenance, provider: `pass:${pass.id}`, version: pass.version, method: "supported-fact-projection" }, selector, dependencies);
-    store.seal(run, { status: "partial", pass: pass.id, version: pass.version, reads: pass.reads, writes: pass.writes, dependencies: pass.dependencies, invalidation: pass.invalidation, bounds: pass.bounds }); runs.push(run); completed.set(pass.id, run);
+    const emitted = store.sql("SELECT f.predicate,COUNT(*) AS n FROM sc_owned o JOIN sc_claims c ON c.id=o.claim JOIN sc_facts f ON f.id=c.fact WHERE o.run=? GROUP BY f.predicate").all(run) as { predicate: string; n: number }[];
+    if (emitted.some(row => !(pass.writes as string[]).includes(row.predicate)) || emitted.reduce((n, row) => n + row.n, 0) > pass.bounds.maxRows) throw Error(`Pass ${pass.id} violated its output contract`);
+    store.seal(run, { ...contract, status: "partial" }); runs.push(run); completed.set(pass.id, run);
   }
   return runs;
+}
+
+export function passContract(pass: PassContract): Record<string, unknown> {
+  if (!/^[a-z][a-z0-9-]*$/.test(pass.id) || !pass.version || !pass.configurationFingerprint || !pass.ownershipShard) throw Error("Incomplete pass contract");
+  return { pass: pass.id, version: pass.version, configurationFingerprint: pass.configurationFingerprint, reads: pass.reads, writes: pass.writes, dependencies: pass.dependencies,
+    requiredCapabilities: pass.requiredCapabilities, inputDomains: pass.inputDomains, selectorDependencies: pass.selectorDependencies, negativeDependencies: pass.negativeDependencies,
+    ownershipShard: pass.ownershipShard, invalidation: pass.invalidation, coverageBehavior: pass.coverageBehavior, bounds: pass.bounds };
+}
+
+/** Upgrade pass declarations from retained base facts without relaunching a compiler. */
+export function qualifiedCallProjection(store: SemanticStore, input: number, partition: string, previous?: number): number[] {
+  if (previous) {
+    const coverage = JSON.parse((store.sql("SELECT coverage_json FROM sc_runs WHERE id=? AND state='sealed'").get(previous) as { coverage_json: string }).coverage_json) as Record<string, unknown>;
+    if (coverage.configurationFingerprint === callPass.configurationFingerprint && coverage.ownershipShard === callPass.ownershipShard) return [previous];
+  }
+  const row = store.sql("SELECT context,input_fingerprint FROM sc_runs WHERE id=? AND state='sealed'").get(input) as { context: string; input_fingerprint: string };
+  const selector = store.sql("SELECT key FROM sc_run_selectors WHERE run=? AND digest=? ORDER BY key LIMIT 1").get(input, row.input_fingerprint) as { key: string } | undefined;
+  if (!selector) throw Error("Cannot qualify call pass without its native input selector");
+  return executePasses(store, input, partition, { provider: "pass:call-summary", version: callPass.version, basis: "compiler", method: "supported-fact-projection", context: row.context, inputFingerprint: row.input_fingerprint }, selector.key);
 }

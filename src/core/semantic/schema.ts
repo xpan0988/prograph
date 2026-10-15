@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS sc_navigation(snapshot INTEGER NOT NULL REFERENCES sc
 CREATE TABLE IF NOT EXISTS sc_calls(snapshot INTEGER NOT NULL REFERENCES sc_snapshots(id) ON DELETE CASCADE,caller INTEGER NOT NULL REFERENCES sc_entities(id),callee INTEGER NOT NULL REFERENCES sc_entities(id),site_count INTEGER NOT NULL,confidence TEXT NOT NULL,sample_claim INTEGER NOT NULL REFERENCES sc_claims(id),PRIMARY KEY(snapshot,caller,callee));
 CREATE TABLE IF NOT EXISTS sc_visible_symbols(snapshot INTEGER NOT NULL REFERENCES sc_snapshots(id) ON DELETE CASCADE,entity INTEGER NOT NULL REFERENCES sc_symbols(entity),name TEXT NOT NULL,PRIMARY KEY(snapshot,entity));
 CREATE TABLE IF NOT EXISTS sc_context_lookup(snapshot INTEGER NOT NULL REFERENCES sc_snapshots(id) ON DELETE CASCADE,claim INTEGER NOT NULL REFERENCES sc_claims(id),context TEXT NOT NULL,PRIMARY KEY(snapshot,claim));
+CREATE TABLE IF NOT EXISTS sc_projection_rows(run INTEGER NOT NULL REFERENCES sc_runs(id) ON DELETE CASCADE,kind TEXT NOT NULL,ordinal INTEGER NOT NULL,claim INTEGER NOT NULL REFERENCES sc_claims(id),PRIMARY KEY(run,kind,ordinal));
 CREATE TABLE IF NOT EXISTS sc_diagnostics(run INTEGER NOT NULL REFERENCES sc_runs(id),ordinal INTEGER NOT NULL,code TEXT NOT NULL,message TEXT NOT NULL,PRIMARY KEY(run,ordinal));
 CREATE INDEX IF NOT EXISTS sc_fact_conflict ON sc_facts(predicate,logical_key);
 CREATE INDEX IF NOT EXISTS sc_owned_claim ON sc_owned(claim,run);
@@ -42,5 +43,6 @@ CREATE INDEX IF NOT EXISTS sc_claim_fact ON sc_claims(fact,id);
 CREATE INDEX IF NOT EXISTS sc_claim_supported ON sc_claims(id,support_group) WHERE support_group IS NOT NULL;
 CREATE INDEX IF NOT EXISTS sc_nav_native_v2 ON sc_navigation(snapshot,subject,claim) WHERE relation IN ('native-symbol','native-signature','native-relationship','native-occurrence','native-declaration');
 CREATE INDEX IF NOT EXISTS sc_nav_native_relationship ON sc_navigation(snapshot,subject,claim) WHERE relation='native-relationship';
+CREATE INDEX IF NOT EXISTS sc_nav_boundary_participant ON sc_navigation(snapshot,object,claim) WHERE relation IN ('boundary-invokes','boundary-implements','boundary-emits','boundary-listens','boundary-registers');
 CREATE INDEX IF NOT EXISTS sc_context_key ON sc_context_lookup(snapshot,context,claim);
 `;

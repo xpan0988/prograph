@@ -2,8 +2,8 @@ import { createHash } from "node:crypto";
 import type { Confidence } from "../graph/schema.js";
 
 export const SEMANTIC_FORMAT_VERSION = 2;
-export const SEMANTIC_SCHEMA_VERSION = "2.0.0-step2.2";
-export const READABLE_SEMANTIC_SCHEMAS = ["2.0.0-step1", "2.0.0-step2.1", SEMANTIC_SCHEMA_VERSION] as const;
+export const SEMANTIC_SCHEMA_VERSION = "2.0.0-step2.3";
+export const READABLE_SEMANTIC_SCHEMAS = ["2.0.0-step1", "2.0.0-step2.1", "2.0.0-step2.2", SEMANTIC_SCHEMA_VERSION] as const;
 export const RUST_PROVIDER_VERSION = "rust-scip-runner-3";
 export const TYPESCRIPT_SEMANTIC_VERSION = "2";
 export const CLANG_SEMANTIC_VERSION = "2";
@@ -87,6 +87,24 @@ export const PREDICATES = {
   "cxx.Declaration": { version: 1, relation: "native-declaration", unique: false },
   "legacy.Node": { version: 1, relation: "legacy-node", unique: false },
   "legacy.Relation": { version: 1, relation: "legacy-relation", unique: false },
+  "source.File": { version: 1, relation: "source-file", unique: false },
+  "syntax.Diagnostic": { version: 1, relation: "syntax-diagnostic", unique: false },
+  "syntax.Node": { version: 1, relation: "syntax-node", unique: false },
+  "syntax.Relation": { version: 1, relation: "syntax-relation", unique: false },
+  "projection.Node": { version: 1, relation: "projection-node", unique: false },
+  "projection.Relation": { version: 1, relation: "projection-relation", unique: false },
+  "projection.Dependency": { version: 1, relation: "file-dependency", unique: false },
+  "framework.Component": { version: 1, relation: "framework-component", unique: false },
+  "knowledge.Link": { version: 1, relation: "knowledge-link", unique: false },
+  "support.Disjunction": { version: 1, relation: "support-disjunction", unique: false },
+  "support.Conjunction": { version: 1, relation: "support-conjunction", unique: false },
+  "boundary.Operation": { version: 1, relation: "boundary-operation", unique: false },
+  "boundary.Invokes": { version: 1, relation: "boundary-invokes", unique: false },
+  "boundary.Implements": { version: 1, relation: "boundary-implements", unique: false },
+  "boundary.Emits": { version: 1, relation: "boundary-emits", unique: false },
+  "boundary.Listens": { version: 1, relation: "boundary-listens", unique: false },
+  "boundary.Registers": { version: 1, relation: "boundary-registers", unique: false },
+  "boundary.Path": { version: 1, relation: "boundary-path", unique: false },
 } as const;
 export type Predicate = keyof typeof PREDICATES;
 
@@ -100,6 +118,10 @@ export function validateFact(input: FactInput): void {
   if (["common.Definition", "common.Reference", "common.Import", "common.CallTarget", "common.CallSummary"].includes(input.predicate) && !input.object) throw new Error("Binding requires an object");
   if (input.predicate.startsWith("common.") && input.predicate !== "common.CallSummary" && !input.occurrence) throw new Error("Observation requires occurrence evidence");
   if (input.predicate === "common.CallSummary" && !input.supports?.length) throw new Error("Derived call summary requires support");
+  if (["projection.", "framework.", "knowledge.", "boundary.", "support."].some(prefix => input.predicate.startsWith(prefix)) && !input.supports?.length) throw new Error("Derived output requires input support");
+  if (input.predicate.startsWith("boundary.") && input.predicate !== "boundary.Operation" && !input.object) throw Error("Boundary binding requires an object");
+  if (["boundary.Invokes", "boundary.Emits", "boundary.Listens"].includes(input.predicate) && !input.occurrence) throw Error("Boundary invocation requires a call occurrence");
+  if (input.predicate === "boundary.Operation" && (!["protocol", "namespace", "operation"].every(field => typeof input.value?.[field] === "string" && String(input.value[field]).trim()))) throw Error("Boundary operation requires explicit identity");
   if ((input.supports?.length ?? 0) > 32) throw new Error("Support exceeds 32 alternatives");
   for (const alternative of input.supports ?? []) {
     if (!alternative.length) throw new Error("Empty support conjunction");

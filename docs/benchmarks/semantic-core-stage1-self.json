@@ -1,0 +1,274 @@
+{
+  "repository": {
+    "root": "/Users/xiyuanpan/prograph",
+    "identity": "52f21d49288e74c1",
+    "gitCommit": "cbd1803fc94fe54106204d59a35db03ab8f1e992"
+  },
+  "startedAt": "2026-10-15T08:38:41.891Z",
+  "elapsedMs": 22243,
+  "sourceFiles": 118,
+  "sourceLines": 13061,
+  "sourceInventoryDigest": "6f8de46d42d1e6b755f12b3c67cbea6ed9391d82928cad3410cafbf2277c4910",
+  "legacy": {
+    "schema": "1.2.0",
+    "nodes": 5244,
+    "edges": 12159,
+    "diagnostics": 2298
+  },
+  "semantic": {
+    "format": 2,
+    "status": "partial",
+    "snapshot": 1,
+    "context": "sc2:context:10f05b75454a14020c50ddb8782fd0e801c43e3969e2e74dc80f9e5739ee377c",
+    "durationMs": 18679
+  },
+  "unitTimings": [
+    {
+      "partition": "analysis/source",
+      "stageAndSealMs": 852.525
+    },
+    {
+      "partition": "analysis/pass:framework-react@1",
+      "stageAndSealMs": 58.317
+    },
+    {
+      "partition": "analysis/pass:framework-tauri@1",
+      "stageAndSealMs": 10.032
+    },
+    {
+      "partition": "analysis/pass:schema-contracts@1",
+      "stageAndSealMs": 7.42
+    },
+    {
+      "partition": "analysis/pass:documentation@1",
+      "stageAndSealMs": 67.254
+    },
+    {
+      "partition": "analysis/pass:package-config@1",
+      "stageAndSealMs": 8.804
+    },
+    {
+      "partition": "analysis/pass:cargo-config@1",
+      "stageAndSealMs": 4.259
+    },
+    {
+      "partition": "analysis/pass:tauri-config@1",
+      "stageAndSealMs": 9.028
+    },
+    {
+      "partition": "analysis/pass:tauri-capabilities@1",
+      "stageAndSealMs": 1.256
+    },
+    {
+      "partition": "analysis/pass:test-relevance@1",
+      "stageAndSealMs": 29.702
+    },
+    {
+      "partition": "analysis/pass:knowledge-links@1",
+      "stageAndSealMs": 95.878
+    },
+    {
+      "partition": "analysis/pass:boundary-binding@1",
+      "stageAndSealMs": 39.492
+    },
+    {
+      "partition": "analysis/pass:dependency-projection@1",
+      "stageAndSealMs": 156.155
+    },
+    {
+      "partition": "context/typescript/project:tests/fixtures/mixed/tsconfig.json",
+      "stageAndSealMs": 0.483
+    },
+    {
+      "partition": "typescript/project:tests/fixtures/mixed/tsconfig.json",
+      "stageAndSealMs": 88.413
+    },
+    {
+      "partition": "typescript/project:tests/fixtures/mixed/tsconfig.json/pass:call-summary@1",
+      "stageAndSealMs": 0.814
+    },
+    {
+      "partition": "context/typescript/root",
+      "stageAndSealMs": 0.297
+    },
+    {
+      "partition": "typescript/root",
+      "stageAndSealMs": 7630.437
+    },
+    {
+      "partition": "typescript/root/pass:call-summary@1",
+      "stageAndSealMs": 772.366
+    },
+    {
+      "partition": "context/typescript/project:tsconfig.node.json",
+      "stageAndSealMs": 0.255
+    },
+    {
+      "partition": "typescript/project:tsconfig.node.json",
+      "stageAndSealMs": 5877.457
+    },
+    {
+      "partition": "typescript/project:tsconfig.node.json/pass:call-summary@1",
+      "stageAndSealMs": 499.35
+    },
+    {
+      "partition": "context/typescript/project:tsconfig.ui.json",
+      "stageAndSealMs": 0.233
+    },
+    {
+      "partition": "typescript/project:tsconfig.ui.json",
+      "stageAndSealMs": 1605.095
+    },
+    {
+      "partition": "typescript/project:tsconfig.ui.json/pass:call-summary@1",
+      "stageAndSealMs": 80.876
+    },
+    {
+      "partition": "context/rust/project:tests/fixtures/malformed/Cargo.toml",
+      "stageAndSealMs": 0.23
+    },
+    {
+      "partition": "context/rust/project:tests/fixtures/mixed/src-tauri/Cargo.toml",
+      "stageAndSealMs": 0.195
+    },
+    {
+      "partition": "context/rust/project:tests/fixtures/rust-quality/Cargo.toml",
+      "stageAndSealMs": 0.158
+    },
+    {
+      "partition": "context/rust/project:tests/fixtures/rust-verified-misses/Cargo.toml",
+      "stageAndSealMs": 0.15
+    }
+  ],
+  "units": [
+    {
+      "key": "typescript/project:tests/fixtures/mixed/tsconfig.json",
+      "language": "typescript",
+      "context": "sc2:context:078cf730a8c3e28e9eb0c2ae06c30e82ef0e1509f3c211725b7d83c65ee67675",
+      "sources": 3,
+      "gaps": []
+    },
+    {
+      "key": "typescript/root",
+      "language": "typescript",
+      "context": "sc2:context:10f05b75454a14020c50ddb8782fd0e801c43e3969e2e74dc80f9e5739ee377c",
+      "sources": 90,
+      "gaps": []
+    },
+    {
+      "key": "typescript/project:tsconfig.node.json",
+      "language": "typescript",
+      "context": "sc2:context:e382dcf7cdb7ba5999c5bd0fd000809c0914b27fb54c8a9b9707f51576eac5fc",
+      "sources": 58,
+      "gaps": []
+    },
+    {
+      "key": "typescript/project:tsconfig.ui.json",
+      "language": "typescript",
+      "context": "sc2:context:5ca81dc90f93587007b7b1677e365f1655f8030a0fc8fc8b96ad30e69818fc01",
+      "sources": 19,
+      "gaps": []
+    },
+    {
+      "key": "rust/project:tests/fixtures/malformed/Cargo.toml",
+      "language": "rust",
+      "context": "sc2:context:9854a54c6813c398ec5964b18f65975cf2cbfd45d7c42a1fbdc4cffaabb0529f",
+      "sources": 1,
+      "gaps": [
+        "Manifest observed; interpreter/classpath/SDK/features/tags/targets are not compiler-qualified by discovery alone"
+      ]
+    },
+    {
+      "key": "rust/project:tests/fixtures/mixed/src-tauri/Cargo.toml",
+      "language": "rust",
+      "context": "sc2:context:aaf4500cf28175d8e94ebe72e9ae1bf5e16eb7b3f407b2cfae9c8f707a0a871a",
+      "sources": 3,
+      "gaps": [
+        "Manifest observed; interpreter/classpath/SDK/features/tags/targets are not compiler-qualified by discovery alone"
+      ]
+    },
+    {
+      "key": "rust/project:tests/fixtures/rust-quality/Cargo.toml",
+      "language": "rust",
+      "context": "sc2:context:fb600635629e66c6dc835f4b1af99992372713f93f9936d7c265ba65e152aa0a",
+      "sources": 8,
+      "gaps": [
+        "Manifest observed; interpreter/classpath/SDK/features/tags/targets are not compiler-qualified by discovery alone"
+      ]
+    },
+    {
+      "key": "rust/project:tests/fixtures/rust-verified-misses/Cargo.toml",
+      "language": "rust",
+      "context": "sc2:context:992910e6fbb27e031a7b2f46adae2797d093eee76c31d9d2bd2b19cfbcc66e54",
+      "sources": 8,
+      "gaps": [
+        "Manifest observed; interpreter/classpath/SDK/features/tags/targets are not compiler-qualified by discovery alone"
+      ]
+    }
+  ],
+  "counts": {
+    "occurrences": 90952,
+    "facts": 157242,
+    "claims": 157242,
+    "navigation": 157242,
+    "calls": 9221
+  },
+  "queries": [
+    {
+      "name": "deriveOwnedAnalysis",
+      "ms": 1.164,
+      "symbols": 2,
+      "definitions": 1,
+      "references": 2,
+      "work": {
+        "candidateRows": 2,
+        "supportRows": 0,
+        "metadataRows": 9,
+        "returnedRows": 2,
+        "globalGraphMaterialized": false
+      }
+    },
+    {
+      "name": "SemanticStore",
+      "ms": 0.63,
+      "symbols": 2,
+      "definitions": 1,
+      "references": 5,
+      "work": {
+        "candidateRows": 6,
+        "supportRows": 0,
+        "metadataRows": 9,
+        "returnedRows": 5,
+        "globalGraphMaterialized": false
+      }
+    },
+    {
+      "name": "indexSemanticFoundation",
+      "ms": 0.43,
+      "symbols": 2,
+      "definitions": 1,
+      "references": 3,
+      "work": {
+        "candidateRows": 3,
+        "supportRows": 0,
+        "metadataRows": 9,
+        "returnedRows": 3,
+        "globalGraphMaterialized": false
+      }
+    }
+  ],
+  "integrity": "ok",
+  "databaseBytes": 286175232,
+  "maxRssKiB": 1522480,
+  "implementationDigests": {
+    "typescript": "d923a7d94a918929edd4ac59d83c6ac3f126ad97588a2277b88fba2ed5b847dc",
+    "projects": "0fd87bb5664c78bfcf28e2bd95821223ee5f8670c22bc46d8c610947674f955d",
+    "passes": "0d93497b35e0cfe26dcb234f2be08ea008ca4d4ac9d06ef3c580438fea33960f",
+    "analysis-passes": "d1714de2fe0e1e499f12baf7917a15892d192de6fe8f9ed27dc9189b95270411",
+    "boundary-pass": "29089d8d7ca7016fc8a9b388628b80f293cf60a1021cf0285a8b2aab1947bc4d",
+    "owned-projection": "eac12791a6c435c52282d05e3c73c1cadefb45a18912637d5d9fc169c51b2ae6",
+    "provider-runs": "cb1dbcace26247be9a3b4b6b3d7c328a9fad0ac903d282c2d178dcd3122d6cfd",
+    "store": "d2ea2607587423b51984e6c440d5ff5c0a5f14060628e7895c4e5b9d213e95bd",
+    "schema": "43f6aee2ebbcef36eaf2d9e7e8c4818caf1814402fb157987ea3741b9fb63d49"
+  }
+}

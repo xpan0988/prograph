@@ -4,7 +4,7 @@ import Database from "better-sqlite3";
 import { resolveRepositoryRoot } from "../repository/repository.js";
 import { canonical, digest, SEMANTIC_FORMAT_VERSION, READABLE_SEMANTIC_SCHEMAS } from "./model.js";
 
-export const SEMANTIC_OPERATIONS = ["status", "find", "definition", "references", "callers", "callees", "occurrence", "explain", "context", "native", "relationships"] as const;
+export const SEMANTIC_OPERATIONS = ["status", "find", "definition", "references", "callers", "callees", "occurrence", "explain", "context", "native", "relationships", "boundaries", "boundary-participants"] as const;
 export type SemanticOperation = typeof SEMANTIC_OPERATIONS[number];
 export interface SemanticQueryOptions { limit?: number; cursor?: string; snapshot?: number; maxBytes?: number }
 interface Cursor { snapshot: number; query: string; after: number }
@@ -78,6 +78,20 @@ export class SemanticQuery {
       if (operation === "status") {
         const page = this.db.prepare("SELECT r.id,r.partition_key,r.context,r.input_fingerprint FROM sc_partitions p JOIN sc_runs r ON r.id=p.run WHERE p.snapshot=? AND p.run>? ORDER BY p.run LIMIT ?").all(snapshot, after, limit + 1) as typeof partitions;
         rows = page.map(p => ({ page_key: p.id, partition: p.partition_key, context: p.context, inputFingerprint: p.input_fingerprint, legacy: p.partition_key === "legacy/full" })); examined = rows.length;
+      } else if (operation === "boundaries" || operation === "boundary-participants") {
+        if (operation === "boundaries") {
+          rows = this.db.prepare(`SELECT n.claim AS page_key,e.key AS operation,c.key AS evidenceClaim,n.confidence,f.value_json,p.json AS provenance
+            FROM sc_navigation n JOIN sc_claims c ON c.id=n.claim JOIN sc_facts f ON f.id=c.fact JOIN sc_entities e ON e.id=n.subject JOIN sc_provenance p ON p.id=c.provenance
+            WHERE n.snapshot=? AND n.relation='boundary-operation' AND n.claim>? ORDER BY n.claim LIMIT ?`).all(snapshot, after, limit + 1) as Array<Record<string, unknown>>;
+        } else {
+          const target = this.db.prepare("SELECT id FROM sc_entities WHERE key=?").get(input) as { id: number } | undefined;
+          if (target) rows = this.db.prepare(`SELECT n.claim AS page_key,n.relation,s.key AS symbol,sym.name,sym.file,o.key AS occurrence,c.key AS evidenceClaim,n.confidence,f.value_json,p.json AS provenance
+            FROM sc_navigation n JOIN sc_entities s ON s.id=n.subject JOIN sc_symbols sym ON sym.entity=n.subject LEFT JOIN sc_entities o ON o.id=n.occurrence
+            JOIN sc_claims c ON c.id=n.claim JOIN sc_facts f ON f.id=c.fact JOIN sc_provenance p ON p.id=c.provenance
+            WHERE n.snapshot=? AND n.object=? AND n.relation IN ('boundary-invokes','boundary-implements','boundary-emits','boundary-listens','boundary-registers') AND n.claim>? ORDER BY n.claim LIMIT ?`).all(snapshot, target.id, after, limit + 1) as Array<Record<string, unknown>>;
+        }
+        examined = rows.length;
+        rows = rows.map(({ value_json, provenance, ...row }) => ({ ...row, value: JSON.parse(String(value_json)), provenance: JSON.parse(String(provenance)) }));
       } else if (operation === "find") {
         if (input.length > 256) throw new Error("Symbol query exceeds 256 characters");
         const items = this.db.prepare(`SELECT s.entity AS page_key,e.key,s.name,s.qualified_name,s.kind,s.file,s.context AS variant FROM sc_visible_symbols v JOIN sc_symbols s ON s.entity=v.entity JOIN sc_entities e ON e.id=s.entity

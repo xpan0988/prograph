@@ -3,6 +3,7 @@ import { emptyAdapterResult } from "../../../core/adapters/contracts.js";
 import { GraphBuilder } from "../../../core/graph/builder.js";
 import { nodeId, withEdgeId } from "../../../core/graph/identity.js";
 import type { EdgeKind, GraphNode, SourceEvidence } from "../../../core/graph/schema.js";
+import { tauriRoots, tauriScope } from "../../../core/graph/boundaries.js";
 
 interface Position {
   line: number;
@@ -136,6 +137,29 @@ export const tauriAdapter: FrameworkAdapter = {
   },
   async analyze(snapshot, graphInput) {
     if (!snapshot.config.adapters.tauri) return emptyAdapterResult();
+    const roots = tauriRoots(snapshot);
+    if (roots.length > 1) {
+      const combined = new GraphBuilder(); let commandCount = 0; let eventCount = 0; let unresolvedEventExpressionCount = 0;
+      for (const root of roots) {
+        const files = snapshot.files.filter(file => tauriScope(roots, file) === root);
+        const selected = new Set(files);
+        const inputNodes = graphInput.nodes.filter(node => node.file && selected.has(node.file)); const ids = new Set(inputNodes.map(node => node.id));
+        const result = await tauriAdapter.analyze({ ...snapshot, files,
+          fileContents: new Map([...snapshot.fileContents].filter(([file]) => selected.has(file))),
+          absoluteFiles: new Map([...snapshot.absoluteFiles].filter(([file]) => selected.has(file))) },
+        { ...graphInput, nodes: inputNodes, edges: graphInput.edges.filter(edge => ids.has(edge.source) && ids.has(edge.target)) });
+        const replacements = new Map<string, string>();
+        for (const node of result.nodes) if (node.metadata.boundary) {
+          const boundary = node.metadata.boundary as Record<string, unknown>; const qualifiedName = `tauri:${root}:${node.kind}:${node.name}`;
+          const id = nodeId({ repositoryIdentity: snapshot.repository.identity, language: "framework", kind: node.kind, qualifiedName }); replacements.set(node.id, id);
+          node.id = id; node.qualifiedName = qualifiedName; node.metadata = { ...node.metadata, boundary: { ...boundary, namespace: `tauri:${root}` } };
+        }
+        result.edges = result.edges.map(edge => withEdgeId({ ...edge, source: replacements.get(edge.source) ?? edge.source, target: replacements.get(edge.target) ?? edge.target }));
+        combined.merge(result);
+        commandCount += Number(result.metadata.commandCount ?? 0); eventCount += Number(result.metadata.eventCount ?? 0); unresolvedEventExpressionCount += Number(result.metadata.unresolvedEventExpressionCount ?? 0);
+      }
+      return combined.result({ commandCount, eventCount, unresolvedEventExpressionCount, namespaces: roots });
+    }
     const graph = new GraphBuilder();
     const commandNodes = new Map<string, GraphNode>();
     const eventNodes = new Map<string, GraphNode>();
@@ -315,7 +339,7 @@ export const tauriAdapter: FrameworkAdapter = {
                 kind: "registers",
                 confidence: "exact",
                 evidence: [evidence(file, tokenPosition, "generate_handler! handler", name, "literal-handler-token")],
-                metadata: { framework: "tauri", macroLocation: { file, ...macroPosition } },
+                metadata: { framework: "tauri", handlerPath: token[0], macroLocation: { file, ...macroPosition } },
               }));
             }
           }

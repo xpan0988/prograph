@@ -8,7 +8,7 @@ import { canonical, digest, semanticKey, TYPESCRIPT_SEMANTIC_VERSION, type FactI
 import { SourceCoordinates } from "./coordinates.js";
 import { SemanticStore } from "./store.js";
 import { discoverProjects, type ProjectUnit } from "./projects.js";
-import { executePasses } from "./passes.js";
+import { executePasses, qualifiedCallProjection } from "./passes.js";
 import { retainProviders } from "./provider-runs.js";
 
 export interface SemanticIndexResult { snapshot: number; context: string; inputFingerprint: string; coverage: Record<string, unknown>; durationMs: number }
@@ -192,17 +192,20 @@ async function reusableUnit(store: SemanticStore, snapshot: RepositorySnapshot, 
       try { if (digest(await readFile(file)) !== input.digest) return undefined; } catch { return undefined; }
     }
   }
-  return [run, pass];
+  return [run, ...qualifiedCallProjection(store, run, unit.key, pass)];
 }
 
-export async function indexSemanticFoundation(snapshot: RepositorySnapshot, graph: GraphData, filename: string): Promise<SemanticIndexResult> {
+export async function indexSemanticFoundation(snapshot: RepositorySnapshot, graph: GraphData, filename: string, owned?: { runs: number[]; parent: number | undefined }): Promise<SemanticIndexResult> {
   const started = performance.now(); const plan = discoverProjects(snapshot);
   if (plan.diagnostics.some(message => message.startsWith("Invalid TypeScript project")) && !plan.units.some(unit => unit.language === "typescript" && unit.project !== "<inferred>")) throw Error(plan.diagnostics.join("; "));
   const store = new SemanticStore(filename); const parent = store.activeSnapshot();
   const previous = new Map((parent ? store.sql("SELECT partition_key,run FROM sc_partitions WHERE snapshot=?").all(parent) : [] as unknown[]) .map(value => { const row = value as { partition_key: string; run: number }; return [row.partition_key, row.run] as const; }));
   const inputFingerprint = digest(canonical([...snapshot.fileContents].map(([file, text]) => [file, digest(text)]).sort()));
-  const bridge = store.begin("legacy/full", "legacy", inputFingerprint); const runs: number[] = []; const outcomes: Record<string, unknown>[] = [];
+  const runs: number[] = [...(owned?.runs ?? [])]; const outcomes: Record<string, unknown>[] = [];
   try {
+    if (owned && owned.parent !== parent) throw Error("Owned analysis parent changed before publication");
+    if (!owned) {
+    const bridge = store.begin("legacy/full", "legacy", inputFingerprint);
     const provenance: Provenance = { provider: "legacy-graph", version: graph.schemaVersion, basis: "syntax", method: "compatibility-bridge", context: "legacy", inputFingerprint };
     for (const [predicate, values] of [["legacy.Node", graph.nodes], ["legacy.Relation", graph.edges]] as const) {
       for (let offset = 0; offset < values.length; offset += 1000) store.batch(bridge, () => {
@@ -218,6 +221,7 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
       });
     }
     store.seal(bridge, { status: "legacy", schema: graph.schemaVersion, gaps: ["Whole legacy partition replacement"] }); runs.push(bridge);
+    }
     for (const unit of plan.units) {
       const discoveryGaps = [...unit.gaps, ...plan.diagnostics.slice(0, 4).map(message => message.slice(0, 256))];
       const run = store.begin(`context/${unit.key}`, unit.context, unit.fingerprint);

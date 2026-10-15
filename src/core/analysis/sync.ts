@@ -9,6 +9,10 @@ import { typescriptAdapter, isTypeScriptFile } from "../../adapters/language/typ
 import { rustAdapter } from "../../adapters/language/rust/index.js";
 import { persistGraph } from "../storage/sqlite.js";
 import packageJson from "../../../package.json" with { type: "json" };
+import { SemanticStore } from "../semantic/store.js";
+import { readOwnedProjection } from "../semantic/owned-projection.js";
+import { deriveOwnedAnalysis } from "../semantic/analysis-passes.js";
+import { GraphBuilder } from "../graph/builder.js";
 import { indexSemanticFoundation } from "../semantic/typescript.js";
 
 export interface SyncResult {
@@ -68,10 +72,20 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
   const changedFiles = [...status.addedFiles, ...status.modifiedFiles];
   const affectedFiles = new Set([...changedFiles, ...status.deletedFiles]);
   if (changedFiles.length + status.deletedFiles.length === 0 || changedFiles.length > 10) return undefined;
+  // Only provider observations may be reused as input. Reusing the compatibility graph would
+  // turn yesterday's framework/knowledge conclusions into today's base authority.
+  let source: GraphData;
+  const store = new SemanticStore(path.join(status.indexDirectory, "semantic.sqlite"));
+  try {
+    const run = store.sql("SELECT run FROM sc_partitions WHERE snapshot=? AND partition_key='analysis/source'").get(store.activeSnapshot()) as { run: number } | undefined;
+    if (!run) return undefined; // Old indexes upgrade through a clean analysis.
+    const observations = readOwnedProjection(store, run.run);
+    source = { ...previous, ...observations.result };
+  } finally { store.close(); }
   const scan = await scanRepository(status.repositoryRoot, status.indexDirectory);
   if (changedFiles.some((file) => frameworkRelevant(file, scan.snapshot.fileContents.get(file) ?? ""))) return undefined;
-  const removedIds = new Set(previous.nodes.filter((node) => node.file && affectedFiles.has(node.file)).map((node) => node.id));
-  if (previous.edges.some((edge) => removedIds.has(edge.source) !== removedIds.has(edge.target))) return undefined;
+  const removedIds = new Set(source.nodes.filter((node) => node.file && affectedFiles.has(node.file)).map((node) => node.id));
+  if (source.edges.some((edge) => removedIds.has(edge.source) !== removedIds.has(edge.target))) return undefined;
   for (const file of status.addedFiles) {
     const directory = path.posix.dirname(file);
     if (directory !== "." && !previous.nodes.some((node) => node.kind === "directory" && node.qualifiedName === directory)) return undefined;
@@ -91,7 +105,7 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
   const partialEdges = results.flatMap((result) => result.edges);
   if (partialNodes.some((node) => node.kind === "unresolved_symbol" || node.kind.startsWith("framework_"))) return undefined;
   if (partialEdges.some((edge) => edge.confidence === "probable" || edge.confidence === "unresolved" || ["imports", "invokes", "registers", "emits", "listens", "renders", "passes_callback"].includes(edge.kind))) return undefined;
-  const retainedNodes = previous.nodes.filter((node) => !removedIds.has(node.id));
+  const retainedNodes = source.nodes.filter((node) => !removedIds.has(node.id));
   const retainedIds = new Set(retainedNodes.map((node) => node.id));
   const partialIds = new Set(partialNodes.map((node) => node.id));
   const knownEndpoint = (id: string): boolean => retainedIds.has(id) || partialIds.has(id);
@@ -100,21 +114,26 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
     ...previous,
     repository: scan.snapshot.repository,
     nodes: [...retainedNodes, ...partialNodes],
-    edges: [...previous.edges.filter((edge) => !removedIds.has(edge.source) && !removedIds.has(edge.target)), ...partialEdges],
-    diagnostics: [...previous.diagnostics.filter((item) => !item.file || !affectedFiles.has(item.file)), ...results.flatMap((result) => result.diagnostics)],
+    edges: [...source.edges.filter((edge) => !removedIds.has(edge.source) && !removedIds.has(edge.target)), ...partialEdges],
+    diagnostics: [...source.diagnostics.filter((item) => !item.file || !affectedFiles.has(item.file)), ...results.flatMap((result) => result.diagnostics)],
   };
-  // The isolated path retains root telemetry; source additions/deletions must refresh its inventory count.
+  const owned = await deriveOwnedAnalysis(scan.snapshot, { ...graph, metadata: {} }, path.join(status.indexDirectory, "semantic.sqlite"));
+  const combined = new GraphBuilder(); combined.merge({ ...graph, metadata: {} }); combined.merge(owned.result);
+  graph.nodes = [...combined.nodes.values()]; graph.edges = [...combined.edges.values()]; graph.diagnostics = combined.diagnostics;
+  const languageNames = new Set(["typescript", "rust", "python", "java", "c", "cpp", "go", "csharp"]);
+  const languageRuns = adapterRunsFor(graph, (previousManifest.adapterRuns ?? []).filter(run => languageNames.has(run.adapter)).map(run => run.adapter), previousManifest.adapterRuns)
+    .map(run => ({ ...run, detected: previousManifest.adapterRuns?.find(previous => previous.adapter === run.adapter)?.detected ?? false }));
+  const adapterRuns = [...languageRuns, ...owned.adapterRuns];
+  const typescriptRun = adapterRuns.find(run => run.adapter === "typescript");
+  if (typescriptRun?.metadata) typescriptRun.metadata = { ...typescriptRun.metadata, projectFileCount: scan.snapshot.files.filter(isTypeScriptFile).length };
   const repositoryNode = graph.nodes.find(node => node.kind === "repository");
-  if (repositoryNode && Array.isArray(repositoryNode.metadata.analysis)) {
-    repositoryNode.metadata = { ...repositoryNode.metadata, analysis: repositoryNode.metadata.analysis.map((entry: Record<string, unknown>) =>
-      entry.adapter === "typescript" ? { ...entry, projectFileCount: scan.snapshot.files.filter(isTypeScriptFile).length } : entry) };
-  }
+  if (repositoryNode) repositoryNode.metadata = { ...repositoryNode.metadata, analysis: adapterRuns.map(({ adapter, detected, metadata }) => ({ adapter, detected, ...metadata })) };
   const manifestBase: AnalysisManifest = { ...previousManifest };
   delete manifestBase.gitCommit;
-  const adapterRuns = adapterRunsFor(graph, previousManifest.enabledAdapters, previousManifest.adapterRuns);
   const manifest: AnalysisManifest = {
     ...manifestBase,
     adapterRuns,
+    enabledAdapters: adapterRuns.filter(run => run.detected).map(run => run.adapter),
     toolVersion: packageJson.version,
     repositoryRoot: status.repositoryRoot,
     repositoryIdentity: scan.snapshot.repository.identity,
@@ -133,7 +152,7 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
   // Preserve the qualified legacy isolated-file path; the new slice still replaces its whole project.
   const semanticStarted = performance.now();
   try {
-    const semantic = await indexSemanticFoundation(scan.snapshot, graph, path.join(status.indexDirectory, "semantic.sqlite"));
+    const semantic = await indexSemanticFoundation(scan.snapshot, graph, path.join(status.indexDirectory, "semantic.sqlite"), owned);
     manifest.semanticCore = { format: 2, status: semantic.coverage.status === "unavailable" ? "unavailable" : "partial", snapshot: semantic.snapshot, context: semantic.context, durationMs: semantic.durationMs };
   } catch (error) {
     manifest.semanticCore = { format: 2, status: "failed", durationMs: Math.round(performance.now() - semanticStarted), reason: String(error) };

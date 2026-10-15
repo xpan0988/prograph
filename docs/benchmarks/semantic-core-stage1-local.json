@@ -1,0 +1,116 @@
+{
+  "node": "v25.9.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "tests": {
+    "total": 125,
+    "passed": 125,
+    "pending": 0,
+    "success": true,
+    "suites": [
+      {
+        "file": "core.test.ts",
+        "passed": 41,
+        "statuses": [
+          "passed"
+        ]
+      },
+      {
+        "file": "polyglot.test.ts",
+        "passed": 13,
+        "statuses": [
+          "passed"
+        ]
+      },
+      {
+        "file": "query-runtime.test.ts",
+        "passed": 6,
+        "statuses": [
+          "passed"
+        ]
+      },
+      {
+        "file": "semantic-core.test.ts",
+        "passed": 17,
+        "statuses": [
+          "passed"
+        ]
+      },
+      {
+        "file": "semantic-ingestion.test.ts",
+        "passed": 32,
+        "statuses": [
+          "passed"
+        ]
+      },
+      {
+        "file": "semantic-passes.test.ts",
+        "passed": 7,
+        "statuses": [
+          "passed"
+        ]
+      },
+      {
+        "file": "semantic-rust.test.ts",
+        "passed": 9,
+        "statuses": [
+          "passed"
+        ]
+      }
+    ]
+  },
+  "actualRustProducerEnabled": true,
+  "typecheck": "passed",
+  "nodeAndUiBuild": "passed",
+  "evidenceVerifier": "passed",
+  "recovery": {
+    "node": "v25.9.0",
+    "probes": [
+      {
+        "point": "before-seal",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "before-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "during-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "after-publish",
+        "exitCode": 57,
+        "activeSnapshot": 2,
+        "visible": [
+          "other"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      }
+    ],
+    "corruption": {
+      "refused": true,
+      "unchanged": true
+    }
+  },
+  "note": "Tests, typecheck, build, recovery and self-analysis were run serially. Process recovery is not a physical power-loss test."
+}

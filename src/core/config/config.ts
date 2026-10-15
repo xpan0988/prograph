@@ -1,5 +1,13 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import type { BoundaryProtocol } from "../graph/boundaries.js";
+
+export interface BoundaryConfiguration {
+  protocol: BoundaryProtocol;
+  namespace: string;
+  contracts: string[];
+  bindings: { file: string; symbol: string; operation: string; role: "invokes" | "implements" | "emits" | "listens"; line?: number; column?: number }[];
+}
 
 export const DEFAULT_INCLUDE = [
   "**/*.ts",
@@ -62,6 +70,7 @@ export interface ProGraphConfig {
   include?: string[];
   exclude?: string[];
   adapters?: Partial<Record<AdapterName, boolean>>;
+  boundaries?: BoundaryConfiguration[];
 }
 
 export interface LoadedConfig {
@@ -69,6 +78,7 @@ export interface LoadedConfig {
   exclude: string[];
   adapters: Record<AdapterName, boolean>;
   sourcePath?: string;
+  boundaries?: BoundaryConfiguration[];
 }
 
 export function defaultConfig(): LoadedConfig {
@@ -106,6 +116,7 @@ export async function loadConfig(repositoryRoot: string): Promise<LoadedConfig> 
   }
   return {
     ...defaultConfig(),
+    ...(parsed.boundaries ? { boundaries: validateBoundaries(parsed.boundaries) } : {}),
     include: parsed.include?.length ? parsed.include : DEFAULT_INCLUDE,
     exclude: [...DEFAULT_EXCLUDE, ...(parsed.exclude ?? [])],
     adapters: {
@@ -115,4 +126,18 @@ export async function loadConfig(repositoryRoot: string): Promise<LoadedConfig> 
     },
     ...(sourcePath ? { sourcePath } : {}),
   };
+}
+
+function validateBoundaries(value: BoundaryConfiguration[]): BoundaryConfiguration[] {
+  const protocols = ["tauri-command", "tauri-event", "http", "graphql", "grpc", "ffi", "jni", "pinvoke", "subprocess", "ipc", "websocket", "message", "database"];
+  const relative = (file: string) => typeof file === "string" && file.length > 0 && !path.posix.isAbsolute(file) && !file.includes("\\") && !file.split("/").includes("..");
+  if (!Array.isArray(value) || value.length > 1000) throw Error("Invalid boundary configuration");
+  for (const entry of value) {
+    if (!entry || !protocols.includes(entry.protocol) || typeof entry.namespace !== "string" || !entry.namespace.trim() || entry.namespace.length > 512 ||
+      !Array.isArray(entry.contracts) || !entry.contracts.length || !entry.contracts.every(relative) || !Array.isArray(entry.bindings) || entry.bindings.length > 10000) throw Error("Invalid boundary namespace/contract configuration");
+    for (const binding of entry.bindings) if (!binding || !relative(binding.file) || typeof binding.symbol !== "string" || !binding.symbol ||
+      typeof binding.operation !== "string" || !binding.operation || !["invokes", "implements", "emits", "listens"].includes(binding.role) ||
+      (binding.line !== undefined && (!Number.isSafeInteger(binding.line) || binding.line < 1)) || (binding.column !== undefined && (!Number.isSafeInteger(binding.column) || binding.column < 1))) throw Error("Invalid boundary participant configuration");
+  }
+  return value;
 }

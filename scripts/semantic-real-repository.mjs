@@ -33,6 +33,6 @@ try {
   const report={repository:scan.snapshot.repository,startedAt,elapsedMs,sourceFiles:sources.length,sourceLines:sources.reduce((n,[,text])=>n+text.split('\n').length,0),sourceInventoryDigest:digest(JSON.stringify(sources.map(([file,text])=>[file,digest(text)]).sort())),
     legacy:{schema:result.graph.schemaVersion,nodes:result.graph.nodes.length,edges:result.graph.edges.length,diagnostics:result.graph.diagnostics.length},semantic:result.manifest.semanticCore,unitTimings:timings,units,counts,queries,
     integrity:query.db.pragma('integrity_check',{simple:true}),databaseBytes:(await stat(path.join(output,'semantic.sqlite'))).size,maxRssKiB:process.resourceUsage().maxRSS,
-    implementationDigests:Object.fromEntries(await Promise.all(['typescript','projects','passes','provider-runs','store','schema'].map(async name=>[name,digest(await readFile(new URL(`../dist/core/semantic/${name}.js`,import.meta.url)))]))) };
+    implementationDigests:Object.fromEntries(await Promise.all(['typescript','projects','passes','analysis-passes','boundary-pass','owned-projection','provider-runs','store','schema'].map(async name=>[name,digest(await readFile(new URL(`../dist/core/semantic/${name}.js`,import.meta.url)))]))) };
   if(reportPath) await writeFile(reportPath,`${JSON.stringify(report,null,2)}\n`); process.stdout.write(`${JSON.stringify(report,null,2)}\n`);
 } finally { query.close(); }
