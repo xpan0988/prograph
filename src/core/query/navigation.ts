@@ -36,7 +36,7 @@ export class NavigationRead {
     if (this.limits.signal?.aborted) throw new QueryBudgetError("cancelled", "execution aborted");
     if (performance.now() - this.started > this.deadline) throw new QueryBudgetError("deadline", `${this.deadline}ms`);
   }
-  private charge(row: NodeRow | EdgeRow): void {
+  charge(row: object): void {
     this.check();
     if (++this.candidates > this.maxCandidates) throw new QueryBudgetError("candidates", `${this.maxCandidates} raw rows`);
     for (const value of Object.values(row)) if (typeof value === "string") this.bytes += Buffer.byteLength(value);
@@ -51,6 +51,10 @@ export class NavigationRead {
       this.cache.set(id, row ? graphNodeFromRow(row) : undefined);
     }
     return this.cache.get(id);
+  }
+  edge(id: string): GraphEdge | undefined {
+    this.check(); const row = this.db.prepare("SELECT * FROM edges WHERE id=?").get(id) as EdgeRow | undefined;
+    this.charge(row ?? {}); return row ? graphEdgeFromRow(row) : undefined;
   }
   *fileRoots(file: string): Generator<GraphNode> {
     yield* this.fileNodes(file, true);

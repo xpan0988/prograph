@@ -33,8 +33,8 @@ test("indexed navigation matches former scan semantics across scopes, confidence
   const selectedNodes=(ids:Set<string>)=>(q.database.prepare(`SELECT * FROM nodes WHERE id IN (${[...ids].map(()=>"?")})`).all(...ids) as NodeRow[]).map(graphNodeFromRow);
   try {
     // Fails if these navigation paths accidentally return to whole-graph hydration.
-    vi.spyOn(q as unknown as {allNodes():GraphNode[]},"allNodes").mockImplementation(()=>{throw Error("global nodes");});
-    vi.spyOn(q as unknown as {allEdges():GraphEdge[]},"allEdges").mockImplementation(()=>{throw Error("global edges");});
+    Object.assign(q, { allNodes() { throw Error("global nodes"); } });
+    Object.assign(q, { allEdges() { throw Error("global edges"); } });
     for(const scope of ["code","code+docs","code+config","code+tests","full"] as GraphScope[]) for(const includeUnresolved of [false,true]) {
       const options:ConfidenceQuery={scope,includeUnresolved}; const visible=scopedEdges(edges,nodes,options);
       for(const id of ["symbol:1","symbol:9","symbol:43"]) {

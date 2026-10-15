@@ -1,5 +1,6 @@
 import path from "node:path";
 import Database from "better-sqlite3";
+import { GLOBAL_QUERY_SQL, materializeGlobalQueries } from "../query/global-projections.js";
 import type { AdapterRun, AnalysisManifest, Diagnostic, GraphData, GraphEdge, GraphNode } from "../graph/schema.js";
 
 const SCHEMA_SQL = `
@@ -75,6 +76,7 @@ export async function persistGraph(outputDirectory: string, graph: GraphData, ma
   const database = new Database(path.join(outputDirectory, "graph.sqlite"));
   try {
     database.exec(SCHEMA_SQL);
+    database.exec(GLOBAL_QUERY_SQL);
     const persist = database.transaction(() => {
       for (const table of ["schema_metadata", "repository_metadata", "files", "nodes", "edges", "diagnostics", "adapter_runs"]) {
         database.exec(`DELETE FROM ${table}`);
@@ -132,6 +134,7 @@ export async function persistGraph(outputDirectory: string, graph: GraphData, ma
       }
       const insertAdapter = database.prepare("INSERT INTO adapter_runs (adapter, detected, duration_ms, file_count, node_count, edge_count, diagnostic_count) VALUES (?, ?, ?, ?, ?, ?, ?)");
       for (const run of adapterRuns) insertAdapter.run(run.adapter, run.detected ? 1 : 0, run.durationMs, run.fileCount, run.nodeCount, run.edgeCount, run.diagnosticCount);
+      materializeGlobalQueries(database, graph);
     });
     persist();
   } finally {

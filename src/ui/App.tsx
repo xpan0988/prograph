@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ReactFlowProvider, useEdgesState, useNodesState, type Edge, type Node } from "@xyflow/react";
 import type { Diagnostic, GraphEdge, GraphNode } from "../core/graph/schema";
+import { useIndexedPage } from "./use-indexed-page";
 import { ApiError, errorFingerprint, getJson, postJson, shouldDisplayError } from "./api-client";
 import { DiagnosticsView } from "./components/DiagnosticsView";
 import { EmptyState, ErrorToast, LoadingState } from "./components/GraphStates";
@@ -155,8 +156,6 @@ function AppBody(): React.ReactElement {
   const { t } = useI18n();
   const initialPreferences = useMemo(readUiPreferences, []);
   const [overview, setOverview] = useState<Overview>();
-  const [files, setFiles] = useState<FileSummary[]>([]);
-  const [diagnostics, setDiagnostics] = useState<Diagnostic[]>([]);
   const [view, setView] = useState<View>(initialPreferences.view);
   const [rawGraph, setRawGraph] = useState<GraphResult>({ nodes: [], edges: [] });
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
@@ -174,7 +173,7 @@ function AppBody(): React.ReactElement {
   const [knowledgeScope, setKnowledgeScope] = useState<KnowledgeScope>(initialPreferences.knowledgeScope);
   const [edgeKind, setEdgeKind] = useState(initialPreferences.edgeKind);
   const [status, setStatus] = useState<RepositoryStatus>();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<ErrorNotice>();
   const [languages, setLanguages] = useState(new Set(initialPreferences.languages));
@@ -210,6 +209,11 @@ function AppBody(): React.ReactElement {
     });
   }, []);
 
+  const filePage = useIndexedPage<FileSummary>(`/api/file-page?scope=${encodeURIComponent(knowledgeScope)}`, "operation.bootstrap", reportError);
+  const diagnosticPage = useIndexedPage<Diagnostic>("/api/diagnostic-page", "operation.bootstrap", reportError);
+  const { reload: reloadFiles } = filePage; const { reload: reloadDiagnostics } = diagnosticPage;
+  const files = filePage.items; const diagnostics = diagnosticPage.items;
+
   const refreshArchitecture = useCallback(async () => {
     setLoading(true);
     try {
@@ -223,21 +227,17 @@ function AppBody(): React.ReactElement {
   }, [maxNodes, confidence, evidenceMode, knowledgeScope, dismissError, reportError]);
 
   useEffect(() => {
-    let active = true;
+    const controller = new AbortController();
     void Promise.all([
-      getJson<Overview>(`/api/overview?scope=${encodeURIComponent(knowledgeScope)}`, "operation.bootstrap"),
-      getJson<FileSummary[]>(`/api/files?scope=${encodeURIComponent(knowledgeScope)}`, "operation.bootstrap"),
-      getJson<Diagnostic[]>("/api/diagnostics", "operation.bootstrap"),
-      getJson<RepositoryStatus>("/api/status", "operation.bootstrap"),
-    ]).then(([nextOverview, nextFiles, nextDiagnostics, nextStatus]) => {
-      if (!active) return;
+      getJson<Overview>(`/api/overview?scope=${encodeURIComponent(knowledgeScope)}`, "operation.bootstrap", controller.signal),
+      getJson<RepositoryStatus>("/api/status", "operation.bootstrap", controller.signal),
+    ]).then(([nextOverview, nextStatus]) => {
+      if (controller.signal.aborted) return;
       setOverview(nextOverview);
-      setFiles(nextFiles);
-      setDiagnostics(nextDiagnostics);
       setStatus(nextStatus);
       dismissError();
-    }).catch((caught) => reportError("operation.bootstrap", caught));
-    return () => { active = false; };
+    }).catch((caught) => { if (!controller.signal.aborted) reportError("operation.bootstrap", caught); });
+    return () => controller.abort();
   }, [knowledgeScope, dismissError, reportError]);
 
   useEffect(() => {
@@ -363,15 +363,17 @@ function AppBody(): React.ReactElement {
     setSyncing(true);
     try {
       await postJson<unknown>("/api/sync", "operation.sync");
-      setStatus(await getJson<RepositoryStatus>("/api/status", "operation.sync"));
+      const [nextOverview, nextStatus] = await Promise.all([getJson<Overview>(`/api/overview?scope=${encodeURIComponent(knowledgeScope)}`, "operation.sync"), getJson<RepositoryStatus>("/api/status", "operation.sync")]);
+      setOverview(nextOverview); setStatus(nextStatus);
       await refreshArchitecture();
+      reloadFiles(); reloadDiagnostics();
       dismissError();
     } catch (caught) {
       reportError("operation.sync", caught);
     } finally {
       setSyncing(false);
     }
-  }, [refreshArchitecture, dismissError, reportError]);
+  }, [refreshArchitecture, dismissError, reportError, reloadFiles, reloadDiagnostics, knowledgeScope]);
 
   const changeView = useCallback((next: View) => {
     setView(next);
@@ -431,7 +433,7 @@ function AppBody(): React.ReactElement {
 
   return (
     <div className={appShellClassName(inspectorOpen)} data-inspector-open={inspectorOpen}>
-      <Sidebar view={view} overview={overview} files={files} rawGraph={rawGraph} depth={depth} onViewChange={changeView} />
+      <Sidebar view={view} overview={overview} files={files} rawGraph={rawGraph} depth={depth} onViewChange={changeView} filePage={{ hasNext: filePage.hasNext, hasPrevious: filePage.hasPrevious, loading: filePage.loading, next: filePage.next, previous: filePage.previous }} />
       <main className="workspace">
         <TopToolbar
           query={query}
@@ -464,7 +466,11 @@ function AppBody(): React.ReactElement {
           {view === "architecture" && <ArchitectureLanes />}
           {view === "context" && contextResult && <ContextSummary result={contextResult} />}
           {view === "affected" && affectedResult && <AffectedSummary result={affectedResult} />}
-          {view === "diagnostics" ? <DiagnosticsView diagnostics={diagnostics} /> : rawGraph.nodes.length ? (
+          {view === "diagnostics" ? <div className="paged-diagnostics" aria-busy={diagnosticPage.loading}><div className="page-controls" aria-label={t("repo.pages")}>
+            <button disabled={diagnosticPage.loading || !diagnosticPage.hasPrevious} onClick={diagnosticPage.previous}>{t("repo.previousPage")}</button>
+            <span>{diagnosticPage.loading ? t("repo.pageLoading") : t("repo.pageItems", { count: diagnostics.length })}</span>
+            <button disabled={diagnosticPage.loading || !diagnosticPage.hasNext} onClick={diagnosticPage.next}>{t("repo.nextPage")}</button>
+          </div><DiagnosticsView diagnostics={diagnostics} /></div> : rawGraph.nodes.length ? (
             <GraphCanvas
               nodes={nodes}
               edges={edges}
@@ -484,12 +490,12 @@ function AppBody(): React.ReactElement {
             />
           ) : !loading && prompt ? <EmptyState {...prompt} /> : !loading ? <EmptyState title="graph.empty" description="graph.empty.description" /> : null}
           {selectedNode && relatedEdges.length > 0 && <div className="selection-hint"><strong>{t("graph.selected")}</strong><span>{t("graph.selected.detail")}</span></div>}
-          {loading && <LoadingState />}
+          {loading && view !== "diagnostics" && <LoadingState />}
           {error && <ErrorToast error={error} onDismiss={dismissError} />}
         </section>
       </main>
       {selectedNode && <Inspector node={selectedNode} nodes={rawGraph.nodes} edges={rawGraph.edges} selectedEdge={selectedEdge} onEdgeSelect={setSelectedEdge} onClose={clearSelection} />}
-      <StatusBar state={repositoryState} overview={overview} diagnostics={diagnostics} graph={rawGraph} />
+      <StatusBar state={repositoryState} overview={overview} diagnostics={diagnostics} diagnosticCounts={diagnosticPage.counts} graph={rawGraph} />
     </div>
   );
 }

@@ -1,0 +1,356 @@
+{
+  "baselineRevision": "500135351e296255caa7914d4be925ca55f6c3ee",
+  "startedAt": "2026-10-15T09:24:42.081Z",
+  "corpus": {
+    "source": "/private/tmp/prograph-step2-pastey-fixed/graph.sqlite",
+    "sourceDigest": "513679fe5d9ce5bad0ba39655f4c3ce8239864c0933621ad1795f86afff3323e",
+    "counts": {
+      "nodes": 35970,
+      "edges": 69570
+    },
+    "repository": [
+      {
+        "key": "root",
+        "value": "/Users/xiyuanpan/Pastey"
+      },
+      {
+        "key": "identity",
+        "value": "0992c561ba19ab05"
+      },
+      {
+        "key": "gitCommit",
+        "value": "eaf2e1eb0ba3b0001eb91a1a58cb8e48ae44942c"
+      }
+    ]
+  },
+  "preparation": {
+    "filename": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-global-bench-hqxH1N/graph.sqlite",
+    "projectionVersion": "global-query-1",
+    "nodes": 35970,
+    "edges": 69570,
+    "diagnostics": 42311,
+    "durationMs": 1457,
+    "maxRssKiB": 450528
+  },
+  "before": {
+    "results": {
+      "overview[]": {
+        "timingsMs": [
+          167.246,
+          143.862,
+          170.92,
+          145.257,
+          145.031
+        ],
+        "rawDigest": "600c5c71db2539da802be94b2ef5e41575599c71cbcb505d2a854a6a7b65f11b",
+        "comparisonDigest": "600c5c71db2539da802be94b2ef5e41575599c71cbcb505d2a854a6a7b65f11b",
+        "bytes": 6387,
+        "maxRssKiB": 693408
+      },
+      "overview[{\"scope\":\"full\"}]": {
+        "timingsMs": [
+          170.978,
+          140.199,
+          158.915,
+          145.681,
+          140.826
+        ],
+        "rawDigest": "92ce5569fea8ad1088d010a8f560b209ff8409e1e996ec4dafd23b694d3e3812",
+        "comparisonDigest": "92ce5569fea8ad1088d010a8f560b209ff8409e1e996ec4dafd23b694d3e3812",
+        "bytes": 6773,
+        "maxRssKiB": 693440
+      },
+      "files[]": {
+        "error": "Process exceeded 60000ms including startup",
+        "timingsMs": [],
+        "comparisonDigest": null
+      },
+      "architecture[30]": {
+        "timingsMs": [
+          183.635,
+          149.947,
+          154.147,
+          148.102,
+          152.215
+        ],
+        "rawDigest": "afef6c0569d8579a7a537cdac9296e95da56037d228521c9d9a425bf44922d75",
+        "comparisonDigest": "4db8cdb7809d58a0db8597b04ac45b8cf5b1b57da13609cc3d7b3d3e580de444",
+        "bytes": 707473,
+        "maxRssKiB": 701712
+      },
+      "architecture[30,{\"scope\":\"code+docs\"}]": {
+        "timingsMs": [
+          199.6,
+          181.906,
+          189.381,
+          163.235,
+          181.811
+        ],
+        "rawDigest": "52fb8d5463fbd9a12532d8a848bbfba6fc5bde98acaa2316db6ddb48246441c9",
+        "comparisonDigest": "52fb8d5463fbd9a12532d8a848bbfba6fc5bde98acaa2316db6ddb48246441c9",
+        "bytes": 17307,
+        "maxRssKiB": 665728
+      },
+      "cycles[]": {
+        "timingsMs": [
+          164.033,
+          135.621,
+          153.493,
+          141.423,
+          138.633
+        ],
+        "rawDigest": "05c4da319798531d11c0a9dae23916da2807b3055a7cc350d29d0a7cd88f8f1e",
+        "comparisonDigest": "05c4da319798531d11c0a9dae23916da2807b3055a7cc350d29d0a7cd88f8f1e",
+        "bytes": 8531,
+        "maxRssKiB": 661168
+      },
+      "context[\"semantic command configuration\"]": {
+        "timingsMs": [
+          54.772,
+          45.002,
+          43.768,
+          43.121,
+          42.573
+        ],
+        "rawDigest": "27c36cd27fa17bf82ab00e33c505fa79c094fbe0c5617df1078cde4d4932ffb0",
+        "comparisonDigest": "27c36cd27fa17bf82ab00e33c505fa79c094fbe0c5617df1078cde4d4932ffb0",
+        "bytes": 47388,
+        "maxRssKiB": 199376
+      },
+      "frameworkBindings[\"tauri\"]": {
+        "timingsMs": [
+          2.994,
+          1.493,
+          1.369,
+          1.361,
+          1.358
+        ],
+        "rawDigest": "d384aa5fc0795393a04d6ba398202e5bb4ee4a7c9d90af3ece30c69f1dc4df04",
+        "comparisonDigest": "d384aa5fc0795393a04d6ba398202e5bb4ee4a7c9d90af3ece30c69f1dc4df04",
+        "bytes": 316333,
+        "maxRssKiB": 143360
+      },
+      "searchSymbols[\"invoke\",20]": {
+        "timingsMs": [
+          8.727,
+          5.226,
+          5.015,
+          5.115,
+          5.061
+        ],
+        "rawDigest": "f3be556577c67a589fca2f24c649984fd3e169c6a772332512d3e0cba6ec2f7f",
+        "comparisonDigest": "f3be556577c67a589fca2f24c649984fd3e169c6a772332512d3e0cba6ec2f7f",
+        "bytes": 10188,
+        "maxRssKiB": 148032
+      }
+    },
+    "isolatedOverviewMs": [],
+    "maxRssKiB": 701712,
+    "node": "v25.9.0"
+  },
+  "after": {
+    "results": {
+      "overview[]": {
+        "timingsMs": [
+          1,
+          0.113,
+          0.086,
+          0.096,
+          0.079
+        ],
+        "rawDigest": "600c5c71db2539da802be94b2ef5e41575599c71cbcb505d2a854a6a7b65f11b",
+        "comparisonDigest": "600c5c71db2539da802be94b2ef5e41575599c71cbcb505d2a854a6a7b65f11b",
+        "bytes": 6387,
+        "maxRssKiB": 131152
+      },
+      "overview[{\"scope\":\"full\"}]": {
+        "timingsMs": [
+          0.952,
+          0.105,
+          0.094,
+          0.097,
+          0.531
+        ],
+        "rawDigest": "92ce5569fea8ad1088d010a8f560b209ff8409e1e996ec4dafd23b694d3e3812",
+        "comparisonDigest": "92ce5569fea8ad1088d010a8f560b209ff8409e1e996ec4dafd23b694d3e3812",
+        "bytes": 6773,
+        "maxRssKiB": 130384
+      },
+      "files[]": {
+        "timingsMs": [
+          1.737,
+          0.381,
+          0.329,
+          0.29,
+          0.29
+        ],
+        "rawDigest": "3527532bd95417dcffeaa9a6bcae2b03541deee37f0f71446a024f1709153abd",
+        "comparisonDigest": "3527532bd95417dcffeaa9a6bcae2b03541deee37f0f71446a024f1709153abd",
+        "bytes": 29961,
+        "maxRssKiB": 131728
+      },
+      "architecture[30]": {
+        "timingsMs": [
+          7.512,
+          1.138,
+          1.154,
+          1.133,
+          1.185
+        ],
+        "rawDigest": "4db8cdb7809d58a0db8597b04ac45b8cf5b1b57da13609cc3d7b3d3e580de444",
+        "comparisonDigest": "4db8cdb7809d58a0db8597b04ac45b8cf5b1b57da13609cc3d7b3d3e580de444",
+        "bytes": 463509,
+        "maxRssKiB": 148256
+      },
+      "architecture[30,{\"scope\":\"code+docs\"}]": {
+        "timingsMs": [
+          2.664,
+          0.87,
+          0.821,
+          0.781,
+          0.795
+        ],
+        "rawDigest": "52fb8d5463fbd9a12532d8a848bbfba6fc5bde98acaa2316db6ddb48246441c9",
+        "comparisonDigest": "52fb8d5463fbd9a12532d8a848bbfba6fc5bde98acaa2316db6ddb48246441c9",
+        "bytes": 17307,
+        "maxRssKiB": 133136
+      },
+      "cycles[]": {
+        "timingsMs": [
+          1.317,
+          0.226,
+          0.622,
+          0.208,
+          0.195
+        ],
+        "rawDigest": "05c4da319798531d11c0a9dae23916da2807b3055a7cc350d29d0a7cd88f8f1e",
+        "comparisonDigest": "05c4da319798531d11c0a9dae23916da2807b3055a7cc350d29d0a7cd88f8f1e",
+        "bytes": 8531,
+        "maxRssKiB": 130896
+      },
+      "context[\"semantic command configuration\"]": {
+        "timingsMs": [
+          25.073,
+          15.661,
+          14.831,
+          14.763,
+          14.649
+        ],
+        "rawDigest": "27c36cd27fa17bf82ab00e33c505fa79c094fbe0c5617df1078cde4d4932ffb0",
+        "comparisonDigest": "27c36cd27fa17bf82ab00e33c505fa79c094fbe0c5617df1078cde4d4932ffb0",
+        "bytes": 47388,
+        "maxRssKiB": 167376
+      },
+      "frameworkBindings[\"tauri\"]": {
+        "timingsMs": [
+          7.185,
+          5.144,
+          6.147,
+          4.431,
+          4.714
+        ],
+        "rawDigest": "d384aa5fc0795393a04d6ba398202e5bb4ee4a7c9d90af3ece30c69f1dc4df04",
+        "comparisonDigest": "d384aa5fc0795393a04d6ba398202e5bb4ee4a7c9d90af3ece30c69f1dc4df04",
+        "bytes": 316333,
+        "maxRssKiB": 155648
+      },
+      "searchSymbols[\"invoke\",20]": {
+        "timingsMs": [
+          2.36,
+          0.598,
+          0.544,
+          0.485,
+          0.449
+        ],
+        "rawDigest": "f3be556577c67a589fca2f24c649984fd3e169c6a772332512d3e0cba6ec2f7f",
+        "comparisonDigest": "f3be556577c67a589fca2f24c649984fd3e169c6a772332512d3e0cba6ec2f7f",
+        "bytes": 10188,
+        "maxRssKiB": 132224
+      }
+    },
+    "isolatedOverviewMs": [
+      63.058,
+      62.548,
+      61.004,
+      62.46,
+      61.872,
+      61.84,
+      61.591,
+      62.041,
+      61.387,
+      61.392
+    ],
+    "maxRssKiB": 167376,
+    "node": "v25.9.0"
+  },
+  "filesOracle": {
+    "comparisonDigest": "3527532bd95417dcffeaa9a6bcae2b03541deee37f0f71446a024f1709153abd",
+    "methodology": "Frozen legacy scope/confidence predicates and immutable source rows, with repeated ID lookups replaced by a unique-ID map solely for the independent equivalence oracle. Not a timed execution of the former files method."
+  },
+  "equivalence": {
+    "overview[]": {
+      "same": true,
+      "oracle": "executed-frozen-method",
+      "beforeError": null,
+      "afterError": null
+    },
+    "overview[{\"scope\":\"full\"}]": {
+      "same": true,
+      "oracle": "executed-frozen-method",
+      "beforeError": null,
+      "afterError": null
+    },
+    "files[]": {
+      "same": true,
+      "oracle": "independent-frozen-predicate-files-oracle",
+      "beforeError": "Process exceeded 60000ms including startup",
+      "afterError": null
+    },
+    "architecture[30]": {
+      "same": true,
+      "oracle": "executed-frozen-method",
+      "beforeError": null,
+      "afterError": null
+    },
+    "architecture[30,{\"scope\":\"code+docs\"}]": {
+      "same": true,
+      "oracle": "executed-frozen-method",
+      "beforeError": null,
+      "afterError": null
+    },
+    "cycles[]": {
+      "same": true,
+      "oracle": "executed-frozen-method",
+      "beforeError": null,
+      "afterError": null
+    },
+    "context[\"semantic command configuration\"]": {
+      "same": true,
+      "oracle": "executed-frozen-method",
+      "beforeError": null,
+      "afterError": null
+    },
+    "frameworkBindings[\"tauri\"]": {
+      "same": true,
+      "oracle": "executed-frozen-method",
+      "beforeError": null,
+      "afterError": null
+    },
+    "searchSymbols[\"invoke\",20]": {
+      "same": true,
+      "oracle": "executed-frozen-method",
+      "beforeError": null,
+      "afterError": null
+    }
+  },
+  "integrity": "ok",
+  "methodology": "SQLite online backup of an existing historical graph; original bytes checked unchanged. Explicit offline projection preparation precedes process-separated baseline/current reads. Each method runs in its own process, attempting five serial core samples under a 60s process deadline; timeouts are retained without a latency or output hash. Maximum RSS covers completed method processes only; timed-out process RSS is unavailable. Ten current isolated overview samples include process startup. A separate frozen-predicate/unique-ID-map file oracle checks real file-statistic equivalence when the original method times out; its output is never used as the former method latency. OS page cache is not evicted. Architecture comparison applies only the declared 64-symbol/1000-edge output caps to the baseline; raw and compared hashes are both retained. No LOC/provider/physical-power-loss qualification.",
+  "implementationDigests": {
+    "query-service": "06646ae331a0cc1076eaaeb99446a84257e0ee1e385b04509edcb8a34c39e83f",
+    "global-read": "db81dc274767b508286e6d621681b1ebf8d21d675e3cb161a3e94ba80415b3c7",
+    "global-projections": "04e4457dcb6cbf3dbbfb85176b7bcad4ca3e6bd9cc944763f8eb37d9eb343c54",
+    "file-architecture": "cc7a22ba507ad7be8ada25d4652aa85027e0f64944596b4bc6b3f9bd42768f17",
+    "navigation": "56799c8594dbbd9a306ce5f41d6258209c5b1ba082a2fe231ccb12b8ac0e183e",
+    "isolation": "3ebd63a91c555f6cc07b5f9e19f094e1cb751afad48745c0d4fc9fe0807a472b"
+  }
+}

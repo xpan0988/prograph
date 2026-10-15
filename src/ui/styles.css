@@ -466,3 +466,22 @@ kbd { padding: 2px 5px; border: 1px solid var(--color-border-strong); border-rad
   .status-tail { display: none; }
   .lane-labels span { padding-right: var(--space-2); padding-left: var(--space-2); font-size: 8px; }
 }
+
+.page-controls { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px; color: var(--color-muted); font-size: 10px; }
+.page-controls button { border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 5px 8px; background: #101822; color: var(--color-text-secondary); cursor: pointer; }
+.page-controls button:disabled { opacity: .4; cursor: default; }
+.page-controls button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.paged-diagnostics { height: 100%; display: flex; flex-direction: column; min-height: 0; }
+.paged-diagnostics .diagnostic-view { height: auto; min-height: 0; flex: 1; }
+
+.repository-panel .file-list { flex: 1; }
+.repository-panel > .page-controls { flex: 0 0 auto; }
+@media (max-height: 820px) {
+  .sidebar nav { flex: 0 1 auto; min-height: 120px; overflow-y: auto; }
+  .repository-panel.open { min-height: 160px; }
+}
+@media (max-height: 650px) {
+  .sidebar { overflow-y: auto; }
+  .sidebar nav { flex: 0 0 auto; }
+  .repository-panel.open { flex: 0 0 160px; }
+}

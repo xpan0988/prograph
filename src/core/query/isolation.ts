@@ -6,7 +6,7 @@ import type { SemanticOperation, SemanticQueryOptions } from "../semantic/query.
 import { resolveRepositoryRoot } from "../repository/repository.js";
 import { runProviderProcess, ProviderProcessError } from "../semantic/process.js";
 
-export const LEGACY_READ_OPERATIONS = ["overview", "adapters", "architecture", "files", "fileDetails", "searchSymbols", "symbol", "callers", "callees", "neighborhood", "cycles", "frameworkBindings", "context", "affected", "diagnostics"] as const;
+export const LEGACY_READ_OPERATIONS = ["overview", "adapters", "architecture", "files", "filePage", "fileDetails", "searchSymbols", "symbol", "callers", "callees", "neighborhood", "cycles", "frameworkBindings", "context", "affected", "diagnostics", "diagnosticPage"] as const;
 const operations = LEGACY_READ_OPERATIONS;
 type Operation = typeof operations[number];
 export type AsyncQueryClient = { [K in Operation]: (...args: Parameters<QueryService[K]>) => Promise<ReturnType<QueryService[K]>> };

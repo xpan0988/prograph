@@ -25,8 +25,8 @@ async function requestJson<T>(url: string, operation: string, init?: RequestInit
   }
 }
 
-export function getJson<T>(url: string, operation: string): Promise<T> {
-  return requestJson<T>(url, operation);
+export function getJson<T>(url: string, operation: string, signal?: AbortSignal): Promise<T> {
+  return requestJson<T>(url, operation, signal ? { signal } : undefined);
 }
 
 export function postJson<T>(url: string, operation: string): Promise<T> {

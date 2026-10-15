@@ -8,6 +8,7 @@ interface StatusBarProps {
   state: RepositoryState;
   overview?: Overview | undefined;
   diagnostics: Diagnostic[];
+  diagnosticCounts?: Record<string, number> | undefined;
   graph: GraphResult;
 }
 
@@ -18,12 +19,12 @@ function StateIcon({ state }: { state: RepositoryState }): React.ReactElement {
   return <Pulse size={14} />;
 }
 
-export function StatusBar({ state, overview, diagnostics, graph }: StatusBarProps): React.ReactElement {
+export function StatusBar({ state, overview, diagnostics, diagnosticCounts, graph }: StatusBarProps): React.ReactElement {
   const { t } = useI18n();
   const duration = overview?.adapters.reduce((total, adapter) => total + adapter.durationMs, 0) ?? 0;
-  const errors = diagnostics.filter((item) => item.severity === "error").length;
-  const warnings = diagnostics.filter((item) => item.severity === "warning").length;
-  const info = diagnostics.filter((item) => item.severity === "info").length;
+  const errors = diagnosticCounts?.error ?? diagnostics.filter((item) => item.severity === "error").length;
+  const warnings = diagnosticCounts?.warning ?? diagnostics.filter((item) => item.severity === "warning").length;
+  const info = diagnosticCounts?.info ?? diagnostics.filter((item) => item.severity === "info").length;
   return (
     <footer className="statusbar" aria-live="polite">
       <div className={`status-chip state-${state}`}><StateIcon state={state} /><strong>{t(`status.${state}`)}</strong></div>

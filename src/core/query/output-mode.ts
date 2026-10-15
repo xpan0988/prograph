@@ -27,7 +27,7 @@ function evidencePointer(evidence: SourceEvidence): Record<string, unknown> {
 
 function uiMetadata(metadata: Record<string, unknown> | undefined): Record<string, unknown> | undefined {
   if (!metadata) return undefined;
-  const allowed = ["boundary","uiGranularity", "symbolCount", "incomingCount", "outgoingCount", "containedSymbols", "aggregated", "edgeKinds", "underlyingEdgeCount", "underlyingEdges"];
+  const allowed = ["boundary","uiGranularity", "symbolCount", "incomingCount", "outgoingCount", "containedSymbols", "containedSymbolsTruncated", "aggregated", "edgeKinds", "underlyingEdgeCount", "underlyingEdges"];
   const picked = Object.fromEntries(allowed.flatMap((key) => key in metadata ? [[key, metadata[key]]] : []));
   return Object.keys(picked).length ? picked : undefined;
 }

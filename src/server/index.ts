@@ -83,6 +83,11 @@ export async function startServer(repository = ".", options: ServerOptions = {})
     const selectedScope = scopeParam(request.query.scope);
     response.json(await queryFor(response).files({ ...(selectedScope ? { scope: selectedScope } : {}) }));
   });
+  app.get("/api/file-page", async (request, response) => {
+    const selectedScope = scopeParam(request.query.scope);
+    response.json(await queryFor(response).filePage({ ...(selectedScope ? { scope: selectedScope } : {}), limit: numberParam(request.query.limit, 200), ...(typeof request.query.cursor === "string" ? { cursor: request.query.cursor } : {}) }));
+  });
+  app.get("/api/diagnostic-page", async (request, response) => response.json(await queryFor(response).diagnosticPage({ limit: numberParam(request.query.limit, 200), ...(typeof request.query.cursor === "string" ? { cursor: request.query.cursor } : {}) })));
   app.get("/api/files/{*path}", async (request, response) => sendQuery(response, await queryFor(response).fileDetails((request.params.path as unknown as string[]).join("/"), confidenceParams(request.query)), request.query));
   app.get("/api/symbols/search", async (request, response) => {
     const selectedScope = scopeParam(request.query.scope);
@@ -150,5 +155,6 @@ export async function startServer(repository = ".", options: ServerOptions = {})
     });
     candidate.on("error", reject);
   });
-  return { server, url: `http://${host}:${port}` };
+  const address = server.address();
+  return { server, url: `http://${host}:${address && typeof address !== "string" ? address.port : port}` };
 }

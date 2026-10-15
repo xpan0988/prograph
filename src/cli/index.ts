@@ -4,6 +4,7 @@ import { access, writeFile } from "node:fs/promises";
 import { Command, Option } from "commander";
 import open from "open";
 import { analyzeRepository } from "../core/analysis/analyze.js";
+import { prepareQueryIndex } from "../core/analysis/prepare-queries.js";
 import { repositoryStatus } from "../core/analysis/state.js";
 import { syncRepository } from "../core/analysis/sync.js";
 import { watchRepository } from "../core/analysis/watch.js";
@@ -294,7 +295,20 @@ for (const operation of SEMANTIC_OPERATIONS) {
     });
 }
 
+addFormat(addIndex(program.command("prepare-queries [path]").description("Offline preparation of bounded global query projections for an existing graph")))
+  .action(async (input = ".", options: FormatOptions & { index?: string }) => {
+    const root = await resolveRepositoryRoot(input); const selected = path.resolve(options.index ?? path.join(root, ".prograph"));
+    writeResult(prepareQueryIndex(selected.endsWith(".sqlite") ? selected : path.join(selected, "graph.sqlite")), options.format);
+  });
+addFormat(addIndex(program.command("files-page [path]").description("Read a bounded keyset page of indexed files")))
+  .addOption(new Option("--scope <scope>", "graph scope").choices(["code", "code+docs", "code+config", "code+tests", "full"]).default("code"))
+  .option("--limit <number>", "maximum file summaries", Number, 200).option("--cursor <cursor>", "index-generation-bound cursor")
+  .action(async (input = ".", options: QueryOptions & { limit: number; cursor?: string }) => writeResult(await withQuery(input, options.index, query => query.filePage({ ...(options.scope ? { scope: options.scope } : {}), limit: options.limit, ...(options.cursor ? { cursor: options.cursor } : {}) })), options.format));
+
 const framework = program.command("framework").description("framework-specific queries");
+addFormat(addIndex(program.command("diagnostics-page [path]").description("Read a bounded keyset page of diagnostics")))
+  .option("--limit <number>", "maximum diagnostics", Number, 200).option("--cursor <cursor>", "index-generation-bound cursor")
+  .action(async (input = ".", options: QueryOptions & { limit: number; cursor?: string }) => writeResult(await withQuery(input, options.index, query => query.diagnosticPage({ limit: options.limit, ...(options.cursor ? { cursor: options.cursor } : {}) })), options.format));
 addFormat(addConfidence(addIndex(framework.command("tauri [path]").description("show Tauri commands and events")))).action(async (input = ".", options: QueryOptions) => {
   writeResult(await withQuery(input, options.index, (query) => query.frameworkBindings("tauri", confidence(options))), options.format);
 });

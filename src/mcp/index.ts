@@ -54,6 +54,14 @@ export function createProGraphMcpServer(defaultRepository = ".", defaultIndex?: 
     response(await withQuery(repo(input), index(input), extra.signal, (query) => query.overview({ ...(input.scope ? { scope: input.scope } : {}) }))));
   server.registerTool("get_status", { description: "Get repository index freshness", inputSchema: contextShape }, async (input, extra) =>
     response(await repositoryStatus(repo(input), index(input))));
+  server.registerTool("list_files_page", {
+    description: "Read a bounded file-summary page; continuation is bound to the index generation and scope",
+    inputSchema: { ...contextShape, scope: z.enum(["code", "code+docs", "code+config", "code+tests", "full"]).optional(), limit: z.number().int().min(1).max(1000).optional(), cursor: z.string().max(1024).optional() },
+  }, async (input, extra) => response(await withQuery(repo(input), index(input), extra.signal, query => query.filePage({ ...(input.scope ? { scope: input.scope } : {}), limit: input.limit ?? 200, ...(input.cursor ? { cursor: input.cursor } : {}) }))));
+  server.registerTool("list_diagnostics_page", {
+    description: "Read a bounded diagnostics page, with repository-wide severity counts",
+    inputSchema: { ...contextShape, limit: z.number().int().min(1).max(1000).optional(), cursor: z.string().max(1024).optional() },
+  }, async (input, extra) => response(await withQuery(repo(input), index(input), extra.signal, query => query.diagnosticPage({ limit: input.limit ?? 200, ...(input.cursor ? { cursor: input.cursor } : {}) }))));
   server.registerTool("find_symbol", {
     description: "Find trusted concrete symbols by name or qualified name",
     inputSchema: { ...contextShape, query: z.string(), maxNodes: z.number().int().min(1).max(200).optional(), includeUnresolved: z.boolean().optional(), scope: z.enum(["code", "code+docs", "code+config", "code+tests", "full"]).optional() },

@@ -43,9 +43,10 @@ interface SidebarProps {
   rawGraph: GraphResult;
   depth: number;
   onViewChange: (view: View) => void;
+  filePage?: { hasNext: boolean; hasPrevious: boolean; loading: boolean; next(): void; previous(): void };
 }
 
-export function Sidebar({ view, overview, files, rawGraph, depth, onViewChange }: SidebarProps): React.ReactElement {
+export function Sidebar({ view, overview, files, rawGraph, depth, onViewChange, filePage }: SidebarProps): React.ReactElement {
   const { locale, setLocale, t } = useI18n();
   const [filesOpen, setFilesOpen] = useState(true);
   const [fileFilter, setFileFilter] = useState("");
@@ -98,6 +99,7 @@ export function Sidebar({ view, overview, files, rawGraph, depth, onViewChange }
           {filesOpen ? <CaretDown size={14} /> : <CaretRight size={14} />}
         </button>
         {filesOpen && (
+          <>
           <div className="file-list">
             <label className="file-filter">
               <span>{t("repo.filterFiles")}</span>
@@ -110,6 +112,11 @@ export function Sidebar({ view, overview, files, rawGraph, depth, onViewChange }
             ))}
             {filteredFiles.length > visibleFiles.length && <small>{t("repo.moreFiles", { count: filteredFiles.length - visibleFiles.length })}</small>}
           </div>
+            {filePage && <div className="page-controls" aria-label={t("repo.pages")}>
+              <button disabled={filePage.loading || !filePage.hasPrevious} onClick={filePage.previous}>{t("repo.previousPage")}</button>
+              <button disabled={filePage.loading || !filePage.hasNext} onClick={filePage.next}>{t("repo.nextPage")}</button>
+            </div>}
+          </>
         )}
       </section>
       <div className="scope-card">

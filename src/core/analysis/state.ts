@@ -13,6 +13,7 @@ import { recordedInputStatus, type RecordedInputStatus } from "../semantic/provi
 const require = createRequire(import.meta.url);
 
 export const ADAPTER_VERSIONS = {
+  globalQueries: "1",
   semanticCore: `${SEMANTIC_SCHEMA_VERSION}/ts:${TYPESCRIPT_SEMANTIC_VERSION}/clang:${CLANG_SEMANTIC_VERSION}/scip:${SCIP_SEMANTIC_VERSION}/rust:${RUST_PROVIDER_VERSION}`,
   typescript: "2",
   polyglot: "1",
