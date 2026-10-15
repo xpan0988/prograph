@@ -451,7 +451,7 @@ OpenAPI, GraphQL and Protobuf identity nodes use a protocol, schema-file namespa
 
 SQL and HCL files are discovered but not semantically extracted yet. Existing Cargo TOML and package/Tauri JSON extraction remains available. Arbitrary JSON/YAML does not create graph nodes. Kotlin, Swift and other future language frontends are not implemented.
 
-New polyglot and schema changes use conservative full rebuilds; unchanged indexes are reused. Existing isolated TS/Rust incremental behavior remains available. Excluded directories are no longer traversed just to count files (`excludedFileCount` is a compatibility field reported as zero, not a measured count). Custom in-repository output directories are excluded from scanning. Analysis still retains source and graph data in memory; million-line performance and global query memory usage are not certified.
+New polyglot and schema changes use conservative full rebuilds; unchanged indexes are reused. Existing isolated TS/Rust incremental behavior remains available. Excluded directories are no longer traversed just to count files (`excludedFileCount` is a compatibility field reported as zero, not a measured count). Custom in-repository output directories are excluded from scanning. Analysis still retains source and graph data in memory; million-line indexing is not certified. Local caller/callee/neighborhood/affected navigation uses bounded indexed reads. Interactive queries run in read-only children with admission/deadline/output limits and explicit errors; global overview/architecture/files/cycles still materialize arrays inside those children. Process startup adds latency; see the Step 2 measurements.
 
 ## Development
 

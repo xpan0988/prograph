@@ -1,6 +1,6 @@
 # ProGraph Semantic Core 2.0
 
-**Status:** Target engineering design. The additive foundation and TypeScript vertical slice are closed in [Step 1](semantic-core-step1.md). The project-aware ingestion milestone is implemented within [Step 2](semantic-core-step2.md); those records distinguish shipped behavior, verified evidence, unmet scale gates and unfinished core work. The complete architecture is not implemented.
+**Status:** Target engineering design. The additive foundation and TypeScript vertical slice are closed in [Step 1](semantic-core-step1.md). Project-aware ingestion and the qualified provider/query runtime milestones are implemented within [Step 2](semantic-core-step2.md); those records distinguish shipped behavior, verified evidence, unmet scale gates and unfinished core work. The complete architecture is not implemented.
 
 **Review date:** 1 October 2026.
 

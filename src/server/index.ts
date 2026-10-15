@@ -2,12 +2,14 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import express from "express";
 import type { Server } from "node:http";
-import { queryServiceForRepository, type ConfidenceQuery } from "../core/query/query-service.js";
+import { type ConfidenceQuery } from "../core/query/query-service.js";
 import { formatQueryOutput, type OutputMode } from "../core/query/output-mode.js";
 import { repositoryStatus } from "../core/analysis/state.js";
 import { syncRepository } from "../core/analysis/sync.js";
 import type { GraphScope } from "../core/graph/schema.js";
-import { semanticQueryForRepository, type SemanticOperation } from "../core/semantic/query.js";
+import { type SemanticOperation } from "../core/semantic/query.js";
+
+import { isolatedQueryForRepository, isolatedSemanticRead, QueryExecutionError, type AsyncQueryClient } from "../core/query/isolation.js";
 
 export interface ServerOptions {
   host?: string;
@@ -49,53 +51,58 @@ function sendQuery(response: express.Response, value: unknown, requestQuery: Rec
 }
 
 export async function startServer(repository = ".", options: ServerOptions = {}): Promise<{ server: Server; url: string }> {
-  const query = await queryServiceForRepository(repository, options.index);
+  const probe = await isolatedQueryForRepository(repository, options.index);
+  await probe.symbol("__prograph_startup_probe__");
   const app = express();
   const host = options.host ?? "127.0.0.1";
   const port = options.port ?? 43117;
   const staticDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../ui");
-  app.get("/api/overview", (request, response) => {
+  const queryFor = (response: express.Response) => response.locals.query as AsyncQueryClient;
+  app.use("/api", async (_request, response, next) => {
+    const controller = new AbortController();
+    response.on("close", () => controller.abort()); response.locals.signal = controller.signal;
+    try { response.locals.query = await isolatedQueryForRepository(repository, options.index, { signal: controller.signal }); next(); }
+    catch (error) { next(error); }
+  });
+  app.get("/api/overview", async (request, response) => {
     const selectedScope = scopeParam(request.query.scope);
-    response.json(query.overview({ ...(selectedScope ? { scope: selectedScope } : {}) }));
+    response.json(await queryFor(response).overview({ ...(selectedScope ? { scope: selectedScope } : {}) }));
   });
   app.get("/api/status", async (_request, response) => response.json(await repositoryStatus(repository, options.index)));
   app.get("/api/semantic/:operation", async (request, response) => {
-    let semantic: Awaited<ReturnType<typeof semanticQueryForRepository>> | undefined;
     try {
-      semantic = await semanticQueryForRepository(repository, options.index);
-      response.json(semantic.execute(request.params.operation as SemanticOperation, String(request.query.input ?? ""), {
+      response.json(await isolatedSemanticRead(repository, options.index, request.params.operation as SemanticOperation, String(request.query.input ?? ""), {
         limit: numberParam(request.query.limit, 50), ...(typeof request.query.cursor === "string" ? { cursor: request.query.cursor } : {}),
         maxBytes: numberParam(request.query.maxBytes, 32768), ...(request.query.snapshot !== undefined ? { snapshot: Number(request.query.snapshot) } : {}),
-      }));
-    } catch (error) { response.status(409).json({ error: String(error), semanticAvailable: false, legacyAvailable: true }); }
-    finally { semantic?.close(); }
+      }, { signal: response.locals.signal as AbortSignal }));
+    } catch (error) { response.status(409).json({ error: String(error), semanticAvailable: false, legacyAvailable: true, ...(error instanceof QueryExecutionError ? { code: error.code } : {}) }); }
   });
   app.post("/api/sync", async (_request, response) => response.json(await syncRepository(repository, options.index)));
-  app.get("/api/architecture", (request, response) => sendQuery(response, query.architecture(numberParam(request.query.maxNodes, 100), confidenceParams(request.query)), request.query));
-  app.get("/api/files", (request, response) => {
+  app.get("/api/architecture", async (request, response) => sendQuery(response, await queryFor(response).architecture(numberParam(request.query.maxNodes, 100), confidenceParams(request.query)), request.query));
+  app.get("/api/files", async (request, response) => {
     const selectedScope = scopeParam(request.query.scope);
-    response.json(query.files({ ...(selectedScope ? { scope: selectedScope } : {}) }));
+    response.json(await queryFor(response).files({ ...(selectedScope ? { scope: selectedScope } : {}) }));
   });
-  app.get("/api/files/{*path}", (request, response) => sendQuery(response, query.fileDetails((request.params.path as unknown as string[]).join("/"), confidenceParams(request.query)), request.query));
-  app.get("/api/symbols/search", (request, response) => {
+  app.get("/api/files/{*path}", async (request, response) => sendQuery(response, await queryFor(response).fileDetails((request.params.path as unknown as string[]).join("/"), confidenceParams(request.query)), request.query));
+  app.get("/api/symbols/search", async (request, response) => {
     const selectedScope = scopeParam(request.query.scope);
-    sendQuery(response, query.searchSymbols(String(request.query.q ?? ""), numberParam(request.query.maxNodes, 50), {
+    sendQuery(response, await queryFor(response).searchSymbols(String(request.query.q ?? ""), numberParam(request.query.maxNodes, 50), {
       includeUnresolved: request.query.includeUnresolved === "true",
       ...(selectedScope ? { scope: selectedScope } : {}),
     }), request.query);
   });
-  app.get("/api/symbols/:id", (request, response) => {
-    const symbol = query.symbol(request.params.id);
+  app.get("/api/symbols/:id", async (request, response) => {
+    const symbol = await queryFor(response).symbol(request.params.id);
     if (!symbol) return response.status(404).json({ error: "Symbol not found" });
     return sendQuery(response, symbol, request.query);
   });
-  app.get("/api/symbols/:id/callers", (request, response) => sendQuery(response, query.callers(request.params.id, numberParam(request.query.maxNodes, 50), confidenceParams(request.query)), request.query));
-  app.get("/api/symbols/:id/callees", (request, response) => sendQuery(response, query.callees(request.params.id, numberParam(request.query.maxNodes, 50), confidenceParams(request.query)), request.query));
-  app.get("/api/symbols/:id/neighborhood", (request, response) => {
+  app.get("/api/symbols/:id/callers", async (request, response) => sendQuery(response, await queryFor(response).callers(request.params.id, numberParam(request.query.maxNodes, 50), confidenceParams(request.query)), request.query));
+  app.get("/api/symbols/:id/callees", async (request, response) => sendQuery(response, await queryFor(response).callees(request.params.id, numberParam(request.query.maxNodes, 50), confidenceParams(request.query)), request.query));
+  app.get("/api/symbols/:id/neighborhood", async (request, response) => {
     try {
       const edgeKinds = listParam(request.query.edgeKind) as import("../core/graph/schema.js").EdgeKind[] | undefined;
       const nodeKinds = listParam(request.query.nodeKind) as import("../core/graph/schema.js").NodeKind[] | undefined;
-      sendQuery(response, query.neighborhood(request.params.id, {
+      sendQuery(response, await queryFor(response).neighborhood(request.params.id, {
         depth: numberParam(request.query.depth, 2),
         maxNodes: numberParam(request.query.maxNodes, 50),
         ...confidenceParams(request.query),
@@ -103,29 +110,36 @@ export async function startServer(repository = ".", options: ServerOptions = {})
         ...(nodeKinds ? { nodeKinds } : {}),
       }), request.query);
     } catch (error) {
+      if (error instanceof QueryExecutionError) throw error;
       response.status(404).json({ error: String(error) });
     }
   });
-  app.get("/api/cycles", (request, response) => sendQuery(response, query.cycles(confidenceParams(request.query)), request.query));
-  app.get("/api/frameworks", (request, response) => sendQuery(response, query.frameworkBindings(undefined, confidenceParams(request.query)), request.query));
-  app.get("/api/frameworks/tauri", (request, response) => sendQuery(response, query.frameworkBindings("tauri", confidenceParams(request.query)), request.query));
-  app.get("/api/diagnostics", (_request, response) => response.json(query.diagnostics()));
-  app.get("/api/context", (request, response) => sendQuery(response, query.context(String(request.query.task ?? ""), {
+  app.get("/api/cycles", async (request, response) => sendQuery(response, await queryFor(response).cycles(confidenceParams(request.query)), request.query));
+  app.get("/api/frameworks", async (request, response) => sendQuery(response, await queryFor(response).frameworkBindings(undefined, confidenceParams(request.query)), request.query));
+  app.get("/api/frameworks/tauri", async (request, response) => sendQuery(response, await queryFor(response).frameworkBindings("tauri", confidenceParams(request.query)), request.query));
+  app.get("/api/diagnostics", async (_request, response) => response.json(await queryFor(response).diagnostics()));
+  app.get("/api/context", async (request, response) => sendQuery(response, await queryFor(response).context(String(request.query.task ?? ""), {
     ...confidenceParams(request.query),
     maxFiles: numberParam(request.query.maxFiles, 20),
     maxSymbols: numberParam(request.query.maxSymbols, 50),
   }), request.query));
-  app.get("/api/affected", (request, response) => {
+  app.get("/api/affected", async (request, response) => {
     try {
-      sendQuery(response, query.affected(String(request.query.input ?? ""), {
+      sendQuery(response, await queryFor(response).affected(String(request.query.input ?? ""), {
         ...confidenceParams(request.query),
         depth: numberParam(request.query.depth, 3),
         maxNodes: numberParam(request.query.maxNodes, 100),
         includeTests: request.query.includeTests === "true",
       }), request.query);
     } catch (error) {
+      if (error instanceof QueryExecutionError) throw error;
       response.status(404).json({ error: String(error) });
     }
+  });
+  app.use((error: unknown, _request: express.Request, response: express.Response, next: express.NextFunction) => {
+    if (!(error instanceof QueryExecutionError)) return next(error);
+    const status = error.code === "QUERY_BUSY" ? 429 : error.code === "QUERY_DEADLINE" ? 408 : 409;
+    response.status(status).json({ error: error.message, code: error.code });
   });
   app.use(express.static(staticDirectory));
   app.get("/{*path}", (_request, response) => response.sendFile(path.join(staticDirectory, "index.html")));
@@ -136,6 +150,5 @@ export async function startServer(repository = ".", options: ServerOptions = {})
     });
     candidate.on("error", reject);
   });
-  server.on("close", () => query.close());
   return { server, url: `http://${host}:${port}` };
 }

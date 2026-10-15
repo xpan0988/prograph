@@ -7,7 +7,8 @@ import { analyzeRepository } from "../core/analysis/analyze.js";
 import { repositoryStatus } from "../core/analysis/state.js";
 import { syncRepository } from "../core/analysis/sync.js";
 import { watchRepository } from "../core/analysis/watch.js";
-import { queryServiceForRepository, type BoundedQuery, type ConfidenceQuery, type QueryService } from "../core/query/query-service.js";
+import { type BoundedQuery, type ConfidenceQuery } from "../core/query/query-service.js";
+import { isolatedQueryForRepository, isolatedSemanticRead, type AsyncQueryClient } from "../core/query/isolation.js";
 import { formatQueryOutput, type OutputMode } from "../core/query/output-mode.js";
 import type { EdgeKind, GraphScope, NodeKind } from "../core/graph/schema.js";
 import { resolveRepositoryRoot } from "../core/repository/repository.js";
@@ -15,7 +16,7 @@ import { startServer } from "../server/index.js";
 import { startMcpServer } from "../mcp/index.js";
 import { writeResult, type OutputFormat } from "./output.js";
 import packageJson from "../../package.json" with { type: "json" };
-import { semanticQueryForRepository, SEMANTIC_OPERATIONS, type SemanticOperation } from "../core/semantic/query.js";
+import { SEMANTIC_OPERATIONS, type SemanticOperation } from "../core/semantic/query.js";
 import { importScip, type ScipManifest } from "../core/semantic/scip-import.js";
 import { indexClang } from "../core/semantic/clang.js";
 import { indexRust, type RustOptions } from "../core/semantic/rust.js";
@@ -83,13 +84,8 @@ async function withCancellation<T>(execute: (signal: AbortSignal) => Promise<T>)
     process.removeListener("SIGINT", abort); process.removeListener("SIGTERM", abort);
   }
 }
-async function withQuery<T>(repo: string, index: string | undefined, callback: (query: QueryService) => T | Promise<T>): Promise<T> {
-  const query = await queryServiceForRepository(repo, index);
-  try {
-    return await callback(query);
-  } finally {
-    query.close();
-  }
+async function withQuery<T>(repo: string, index: string | undefined, callback: (query: AsyncQueryClient) => T | Promise<T>): Promise<T> {
+  return withCancellation(async signal => callback(await isolatedQueryForRepository(repo, index, { signal })));
 }
 
 function confidence(options: QueryOptions): ConfidenceQuery {
@@ -192,7 +188,7 @@ addIndex(program.command("open [path]").description("serve and open the local vi
   process.stdout.write(`ProGraph opened ${url}\n`);
 });
 
-const simpleQueries: Array<[string, string, (query: QueryService, options: QueryOptions) => unknown]> = [
+const simpleQueries: Array<[string, string, (query: AsyncQueryClient, options: QueryOptions) => unknown]> = [
   ["overview [path]", "show repository overview", (query, options) => query.overview({ ...(options.scope ? { scope: options.scope } : {}) })],
   ["files [path]", "list indexed files", (query, options) => query.files({ ...(options.scope ? { scope: options.scope } : {}) })],
   ["diagnostics [path]", "show diagnostics", (query) => query.diagnostics()],
@@ -291,14 +287,10 @@ for (const operation of SEMANTIC_OPERATIONS) {
     .option("--snapshot <number>", "retained snapshot", Number)
     .option("--max-bytes <number>", "bounded JSON response budget", Number, 32768)
     .action(async (input = "", options: FormatOptions & { repo: string; index?: string; limit: number; cursor?: string; snapshot?: number; maxBytes: number }) => {
-      const query = await semanticQueryForRepository(options.repo, options.index);
-      try {
-        const result = query.execute(operation as SemanticOperation, input, { limit: options.limit, maxBytes: options.maxBytes, ...(options.cursor ? { cursor: options.cursor } : {}), ...(options.snapshot !== undefined ? { snapshot: options.snapshot } : {}) });
-        // Keep the semantic JSON transport within the query's byte budget; indentation adds unbounded overhead.
-        if (options.format === "json") process.stdout.write(`${JSON.stringify(result)}\n`);
-        else writeResult(result, options.format);
-      }
-      finally { query.close(); }
+      const result = await withCancellation(signal => isolatedSemanticRead(options.repo, options.index, operation as SemanticOperation, input, { limit: options.limit, maxBytes: options.maxBytes, ...(options.cursor ? { cursor: options.cursor } : {}), ...(options.snapshot !== undefined ? { snapshot: options.snapshot } : {}) }, { signal }));
+      // Keep the semantic JSON transport within the query's byte budget; indentation adds unbounded overhead.
+      if (options.format === "json") process.stdout.write(`${JSON.stringify(result)}\n`);
+      else writeResult(result, options.format);
     });
 }
 

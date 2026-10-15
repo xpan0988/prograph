@@ -5,6 +5,7 @@ import { evidenceOf, graphDomainOf, isKnowledgeNode as metadataIsKnowledgeNode, 
 import type { Confidence, Diagnostic, EdgeKind, GraphEdge, GraphNode, GraphScope, NodeKind } from "../graph/schema.js";
 import { diagnosticFromRow, graphEdgeFromRow, graphNodeFromRow, type DiagnosticRow, type EdgeRow, type NodeRow } from "../storage/sqlite.js";
 import { resolveRepositoryRoot } from "../repository/repository.js";
+import { NavigationRead, type NavigationLimits } from "./navigation.js";
 
 export interface ScopeQuery {
   scope?: GraphScope;
@@ -126,7 +127,7 @@ function isTestFile(file: string): boolean {
 export class QueryService {
   readonly database: Database.Database;
 
-  constructor(databasePath: string) {
+  constructor(databasePath: string, private readonly navigationLimits: NavigationLimits = {}) {
     this.database = new Database(databasePath, { readonly: true, fileMustExist: true });
   }
 
@@ -345,10 +346,12 @@ export class QueryService {
   }
 
   fileDetails(file: string, options: ConfidenceQuery = {}): Record<string, unknown> {
-    const nodes = scopedNodes((this.database.prepare("SELECT * FROM nodes WHERE file = ? ORDER BY start_line, name").all(file) as NodeRow[]).map(graphNodeFromRow), options);
-    const nodeIds = nodes.map((node) => node.id);
-    const edges = this.edgesTouching(nodeIds, options);
-    return { file, nodes, dependencies: edges.filter((edge) => nodeIds.includes(edge.source)), reverseDependencies: edges.filter((edge) => nodeIds.includes(edge.target)) };
+    return this.readNavigation(read => {
+      const nodes = scopedNodes([...read.fileNodes(file)], options);
+      const nodeIds = nodes.map((node) => node.id);
+      const edges = [...read.fileEdges(nodeIds)].filter(edge => this.navigationEdge(read, edge, options));
+      return { file, nodes, dependencies: edges.filter((edge) => nodeIds.includes(edge.source)), reverseDependencies: edges.filter((edge) => nodeIds.includes(edge.target)) };
+    });
   }
 
   searchSymbols(query: string, maxNodes = 50, options: SymbolSearchOptions = {}): GraphNode[] {
@@ -368,59 +371,58 @@ export class QueryService {
   }
 
   callers(id: string, maxNodes = 50, options: ConfidenceQuery = {}): { symbol?: GraphNode; nodes: GraphNode[]; edges: GraphEdge[] } {
-    const allNodes = this.allNodes();
-    const selectedKinds = scope(options) === "code" ? new Set<EdgeKind>(["calls", "invokes", "renders", "listens"]) : undefined;
-    const edges = scopedEdges((this.database.prepare("SELECT * FROM edges WHERE target = ?").all(id) as EdgeRow[]).map(graphEdgeFromRow), allNodes, options)
-      .filter((edge) => !selectedKinds || selectedKinds.has(edge.kind))
-      .slice(0, maxNodes);
-    const symbol = this.symbol(id);
-    return { ...(symbol ? { symbol } : {}), nodes: this.nodesByIds(edges.map((edge) => edge.source)), edges };
+    return this.directional(id, "target", maxNodes, options, ["calls", "invokes", "renders", "listens"]);
   }
 
   callees(id: string, maxNodes = 50, options: ConfidenceQuery = {}): { symbol?: GraphNode; nodes: GraphNode[]; edges: GraphEdge[] } {
-    const allNodes = this.allNodes();
-    const selectedKinds = scope(options) === "code" ? new Set<EdgeKind>(["calls", "invokes", "renders", "emits", "uses_type"]) : undefined;
-    const edges = scopedEdges((this.database.prepare("SELECT * FROM edges WHERE source = ?").all(id) as EdgeRow[]).map(graphEdgeFromRow), allNodes, options)
-      .filter((edge) => !selectedKinds || selectedKinds.has(edge.kind))
-      .slice(0, maxNodes);
-    const symbol = this.symbol(id);
-    return { ...(symbol ? { symbol } : {}), nodes: this.nodesByIds(edges.map((edge) => edge.target)), edges };
+    return this.directional(id, "source", maxNodes, options, ["calls", "invokes", "renders", "emits", "uses_type"]);
+  }
+
+  private directional(id: string, direction: "source" | "target", maxNodes: number, options: ConfidenceQuery, kinds: EdgeKind[]): { symbol?: GraphNode; nodes: GraphNode[]; edges: GraphEdge[] } {
+    if (!Number.isSafeInteger(maxNodes) || maxNodes < 0 || maxNodes > 500) throw Error("Navigation maxNodes must be 0..500");
+    return this.readNavigation(read => {
+      const symbol = read.node(id); const edges: GraphEdge[] = [];
+      if (maxNodes) for (const edge of read.edges([id], direction)) {
+        if (scope(options) === "code" && !kinds.includes(edge.kind) || !this.navigationEdge(read, edge, options)) continue;
+        edges.push(edge); if (edges.length === maxNodes) break;
+      }
+      return { ...(symbol ? { symbol } : {}), nodes: this.nodesByIds(edges.map(edge => direction === "target" ? edge.source : edge.target)), edges };
+    });
   }
 
   neighborhood(id: string, options: BoundedQuery = {}): Neighborhood {
-    const center = this.symbol(id);
-    if (!center) throw new Error(`Symbol not found: ${id}`);
-    const depth = Math.max(0, Math.min(options.depth ?? 2, 8));
-    const maxNodes = Math.max(1, Math.min(options.maxNodes ?? 50, 500));
-    const maxEdges = Math.max(1, Math.min(options.maxEdges ?? maxNodes * 4, 2000));
-    const allNodes = this.allNodes();
-    const allEdges = scopedEdges(this.allEdges(), allNodes, options)
-      .filter((edge) => !options.edgeKinds?.length || options.edgeKinds.includes(edge.kind));
-    const nodeIds = new Set([id]);
-    const selectedEdges = new Map<string, GraphEdge>();
-    let frontier = new Set([id]);
-    let truncated = false;
-    for (let level = 0; level < depth; level += 1) {
-      const next = new Set<string>();
-      for (const edge of allEdges) {
-        if (!frontier.has(edge.source) && !frontier.has(edge.target)) continue;
-        const candidate = frontier.has(edge.source) ? edge.target : edge.source;
-        if (nodeIds.size >= maxNodes && !nodeIds.has(candidate)) {
-          truncated = true;
-          continue;
+    return this.readNavigation(read => {
+      const center = read.node(id);
+      if (!center) throw new Error(`Symbol not found: ${id}`);
+      const depth = Math.max(0, Math.min(options.depth ?? 2, 8));
+      const maxNodes = Math.max(1, Math.min(options.maxNodes ?? 50, 500));
+      const maxEdges = Math.max(1, Math.min(options.maxEdges ?? maxNodes * 4, 2000));
+      const nodeIds = new Set([id]);
+      const selectedEdges = new Map<string, GraphEdge>();
+      let frontier = new Set([id]);
+      let truncated = false;
+      for (let level = 0; level < depth; level += 1) {
+        const next = new Set<string>();
+        for (const edge of read.edges(frontier, "both")) {
+          if (options.edgeKinds?.length && !options.edgeKinds.includes(edge.kind) || !this.navigationEdge(read, edge, options)) continue;
+          const candidate = frontier.has(edge.source) ? edge.target : edge.source;
+          if (nodeIds.size >= maxNodes && !nodeIds.has(candidate)) {
+            truncated = true;
+            continue;
+          }
+          nodeIds.add(candidate);
+          next.add(candidate);
+          selectedEdges.set(edge.id, edge);
         }
-        nodeIds.add(candidate);
-        next.add(candidate);
-        selectedEdges.set(edge.id, edge);
+        frontier = next;
       }
-      frontier = next;
-    }
-    let nodes = scopedNodes(this.nodesByIds([...nodeIds]), options);
-    if (options.nodeKinds?.length) nodes = nodes.filter((node) => node.id === id || options.nodeKinds!.includes(node.kind));
-    const finalIds = new Set(nodes.map((node) => node.id));
-    const finalEdges = [...selectedEdges.values()].filter((edge) => finalIds.has(edge.source) && finalIds.has(edge.target));
-    if (finalEdges.length > maxEdges) truncated = true;
-    return { center, nodes, edges: finalEdges.slice(0, maxEdges), truncated };
+      let nodes = scopedNodes(this.nodesByIds([...nodeIds]), options);
+      if (options.nodeKinds?.length) nodes = nodes.filter((node) => node.id === id || options.nodeKinds!.includes(node.kind));
+      const finalIds = new Set(nodes.map((node) => node.id));
+      const finalEdges = [...selectedEdges.values()].filter((edge) => finalIds.has(edge.source) && finalIds.has(edge.target));
+      if (finalEdges.length > maxEdges) truncated = true;
+      return { center, nodes, edges: finalEdges.slice(0, maxEdges), truncated };
+    });
   }
 
   cycles(options: ConfidenceQuery = {}): Array<{ nodeIds: string[]; nodes: GraphNode[] }> {
@@ -490,8 +492,7 @@ export class QueryService {
       return { node, score, reasons };
     }).filter((item) => item.score > 0).sort((a, b) => b.score - a.score || a.node.qualifiedName.localeCompare(b.node.qualifiedName)).slice(0, maxSymbols);
     const selectedIds = new Set(ranked.map((item) => item.node.id));
-    const allNodes = this.allNodes();
-    const trustedEdges = scopedEdges(this.allEdges(), allNodes, options);
+    const trustedEdges = this.edgesTouching([...selectedIds], options);
     const relationships = trustedEdges.filter((edge) => selectedIds.has(edge.source) && selectedIds.has(edge.target))
       .slice(0, maxSymbols * 3);
     const fileScores = new Map<string, { score: number; reasons: Set<string> }>();
@@ -512,51 +513,50 @@ export class QueryService {
   }
 
   affected(input: string, options: AffectedQuery = {}): Record<string, unknown> {
-    const depth = Math.max(1, Math.min(options.depth ?? 3, 8));
-    const maxNodes = Math.max(1, Math.min(options.maxNodes ?? 100, 500));
-    const directSymbols = input.includes(":") ? scopedNodes([this.symbol(input)].filter((node): node is GraphNode => Boolean(node)), options) : [];
-    const fileNodes = scopedNodes((this.database.prepare("SELECT * FROM nodes WHERE file = ? AND kind NOT IN ('file', 'directory', 'repository', 'unresolved_symbol') ORDER BY start_line").all(input) as NodeRow[]).map(graphNodeFromRow), options);
-    const allRoots = directSymbols.length ? directSymbols : fileNodes.length ? fileNodes : this.searchSymbols(input, 20, options);
-    if (!allRoots.length) throw new Error(`No indexed file or symbol matches: ${input}`);
-    const allNodes = this.allNodes();
-    const selectedKinds = scope(options) === "code" ? new Set<EdgeKind>(["calls", "imports", "invokes", "renders", "listens", "uses_type"]) : undefined;
-    const allEdges = scopedEdges(this.allEdges(), allNodes, options)
-      .filter((edge) => !selectedKinds || selectedKinds.has(edge.kind));
-    const rootIds = new Set(allRoots.map((node) => node.id));
-    const visited = new Set(rootIds);
-    const selectedEdges: GraphEdge[] = [];
-    const direct = new Set<string>();
-    const transitive = new Set<string>();
-    let frontier = new Set(rootIds);
-    for (let level = 1; level <= depth; level += 1) {
-      const next = new Set<string>();
-      for (const edge of allEdges) {
-        if (!frontier.has(edge.target) || visited.has(edge.source)) continue;
-        if (direct.size + transitive.size >= maxNodes) break;
-        visited.add(edge.source);
-        next.add(edge.source);
-        selectedEdges.push(edge);
-        (level === 1 ? direct : transitive).add(edge.source);
+    return this.readNavigation(read => {
+      const depth = Math.max(1, Math.min(options.depth ?? 3, 8));
+      const maxNodes = Math.max(1, Math.min(options.maxNodes ?? 100, 500));
+      const directSymbols = input.includes(":") ? scopedNodes([read.node(input)].filter((node): node is GraphNode => Boolean(node)), options) : [];
+      const fileNodes = directSymbols.length ? [] : scopedNodes([...read.fileRoots(input)], options);
+      const allRoots = directSymbols.length ? directSymbols : fileNodes.length ? fileNodes : this.searchSymbols(input, 20, options);
+      if (!allRoots.length) throw new Error(`No indexed file or symbol matches: ${input}`);
+      const selectedKinds = scope(options) === "code" ? new Set<EdgeKind>(["calls", "imports", "invokes", "renders", "listens", "uses_type"]) : undefined;
+      const rootIds = new Set(allRoots.map((node) => node.id));
+      const visited = new Set(rootIds);
+      const selectedEdges: GraphEdge[] = [];
+      const direct = new Set<string>();
+      const transitive = new Set<string>();
+      let frontier = new Set(rootIds);
+      for (let level = 1; level <= depth; level += 1) {
+        const next = new Set<string>();
+        for (const edge of read.edges(frontier, "target")) {
+          if (selectedKinds && !selectedKinds.has(edge.kind) || !this.navigationEdge(read, edge, options) || visited.has(edge.source)) continue;
+          if (direct.size + transitive.size >= maxNodes) break;
+          visited.add(edge.source);
+          next.add(edge.source);
+          selectedEdges.push(edge);
+          (level === 1 ? direct : transitive).add(edge.source);
+        }
+        frontier = next;
       }
-      frontier = next;
-    }
-    const affectedNodes = this.nodesByIds([...direct, ...transitive]);
-    const affectedFiles = [...new Set(affectedNodes.map((node) => node.file).filter((file): file is string => Boolean(file)))].sort();
-    const relatedTests = options.includeTests ? affectedFiles.filter(isTestFile) : [];
-    const frameworks = [...new Set(selectedEdges.filter((edge) => ["invokes", "listens", "emits", "registers"].includes(edge.kind)).map((edge) => edge.kind))];
-    return {
-      input,
-      roots: allRoots.slice(0, maxNodes),
-      rootCount: allRoots.length,
-      directlyAffectedSymbols: this.nodesByIds([...direct]),
-      transitivelyAffectedSymbols: this.nodesByIds([...transitive]),
-      affectedFiles,
-      relatedTests,
-      frameworkBoundariesCrossed: frameworks,
-      relationships: selectedEdges,
-      confidenceSummary: Object.fromEntries(["exact", "resolved", "probable", "unresolved"].map((confidence) => [confidence, selectedEdges.filter((edge) => edge.confidence === confidence).length])),
-      bounded: { depth, maxNodes, truncated: direct.size + transitive.size >= maxNodes || allRoots.length > maxNodes },
-    };
+      const affectedNodes = this.nodesByIds([...direct, ...transitive]);
+      const affectedFiles = [...new Set(affectedNodes.map((node) => node.file).filter((file): file is string => Boolean(file)))].sort();
+      const relatedTests = options.includeTests ? affectedFiles.filter(isTestFile) : [];
+      const frameworks = [...new Set(selectedEdges.filter((edge) => ["invokes", "listens", "emits", "registers"].includes(edge.kind)).map((edge) => edge.kind))];
+      return {
+        input,
+        roots: allRoots.slice(0, maxNodes),
+        rootCount: allRoots.length,
+        directlyAffectedSymbols: this.nodesByIds([...direct]),
+        transitivelyAffectedSymbols: this.nodesByIds([...transitive]),
+        affectedFiles,
+        relatedTests,
+        frameworkBoundariesCrossed: frameworks,
+        relationships: selectedEdges,
+        confidenceSummary: Object.fromEntries(["exact", "resolved", "probable", "unresolved"].map((confidence) => [confidence, selectedEdges.filter((edge) => edge.confidence === confidence).length])),
+        bounded: { depth, maxNodes, truncated: direct.size + transitive.size >= maxNodes || allRoots.length > maxNodes },
+      };
+    });
   }
 
   diagnostics(): Diagnostic[] {
@@ -570,9 +570,20 @@ export class QueryService {
   }
 
   private edgesTouching(ids: string[], options: ConfidenceQuery = {}): GraphEdge[] {
-    if (!ids.length) return [];
-    const placeholders = ids.map(() => "?").join(",");
-    return scopedEdges((this.database.prepare(`SELECT * FROM edges WHERE source IN (${placeholders}) OR target IN (${placeholders})`).all(...ids, ...ids) as EdgeRow[]).map(graphEdgeFromRow), this.allNodes(), options);
+    return this.readNavigation(read => [...read.edges(ids, "both")].filter(edge => this.navigationEdge(read, edge, options)));
+  }
+
+  private readNavigation<T>(execute: (read: NavigationRead) => T): T {
+    return this.database.transaction(() => {
+      const read = new NavigationRead(this.database, this.navigationLimits);
+      const result = execute(read); read.check(); return result;
+    }).deferred();
+  }
+
+  private navigationEdge(read: NavigationRead, edge: GraphEdge, options: ConfidenceQuery): boolean {
+    if (!includedConfidences(options).has(edge.confidence) || scope(options) === "code" && isKnowledgeEdge(edge)) return false;
+    const source = read.node(edge.source); const target = read.node(edge.target);
+    return !!source && !!target && nodeInScope(source, scope(options)) && nodeInScope(target, scope(options));
   }
 
   private allNodes(): GraphNode[] {

@@ -1,6 +1,6 @@
 # ProGraph Architecture
 
-This document describes the current implementation. [Semantic Core 2.0](semantic-core-2.md) owns the target architecture. Its foundation and TypeScript vertical slice are implemented additively; [the Step 1 engineering report](semantic-core-step1.md) owns the shipped semantic behavior, storage decisions, measurements and limitations. The remaining redesign is not implemented.
+This document describes the current implementation. [Semantic Core 2.0](semantic-core-2.md) owns the target architecture. Its foundation and TypeScript vertical slice are implemented additively. [Step 1](semantic-core-step1.md) and [Step 2](semantic-core-step2.md) own shipped semantic behavior, provider/query runtime contracts, measurements and remaining acceptance gates. The complete redesign is not implemented.
 
 ## Goals And Boundaries
 
@@ -184,9 +184,9 @@ The JSON export is not the canonical local query store.
 
 `QueryService` owns repository overview, architecture summaries, files, file relationships, symbol search/details, callers, callees, bounded neighborhoods, cycles, framework bindings, deterministic task context, bounded affected-change traversal, and diagnostics.
 
-The CLI and local API call this service directly. UI-specific graph logic is limited to visual filtering and deterministic layout; the UI does not duplicate dependency extraction or repository query semantics.
+CLI/MCP/local API reads dispatch this service in bounded read-only child processes. The fixed RPC surface, two-child/sixteen-waiter admission limit and two-second deadline preserve successful output contracts while failing oversized work explicitly. HTTP disconnects, MCP cancellation and CLI interrupts terminate corresponding work. Direct in-process library use remains synchronous. UI-specific graph logic is limited to visual filtering and deterministic layout; the UI does not duplicate dependency extraction or repository query semantics.
 
-Bounded graph queries cap depth, node count, and selected edges to keep agent output and visual expansion manageable. Graph relationships default to the trusted `exact` and `resolved` confidence levels. Probable and unresolved data require explicit opt-in and remain available in storage, exports, and diagnostics. Default symbol search excludes unresolved symbols.
+Legacy callers/callees, neighborhoods, affected traversal and file relationships use indexed adjacency and targeted endpoints under one read transaction. Raw rejected candidates also consume work. Defaults are 20,000 raw rows/lookups, 8 MiB encountered payloads and a cooperative one-second navigation deadline, with explicit budget failure. Graph queries also cap depth, node count and selected edges. Graph relationships default to the trusted `exact` and `resolved` confidence levels. Probable and unresolved data require explicit opt-in and remain available in storage, exports, and diagnostics. Default symbol search excludes unresolved symbols.
 
 Graph scope defaults to `code`, matching the original code/framework graph. Optional scopes are `code+docs`, `code+config`, `code+tests`, and `full`. Scope filtering is shared by CLI, MCP, API, and UI paths.
 
@@ -279,4 +279,4 @@ Analysis is still memory-resident. There is no million-line benchmark claim, per
 
 The [Step 1 closure](semantic-core-step1.md) and [Step 2 implementation record](semantic-core-step2.md) own implemented semantic behavior and measured acceptance status. Legacy graph schema `1.2.0` and workflows remain available. `semantic.sqlite` format 2 now provides project-aware TypeScript facts, explicit verified SCIP import, opt-in bounded Clang extraction, explicit pinned Rust navigation, owned call passes and SQL occurrence navigation. Native facts and build inputs remain separate from legacy node/edge projections. Recorded compiler dependencies supplement status/sync freshness; external tools are never launched by discovery or sync.
 
-Full default activation, other precise language backends, semantic boundary/framework conversion, work-bounded legacy query migration, projection deltas/worker isolation and complete reachability GC are still unfinished. Native Clang/SCIP mapping and the restricted Rust runner are versioned and incomplete. The one-second publication target is unmet. This additive milestone is not acceptance of the complete Semantic Core 2.0 architecture.
+Full default activation, other precise language backends, semantic boundary/framework conversion, remaining global legacy-query migration, projection deltas/indexing isolation and complete reachability GC are still unfinished. Native Clang/SCIP mapping and the restricted Rust runner are versioned and incomplete. The one-second publication target is unmet. This additive milestone is not acceptance of the complete Semantic Core 2.0 architecture.

@@ -19,7 +19,8 @@
     "clean": "node scripts/clean.mjs",
     "dev": "vite",
     "typecheck": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.ui.json --noEmit",
-    "test": "vitest run",
+    "build:node": "tsc -p tsconfig.node.json",
+    "test": "npm run build:node && vitest run",
     "test:watch": "vitest",
     "lint": "npm run typecheck",
     "prepublishOnly": "npm run build"
