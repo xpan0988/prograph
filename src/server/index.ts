@@ -4,8 +4,7 @@ import express from "express";
 import type { Server } from "node:http";
 import { type ConfidenceQuery } from "../core/query/query-service.js";
 import { formatQueryOutput, type OutputMode } from "../core/query/output-mode.js";
-import { repositoryStatus } from "../core/analysis/state.js";
-import { syncRepository } from "../core/analysis/sync.js";
+import { executeIndex, IndexExecutionError } from "../core/analysis/index-execution.js";
 import type { GraphScope } from "../core/graph/schema.js";
 import { type SemanticOperation } from "../core/semantic/query.js";
 
@@ -68,7 +67,7 @@ export async function startServer(repository = ".", options: ServerOptions = {})
     const selectedScope = scopeParam(request.query.scope);
     response.json(await queryFor(response).overview({ ...(selectedScope ? { scope: selectedScope } : {}) }));
   });
-  app.get("/api/status", async (_request, response) => response.json(await repositoryStatus(repository, options.index)));
+  app.get("/api/status", async (_request, response) => response.json(await executeIndex({ operation: "status", repository, ...(options.index !== undefined ? { index: options.index } : {}) }, { signal: response.locals.signal as AbortSignal })));
   app.get("/api/semantic/:operation", async (request, response) => {
     try {
       response.json(await isolatedSemanticRead(repository, options.index, request.params.operation as SemanticOperation, String(request.query.input ?? ""), {
@@ -77,7 +76,7 @@ export async function startServer(repository = ".", options: ServerOptions = {})
       }, { signal: response.locals.signal as AbortSignal }));
     } catch (error) { response.status(409).json({ error: String(error), semanticAvailable: false, legacyAvailable: true, ...(error instanceof QueryExecutionError ? { code: error.code } : {}) }); }
   });
-  app.post("/api/sync", async (_request, response) => response.json(await syncRepository(repository, options.index)));
+  app.post("/api/sync", async (_request, response) => response.json(await executeIndex({ operation: "sync", repository, ...(options.index !== undefined ? { index: options.index } : {}) }, { signal: response.locals.signal as AbortSignal })));
   app.get("/api/architecture", async (request, response) => sendQuery(response, await queryFor(response).architecture(numberParam(request.query.maxNodes, 100), confidenceParams(request.query)), request.query));
   app.get("/api/files", async (request, response) => {
     const selectedScope = scopeParam(request.query.scope);
@@ -142,8 +141,8 @@ export async function startServer(repository = ".", options: ServerOptions = {})
     }
   });
   app.use((error: unknown, _request: express.Request, response: express.Response, next: express.NextFunction) => {
-    if (!(error instanceof QueryExecutionError)) return next(error);
-    const status = error.code === "QUERY_BUSY" ? 429 : error.code === "QUERY_DEADLINE" ? 408 : 409;
+    if (!(error instanceof QueryExecutionError) && !(error instanceof IndexExecutionError)) return next(error);
+    const status = error.code.endsWith("_BUSY") ? 429 : error.code.endsWith("_DEADLINE") ? 408 : 409;
     response.status(status).json({ error: error.message, code: error.code });
   });
   app.use(express.static(staticDirectory));

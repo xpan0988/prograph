@@ -3,7 +3,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { type ConfidenceQuery } from "../core/query/query-service.js";
 import { formatQueryOutput } from "../core/query/output-mode.js";
-import { repositoryStatus } from "../core/analysis/state.js";
+import { executeIndex } from "../core/analysis/index-execution.js";
 import packageJson from "../../package.json" with { type: "json" };
 import type { GraphScope } from "../core/graph/schema.js";
 import { SEMANTIC_OPERATIONS } from "../core/semantic/query.js";
@@ -53,7 +53,7 @@ export function createProGraphMcpServer(defaultRepository = ".", defaultIndex?: 
   server.registerTool("get_repository_overview", { description: "Get the indexed repository overview", inputSchema: { ...contextShape, scope: z.enum(["code", "code+docs", "code+config", "code+tests", "full"]).optional() } }, async (input, extra) =>
     response(await withQuery(repo(input), index(input), extra.signal, (query) => query.overview({ ...(input.scope ? { scope: input.scope } : {}) }))));
   server.registerTool("get_status", { description: "Get repository index freshness", inputSchema: contextShape }, async (input, extra) =>
-    response(await repositoryStatus(repo(input), index(input))));
+    response(await executeIndex({ operation: "status", repository: repo(input), ...(index(input) !== undefined ? { index: index(input)! } : {}) }, { signal: extra.signal })));
   server.registerTool("list_files_page", {
     description: "Read a bounded file-summary page; continuation is bound to the index generation and scope",
     inputSchema: { ...contextShape, scope: z.enum(["code", "code+docs", "code+config", "code+tests", "full"]).optional(), limit: z.number().int().min(1).max(1000).optional(), cursor: z.string().max(1024).optional() },

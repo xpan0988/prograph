@@ -1,0 +1,533 @@
+{
+  "scope": "Stage 5 indexing isolation and owner-death cleanup qualification. Complete main invocation 208 passed; six subsequently added actual provider CLI tests separately passed. The later watch-only custom index exclusion passed two focused rechecks and typecheck; no semantic/index/query runtime logic changed after the main invocation began. Distinct current tests: 214; not a claimed single 214-test local invocation. Linux matrix pending.",
+  "baselineCommit": "868766b1787dc60c88b827fe37fe62e5f40f296b",
+  "main": {
+    "passed": 208,
+    "failed": 0,
+    "skipped": 0,
+    "wallSeconds": 2009.061,
+    "reportSha256": "dbba68d6e097e352ad6da9f0b1e5a44b758fe94ecf279203c69148405e0ce2c8"
+  },
+  "actualProviderCli": {
+    "passed": 6,
+    "skipped": 0,
+    "languages": [
+      "python",
+      "go",
+      "java",
+      "csharp",
+      "rust",
+      "clang"
+    ],
+    "genericScipReimport": "actual Go output",
+    "reportSha256": "d5fc222f9baec602169f3ebb255b9b2c003c570af1ab4c27e9402f2787625228"
+  },
+  "watchRecheck": {
+    "passed": 2,
+    "skipped": 0,
+    "reportSha256": "25e59ab69847fd53ca1bdf7d9554d77b574e9c5b4cfaa3bfcd51ff2ee54a10de"
+  },
+  "focused": {
+    "passed": 16,
+    "skipped": 0
+  },
+  "priorRunnerOwnerDeath": {
+    "baselineCommit": "6eefca04b5032f3416fcc95bda23dec4bb8f65db",
+    "scope": "controlled Node SDK fixture, actual old process runner, not compiler/RSS/power-loss evidence",
+    "ownerKilled": "SIGKILL",
+    "unguardedDescendantWroteAfterOwnerDeath": true,
+    "ids": {
+      "sdk": 32304,
+      "descendant": 32305
+    }
+  },
+  "oracle": {
+    "measuredAt": "2026-10-16T16:21:05.690Z",
+    "node": "v25.9.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "initialSeed": 2749979,
+    "sourceRoot": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-multiprovider-uZiBgO",
+    "complete": true,
+    "expectedChecks": 18,
+    "scope": "Actual TS/Clang/Rust/Python/Go/Java/Csharp tools, fresh independent index and reauthorized execution control per edit; no copied facts or producer outputs",
+    "evidence": [
+      {
+        "edit": "initial",
+        "seed": 3146667341,
+        "hashes": {
+          "facts": "e9408f3c3e09e3d10e370cbf455b98860667835f3a26e4b66a9498826eb9085b",
+          "claims": "923e4a26e0e92d5c133324e3fc2a9c170f5df33d36399dae6e0ed6950aec2bfa",
+          "coverage": "898f9073132556f2e2adc7d2c2f7fa16933aff7179f4de22a243b4f5148426f7",
+          "navigation": "c315119bd769df36850cb06a2c0802f07923eadff1d59b9342e2cf74d1e0429f",
+          "calls": "ff267a91f8b33e6323dc625aac17f90f48ceeacab28220f3901c7fe1c0e9a7b4",
+          "projections": "250ac7e94b570f6e02cc22084e01ca07beba3ca8c738a167a61b44dc71c26b5d"
+        },
+        "counts": {
+          "facts": 309,
+          "claims": 309,
+          "coverage": 87,
+          "navigation": 309,
+          "calls": 7,
+          "projections": 121
+        }
+      },
+      {
+        "edit": "add Python module without editing importer",
+        "seed": 3442144840,
+        "hashes": {
+          "facts": "2737ab59194558c1984bb9bee85cae247528f8e1d35c358b7901bf5c6b551eb4",
+          "claims": "22a135985ebd45dc5db69119bd3fdedef5df7570c4359a53182941eacd9806a6",
+          "coverage": "642d26549a025f6ab40f6547ca4cc4fec410ba7eb95a24da4e337cf30ab5e1f4",
+          "navigation": "2459737ff3c0e306a22ca7ef919f7141862653b86d453ae1e519fada7cea53a4",
+          "calls": "ff267a91f8b33e6323dc625aac17f90f48ceeacab28220f3901c7fe1c0e9a7b4",
+          "projections": "0830b0b4c23e613e825b5ce35f61d94afd3c8742795f5d709b17fedfd8fd8f83"
+        },
+        "counts": {
+          "facts": 328,
+          "claims": 330,
+          "coverage": 91,
+          "navigation": 330,
+          "calls": 7,
+          "projections": 130
+        }
+      },
+      {
+        "edit": "modify exported TS overload",
+        "seed": 3442144840,
+        "hashes": {
+          "facts": "6cd5856e2db7e718dd8bf235f2a6781a8e55e05861af454d7a0df896afaa7754",
+          "claims": "3b00fa9cfec37ad0445c8c17a39607a9c85e49950fe37bc32c8039c55af448cc",
+          "coverage": "5d8f9b74b2c8f3659e13f6a2cc511b6afdfffc12b4f19dbd22508ca8d95339b4",
+          "navigation": "ca7acb383cb899de0b67e2da9c59f6acb1a79a924c7ca3aa72eebbfb91b9fb5a",
+          "calls": "ff267a91f8b33e6323dc625aac17f90f48ceeacab28220f3901c7fe1c0e9a7b4",
+          "projections": "a481125fba76b7e0ded97535a55f5e69550300bd4589662fdf0d60c4b1922f28"
+        },
+        "counts": {
+          "facts": 342,
+          "claims": 344,
+          "coverage": 91,
+          "navigation": 344,
+          "calls": 7,
+          "projections": 134
+        }
+      },
+      {
+        "edit": "rename Java source",
+        "seed": 3442144840,
+        "hashes": {
+          "facts": "790c6c310834aa0f8d74e707176e66600910b19f46181a5f09bddc3645737d13",
+          "claims": "86fb1275c491a498f8778b20a7efcfec809921e0095cc8a0a485d45670c5699d",
+          "coverage": "21946f64f54224ae1fd9a8079ea224c6c3c90a7fad64c98ee750d053124e5f88",
+          "navigation": "82aa7dcbaf647bc2d37a3101a35e2462798f02f0d56333360083b5b23989dd32",
+          "calls": "ff267a91f8b33e6323dc625aac17f90f48ceeacab28220f3901c7fe1c0e9a7b4",
+          "projections": "c9bd33636d36ce460bd7610ddf2cb3bf1b272bbfffe2542b93c412f457ef2a81"
+        },
+        "counts": {
+          "facts": 342,
+          "claims": 344,
+          "coverage": 91,
+          "navigation": 344,
+          "calls": 7,
+          "projections": 134
+        }
+      },
+      {
+        "edit": "delete shadow Python module",
+        "seed": 3442144840,
+        "hashes": {
+          "facts": "66c18acd464b2aa06dbd49da7ae98219512c8cac843c5f6156a29df8de968d22",
+          "claims": "32dfc84ae264ffa3485ac98553f7bbbd27f0952fd89b17b32e3c9f349808d3b7",
+          "coverage": "34ae952c7484634bc365527d50433eb53c786a286c6081124638e45d5445a1ac",
+          "navigation": "5edacf08fd7eee871594107e1e121c0e4f2890f2f49525598e7f97c9b86e06bb",
+          "calls": "ff267a91f8b33e6323dc625aac17f90f48ceeacab28220f3901c7fe1c0e9a7b4",
+          "projections": "e0201733a86fac33f3c60275fc5e20937815b0eaa363658f2870730ddcc71e3e"
+        },
+        "counts": {
+          "facts": 323,
+          "claims": 323,
+          "coverage": 87,
+          "navigation": 323,
+          "calls": 7,
+          "projections": 125
+        }
+      },
+      {
+        "edit": "project compiler configuration",
+        "seed": 3442144840,
+        "hashes": {
+          "facts": "4fee08f5ed8063bb1d8c2dc0f640a053367cb76e39813607f7eeb6c7a795382e",
+          "claims": "b3c1dbd2c649d3930c7a9dd49d8e3ead83bccb29fcc045e793b23b94db253ad4",
+          "coverage": "34ae952c7484634bc365527d50433eb53c786a286c6081124638e45d5445a1ac",
+          "navigation": "e617272206ef6434d413e56e6a2cc264a90e71e0304d7b55f92127434c24d550",
+          "calls": "65e1e32965635bc4167115bd91a9c9c08fa3535cce46beec522d139f5821eca2",
+          "projections": "e0201733a86fac33f3c60275fc5e20937815b0eaa363658f2870730ddcc71e3e"
+        },
+        "counts": {
+          "facts": 323,
+          "claims": 323,
+          "coverage": 87,
+          "navigation": 323,
+          "calls": 7,
+          "projections": 125
+        }
+      },
+      {
+        "edit": "documentation only",
+        "seed": 3536200967,
+        "hashes": {
+          "facts": "bf74970588395a12aeb4f33e84c8dd75be02562dd80c2012537c302ef7b8c288",
+          "claims": "df937ab6c922c009b02b6cee26e6527decfed3c9080f7b1975c34b24d379ea01",
+          "coverage": "34ae952c7484634bc365527d50433eb53c786a286c6081124638e45d5445a1ac",
+          "navigation": "c8909f2931169d33b9d0f98457e2a08377261aa809f2e591099d1388c86b8975",
+          "calls": "65e1e32965635bc4167115bd91a9c9c08fa3535cce46beec522d139f5821eca2",
+          "projections": "f9a756a9c839c83e587ca5d9038028ee11ac2199f1a295581390b1f14e752594"
+        },
+        "counts": {
+          "facts": 323,
+          "claims": 323,
+          "coverage": 87,
+          "navigation": 323,
+          "calls": 7,
+          "projections": 125
+        }
+      },
+      {
+        "edit": "Csharp variant defines",
+        "seed": 3536200967,
+        "hashes": {
+          "facts": "fe3ecd99b6135b21809230194fdda62bd13ed139181935b94bf27cc79b859dbc",
+          "claims": "ccb0944f82513d6964a9962bf7d014dbec3256fc93b7ba448dd67d6848de966e",
+          "coverage": "34ae952c7484634bc365527d50433eb53c786a286c6081124638e45d5445a1ac",
+          "navigation": "7e2ece01a7d9f9beb4e6ae107df0f435911fa56f2f3f4dbbfa7c4a5f6e034cca",
+          "calls": "d7e017d439d7be8286436f3a09627e5c3b6241a4c748da284de514a1cf63ab6e",
+          "projections": "f9a756a9c839c83e587ca5d9038028ee11ac2199f1a295581390b1f14e752594"
+        },
+        "counts": {
+          "facts": 323,
+          "claims": 323,
+          "coverage": 87,
+          "navigation": 323,
+          "calls": 7,
+          "projections": 125
+        }
+      },
+      {
+        "edit": "Rust feature variant",
+        "seed": 3536200967,
+        "hashes": {
+          "facts": "1f802caccb076e0642cfdf111d917b06d895cf0da6e54e4e50aad8c1ae0de8ca",
+          "claims": "b4448c708ac930c5a064c0df03e893edeb1f977129bc999a72b7497c58bd2f9a",
+          "coverage": "34ae952c7484634bc365527d50433eb53c786a286c6081124638e45d5445a1ac",
+          "navigation": "66e29cc8592eb9fef318c827608040d22a303f4de170313752ef01c630967b1a",
+          "calls": "4ddd94dbb4225ef4c3f1236fb37c6124d9f6dd2999a3178416d0c5399f612c95",
+          "projections": "93483b017302df18d83233376ce5d96a65729ea0ec313d520f859335eca939d7"
+        },
+        "counts": {
+          "facts": 323,
+          "claims": 323,
+          "coverage": 87,
+          "navigation": 323,
+          "calls": 7,
+          "projections": 125
+        }
+      },
+      {
+        "edit": "Java language level",
+        "seed": 3536200967,
+        "hashes": {
+          "facts": "857d1fc57617ecbc2c3486c9e0c11de39e602a05a90175e423d724492f7bb0d5",
+          "claims": "e517789bf5081c19138905ddef440fbfc02f9282e2ea369768bcf920a2969db1",
+          "coverage": "34ae952c7484634bc365527d50433eb53c786a286c6081124638e45d5445a1ac",
+          "navigation": "6175ea8eb5f0a3ab51f27d00a482cf31696893b9359427ecd420bddc33eede70",
+          "calls": "ae35ed1201ae34a4a3e3ecbd1db16692190d30a6665c2c4275f0a5d16c10ba21",
+          "projections": "93483b017302df18d83233376ce5d96a65729ea0ec313d520f859335eca939d7"
+        },
+        "counts": {
+          "facts": 323,
+          "claims": 323,
+          "coverage": 87,
+          "navigation": 323,
+          "calls": 7,
+          "projections": 125
+        }
+      },
+      {
+        "edit": "C header dependency",
+        "seed": 2163121850,
+        "hashes": {
+          "facts": "8edb78ffd6c1ca3cbd8daf80192e3f5fc1843b6d95d2f1e53a21c6f1d311eb76",
+          "claims": "3e92a813392902ae6a678f99b741e2bc5eddf17e868c80eb93aa3496ea57f20b",
+          "coverage": "34ae952c7484634bc365527d50433eb53c786a286c6081124638e45d5445a1ac",
+          "navigation": "92bc3510c0bd998e8ccdf4f249d37f4b09b5623cfda5e434b0e6f4c9b444bb07",
+          "calls": "ae35ed1201ae34a4a3e3ecbd1db16692190d30a6665c2c4275f0a5d16c10ba21",
+          "projections": "4d1185f8e033ecbf4c285673b5906be4e9c7a97f2c2a6746c30a5c9dc2417faa"
+        },
+        "counts": {
+          "facts": 325,
+          "claims": 325,
+          "coverage": 87,
+          "navigation": 325,
+          "calls": 7,
+          "projections": 127
+        }
+      },
+      {
+        "edit": "Go target tags",
+        "seed": 2163121850,
+        "hashes": {
+          "facts": "b7c665724481e228c86410a00ee8d4d153570f17df80c9a9796df324ceac1dd0",
+          "claims": "91594de9eb7787b872739b3769d5b728df70731a76cb00527af2ecd691db2654",
+          "coverage": "34ae952c7484634bc365527d50433eb53c786a286c6081124638e45d5445a1ac",
+          "navigation": "19911f334d3b58965c367966a27cc49237d48f61856adf36d26f40a4f4d84626",
+          "calls": "5a6a551e03adec86d9ca9848435cccbc2f7d5d80a91d3379345369c5e2e0979f",
+          "projections": "4d1185f8e033ecbf4c285673b5906be4e9c7a97f2c2a6746c30a5c9dc2417faa"
+        },
+        "counts": {
+          "facts": 325,
+          "claims": 325,
+          "coverage": 87,
+          "navigation": 325,
+          "calls": 7,
+          "projections": 127
+        }
+      },
+      {
+        "edit": "schema contract replacement",
+        "seed": 1542790865,
+        "hashes": {
+          "facts": "022022a9511b4a740f49b8ac1b673eae0cedca673e91971844183c41edc9e523",
+          "claims": "9f61278a9464a604c965508f959db5c684c191b6b92a47c7425448c37b7d5dbe",
+          "coverage": "34ae952c7484634bc365527d50433eb53c786a286c6081124638e45d5445a1ac",
+          "navigation": "2c929d5b5a04c8b319a7a0957955d6377203c3c762e687eccbee1705a82556a9",
+          "calls": "5a6a551e03adec86d9ca9848435cccbc2f7d5d80a91d3379345369c5e2e0979f",
+          "projections": "e1280da96555476a2849ddc2b6ccb29404b636cd34da3b7cd563ebf1ecb08455"
+        },
+        "counts": {
+          "facts": 325,
+          "claims": 325,
+          "coverage": 87,
+          "navigation": 325,
+          "calls": 7,
+          "projections": 127
+        }
+      },
+      {
+        "edit": "producer receipt mismatch",
+        "seed": 1542790865,
+        "hashes": {
+          "facts": "6e84a610d3dae8157da4d42f9927bc71238d00750117822e4759be78cf9b2872",
+          "claims": "9198edd5da5cfac8ad5918f5066a48e8596f787a000c5a6ba1995d8ae83bfcf0",
+          "coverage": "51a21ce9d0b6aa3015b73c23fe6af09410c06e0ecca781944746afc78c4ee300",
+          "navigation": "d4271762c7722329ef17cfa8f55737f47378b28882bb117af03ef5e95f58b71f",
+          "calls": "3ed1107804e7024d6647ed6ac003d9879d9ac53866e88be62a72d803a9c96359",
+          "projections": "e1280da96555476a2849ddc2b6ccb29404b636cd34da3b7cd563ebf1ecb08455"
+        },
+        "counts": {
+          "facts": 287,
+          "claims": 287,
+          "coverage": 77,
+          "navigation": 287,
+          "calls": 6,
+          "projections": 127
+        }
+      },
+      {
+        "edit": "restore qualified producer",
+        "seed": 1542790865,
+        "hashes": {
+          "facts": "022022a9511b4a740f49b8ac1b673eae0cedca673e91971844183c41edc9e523",
+          "claims": "9f61278a9464a604c965508f959db5c684c191b6b92a47c7425448c37b7d5dbe",
+          "coverage": "34ae952c7484634bc365527d50433eb53c786a286c6081124638e45d5445a1ac",
+          "navigation": "2c929d5b5a04c8b319a7a0957955d6377203c3c762e687eccbee1705a82556a9",
+          "calls": "5a6a551e03adec86d9ca9848435cccbc2f7d5d80a91d3379345369c5e2e0979f",
+          "projections": "e1280da96555476a2849ddc2b6ccb29404b636cd34da3b7cd563ebf1ecb08455"
+        },
+        "counts": {
+          "facts": 325,
+          "claims": 325,
+          "coverage": 87,
+          "navigation": 325,
+          "calls": 7,
+          "projections": 127
+        }
+      },
+      {
+        "edit": "Rust feature variant",
+        "seed": 1542790865,
+        "hashes": {
+          "facts": "022022a9511b4a740f49b8ac1b673eae0cedca673e91971844183c41edc9e523",
+          "claims": "9f61278a9464a604c965508f959db5c684c191b6b92a47c7425448c37b7d5dbe",
+          "coverage": "34ae952c7484634bc365527d50433eb53c786a286c6081124638e45d5445a1ac",
+          "navigation": "2c929d5b5a04c8b319a7a0957955d6377203c3c762e687eccbee1705a82556a9",
+          "calls": "5a6a551e03adec86d9ca9848435cccbc2f7d5d80a91d3379345369c5e2e0979f",
+          "projections": "e1280da96555476a2849ddc2b6ccb29404b636cd34da3b7cd563ebf1ecb08455"
+        },
+        "counts": {
+          "facts": 325,
+          "claims": 325,
+          "coverage": 87,
+          "navigation": 325,
+          "calls": 7,
+          "projections": 127
+        }
+      },
+      {
+        "edit": "Go target tags",
+        "seed": 1542790865,
+        "hashes": {
+          "facts": "022022a9511b4a740f49b8ac1b673eae0cedca673e91971844183c41edc9e523",
+          "claims": "9f61278a9464a604c965508f959db5c684c191b6b92a47c7425448c37b7d5dbe",
+          "coverage": "34ae952c7484634bc365527d50433eb53c786a286c6081124638e45d5445a1ac",
+          "navigation": "2c929d5b5a04c8b319a7a0957955d6377203c3c762e687eccbee1705a82556a9",
+          "calls": "5a6a551e03adec86d9ca9848435cccbc2f7d5d80a91d3379345369c5e2e0979f",
+          "projections": "e1280da96555476a2849ddc2b6ccb29404b636cd34da3b7cd563ebf1ecb08455"
+        },
+        "counts": {
+          "facts": 325,
+          "claims": 325,
+          "coverage": 87,
+          "navigation": 325,
+          "calls": 7,
+          "projections": 127
+        }
+      },
+      {
+        "edit": "C header dependency",
+        "seed": 2492582396,
+        "hashes": {
+          "facts": "2b737507bf4f205ea6cfaf327a43fd3f6b956c002dd8373f4451792ee19ec29c",
+          "claims": "a1bf34712e7825fb5b66bca574e61c722967d4cc687bec6402d3b5c2a7e29bf7",
+          "coverage": "34ae952c7484634bc365527d50433eb53c786a286c6081124638e45d5445a1ac",
+          "navigation": "92f19b5c560711a96a50e895910233f6cc5783da7dc310925b6feef6d7c10c7b",
+          "calls": "5a6a551e03adec86d9ca9848435cccbc2f7d5d80a91d3379345369c5e2e0979f",
+          "projections": "d55a6af82790231fb10c953871c0720f11ed06d3f328636356a6b703af7abcf4"
+        },
+        "counts": {
+          "facts": 325,
+          "claims": 325,
+          "coverage": 87,
+          "navigation": 325,
+          "calls": 7,
+          "projections": 127
+        }
+      }
+    ]
+  },
+  "actualWriterUpgrade": {
+    "baseline": {
+      "commit": "6eefca04b5032f3416fcc95bda23dec4bb8f65db",
+      "runtime": "/private/tmp/prograph-stage5g-baseline/accepted-nxm4mL",
+      "node": "v25.9.0",
+      "compiler": "5.9.3",
+      "scope": "Accepted source compiled using current locked dependencies; not historical binary performance evidence",
+      "digests": {
+        "core/semantic/model.js": "504527f0eab68a55364af39cfc62bb645a19701c4f2e5208186d3c95f62696b5",
+        "core/semantic/managed-scip.js": "333ad4e67ddc1570bf8b1a15834866489f468a3bee5b2f991c359098a6a1203c",
+        "core/semantic/provider-replay.js": "5a955825b925b261d28fe14fd8eaa51bb47a0f88e08dfea9fe11a5d31673a9a9"
+      }
+    },
+    "sourceRoot": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-multiprovider-UxOOUJ",
+    "pinned": 3,
+    "historicalClaimHash": "cdf8b4b6830d60b01a3d23d3e5751c008978c7480f51a28a42e7360da861a50a",
+    "cleanRebuildHash": "f46e3a87298fe580cd706268ff9f1e406abc217e080f5f075f9a455f7a5865f1",
+    "counts": {
+      "facts": 105,
+      "claims": 105,
+      "coverage": 37,
+      "navigation": 105,
+      "calls": 3,
+      "projections": 39
+    },
+    "pinnedGc": {
+      "collected": {
+        "snapshots": 2,
+        "runs": 0,
+        "claims": 0,
+        "facts": 0,
+        "sources": 0,
+        "provenance": 0,
+        "groups": 0,
+        "entities": 0,
+        "origin_runs": 0
+      },
+      "active": 4,
+      "artifacts": {
+        "state": "deferred",
+        "reason": "Retained source has no unique root witness; no workspace deleted"
+      }
+    },
+    "unpinnedGc": "complete",
+    "freshness": "fresh"
+  },
+  "recovery": {
+    "node": "v25.9.0",
+    "probes": [
+      {
+        "point": "before-seal",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "before-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "during-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "after-publish",
+        "exitCode": 57,
+        "activeSnapshot": 2,
+        "visible": [
+          "other"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      }
+    ],
+    "corruption": {
+      "refused": true,
+      "unchanged": true
+    }
+  },
+  "sourceDigests": {
+    "src/core/semantic/process.ts": "b00c1f78d9802e2cfd2294b01dd8d9cd391211dbb09f60c89b8cc157cf8eb2da",
+    "src/core/semantic/provider-guard.ts": "c7c1e32f55dece767e5a2a09b48633c1b137858260b72a22d5f304b244d65f69",
+    "src/core/semantic/clang.ts": "4b436d0bc8f3511aba6e40da21a211f264a7d155bde430b1be8339fdc6047547",
+    "src/core/analysis/index-execution.ts": "07ffb334004d338fbbc11ab7d68a7ecf64f110d004c1b6dfe167ea996ff5e491",
+    "src/core/analysis/index-worker.ts": "aef446c75cb7874aea5c093da5ed0821253fd22d7823803e3e1ce11626e9571b",
+    "src/core/analysis/watch.ts": "f0a68b6f58db1a993354aeecc3d5076d3051a24d5759f20d0e0f2eb4dda0ae05",
+    "src/core/query/isolation.ts": "def7bafc2ea63e4dcd925973cbf74f480283e8de8f893167ae9d48cf1cbc61af",
+    "src/cli/index.ts": "469ed0df049f68acecd598222585ec7cd1927cf3ba7abe4f1fc4d9ce0966ee80",
+    "src/mcp/index.ts": "01d387e6dcc7cf60a4a30b410ca31bad663d37684864cda61aba0210b5d7d65b",
+    "src/server/index.ts": "4834694491b1e66bbe9df6e0dec7867bf215c8056e73a5b455212a96311dce07"
+  },
+  "build": "Complete Node/UI production build passed after all test invocations",
+  "typecheck": "passed",
+  "limitations": [
+    "Host process admission, not a global cross-process native RSS/disk sandbox",
+    "POSIX native group cleanup qualified; Windows not qualified",
+    "Read worker launch architecture unchanged",
+    "Cross-database publication remains non-atomic; cancellation may follow a completed semantic commit",
+    "Real self-analysis was concurrent correctness evidence, not throughput/RSS qualification"
+  ]
+}

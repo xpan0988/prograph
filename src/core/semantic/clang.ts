@@ -1,6 +1,4 @@
 import path from "node:path";
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
 import { mkdir, realpath } from "node:fs/promises";
 import { scanRepository, resolveRepositoryRoot } from "../repository/repository.js";
 import { discoverProjects, type ProjectUnit } from "./projects.js";
@@ -15,8 +13,9 @@ import { authorizeProvider, verifyProviderAuthorization } from "./provider-grant
 import { withIndexWork } from "./maintenance-lock.js";
 import { captureClangInputs, clangDriverSelection } from "./clang-inputs.js";
 import { inputMatches } from "./input-check.js";
+import { runProviderProcess } from "./process.js";
 
-const exec = promisify(execFile);
+const exec = (executable: string, args: string[], options: { cwd?: string; env: NodeJS.ProcessEnv; timeout: number; maxBuffer: number }) => runProviderProcess(executable, args, options.cwd ?? process.cwd(), options.env, { timeoutMs: options.timeout, maxOutputBytes: options.maxBuffer });
 const COMPILER = "/usr/bin/clang";
 const bounds = { maxOutputBytes: 33554432, maxSourceBytes: 8388608, timeoutMs: 30000, batch: 500, maxNodes: 200000 };
 interface Ast {

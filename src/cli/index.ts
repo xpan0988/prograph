@@ -3,14 +3,12 @@ import path from "node:path";
 import { access, writeFile } from "node:fs/promises";
 import { Command, Option } from "commander";
 import open from "open";
-import { analyzeRepository } from "../core/analysis/analyze.js";
+import { executeIndex } from "../core/analysis/index-execution.js";
 import { prepareQueryIndex } from "../core/analysis/prepare-queries.js";
-import { repositoryStatus } from "../core/analysis/state.js";
-import { syncRepository } from "../core/analysis/sync.js";
 import { watchRepository } from "../core/analysis/watch.js";
 import { type BoundedQuery, type ConfidenceQuery } from "../core/query/query-service.js";
 import { isolatedQueryForRepository, isolatedSemanticRead, type AsyncQueryClient } from "../core/query/isolation.js";
-import { indexManagedProject, toolReceipt } from "../core/semantic/managed-scip.js";
+import { toolReceipt } from "../core/semantic/managed-scip.js";
 import { formatQueryOutput, type OutputMode } from "../core/query/output-mode.js";
 import type { EdgeKind, GraphScope, NodeKind } from "../core/graph/schema.js";
 import { resolveRepositoryRoot } from "../core/repository/repository.js";
@@ -19,12 +17,9 @@ import { startMcpServer } from "../mcp/index.js";
 import { writeResult, type OutputFormat } from "./output.js";
 import packageJson from "../../package.json" with { type: "json" };
 import { SEMANTIC_OPERATIONS, type SemanticOperation } from "../core/semantic/query.js";
-import { importScip, type ScipManifest } from "../core/semantic/scip-import.js";
-import { indexClang } from "../core/semantic/clang.js";
 import { SemanticStore } from "../core/semantic/store.js";
 import { collectIndexGarbage } from "../core/semantic/provider-artifacts.js";
-import { indexRust, type RustOptions } from "../core/semantic/rust.js";
-import { readFile, stat } from "node:fs/promises";
+import type { RustOptions } from "../core/semantic/rust.js";
 
 interface FormatOptions {
   format: OutputFormat;
@@ -151,16 +146,16 @@ addFormat(program.command("init [path]", { isDefault: false }).description("crea
 }));
 
 addFormat(program.command("analyze [path]").description("analyze a repository and write its ProGraph index").option("--output <path>", "alternative output directory").action(async (input = ".", options: FormatOptions & { output?: string }) => {
-  const result = await analyzeRepository(input, { ...(options.output ? { output: options.output } : {}) });
+  const result = await withCancellation(signal => executeIndex({ operation: "analyze", repository: input, ...(options.output !== undefined ? { index: options.output } : {}) }, { signal }));
   writeResult({ outputDirectory: result.outputDirectory, ...result.manifest, adapters: result.adapterRuns }, options.format);
 }));
 
 addFormat(addIndex(program.command("status [path]").description("show index freshness and repository changes"))).action(async (input = ".", options: FormatOptions & { index?: string }) => {
-  writeResult(await repositoryStatus(input, options.index), options.format);
+  writeResult(await withCancellation(signal => executeIndex({ operation: "status", repository: input, ...(options.index !== undefined ? { index: options.index } : {}) }, { signal })), options.format);
 });
 
 addFormat(addIndex(program.command("sync [path]").description("synchronize a repository index conservatively"))).action(async (input = ".", options: FormatOptions & { index?: string }) => {
-  writeResult(await syncRepository(input, options.index), options.format);
+  writeResult(await withCancellation(signal => executeIndex({ operation: "sync", repository: input, ...(options.index !== undefined ? { index: options.index } : {}) }, { signal })), options.format);
 });
 
 addIndex(program.command("watch [path]").description("watch a repository and synchronize on changes")).action(async (input = ".", options: { index?: string }) => {
@@ -281,7 +276,7 @@ addFormat(addIndex(semanticCommand.command("index-project <configuration>").desc
   .option("--repo <path>", "repository path", ".")
   .option("--timeout-ms <number>", "total provider deadline before publication", Number, 300000)
   .action(async (configuration: string, options: FormatOptions & { repo: string; index?: string; timeoutMs: number }) => {
-    writeResult(await withCancellation(signal => indexManagedProject(options.repo, configuration, options.index, { timeoutMs: options.timeoutMs, signal })), options.format);
+    writeResult(await withCancellation(signal => executeIndex({ operation: "managed", repository: options.repo, input: configuration, ...(options.index !== undefined ? { index: options.index } : {}), providerOptions: { timeoutMs: options.timeoutMs } }, { signal })), options.format);
   });
 addFormat(addIndex(semanticCommand.command("index-rust <manifest>").description("Explicit pinned offline Rust workspace navigation in an isolated source copy")))
   .option("--repo <path>", "repository path", ".")
@@ -293,18 +288,16 @@ addFormat(addIndex(semanticCommand.command("index-rust <manifest>").description(
   .option("--target <triple>", "explicit Rust target triple")
   .option("--timeout-ms <number>", "total provider deadline before publication", Number, 120000)
   .action(async (manifest: string, options: FormatOptions & RustOptions & { repo: string; index?: string; defaultFeatures?: boolean }) => {
-    writeResult(await withCancellation(signal => indexRust(options.repo, manifest, { ...options, noDefaultFeatures: options.defaultFeatures === false, signal }, options.index)), options.format);
+    writeResult(await withCancellation(signal => executeIndex({ operation: "rust", repository: options.repo, input: manifest, ...(options.index !== undefined ? { index: options.index } : {}), providerOptions: { analyzer: options.analyzer, analyzerSha256: options.analyzerSha256, toolchain: options.toolchain, noDefaultFeatures: options.defaultFeatures === false, ...(options.target !== undefined ? { target: options.target } : {}), ...(options.features !== undefined ? { features: options.features } : {}), ...(options.timeoutMs !== undefined ? { timeoutMs: options.timeoutMs } : {}) } }, { signal })), options.format);
   });
 addFormat(addIndex(semanticCommand.command("index-clang <unit>").description("Explicit syntax-only Clang extraction for an arguments-array compilation unit")))
   .option("--repo <path>", "repository path", ".")
-  .action(async (unit: string, options: FormatOptions & { repo: string; index?: string }) => writeResult(await indexClang(options.repo, unit, options.index), options.format));
+  .action(async (unit: string, options: FormatOptions & { repo: string; index?: string }) => writeResult(await withCancellation(signal => executeIndex({ operation: "clang", repository: options.repo, input: unit, ...(options.index !== undefined ? { index: options.index } : {}) }, { signal })), options.format));
 addFormat(addIndex(semanticCommand.command("import-scip <artifact>").description("Import a source-verified SCIP artifact without running its indexer")))
   .requiredOption("--manifest <path>", "source digest and producer sidecar")
   .option("--repo <path>", "repository path", ".")
   .action(async (artifact: string, options: FormatOptions & { manifest: string; repo: string; index?: string }) => {
-    if ((await stat(options.manifest)).size > 16777216) throw Error("SCIP sidecar exceeds 16 MiB");
-    const manifest = JSON.parse(await readFile(options.manifest, "utf8")) as ScipManifest;
-    writeResult(await importScip(options.repo, artifact, manifest, options.index), options.format);
+    writeResult(await withCancellation(signal => executeIndex({ operation: "scip", repository: options.repo, input: artifact, manifestFile: options.manifest, ...(options.index !== undefined ? { index: options.index } : {}) }, { signal })), options.format);
   });
 for (const operation of SEMANTIC_OPERATIONS) {
   addFormat(addIndex(semanticCommand.command(`${operation} [input]`).description(`Semantic ${operation}`)))

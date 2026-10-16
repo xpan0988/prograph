@@ -49,7 +49,7 @@ export async function executeRead(filename: string, domain: "legacy" | "semantic
     const remaining = Math.floor(deadline - performance.now());
     if (remaining <= 0) throw new QueryExecutionError("QUERY_DEADLINE", "Query deadline exceeded");
     const result = await runProviderProcess(process.execPath, ["--max-old-space-size=192", executable, payload], path.dirname(filename), process.env,
-      { timeoutMs: remaining, maxOutputBytes: domain === "semantic" ? 262144 : 4 * 1024 ** 2, ...(options.signal ? { signal: options.signal } : {}) });
+      { timeoutMs: remaining, maxOutputBytes: domain === "semantic" ? 262144 : 4 * 1024 ** 2, parentGuard: false, ...(options.signal ? { signal: options.signal } : {}) });
     const decoded = JSON.parse(result.stdout) as { value?: unknown; error?: string; code?: string };
     if (decoded.error) throw new QueryExecutionError(decoded.code ?? "QUERY_FAILED", decoded.error);
     return decoded.value;
