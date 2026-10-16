@@ -3,6 +3,7 @@ import type { GraphNode, GraphEdge, Diagnostic } from "../graph/schema.js";
 import { SemanticStore } from "./store.js";
 import { canonical, digest, semanticKey, type FactInput, type Provenance, type SupportAtom } from "./model.js";
 
+// Source-observation identity/context version. Individual pass rules version separately.
 export const OWNED_PASS_VERSION = "analysis-passes-3";
 export interface OwnedProjection {
   run: number;
@@ -32,7 +33,7 @@ export function readOwnedProjection(store: SemanticStore, run: number): OwnedPro
   const result: AdapterResult = { nodes: [], edges: [], diagnostics: [], metadata: {} };
   const nodeClaims = new Map<string, string>(); const edgeClaims = new Map<string, string>(); let bytes = 0; let count = 0;
   for (const raw of store.sql(`SELECT c.key,f.predicate,f.value_json FROM sc_projection_rows o JOIN sc_claims c ON c.id=o.claim JOIN sc_facts f ON f.id=c.fact
-    WHERE o.run=? AND f.predicate IN ('syntax.Node','syntax.Relation','projection.Node','projection.Relation','syntax.Diagnostic') ORDER BY o.kind,o.ordinal`).iterate(run)) {
+    WHERE o.run=? AND f.predicate IN ('syntax.Node','syntax.Relation','projection.Node','projection.Relation','syntax.Diagnostic','projection.Diagnostic') ORDER BY o.kind,o.ordinal`).iterate(run)) {
     const row = raw as { key: string; predicate: string; value_json: string };
     if (++count > 1000000 || (bytes += Buffer.byteLength(row.value_json)) > 128 * 1024 ** 2) throw Error("Owned projection input exceeds offline work bounds");
     let value = JSON.parse(row.value_json) as { node?: GraphNode; edge?: GraphEdge; diagnostic?: Diagnostic; payloadEntity?: string };
@@ -88,7 +89,7 @@ export class OwnedWriter {
     return this.store.addFact(this.run, { ...input, context: this.provenance.context, provenance: this.provenance, supports: alternatives.map(claims => this.support(claims)) });
   }
   write(result: AdapterResult, evidenceNodes?: Map<string, Set<string>>): OwnedProjection {
-    if (result.nodes.length + result.edges.length > 1000000) throw Error("Pass output exceeds row bound");
+    if (result.nodes.length + result.edges.length + result.diagnostics.length > 1000000) throw Error("Pass output exceeds row bound");
     let bytes = 0;
     const nodeFiles = evidenceNodes ?? new Map<string, Set<string>>();
     if (!evidenceNodes) for (const edge of result.edges) for (const id of [edge.source, edge.target]) {
@@ -123,6 +124,20 @@ export class OwnedWriter {
       const items = kind === "node" ? result.nodes : result.edges;
       for (let offset = 0; offset < items.length; offset += 500) this.store.batch(this.run, () => { items.slice(offset, offset + 500).forEach((item, index) => write(kind, item, offset + index)); });
     }
+    for (let offset = 0; offset < result.diagnostics.length; offset += 500) this.store.batch(this.run, () => {
+      for (const [index, original] of result.diagnostics.slice(offset, offset + 500).entries()) {
+        const diagnostic = json(original); const payload = { diagnostic }; const encoded = canonical(payload);
+        bytes += Buffer.byteLength(encoded); if (bytes > 128 * 1024 ** 2) throw Error("Pass output exceeds byte bound");
+        const subject = semanticKey("projection-diagnostic", [this.snapshot.repository.identity, this.provenance.provider, diagnostic]);
+        this.store.addEntity(subject, "artifact", { key: subject }); let value: Record<string, unknown> = payload;
+        if (Buffer.byteLength(encoded) > 65536) { const key = semanticKey("projection-payload", [encoded]); this.store.addEntity(key, "artifact", payload); value = { payloadEntity: key }; }
+        const source = diagnostic.file && this.fileClaims.get(diagnostic.file);
+        // Exact records that the pass reported this diagnosis; it does not upgrade
+        // the diagnosed program relationship's confidence or provider coverage.
+        const claim = this.fact({ predicate: "projection.Diagnostic", subject, value, confidence: "exact" }, [source ? [source] : []]);
+        this.store.sql("INSERT INTO sc_projection_rows(run,kind,ordinal,claim) SELECT ?,'diagnostic',?,id FROM sc_claims WHERE key=?").run(this.run, offset + index, claim);
+      }
+    });
     return { run: this.run, result, nodeClaims: this.nodeClaims, edgeClaims: this.edgeClaims };
   }
 }

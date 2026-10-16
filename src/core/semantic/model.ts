@@ -2,8 +2,8 @@ import { createHash } from "node:crypto";
 import type { Confidence } from "../graph/schema.js";
 
 export const SEMANTIC_FORMAT_VERSION = 2;
-export const SEMANTIC_SCHEMA_VERSION = "2.0.0-step2.9";
-export const READABLE_SEMANTIC_SCHEMAS = ["2.0.0-step1", "2.0.0-step2.1", "2.0.0-step2.2", "2.0.0-step2.3", "2.0.0-step2.4", "2.0.0-step2.5", "2.0.0-step2.6", "2.0.0-step2.7", "2.0.0-step2.8", SEMANTIC_SCHEMA_VERSION] as const;
+export const SEMANTIC_SCHEMA_VERSION = "2.0.0-step2.10";
+export const READABLE_SEMANTIC_SCHEMAS = ["2.0.0-step1", "2.0.0-step2.1", "2.0.0-step2.2", "2.0.0-step2.3", "2.0.0-step2.4", "2.0.0-step2.5", "2.0.0-step2.6", "2.0.0-step2.7", "2.0.0-step2.8", "2.0.0-step2.9", SEMANTIC_SCHEMA_VERSION] as const;
 export const RUST_PROVIDER_VERSION = "rust-scip-runner-6";
 export const MANAGED_SCIP_VERSION = "managed-scip-3";
 export const TYPESCRIPT_SEMANTIC_VERSION = "5";
@@ -95,6 +95,7 @@ export const PREDICATES = {
   "syntax.Relation": { version: 1, relation: "syntax-relation", unique: false },
   "projection.Node": { version: 1, relation: "projection-node", unique: false },
   "projection.Relation": { version: 1, relation: "projection-relation", unique: false },
+  "projection.Diagnostic": { version: 1, relation: "projection-diagnostic", unique: false },
   "projection.Dependency": { version: 1, relation: "file-dependency", unique: false },
   "framework.Component": { version: 1, relation: "framework-component", unique: false },
   "knowledge.Link": { version: 1, relation: "knowledge-link", unique: false },

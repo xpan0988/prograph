@@ -150,18 +150,18 @@ describe("owned semantic derivations", () => {
     };
     await analyzeRepository(root); const first = selected();
     expect(first.some(row => row.partition_key.includes("/operation:"))).toBe(true);
-    expect(first.some(row => row.partition_key.includes("pass:knowledge-links@3/file:"))).toBe(true);
+    expect(first.some(row => row.partition_key.includes("pass:knowledge-links@4/file:"))).toBe(true);
     await writeFile(path.join(root, "unrelated.ts"), "export function independent(){return 2}\n"); await syncRepository(root);
     const second = selected();
-    const outputs = first.filter(row => row.partition_key.includes("/operation:") || row.partition_key.includes("pass:knowledge-links@3/file:") || row.partition_key.includes("pass:documentation@3/file:"));
+    const outputs = first.filter(row => row.partition_key.includes("/operation:") || row.partition_key.includes("pass:knowledge-links@4/file:") || row.partition_key.includes("pass:documentation@4/file:"));
     expect(outputs.length).toBeGreaterThan(2);
     expect(second.filter(row => outputs.some(old => old.partition_key === row.partition_key))).toEqual(outputs);
     await writeFile(path.join(root, "shadow.ts"), "export function handler(){return 3}\n"); await syncRepository(root);
-    const shadowed = selected(); const oldKnowledge = first.find(row => row.partition_key.includes("pass:knowledge-links@3/file:README.md"))!;
+    const shadowed = selected(); const oldKnowledge = first.find(row => row.partition_key.includes("pass:knowledge-links@4/file:README.md"))!;
     const negative = new SemanticStore(path.join(root, ".prograph/semantic.sqlite"));
     try {
       expect(facts(negative, "knowledge.Link")).toHaveLength(0); expect(facts(negative, "boundary.Implements")).toHaveLength(1);
-      const oldIndex = first.find(row => row.partition_key === "analysis/pass:knowledge-links@3")!;
+      const oldIndex = first.find(row => row.partition_key === "analysis/pass:knowledge-links@4")!;
       const stale = negative.publish([...shadowed.filter(row => ![oldKnowledge.partition_key, oldIndex.partition_key].includes(row.partition_key)).map(row => row.run), oldIndex.run, oldKnowledge.run], negative.activeSnapshot());
       expect(facts(negative, "knowledge.Link", stale)).toHaveLength(0); // Original doc/target and the entire old pass index remain; its input qualification rejects stale admission.
     } finally { negative.close(); }

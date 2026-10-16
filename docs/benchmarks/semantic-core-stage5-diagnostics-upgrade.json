@@ -1,0 +1,24 @@
+{
+  "scope": "Actual old 2.9 self-analysis database online-backup upgraded by 2.10 writer; no source reanalysis, old index unchanged; snapshot/fact navigation and 8 bounded samples compare before/after. Not current-source freshness or performance evidence.",
+  "source": "/private/tmp/prograph-stage5h-self-IQK/semantic.sqlite",
+  "sourceSha256": "f9a12ed5f50da29dc3e25d12177eb3cdf535842caad04eb68d2da24b02edecce",
+  "root": "/private/tmp/prograph-diagnostics-upgrade-5INcZz",
+  "before": {
+    "snapshot": 1,
+    "schema": "2.0.0-step2.9",
+    "claims": "f8b96f857ea22025a161df5f02eb498754e1d5c26df13a2b19114fdc75b30d83",
+    "calls": "856f5471f8f55e4902089b8ee46ae829cb0a489874d8204fa1e238372b967aa0",
+    "samplesHash": "2a1ab88b7cb0cdeba317e38981f74e9512c3f8ea9df14c2f8cc77b27d845ff8b",
+    "sampleCount": 8
+  },
+  "after": {
+    "snapshot": 1,
+    "schema": "2.0.0-step2.10",
+    "claims": "f8b96f857ea22025a161df5f02eb498754e1d5c26df13a2b19114fdc75b30d83",
+    "calls": "856f5471f8f55e4902089b8ee46ae829cb0a489874d8204fa1e238372b967aa0",
+    "samplesHash": "2a1ab88b7cb0cdeba317e38981f74e9512c3f8ea9df14c2f8cc77b27d845ff8b",
+    "sampleCount": 8
+  },
+  "integrity": "ok",
+  "foreignKeys": []
+}

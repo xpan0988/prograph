@@ -1,5 +1,5 @@
 import type { AdapterResult, RepositorySnapshot } from "../adapters/contracts.js";
-import type { GraphEdge, GraphNode } from "../graph/schema.js";
+import type { Diagnostic, GraphEdge, GraphNode } from "../graph/schema.js";
 import { canonical, digest, type Provenance } from "./model.js";
 import { OwnedWriter, readOwnedProjection, normalizeProjection, type OwnedProjection } from "./owned-projection.js";
 import { passContract, type PassContract } from "./passes.js";
@@ -16,9 +16,9 @@ export function partitionProjection(store: SemanticStore, index: number, partiti
   result = normalizeProjection(result);
   const outputNodes = new Map(result.nodes.map(node => [node.id, node]));
   const nodes = new Map([...input, ...result.nodes].map(node => [node.id, node]));
-  const groups = new Map<string, { nodes: GraphNode[]; edges: GraphEdge[] }>();
+  const groups = new Map<string, { nodes: GraphNode[]; edges: GraphEdge[]; diagnostics: Diagnostic[] }>();
   const own = (file: string | undefined) => file && snapshot.fileContents.has(file) ? file : "";
-  const group = (file: string) => { let value = groups.get(file); if (!value) { value = { nodes: [], edges: [] }; groups.set(file, value); } return value; };
+  const group = (file: string) => { let value = groups.get(file); if (!value) { value = { nodes: [], edges: [], diagnostics: [] }; groups.set(file, value); } return value; };
   const nodeFiles = new Map<string, Set<string>>();
   for (const edge of result.edges) for (const id of [edge.source, edge.target]) {
     const files = nodeFiles.get(id) ?? new Set<string>();
@@ -35,13 +35,15 @@ export function partitionProjection(store: SemanticStore, index: number, partiti
     const file = own(edge.evidence.find(e => e.file && snapshot.fileContents.has(e.file))?.file ?? nodes.get(edge.source)?.file);
     group(file).edges.push(edge); edgeOwners.set(edge.id, file);
   }
-  if (result.nodes.length + result.edges.length > pass.bounds.maxRows) throw Error("Pass shard plan exceeds row bound");
+  for (const diagnostic of result.diagnostics) group(own(diagnostic.file)).diagnostics.push(diagnostic);
+  if (result.nodes.length + result.edges.length + result.diagnostics.length > pass.bounds.maxRows) throw Error("Pass shard plan exceeds row bound");
   const contract = passContract(pass); const combinedNodes = new Map(inputNodes);
   const nodeClaims = new Map<string, string>(); const edgeClaims = new Map<string, string>();
-  const children: Array<{ file: string; run: number; facts?: number; writer?: OwnedWriter; nodes: GraphNode[]; edges: GraphEdge[] }> = [];
+  const children: Array<{ file: string; run: number; facts?: number; writer?: OwnedWriter; nodes: GraphNode[]; edges: GraphEdge[]; diagnostics: Diagnostic[] }> = [];
   let bytes = 0;
   for (const [file, value] of [...groups].sort(([a], [b]) => a.localeCompare(b))) {
-    const content = { nodes: value.nodes.map(node => ({ node, proof: nodeProofs.get(node.id)! })), edges: value.edges.map(edge => ({ edge, endpoints: [endpoint(edge.source), endpoint(edge.target)] })) };
+    const content = { nodes: value.nodes.map(node => ({ node, proof: nodeProofs.get(node.id)! })), edges: value.edges.map(edge => ({ edge, endpoints: [endpoint(edge.source), endpoint(edge.target)] })),
+      diagnostics: value.diagnostics.map(diagnostic => ({ diagnostic, source: diagnostic.file ? fileClaims.get(diagnostic.file) ?? null : null })) };
     const encoded = canonical(content); bytes += Buffer.byteLength(encoded);
     if (bytes > 128 * 1024 ** 2) throw Error("Pass shard plan exceeds offline byte bound");
     const fingerprint = digest(canonical([provenance.context, contract, file, content]));
@@ -65,7 +67,7 @@ export function partitionProjection(store: SemanticStore, index: number, partiti
     }
   }
   for (const child of children) if (child.writer) {
-    child.writer.write({ nodes: [], edges: child.edges, diagnostics: [], metadata: {} });
+    child.writer.write({ nodes: [], edges: child.edges, diagnostics: child.diagnostics, metadata: {} });
     child.writer.edgeClaims.forEach((claim, id) => edgeClaims.set(id, claim));
   }
   const childByFile = new Map(children.map(child => [child.file, child]));
@@ -81,13 +83,14 @@ export function partitionProjection(store: SemanticStore, index: number, partiti
           const emitted = store.sql("SELECT f.predicate,COUNT(*) AS n FROM sc_owned o JOIN sc_claims c ON c.id=o.claim JOIN sc_facts f ON f.id=c.fact WHERE o.run=? GROUP BY f.predicate").all(child.run) as Array<{ predicate: string; n: number }>;
           if (emitted.some(row => !(pass.writes as string[]).includes(row.predicate))) throw Error("Undeclared sharded pass output");
           child.facts = emitted.reduce((n, row) => n + row.n, 0);
-          store.seal(child.run, { ...contract, status: "partial", file: child.file, facts: child.facts, metadata: { nodes: child.nodes.length, edges: child.edges.length } });
+          store.seal(child.run, { ...contract, status: "partial", file: child.file, facts: child.facts, metadata: { nodes: child.nodes.length, edges: child.edges.length, diagnostics: child.diagnostics.length } });
         }
         if (!Number.isSafeInteger(child.facts) || child.facts! < 0) throw Error("Missing shard fact-count seal");
         total += child.facts!; if (total > pass.bounds.maxRows) throw Error("Pass shards exceed output bound");
         const projection = readOwnedProjection(store, child.run);
         for (const node of projection.result.nodes) sealed.result.nodes.push(node);
         for (const edge of projection.result.edges) sealed.result.edges.push(edge);
+        for (const diagnostic of projection.result.diagnostics) sealed.result.diagnostics.push(diagnostic);
         projection.nodeClaims.forEach((claim, id) => sealed.nodeClaims.set(id, claim)); projection.edgeClaims.forEach((claim, id) => sealed.edgeClaims.set(id, claim));
       }
       return sealed;

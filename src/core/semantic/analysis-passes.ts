@@ -9,22 +9,22 @@ import { reactAdapter } from "../../adapters/framework/react/index.js";
 import { tauriAdapter } from "../../adapters/framework/tauri/index.js";
 import { semanticLinkerAdapter } from "../../adapters/overlay/semantic-linker/index.js";
 import type { AdapterResult, FrameworkAdapter, RepositorySnapshot } from "../adapters/contracts.js";
-import type { AdapterRun } from "../graph/schema.js";
+import type { AdapterRun, Diagnostic } from "../graph/schema.js";
 import { GraphBuilder } from "../graph/builder.js";
 import { validateIdentities } from "../graph/identity.js";
 import { runAdapter } from "../analysis/adapter-run.js";
 import { SemanticStore } from "./store.js";
 import { canonical, digest, semanticKey, type Provenance, type FactInput } from "./model.js";
 import { orderPasses, passContract, type PassContract } from "./passes.js";
-import { OwnedWriter, readOwnedProjection, writeSyntaxBase, OWNED_PASS_VERSION, type OwnedProjection } from "./owned-projection.js";
+import { OwnedWriter, readOwnedProjection, writeSyntaxBase, normalizeProjection, OWNED_PASS_VERSION, type OwnedProjection } from "./owned-projection.js";
 import { partitionProjection } from "./projection-shards.js";
 import { partitionBoundaries } from "./boundary-shards.js";
 
 interface AnalysisPass extends PassContract { adapter?: FrameworkAdapter | undefined }
 function adapterPass(id: string, adapter: FrameworkAdapter, dependencies: string[] = []): AnalysisPass {
-  return { id, adapter, version: "3", configurationFingerprint: "assigned-per-execution", dependencies,
-    reads: ["source.File", "syntax.Node", "syntax.Relation", "projection.Node", "projection.Relation"],
-    writes: ["projection.Node", "projection.Relation", "support.Conjunction", "support.Disjunction"],
+  return { id, adapter, version: "4", configurationFingerprint: "assigned-per-execution", dependencies,
+    reads: ["source.File", "syntax.Node", "syntax.Relation", "syntax.Diagnostic", "projection.Node", "projection.Relation", "projection.Diagnostic"],
+    writes: ["projection.Node", "projection.Relation", "projection.Diagnostic", "support.Conjunction", "support.Disjunction"],
     requiredCapabilities: ["source-catalogue", "sealed-projections"], inputDomains: ["source", "syntax", ...dependencies],
     selectorDependencies: ["repository-source-and-config-catalogue", "qualified-output-admission"], negativeDependencies: ["repository-symbol-and-file-candidate-set"],
     ownershipShard: "source-file-output", invalidation: "indexing-unit-and-selectors", coverageBehavior: "preserve-adapter-evidence-and-gaps",
@@ -32,7 +32,7 @@ function adapterPass(id: string, adapter: FrameworkAdapter, dependencies: string
 }
 /** Algorithm dependencies, rather than incidental adapter array ordering, define visibility. */
 export const analysisPasses: AnalysisPass[] = [
-  { ...adapterPass("framework-react", reactAdapter), writes: ["projection.Node", "projection.Relation", "framework.Component", "support.Conjunction", "support.Disjunction"] },
+  { ...adapterPass("framework-react", reactAdapter), writes: ["projection.Node", "projection.Relation", "projection.Diagnostic", "framework.Component", "support.Conjunction", "support.Disjunction"] },
   adapterPass("framework-tauri", tauriAdapter, ["framework-react"]),
   adapterPass("schema-contracts", architectureAdapter),
   adapterPass("documentation", markdownAdapter),
@@ -42,8 +42,8 @@ export const analysisPasses: AnalysisPass[] = [
   adapterPass("tauri-capabilities", tauriCapabilityAdapter, ["framework-tauri", "tauri-config"]),
   adapterPass("test-relevance", testsAdapter),
   { ...adapterPass("knowledge-links", semanticLinkerAdapter, ["framework-react", "framework-tauri", "schema-contracts", "documentation", "package-config", "cargo-config", "tauri-config", "tauri-capabilities", "test-relevance"]),
-    writes: ["projection.Node", "projection.Relation", "knowledge.Link", "support.Conjunction", "support.Disjunction"] },
-  { ...adapterPass("boundary-binding", architectureAdapter, ["framework-tauri", "schema-contracts"]), ownershipShard: "boundary-operation", adapter: undefined,
+    writes: ["projection.Node", "projection.Relation", "projection.Diagnostic", "knowledge.Link", "support.Conjunction", "support.Disjunction"] },
+  { ...adapterPass("boundary-binding", architectureAdapter, ["framework-tauri", "schema-contracts"]), version: "3", ownershipShard: "boundary-operation", adapter: undefined,
     writes: ["boundary.Operation", "boundary.Invokes", "boundary.Implements", "boundary.Registers", "boundary.Emits", "boundary.Listens", "boundary.Path", "support.Conjunction", "support.Disjunction"],
     coverageBehavior: "qualified-syntax-and-explicit-namespace-bindings;unsupported-families-unavailable" },
   { ...adapterPass("dependency-projection", architectureAdapter, ["knowledge-links", "boundary-binding"]), version: "3", ownershipShard: "source-file", selectorDependencies: ["owned-input-claims", "repository-source-and-config-catalogue", "qualified-output-admission"], negativeDependencies: ["support-eligibility"], adapter: undefined, reads: ["syntax.Node", "syntax.Relation", "projection.Node", "projection.Relation", "boundary.Path"],
@@ -179,7 +179,19 @@ export async function deriveOwnedAnalysis(snapshot: RepositorySnapshot, source: 
       store.seal(run, { ...passContract(pass), status: "partial", metadata: result.metadata });
       // Compatibility is hydrated only from sealed output; algorithms never mutate the source layer.
       const sealed = shards?.seal() ?? readOwnedProjection(store, run); if (shards) runs.push(...shards.runs);
-      sealed.result.diagnostics = result.diagnostics; completed.set(pass.id, sealed);
+      // File shards may be visited in a different order. Preserve the established
+      // adapter report order using its template, but take every payload from facts.
+      const diagnoses = new Map<string, { values: Diagnostic[]; next: number }>();
+      for (const diagnostic of sealed.result.diagnostics) {
+        const key = canonical(diagnostic), bucket = diagnoses.get(key) ?? { values: [], next: 0 };
+        bucket.values.push(diagnostic); diagnoses.set(key, bucket);
+      }
+      if (sealed.result.diagnostics.length !== result.diagnostics.length) throw Error("Sealed diagnostic count differs from pass output");
+      sealed.result.diagnostics = normalizeProjection({ nodes: [], edges: [], diagnostics: result.diagnostics, metadata: {} }).diagnostics.map(diagnostic => {
+        const bucket = diagnoses.get(canonical(diagnostic)), value = bucket?.values[bucket.next++];
+        if (!value) throw Error("Sealed diagnostic payload differs from pass output"); return value;
+      });
+      completed.set(pass.id, sealed);
       final.merge(sealed.result); runs.push(run);
     }
     return { parent, runs, result: final.result(), adapterRuns };
