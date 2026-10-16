@@ -1,0 +1,169 @@
+{
+  "format": 1,
+  "stage": "5E owned artifact retention and concurrent maintenance",
+  "commit": "6eefca04b5032f3416fcc95bda23dec4bb8f65db",
+  "run": 38891859851,
+  "url": "https://github.com/xpan0988/prograph/actions/runs/38891859851",
+  "attempt": 1,
+  "jobs": [
+    {
+      "id": 116943017785,
+      "name": "regression (20)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        }
+      ],
+      "verifiedLog": [
+        "2026-10-16T11:20:07.9081640Z Verified 183 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, complete build, four recovery probes and corruption refusal"
+      ]
+    },
+    {
+      "id": 116943017985,
+      "name": "regression (22)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        }
+      ],
+      "verifiedLog": [
+        "2026-10-16T11:18:28.8319388Z Verified 183 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, complete build, four recovery probes and corruption refusal"
+      ]
+    },
+    {
+      "id": 116943018017,
+      "name": "regression (24)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        }
+      ],
+      "verifiedLog": [
+        "2026-10-16T11:18:54.9516317Z Verified 183 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, complete build, four recovery probes and corruption refusal"
+      ]
+    }
+  ]
+}
