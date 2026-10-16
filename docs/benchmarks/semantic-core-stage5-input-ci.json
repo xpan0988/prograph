@@ -1,0 +1,374 @@
+{
+  "run": 38858753786,
+  "url": "https://github.com/xpan0988/prograph/actions/runs/38858753786",
+  "head": "85d3b12258052fc735391e768d7fe1c3eb78bbc5",
+  "attempt": 1,
+  "status": "completed",
+  "conclusion": "success",
+  "scope": "Compiler input/negative dependency and SDK alias fixes. Provider replay continuation is not covered.",
+  "jobs": [
+    {
+      "id": 116836022077,
+      "name": "regression (22)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "evidence": [
+        "2026-10-16T06:04:09.0344850Z    ✓ real Rust producer qualifies traits, path dependencies, feature variants and stable navigation  4912ms",
+        "2026-10-16T06:05:42.8713021Z    ✓ real python producer qualifies definitions, references, imports/types and owned declared calls  43976ms",
+        "2026-10-16T06:05:42.8715450Z    ✓ real go producer qualifies definitions, references, imports/types and owned declared calls  23405ms",
+        "2026-10-16T06:05:42.8718257Z    ✓ real java producer qualifies definitions, references, imports/types and owned declared calls  5802ms",
+        "2026-10-16T06:05:42.8720711Z    ✓ real csharp producer qualifies definitions, references, imports/types and owned declared calls  21171ms",
+        "2026-10-16T06:06:00.9111057Z Verified 165 passed tests, actual Rust/Python/Go/Java/C# qualification, complete build, four recovery probes and corruption refusal"
+      ]
+    },
+    {
+      "id": 116836022279,
+      "name": "regression (24)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "evidence": [
+        "2026-10-16T06:02:52.4437335Z    ✓ real Rust producer qualifies traits, path dependencies, feature variants and stable navigation  3458ms",
+        "2026-10-16T06:03:37.7872624Z    ✓ real python producer qualifies definitions, references, imports/types and owned declared calls  22128ms",
+        "2026-10-16T06:03:37.7874074Z    ✓ real go producer qualifies definitions, references, imports/types and owned declared calls  12950ms",
+        "2026-10-16T06:03:37.7875383Z    ✓ real java producer qualifies definitions, references, imports/types and owned declared calls  3739ms",
+        "2026-10-16T06:03:37.7876783Z    ✓ real csharp producer qualifies definitions, references, imports/types and owned declared calls  11066ms",
+        "2026-10-16T06:03:48.0748661Z Verified 165 passed tests, actual Rust/Python/Go/Java/C# qualification, complete build, four recovery probes and corruption refusal"
+      ]
+    },
+    {
+      "id": 116836022359,
+      "name": "regression (20)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "evidence": [
+        "2026-10-16T06:05:14.7370728Z    ✓ real Rust producer qualifies traits, path dependencies, feature variants and stable navigation  5329ms",
+        "2026-10-16T06:06:56.2140097Z    ✓ real python producer qualifies definitions, references, imports/types and owned declared calls  49113ms",
+        "2026-10-16T06:06:56.2142674Z    ✓ real go producer qualifies definitions, references, imports/types and owned declared calls  24726ms",
+        "2026-10-16T06:06:56.2144725Z    ✓ real java producer qualifies definitions, references, imports/types and owned declared calls  6005ms",
+        "2026-10-16T06:06:56.2147456Z    ✓ real csharp producer qualifies definitions, references, imports/types and owned declared calls  22074ms",
+        "2026-10-16T06:07:15.9326002Z Verified 165 passed tests, actual Rust/Python/Go/Java/C# qualification, complete build, four recovery probes and corruption refusal"
+      ]
+    }
+  ]
+}
