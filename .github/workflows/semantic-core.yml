@@ -32,6 +32,10 @@ jobs:
           "$RUNNER_TEMP/rust-analyzer" --version
           echo "PROGRAPH_TEST_RUST_ANALYZER=$RUNNER_TEMP/rust-analyzer" >> "$GITHUB_ENV"
       - run: npm run lint
+      - name: Compile accepted prior writer for actual upgrade oracle
+        run: |
+          baseline_runtime=$(node scripts/prepare-semantic-baseline.mjs "$RUNNER_TEMP/semantic-baselines")
+          echo "PROGRAPH_TEST_BASELINE_RUNTIME=$baseline_runtime" >> "$GITHUB_ENV"
       - uses: actions/setup-python@v5
         with:
           python-version: '3.14'
@@ -51,6 +55,10 @@ jobs:
           npm run build:node
           node scripts/install-semantic-producers.mjs "$RUNNER_TEMP/semantic-producers"
       - name: Complete tests, including actual Rust producer
+        env:
+          PROGRAPH_TEST_ORACLE_SEED: ${{ matrix.node }}
+          PROGRAPH_TEST_ORACLE_EVIDENCE: semantic-oracle-results.json
+          PROGRAPH_TEST_UPGRADE_EVIDENCE: semantic-upgrade-results.json
         run: npm test -- --reporter=default --reporter=json --outputFile=semantic-test-results.json
       - name: Complete Node and UI build
         run: npm run build
@@ -65,4 +73,6 @@ jobs:
           path: |
             semantic-test-results.json
             semantic-recovery-results.json
+            semantic-oracle-results.json
+            semantic-upgrade-results.json
             ${{ runner.temp }}/semantic-producers/receipt.json

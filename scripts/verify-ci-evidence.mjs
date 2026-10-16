@@ -20,9 +20,16 @@ const clangInputs = tests.testResults.find(file => /[/\\]semantic-clang-inputs\.
 assert.ok(clangInputs && clangInputs.assertionResults.length >= 8 && clangInputs.assertionResults.every(test => test.status === 'passed'), 'Actual Clang negative-search, macro-anchor, host context and extraction input barriers must execute');
 const inputWitnesses = tests.testResults.find(file => /[/\\]semantic-inputs\.test\.ts$/.test(file.name));
 assert.ok(inputWitnesses && inputWitnesses.assertionResults.length >= 7 && inputWitnesses.assertionResults.every(test => test.status === 'passed'), 'Compiler inputs and source-root binding qualification must execute');
+const oracle = tests.testResults.find(file => /[/\\]semantic-multiprovider\.test\.ts$/.test(file.name));
+assert.ok(oracle && oracle.assertionResults.length >= 2 && oracle.assertionResults.every(test => test.status === 'passed'), 'Actual multi-provider and accepted-writer upgrade oracles must execute');
+const oracleEvidence = JSON.parse(await readFile(process.argv[4] ?? 'semantic-oracle-results.json', 'utf8'));
+assert.equal(oracleEvidence.complete, true); assert.equal(oracleEvidence.expectedChecks, 18); assert.equal(oracleEvidence.evidence.length, 18);
+for (const edit of ['add Python module without editing importer', 'modify exported TS overload', 'rename Java source', 'delete shadow Python module', 'C header dependency', 'project compiler configuration', 'Rust feature variant', 'Go target tags', 'Java language level', 'Csharp variant defines', 'schema contract replacement', 'documentation only', 'producer receipt mismatch', 'restore qualified producer']) assert.ok(oracleEvidence.evidence.some(row => row.edit === edit), `Missing oracle edit ${edit}`);
+const upgrade = JSON.parse(await readFile(process.argv[5] ?? 'semantic-upgrade-results.json', 'utf8'));
+assert.equal(upgrade.baseline.commit, '6eefca04b5032f3416fcc95bda23dec4bb8f65db'); assert.equal(upgrade.freshness, 'fresh'); assert.equal(upgrade.unpinnedGc, 'complete');
 const recovery = JSON.parse(await readFile(process.argv[3] ?? 'semantic-recovery-results.json', 'utf8'));
 assert.deepEqual(recovery.probes.map(probe => probe.point).sort(), ['after-publish', 'before-publish', 'before-seal', 'during-publish']);
 assert.ok(recovery.probes.every(probe => probe.integrity === 'ok' && probe.baselineRetained));
 assert.deepEqual(recovery.corruption, { refused: true, unchanged: true });
 await Promise.all(['dist/cli/index.js', 'dist/core/query/query-worker.js', 'dist/ui/index.html'].map(file => access(file)));
-console.log(`Verified ${tests.numPassedTests} passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, complete build, four recovery probes and corruption refusal`);
+console.log(`Verified ${tests.numPassedTests} passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer upgrade, complete build, four recovery probes and corruption refusal`);
