@@ -3,7 +3,7 @@ import type { GraphNode, GraphEdge, Diagnostic } from "../graph/schema.js";
 import { SemanticStore } from "./store.js";
 import { canonical, digest, semanticKey, type FactInput, type Provenance, type SupportAtom } from "./model.js";
 
-export const OWNED_PASS_VERSION = "analysis-passes-1";
+export const OWNED_PASS_VERSION = "analysis-passes-2";
 export interface OwnedProjection {
   run: number;
   result: AdapterResult;
@@ -12,6 +12,18 @@ export interface OwnedProjection {
 }
 export function graphReference(repository: string, id: string): string { return semanticKey("graph-reference", [repository, id]); }
 const json = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
+/** Normalize exactly the compatibility JSON payload, charging before accumulation. */
+export function normalizeProjection(result: AdapterResult): AdapterResult {
+  if (result.nodes.length + result.edges.length + result.diagnostics.length > 1000000) throw Error("Projection exceeds offline row bound");
+  let bytes = 0;
+  const item = <T>(value: T): T => {
+    const encoded = JSON.stringify(value); bytes += Buffer.byteLength(encoded);
+    if (bytes > 128 * 1024 ** 2) throw Error("Projection exceeds offline byte bound");
+    return JSON.parse(encoded) as T;
+  };
+  return { ...result, nodes: result.nodes.map(item), edges: result.edges.map(item), diagnostics: result.diagnostics.map(item) };
+}
+
 
 /** Mutable objects exist only as offline algorithm inputs/compatibility views, never as authority. */
 export function readOwnedProjection(store: SemanticStore, run: number): OwnedProjection {
@@ -75,11 +87,11 @@ export class OwnedWriter {
     }
     return this.store.addFact(this.run, { ...input, context: this.provenance.context, provenance: this.provenance, supports: alternatives.map(claims => this.support(claims)) });
   }
-  write(result: AdapterResult): OwnedProjection {
+  write(result: AdapterResult, evidenceNodes?: Map<string, Set<string>>): OwnedProjection {
     if (result.nodes.length + result.edges.length > 1000000) throw Error("Pass output exceeds row bound");
     let bytes = 0;
-    const nodeFiles = new Map<string, Set<string>>();
-    for (const edge of result.edges) for (const id of [edge.source, edge.target]) {
+    const nodeFiles = evidenceNodes ?? new Map<string, Set<string>>();
+    if (!evidenceNodes) for (const edge of result.edges) for (const id of [edge.source, edge.target]) {
       const files = nodeFiles.get(id) ?? new Set<string>();
       for (const evidence of edge.evidence) if (evidence.file) files.add(evidence.file);
       nodeFiles.set(id, files);
@@ -115,43 +127,82 @@ export class OwnedWriter {
   }
 }
 
-export function writeSyntaxBase(store: SemanticStore, snapshot: RepositorySnapshot, graph: AdapterResult, context: string, fingerprint: string) {
-  if (graph.nodes.length + graph.edges.length + graph.diagnostics.length + snapshot.files.length > 1000000) throw Error("Source observation layer exceeds offline row bound");
-  let bytes = 0;
-  const run = store.begin("analysis/source", context, fingerprint); const selector = { key: `analysis:catalogue:${snapshot.repository.identity}`, digest: fingerprint };
-  const provenance: Provenance = { provider: "source-and-language-observations", version: OWNED_PASS_VERSION, basis: "syntax", method: "immutable-provider-observations", context, inputFingerprint: fingerprint };
-  const fileClaims = new Map<string, string>(); const nodeClaims = new Map<string, string>();
-  store.batch(run, () => store.selector(run, selector.key, selector.digest));
-  const files = [...snapshot.fileContents].sort(([a], [b]) => a.localeCompare(b));
-  for (let at = 0; at < files.length; at += 500) store.batch(run, () => { for (const [file, source] of files.slice(at, at + 500)) {
-    const hash = digest(source); const key = semanticKey("source-file", [snapshot.repository.identity, file, hash]); store.addEntity(key, "artifact", { key, file, digest: hash });
-    store.input(run, `source:${file}`, hash);
-    fileClaims.set(file, store.addFact(run, { predicate: "source.File", context, subject: key, value: { file, digest: hash, bytes: Buffer.byteLength(source) }, confidence: "exact", provenance }));
-  } });
-  for (const [predicate, items, kind] of [["syntax.Node", graph.nodes, "node"], ["syntax.Relation", graph.edges, "edge"]] as const) {
-    for (let offset = 0; offset < items.length; offset += 500) store.batch(run, () => {
-      for (const [index, original] of items.slice(offset, offset + 500).entries()) {
-        const value = json(original); const subject = graphReference(snapshot.repository.identity, value.id); store.addEntity(subject, "artifact", { key: subject, legacyId: value.id });
-        const payload = { [kind]: value }; bytes += Buffer.byteLength(canonical(payload));
-        if (bytes > 128 * 1024 ** 2) throw Error("Source observation layer exceeds offline byte bound");
-        let bounded: Record<string, unknown> = payload;
-        if (Buffer.byteLength(canonical(payload)) > 65536) { const key = semanticKey("projection-payload", [canonical(payload)]); store.addEntity(key, "artifact", payload); bounded = { payloadEntity: key }; }
-        const claim = store.addFact(run, { predicate, context, subject, value: bounded, confidence: "confidence" in value ? value.confidence : "exact", provenance });
-        store.sql("INSERT INTO sc_projection_rows(run,kind,ordinal,claim) SELECT ?,?,?,id FROM sc_claims WHERE key=?").run(run, kind, offset + index, claim);
-        if (kind === "node") nodeClaims.set(value.id, claim);
-      }
-    });
-  }
-  for (let offset = 0; offset < graph.diagnostics.length; offset += 500) store.batch(run, () => {
-    for (const [index, item] of graph.diagnostics.slice(offset, offset + 500).entries()) {
-      const value = json(item); const subject = semanticKey("syntax-diagnostic", [snapshot.repository.identity, value]);
-      store.addEntity(subject, "artifact", { key: subject }); const payload = { diagnostic: value }; let bounded: Record<string, unknown> = payload;
-      const encoded = canonical(payload); bytes += Buffer.byteLength(encoded); if (bytes > 128 * 1024 ** 2) throw Error("Source diagnostics exceed offline byte bound");
-      if (Buffer.byteLength(encoded) > 65536) { const key = semanticKey("projection-payload", [encoded]); store.addEntity(key, "artifact", payload); bounded = { payloadEntity: key }; }
-      const claim = store.addFact(run, { predicate: "syntax.Diagnostic", context, subject, value: bounded, confidence: "exact", provenance });
-      store.sql("INSERT INTO sc_projection_rows(run,kind,ordinal,claim) SELECT ?,?,?,id FROM sc_claims WHERE key=?").run(run, "diagnostic", offset + index, claim);
+/** Reconstruct offline adapter input from source-owned partitions, never derived output. */
+export function readSyntaxProjection(store: SemanticStore, snapshot: number): OwnedProjection | undefined {
+  const rows = store.sql("SELECT partition_key,run FROM sc_partitions WHERE snapshot=? AND (partition_key='analysis/source' OR partition_key LIKE 'analysis/source/file:%') ORDER BY partition_key").all(snapshot) as Array<{ partition_key: string; run: number }>;
+  if (!rows.some(row => row.partition_key === "analysis/source")) return undefined;
+  const combined: OwnedProjection = { run: rows.find(row => row.partition_key === "analysis/source")!.run, result: { nodes: [], edges: [], diagnostics: [], metadata: {} }, nodeClaims: new Map(), edgeClaims: new Map() };
+  let bytes = 0; let count = 0;
+  for (const row of rows) {
+    const projection = readOwnedProjection(store, row.run);
+    for (const field of ["nodes", "edges", "diagnostics"] as const) {
+      for (const item of projection.result[field]) { bytes += Buffer.byteLength(canonical(item)); if (++count > 1000000 || bytes > 128 * 1024 ** 2) throw Error("Source projection exceeds offline work bounds"); }
     }
-  });
-  store.seal(run, { status: "partial", provider: "source-and-language-observations", version: OWNED_PASS_VERSION, gaps: ["Syntax evidence preserves existing language maturity; native facts remain separate"] });
-  return { run, selector, fileClaims, nodeClaims };
+    for (const node of projection.result.nodes) combined.result.nodes.push(node);
+    for (const edge of projection.result.edges) combined.result.edges.push(edge);
+    for (const diagnostic of projection.result.diagnostics) combined.result.diagnostics.push(diagnostic);
+    projection.nodeClaims.forEach((value, key) => combined.nodeClaims.set(key, value)); projection.edgeClaims.forEach((value, key) => combined.edgeClaims.set(key, value));
+  }
+  return combined;
+}
+
+export function writeSyntaxBase(store: SemanticStore, snapshot: RepositorySnapshot, graph: AdapterResult, context: string, fingerprint: string) {
+  graph = normalizeProjection(graph);
+  if (graph.nodes.length + graph.edges.length + graph.diagnostics.length + snapshot.files.length > 1000000) throw Error("Source observation layer exceeds offline row bound");
+  const selector = { key: `analysis:catalogue:${snapshot.repository.identity}`, digest: fingerprint };
+  const catalogue = store.begin("analysis/catalogue", context, fingerprint); store.selector(catalogue, selector.key, selector.digest);
+  store.seal(catalogue, { status: "partial", version: OWNED_PASS_VERSION, ownershipShard: "source-candidate-catalogue" });
+  const runs = [catalogue]; const fileClaims = new Map<string, string>(); const nodeClaims = new Map<string, string>(); const edgeClaims = new Map<string, string>();
+  const groups = new Map<string, AdapterResult>([["", { nodes: [], edges: [], diagnostics: [], metadata: {} }]]);
+  const group = (file: string | undefined) => {
+    const key = file && snapshot.fileContents.has(file) ? file : "";
+    let value = groups.get(key); if (!value) { value = { nodes: [], edges: [], diagnostics: [], metadata: {} }; groups.set(key, value); } return value;
+  };
+  for (const file of snapshot.fileContents.keys()) group(file);
+  const nodes = new Map(graph.nodes.map(node => [node.id, node]));
+  for (const node of graph.nodes) group(node.file).nodes.push(node);
+  for (const edge of graph.edges) {
+    const owner = nodes.get(edge.source)?.file;
+    group(owner && snapshot.fileContents.has(owner) ? owner : edge.evidence.find(item => item.file && snapshot.fileContents.has(item.file))?.file).edges.push(edge);
+  }
+  for (const diagnostic of graph.diagnostics) group(diagnostic.file).diagnostics.push(diagnostic);
+  let bytes = 0; let run = 0;
+  for (const [file, result] of [...groups].sort(([a], [b]) => a.localeCompare(b))) {
+    const source = file ? snapshot.fileContents.get(file)! : undefined;
+    const inputFingerprint = digest(canonical([OWNED_PASS_VERSION, context, snapshot.config, file, source === undefined ? null : digest(source), result]));
+    const partition = file ? `analysis/source/file:${file}` : "analysis/source";
+    const cached = store.reusable(partition, context, inputFingerprint);
+    const current = cached?.coverage.version === OWNED_PASS_VERSION ? cached.id : store.begin(partition, context, inputFingerprint);
+    if (!file) run = current;
+    runs.push(current);
+    const provenance: Provenance = { provider: "source-and-language-observations", version: OWNED_PASS_VERSION, basis: "syntax", method: "immutable-provider-observations", context, inputFingerprint };
+    if (!cached || current !== cached.id) {
+      if (source !== undefined) store.batch(current, () => {
+        const hash = digest(source); const key = semanticKey("source-file", [snapshot.repository.identity, file, hash]); store.addEntity(key, "artifact", { key, file, digest: hash });
+        store.input(current, `source:${file}`, hash);
+        fileClaims.set(file, store.addFact(current, { predicate: "source.File", context, subject: key, value: { file, digest: hash, bytes: Buffer.byteLength(source) }, confidence: "exact", provenance }));
+      });
+      const write = (predicate: "syntax.Node" | "syntax.Relation" | "syntax.Diagnostic", kind: string, items: Array<GraphNode | GraphEdge | Diagnostic>) => {
+        for (let offset = 0; offset < items.length; offset += 500) store.batch(current, () => {
+          for (const [index, original] of items.slice(offset, offset + 500).entries()) {
+            const value = json(original); const subject = "id" in value ? graphReference(snapshot.repository.identity, value.id) : semanticKey("syntax-diagnostic", [snapshot.repository.identity, value]);
+            store.addEntity(subject, "artifact", "id" in value ? { key: subject, legacyId: value.id } : { key: subject });
+            const payload = { [kind]: value }; const encoded = canonical(payload); let bounded: Record<string, unknown> = payload;
+            if (Buffer.byteLength(encoded) > 65536) { const key = semanticKey("projection-payload", [encoded]); store.addEntity(key, "artifact", payload); bounded = { payloadEntity: key }; }
+            const claim = store.addFact(current, { predicate, context, subject, value: bounded, confidence: "confidence" in value ? value.confidence : "exact", provenance });
+            store.sql("INSERT INTO sc_projection_rows(run,kind,ordinal,claim) SELECT ?,?,?,id FROM sc_claims WHERE key=?").run(current, kind, offset + index, claim);
+          }
+        });
+      };
+      write("syntax.Node", "node", result.nodes); write("syntax.Relation", "edge", result.edges); write("syntax.Diagnostic", "diagnostic", result.diagnostics);
+      store.seal(current, { status: "partial", provider: "source-and-language-observations", version: OWNED_PASS_VERSION, ownershipShard: file ? "source-file" : "source-structure", gaps: ["Syntax evidence preserves existing language maturity; native facts remain separate"] });
+    } else if (file) {
+      const row = store.sql("SELECT c.key FROM sc_owned o JOIN sc_claims c ON c.id=o.claim JOIN sc_facts f ON f.id=c.fact WHERE o.run=? AND f.predicate='source.File'").get(current) as { key: string } | undefined;
+      if (!row) throw Error("Source shard has no file evidence"); fileClaims.set(file, row.key);
+    }
+    const projection = readOwnedProjection(store, current);
+    for (const field of ["nodes", "edges", "diagnostics"] as const) for (const item of projection.result[field]) { bytes += Buffer.byteLength(canonical(item)); if (bytes > 128 * 1024 ** 2) throw Error("Source observation layer exceeds offline byte bound"); }
+    projection.nodeClaims.forEach((value, key) => nodeClaims.set(key, value)); projection.edgeClaims.forEach((value, key) => edgeClaims.set(key, value));
+  }
+  return { run, runs, selector, fileClaims, nodeClaims, projection: { run, result: graph, nodeClaims, edgeClaims } satisfies OwnedProjection };
 }

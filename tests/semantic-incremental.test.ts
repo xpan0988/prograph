@@ -32,6 +32,8 @@ test("compiler document ownership reuses unrelated outputs and invalidates uncha
   await syncRepository(root); const after = inspect(index);
   const id = (rows: typeof after.runs, file: string) => rows.find(row => row.partition_key.endsWith(`/document:${file}`))!.run;
   expect(id(after.runs, "c.ts")).toBe(id(before.runs, "c.ts"));
+  expect(after.runs.find(row => row.partition_key === "analysis/source/file:c.ts")!.run).toBe(before.runs.find(row => row.partition_key === "analysis/source/file:c.ts")!.run);
+  expect(after.runs.find(row => row.partition_key === "analysis/source")!.run).toBe(before.runs.find(row => row.partition_key === "analysis/source")!.run);
   expect(id(after.runs, "b.ts")).not.toBe(id(before.runs, "b.ts"));
   expect(id(after.runs, "a.ts")).not.toBe(id(before.runs, "a.ts"));
   const clean = await fixture(); await analyzeRepository(root, { output: clean }); expect(inspect(clean).hash).toBe(after.hash);

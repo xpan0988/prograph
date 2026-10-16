@@ -1,0 +1,57 @@
+{
+  "scope": "Exploratory only: repeated complete first navigation construction with 16/64/16 MiB writer caches; no producer or reindex staging. Same base facts, serial order and warm filesystem/allocator confounding; informs an implementation tradeoff, not acceptance numbers.",
+  "node": "v25.9.0",
+  "root": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-cache-prototype-88znIU",
+  "trials": [
+    {
+      "cacheKiB": 16000,
+      "snapshot": 1,
+      "ms": 29193.309458000003,
+      "stages": {
+        "content-key": 3.506333999999697,
+        "membership": 2480.223082999999,
+        "support-eligibility": 0.43966700000237324,
+        "navigation": 24981.427624999997,
+        "symbols": 0.028125000004365575,
+        "call-summary": 0.9501659999950789,
+        "pointer-and-commit": 1726.503125000003
+      },
+      "visible": 2000012
+    },
+    {
+      "cacheKiB": 65536,
+      "snapshot": 1,
+      "ms": 32449.793708000005,
+      "stages": {
+        "content-key": 0.603832999993756,
+        "membership": 2451.7925840000025,
+        "support-eligibility": 0.3021660000013071,
+        "navigation": 28720.971166999996,
+        "symbols": 0.04841699999815319,
+        "call-summary": 0.9972910000069533,
+        "pointer-and-commit": 1274.9592919999996
+      },
+      "visible": 2000012
+    },
+    {
+      "cacheKiB": 16000,
+      "snapshot": 1,
+      "ms": 29003.631041,
+      "stages": {
+        "content-key": 0.7235000000073342,
+        "membership": 2360.088249999986,
+        "support-eligibility": 0.2036660000012489,
+        "navigation": 25273.249167,
+        "symbols": 0.004916999998386018,
+        "call-summary": 0.5223750000004657,
+        "pointer-and-commit": 1368.7230410000047
+      },
+      "visible": 2000012
+    }
+  ],
+  "integrity": "ok",
+  "foreignKeys": [],
+  "nodePeakRssKiB": 221232,
+  "decision": "Rejected: 64 MiB was slower than either 16 MiB sample; production cache remains 16 MiB. Exploratory methodology is not the publication acceptance benchmark.",
+  "methodSource": "// Exploratory SQLite writer-cache comparison only. Uses immutable validated base facts;\n// not a replacement for the required publication/reindex acceptance methodology.\nimport Database from '/Users/xiyuanpan/prograph/node_modules/better-sqlite3/lib/index.js';import{mkdtemp,writeFile,rm}from'node:fs/promises';import path from'node:path';import os from'node:os';\nimport{SemanticStore}from'/Users/xiyuanpan/prograph/dist/core/semantic/store.js';import{SEMANTIC_SQL}from'/Users/xiyuanpan/prograph/dist/core/semantic/schema.js';\nconst source='/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-scip-bench-bpTuoQ/.prograph/semantic.sqlite',root=await mkdtemp(path.join(os.tmpdir(),'prograph-cache-prototype-')),filename=path.join(root,'semantic.sqlite');const original=new Database(source,{readonly:true});await original.backup(filename);original.close();let stages={};const s=new SemanticStore(filename,{measure(stage,ms){stages[stage]=ms}});const runs=s.sql('SELECT run FROM sc_partitions WHERE snapshot=?').all(s.activeSnapshot()).map(r=>r.run),trials=[];\ntry{for(const cacheKiB of [16000,65536,16000]){s.db.pragma('cache_size=-'+cacheKiB);s.db.transaction(()=>{s.db.exec(\"DELETE FROM sc_meta WHERE key='active';UPDATE sc_snapshots SET parent=NULL;DELETE FROM sc_snapshots;DELETE FROM sc_visibility;DROP TABLE sc_call_epochs;DROP TABLE sc_claim_navigation\");s.db.exec(SEMANTIC_SQL)})();stages={};const start=performance.now(),snapshot=s.publish(runs);const result={cacheKiB,snapshot,ms:performance.now()-start,stages,visible:s.sql('SELECT COUNT(*) AS n FROM sc_active WHERE snapshot=?').get(snapshot).n};trials.push(result);console.log(JSON.stringify(result));}\nconst report={scope:'Exploratory only: repeated complete first navigation construction with 16/64/16 MiB writer caches; no producer or reindex staging. Same base facts, serial order and warm filesystem/allocator confounding; informs an implementation tradeoff, not acceptance numbers.',node:process.version,root,trials,integrity:s.db.pragma('integrity_check',{simple:true}),foreignKeys:s.db.pragma('foreign_key_check'),nodePeakRssKiB:process.resourceUsage().maxRSS};await writeFile('/private/tmp/prograph-stage5-cache-prototype.json',JSON.stringify(report,null,2)+'\\n');}finally{s.close();await rm(root,{recursive:true,force:true})}\n"
+}

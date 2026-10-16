@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS sc_runs(id INTEGER PRIMARY KEY,partition_key TEXT NOT
 CREATE TABLE IF NOT EXISTS sc_run_digests(run INTEGER PRIMARY KEY REFERENCES sc_runs(id),digest TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS sc_owned(run INTEGER NOT NULL REFERENCES sc_runs(id),claim INTEGER NOT NULL REFERENCES sc_claims(id),PRIMARY KEY(run,claim));
 CREATE TABLE IF NOT EXISTS sc_run_selectors(run INTEGER NOT NULL REFERENCES sc_runs(id),key TEXT NOT NULL,digest TEXT NOT NULL,PRIMARY KEY(run,key));
+CREATE TABLE IF NOT EXISTS sc_selector_gates(run INTEGER NOT NULL,key TEXT NOT NULL,required_key TEXT NOT NULL,expected TEXT NOT NULL,PRIMARY KEY(run,key,required_key),FOREIGN KEY(run,key) REFERENCES sc_run_selectors(run,key) ON DELETE CASCADE,CHECK(key<>required_key));
+CREATE INDEX IF NOT EXISTS sc_selector_gate_key ON sc_selector_gates(key,run);
 CREATE TABLE IF NOT EXISTS sc_inputs(run INTEGER NOT NULL REFERENCES sc_runs(id),resource TEXT NOT NULL,digest TEXT NOT NULL,PRIMARY KEY(run,resource));
 CREATE TABLE IF NOT EXISTS sc_snapshots(id INTEGER PRIMARY KEY,parent INTEGER REFERENCES sc_snapshots(id),key TEXT NOT NULL,created_at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS sc_snapshot_pins(snapshot INTEGER NOT NULL REFERENCES sc_snapshots(id),label TEXT NOT NULL,PRIMARY KEY(snapshot,label));

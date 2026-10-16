@@ -105,9 +105,14 @@ export class SemanticStore {
     this.requireStaging(run);
     this.sql("INSERT INTO sc_inputs VALUES(?,?,?) ON CONFLICT(run,resource) DO UPDATE SET digest=excluded.digest").run(run, resource, hash);
   }
-  selector(run: number, key: string, hash: string): void {
+  selector(run: number, key: string, hash: string, requires: Array<{ key: string; digest: string }> = []): void {
     this.requireStaging(run);
-    this.sql("INSERT INTO sc_run_selectors VALUES(?,?,?) ON CONFLICT(run,key) DO UPDATE SET digest=excluded.digest").run(run, key, hash);
+    if (requires.length > 32 || new Set(requires.map(input => input.key)).size !== requires.length || requires.some(input => !input.key || !input.digest || input.key === key)) throw Error("Invalid selector admission requirements");
+    this.db.transaction(() => {
+      this.sql("INSERT INTO sc_run_selectors VALUES(?,?,?) ON CONFLICT(run,key) DO UPDATE SET digest=excluded.digest").run(run, key, hash);
+      this.sql("DELETE FROM sc_selector_gates WHERE run=? AND key=?").run(run, key);
+      for (const input of requires) this.sql("INSERT INTO sc_selector_gates VALUES(?,?,?,?)").run(run, key, input.key, input.digest);
+    })();
   }
   private support(alternatives: SupportAlternative[]): number {
     // OR of interned, deduplicated AND alternatives. Atom order has no meaning.
@@ -195,6 +200,7 @@ export class SemanticStore {
     content.update(canonical(row));
     for (const claim of this.sql("SELECT c.key FROM sc_owned o JOIN sc_claims c ON c.id=o.claim WHERE o.run=? ORDER BY c.key").iterate(run) as Iterable<{ key: string }>) content.update(claim.key);
     for (const selector of this.sql("SELECT key,digest FROM sc_run_selectors WHERE run=? ORDER BY key").iterate(run)) content.update(canonical(selector));
+    for (const gate of this.sql("SELECT key,required_key,expected FROM sc_selector_gates WHERE run=? ORDER BY key,required_key").iterate(run)) content.update(canonical(["selector-admission", gate]));
     for (const input of this.sql("SELECT resource,digest FROM sc_inputs WHERE run=? ORDER BY resource").iterate(run)) content.update(canonical(input));
     const result = content.digest("hex");
     this.sql("INSERT INTO sc_run_digests VALUES(?,?)").run(run, result);
@@ -224,6 +230,11 @@ export class SemanticStore {
       for (const run of selected) this.sql("INSERT INTO sc_partitions VALUES(?,?,?)").run(id, run.partition_key, run.id);
       const conflicts = this.sql(`SELECT rs.key FROM sc_run_selectors rs JOIN sc_partitions p ON p.run=rs.run WHERE p.snapshot=? GROUP BY rs.key HAVING COUNT(DISTINCT rs.digest)>1 LIMIT 1`).get(id);
       if (conflicts) throw new Error("Conflicting selector environments");
+      // Admission qualifiers may depend only on unconditional input selectors.
+      // This keeps effective selector comparison independent of derived eligibility,
+      // avoiding cyclic gates and invalidating only actually changed environments.
+      if (this.sql(`SELECT 1 FROM sc_selector_gates g JOIN sc_partitions p ON p.run=g.run WHERE p.snapshot=? AND EXISTS(
+        SELECT 1 FROM sc_selector_gates nested INDEXED BY sc_selector_gate_key JOIN sc_partitions owner ON owner.run=nested.run WHERE nested.key=g.required_key AND owner.snapshot=p.snapshot) LIMIT 1`).get(id)) throw Error("Selector admission requires unconditional input selectors");
       publishProjections(this, id, parent, measure);
       this.sql("INSERT INTO sc_meta VALUES('active',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(String(id));
       return id;

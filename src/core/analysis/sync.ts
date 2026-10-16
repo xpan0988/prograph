@@ -10,7 +10,7 @@ import { rustAdapter } from "../../adapters/language/rust/index.js";
 import { persistGraph } from "../storage/sqlite.js";
 import packageJson from "../../../package.json" with { type: "json" };
 import { SemanticStore } from "../semantic/store.js";
-import { readOwnedProjection } from "../semantic/owned-projection.js";
+import { readSyntaxProjection } from "../semantic/owned-projection.js";
 import { deriveOwnedAnalysis } from "../semantic/analysis-passes.js";
 import { GraphBuilder } from "../graph/builder.js";
 import { indexSemanticFoundation } from "../semantic/typescript.js";
@@ -80,9 +80,8 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
   let source: GraphData;
   const store = new SemanticStore(path.join(status.indexDirectory, "semantic.sqlite"));
   try {
-    const run = store.sql("SELECT run FROM sc_partitions WHERE snapshot=? AND partition_key='analysis/source'").get(store.activeSnapshot()) as { run: number } | undefined;
-    if (!run) return undefined; // Old indexes upgrade through a clean analysis.
-    const observations = readOwnedProjection(store, run.run);
+    const observations = store.activeSnapshot() ? readSyntaxProjection(store, store.activeSnapshot()!) : undefined;
+    if (!observations) return undefined; // Old indexes upgrade through a clean analysis.
     source = { ...previous, ...observations.result };
   } finally { store.close(); }
   const scan = await scanRepository(status.repositoryRoot, status.indexDirectory);

@@ -218,7 +218,11 @@ async function reusableUnit(store: SemanticStore, snapshot: RepositorySnapshot, 
     if (input.resource.startsWith("source:")) { const text = snapshot.fileContents.get(input.resource.slice(7)); if (text === undefined || digest(text) !== input.digest) return undefined; }
     else if (input.resource.startsWith("physical:")) {
       const file = input.resource.slice(9);
-      // Project resolution is closed only when every recorded compiler input still matches.
+      const require = createRequire(import.meta.url); const bundle = require.resolve("@ts-morph/common");
+      const sdk = new Set([bundle, path.join(path.dirname(bundle), "typescript.js")]);
+      // Only embedded compiler artifacts are exempt from the closed local-unit rule.
+      // Outside source/ambient/module search spaces still prevent compiler skipping.
+      if (!sdk.has(file) && (file.includes("/node_modules/") || !file.startsWith(`${snapshot.repository.root}/`))) return undefined;
       try { if (digest(await readFile(file)) !== input.digest) return undefined; } catch { return undefined; }
     }
   }

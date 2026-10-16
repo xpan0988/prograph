@@ -64,3 +64,23 @@ test("GC keeps large projection payloads and rolls back failed collection atomic
     expect(store.db.pragma("foreign_key_check")).toEqual([]);
   } finally { store.close(); }
 });
+
+test("GC preserves selector admission and source-catalogue witnesses after their snapshots expire", async () => {
+  const store = await fixture();
+  try {
+    const root = (value: string) => { const id = store.begin("catalogue", "ctx", value); store.selector(id, "catalogue", value); store.seal(id, {}); return id; };
+    const index = (value: string, output: string) => { const id = store.begin("pass-index", "ctx", value); store.selector(id, "output", output, [{ key: "catalogue", digest: value }]); store.seal(id, {}); return id; };
+    const oldRoot = root("one"), oldIndex = index("one", "bound");
+    const output = run(store, "output", fact("output", [[{ selector: "output", digest: "bound" }]]));
+    store.publish([oldRoot, oldIndex, output.id]);
+    const newRoot = root("two"), newIndex = index("two", "ambiguous");
+    const current = store.publish([newRoot, newIndex, output.id]); expect(visible(store, current)).toEqual([]);
+    store.collectGarbage({ keep: 1 });
+    const origins = store.sql("SELECT partition_key,selectors_json FROM sc_origin_runs ORDER BY partition_key").all() as Array<{ partition_key: string; selectors_json: string }>;
+    expect(origins.map(row => row.partition_key)).toEqual(["catalogue", "pass-index"]);
+    expect(JSON.parse(origins[1]!.selectors_json)).toEqual([{ key: "output", digest: "bound", requires: [{ key: "catalogue", digest: "one" }] }]);
+    store.collectGarbage({ keep: 1 }); expect(store.sql("SELECT COUNT(*) AS n FROM sc_origin_runs").get()).toEqual({ n: 2 });
+    expect(visible(store, current)).toEqual([]); expect(store.db.pragma("foreign_key_check")).toEqual([]);
+    store.publish([]); store.collectGarbage({ keep: 1 }); expect(store.sql("SELECT COUNT(*) AS n FROM sc_origin_runs").get()).toEqual({ n: 0 });
+  } finally { store.close(); }
+});

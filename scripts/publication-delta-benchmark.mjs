@@ -22,6 +22,7 @@ const copyInputs=(from,to)=>{store.db.prepare('INSERT INTO sc_inputs SELECT ?,re
 const reset=()=>store.db.transaction(()=>{store.db.exec("DELETE FROM sc_meta WHERE key='active'; UPDATE sc_snapshots SET parent=NULL; DELETE FROM sc_snapshots; DELETE FROM sc_visibility; DROP TABLE sc_call_epochs; DROP TABLE sc_claim_navigation;");store.db.exec(SEMANTIC_SQL);})();
 try {
   report.pragmas=Object.fromEntries(['journal_mode','synchronous','foreign_keys','wal_autocheckpoint','cache_size'].map(key=>[key,store.db.pragma(key,{simple:true})]));
+  if(store.db.prepare('SELECT 1 FROM sc_selector_gates LIMIT 1').get())throw Error('Raw base-fact fixture required: reshaping must not omit selector admission qualifiers');
   const parent=store.activeSnapshot();const sources=store.db.prepare('SELECT r.* FROM sc_partitions p JOIN sc_runs r ON r.id=p.run WHERE p.snapshot=? ORDER BY r.id').all(parent);
   if(store.db.prepare('SELECT 1 FROM sc_partitions p JOIN sc_owned o ON o.run=p.run JOIN sc_claims c ON c.id=o.claim WHERE p.snapshot=? AND c.support_group IS NOT NULL LIMIT 1').get(parent))throw Error('Baseline must contain only base SCIP observations; supported output has its separate fanout workload');
   reset();report.originalOwnershipFirst=publish(sources.map(source=>source.id));report.originalOwnershipPartitions=sources.length;

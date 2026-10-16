@@ -1,0 +1,70 @@
+{
+  "node": "v25.9.0",
+  "totalTests": 160,
+  "passedTests": 160,
+  "failedTests": 0,
+  "pendingTests": 0,
+  "testReportSha256": "3e2d16a85c1d82c10cb49bee6041620a8431d5b451648b803d945bdedfb24e89",
+  "recovery": {
+    "node": "v25.9.0",
+    "probes": [
+      {
+        "point": "before-seal",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "before-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "during-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "after-publish",
+        "exitCode": 57,
+        "activeSnapshot": 2,
+        "visible": [
+          "other"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      }
+    ],
+    "corruption": {
+      "refused": true,
+      "unchanged": true
+    }
+  },
+  "typecheck": "passed",
+  "nodeUiBuild": "passed",
+  "ciEvidenceVerifier": "passed; all five real producers, complete build, four recovery points and corruption refusal",
+  "compiledHashes": {
+    "dist/core/semantic/typescript.js": "d5e63997cf2721a7635edd9697c73a5c7900b0f25e84ceb4f889e962bbf3c7eb",
+    "dist/core/semantic/analysis-passes.js": "7024cd396e32e9803e628d99fc0ca4a8436bbb6d3a8d7f9f932778510e941e86",
+    "dist/core/semantic/owned-projection.js": "9d86abe89c250a11a2ac2bf7093a55704d298bbfe7c2d52fe0a3ddb0c78cf5ca",
+    "dist/core/semantic/projection-shards.js": "c6e2c4bed117256fc17cede524d8a1007aad59caa8428c6ef972eee4d6bd974b",
+    "dist/core/semantic/boundary-shards.js": "597534b4d5c07032f43a7cee6dfeee6d4819e2a892c3201edcb80fd70530c2ab",
+    "dist/core/semantic/store.js": "f84ab7b526ba86aa439d49e0af1eaad5d96df0256c9c9a04b041d42c20531d77",
+    "dist/core/semantic/publication.js": "213a3e579eaed59700b25c6e2e2743283000ae8601fe2a39035ba998f5590558"
+  },
+  "scope": "Final qualified-selector/sharded ownership implementation. Complete actual-producer suite, typecheck, Node/UI build, four recovery points and corruption refusal; a Stage 5 sub-milestone, not full Core 2.0 acceptance."
+}

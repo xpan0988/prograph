@@ -416,6 +416,8 @@ Passes consume immutable read views through `FactReader`/`ProjectionReader`, bac
 
 Each output has a producer partition, supporting claim set or interned support group, and a derivation explanation. Selector dependencies record the query keys used to choose inputs, including negative lookups. Reading "the only candidate named x in scope S" depends on the candidate set, not only on the candidate that happened to win.
 
+A freshly evaluated pass may reuse immutable output shards by content/support fingerprint. Its admission manifest must itself be qualified by the source/indexing environment: retaining an old manifest alongside new source facts must not re-admit an obsolete unique binding. The physical implementation therefore normalizes selector admission requirements in `sc_selector_gates`. A selected output selector is effective only when all required **unconditional** input selectors have their recorded values in that same snapshot. Nested/cyclic selector admission is deliberately rejected; a more general conditional system needs a separately qualified algorithm. Effective selector values are materialized as bounded SQLite metadata for the parent/planned snapshot, then compared before the ordinary claim support closure. An unchanged output can be admitted by a new valid manifest without rewriting its claims; an old manifest whose input catalogue changed contributes no effective admission. This correction is based on the Stage 5 stale-whole-pass-index counterexample, not a relaxation of support validation.
+
 ### Initial and optional passes
 
 | Pass | Inputs | Output / invalidation scope |

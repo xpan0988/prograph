@@ -25,7 +25,10 @@ async function fixture() {
 /** Independent full selected-ownership/OR-of-AND fixed point; no interval/projection inputs. */
 function fullOracle(store: SemanticStore, snapshot: number): number[] {
   const owned = store.db.prepare("SELECT DISTINCT o.claim,c.support_group FROM sc_partitions p JOIN sc_owned o ON o.run=p.run JOIN sc_claims c ON c.id=o.claim WHERE p.snapshot=?").all(snapshot) as { claim: number; support_group: number | null }[];
-  const selectors = new Map((store.db.prepare("SELECT rs.key,rs.digest FROM sc_run_selectors rs JOIN sc_partitions p ON p.run=rs.run WHERE p.snapshot=?").all(snapshot) as { key: string; digest: string }[]).map(x => [x.key, x.digest]));
+  const declarations = store.sql("SELECT rs.run,rs.key,rs.digest FROM sc_run_selectors rs JOIN sc_partitions p ON p.run=rs.run WHERE p.snapshot=?").all(snapshot) as Array<{ run: number; key: string; digest: string }>;
+  const requires = (row: typeof declarations[number]) => store.sql("SELECT required_key,expected FROM sc_selector_gates WHERE run=? AND key=?").all(row.run, row.key) as Array<{ required_key: string; expected: string }>;
+  const unconditional = new Map(declarations.filter(row => !requires(row).length).map(row => [row.key, row.digest]));
+  const selectors = new Map(declarations.filter(row => requires(row).every(input => unconditional.get(input.required_key) === input.expected)).map(row => [row.key, row.digest]));
   const active = new Set(owned.map(x => x.claim)); let changed = true;
   while (changed) {
     changed = false;
@@ -40,6 +43,32 @@ function fullOracle(store: SemanticStore, snapshot: number): number[] {
   return [...active].sort((a, b) => a - b);
 }
 function visible(store: SemanticStore, snapshot: number): number[] { return (store.db.prepare("SELECT claim FROM sc_active WHERE snapshot=? ORDER BY claim").all(snapshot) as { claim: number }[]).map(x => x.claim); }
+
+test("qualified selector admission rejects a stale index and reuses unchanged output across fresh environments", async () => {
+  const { store, run, fact } = await fixture();
+  try {
+    const base = run("base", "base");
+    const root = (value: string) => { const id = store.begin("catalogue", "ctx", "inputs"); store.selector(id, "source-candidates", value); store.seal(id, {}); return id; };
+    const index = (value: string) => { const id = store.begin("pass-index", "ctx", "inputs"); store.selector(id, "validated-output", "same", [{ key: "source-candidates", digest: value }]); store.seal(id, {}); return id; };
+    const one = root("one"), two = root("two"), indexOne = index("one"), indexTwo = index("two");
+    const output = store.begin("output", "ctx", "inputs");
+    const derived = store.batch(output, () => store.addFact(output, { ...fact("derived"), predicate: "common.CallSummary", subject: "caller", object: "target", supports: [[{ claim: base.claims[0]! }, { selector: "validated-output", digest: "same" }]] })); store.seal(output, {});
+    const first = store.publish([base.id, one, indexOne, output]);
+    const next = store.publish([base.id, two, indexTwo, output]);
+    expect(visible(store, next)).toEqual(fullOracle(store, next));
+    const claim = (store.sql("SELECT id FROM sc_claims WHERE key=?").get(derived) as { id: number }).id;
+    expect(store.sql("SELECT COUNT(*) AS n FROM sc_visibility WHERE claim=?").get(claim)).toEqual({ n: 1 });
+    const stale = store.publish([base.id, two, indexOne, output]); expect(visible(store, stale)).toEqual(fullOracle(store, stale));
+    expect(visible(store, stale)).not.toContain(claim); expect(visible(store, first)).toContain(claim);
+    let seed = 0x6a7e; for (let i = 0; i < 40; i++) {
+      seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+      const selected = [base.id, output, seed & 1 ? one : two, ...(seed & 2 ? [seed & 4 ? indexOne : indexTwo] : [])];
+      const snapshot = store.publish(selected); expect(visible(store, snapshot)).toEqual(fullOracle(store, snapshot));
+    }
+    const nested = store.begin("nested", "ctx", "inputs"); store.selector(nested, "nested-output", "value", [{ key: "validated-output", digest: "same" }]); store.seal(nested, {});
+    expect(() => store.publish([base.id, one, indexOne, nested, output])).toThrow("unconditional");
+  } finally { store.close(); }
+});
 
 test("publication reuses unchanged navigation and memberships; readers retain a pinned snapshot", async () => {
   const { store, file, run } = await fixture();

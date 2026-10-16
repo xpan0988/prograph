@@ -1,0 +1,87 @@
+{
+  "measuredAt": "2026-10-16T05:42:57.028Z",
+  "node": "v25.9.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "directory": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-gated-fanout-yIdYr5",
+  "shape": {
+    "derived": 100000,
+    "withAlternativeSupport": 50000,
+    "gateLevels": 1
+  },
+  "results": [
+    {
+      "shape": "initial",
+      "snapshot": 1,
+      "ms": 423.56854100000055,
+      "stages": {
+        "content-key": 0.203,
+        "membership": 52.021,
+        "support-eligibility": 40.424,
+        "navigation": 307.538,
+        "symbols": 0.025,
+        "call-summary": 0.33,
+        "pointer-and-commit": 22.831
+      },
+      "pending": 100001,
+      "visibleDerived": 100000
+    },
+    {
+      "shape": "stale-whole-index",
+      "snapshot": 2,
+      "ms": 361.3427499999998,
+      "stages": {
+        "content-key": 0.113,
+        "membership": 99.246,
+        "support-eligibility": 128.764,
+        "navigation": 101.117,
+        "symbols": 0.021,
+        "call-summary": 26.158,
+        "pointer-and-commit": 5.877
+      },
+      "pending": 100000,
+      "visibleDerived": 50000
+    },
+    {
+      "shape": "last-alternative-removed",
+      "snapshot": 3,
+      "ms": 244.3294160000005,
+      "stages": {
+        "content-key": 0.119,
+        "membership": 76.845,
+        "support-eligibility": 68.541,
+        "navigation": 52.706,
+        "symbols": 0.004,
+        "call-summary": 39.009,
+        "pointer-and-commit": 7.078
+      },
+      "pending": 50001,
+      "visibleDerived": 0
+    },
+    {
+      "shape": "requalified-same-output",
+      "snapshot": 4,
+      "ms": 332.3158340000009,
+      "stages": {
+        "content-key": 0.124,
+        "membership": 97.61,
+        "support-eligibility": 71.814,
+        "navigation": 119.45,
+        "symbols": 0.011,
+        "call-summary": 26.761,
+        "pointer-and-commit": 16.514
+      },
+      "pending": 100000,
+      "visibleDerived": 100000
+    }
+  ],
+  "historical": 100000,
+  "integrity": "ok",
+  "foreignKeys": [],
+  "pragmas": {
+    "journal_mode": "wal",
+    "synchronous": 2
+  },
+  "nodePeakRssKiB": 110576,
+  "scope": "One serial warm synthetic selector-admission/OR-support workload; complete production publication and FULL commit timed. No compiler, LOC or percentile claim."
+}
