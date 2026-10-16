@@ -1,0 +1,278 @@
+{
+  "format": 1,
+  "stage": "5F compiler search contexts and rooted evidence reachability",
+  "commit": "51d2f6dd21fe88b17abf7e399435b7f3bc255492",
+  "run": 38902905371,
+  "url": "https://github.com/xpan0988/prograph/actions/runs/38902905371",
+  "attempt": 1,
+  "jobs": [
+    {
+      "id": 116979262101,
+      "name": "regression (24)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        }
+      ],
+      "decodedLogEvidence": [
+        "2026-10-16T12:49:15.5898885Z      ✓ unknown schemas are refused without modifying the database; query plans use adjacency indexes  1313ms",
+        "2026-10-16T12:49:19.3197353Z  ✓ tests/semantic-artifacts.test.ts (13 tests) 3505ms",
+        "2026-10-16T12:49:31.7827589Z    ✓ Rust build scripts are refused without effects or snapshot replacement  538ms",
+        "2026-10-16T12:49:38.5994572Z  ✓ tests/semantic-clang-inputs.test.ts (8 tests) 6110ms",
+        "2026-10-16T12:49:48.7202473Z  ✓ tests/semantic-inputs.test.ts (7 tests) 9096ms",
+        "2026-10-16T12:50:37.6389303Z    ✓ compiler document ownership reuses unrelated outputs and invalidates unchanged callers after exported signature changes  2535ms",
+        "2026-10-16T12:53:25.3170335Z       Tests  196 passed (196)",
+        "2026-10-16T12:53:38.7533216Z       \"point\": \"before-seal\",",
+        "2026-10-16T12:53:38.7535595Z       \"baselineRetained\": true",
+        "2026-10-16T12:53:38.7537161Z       \"point\": \"before-publish\",",
+        "2026-10-16T12:53:38.7557542Z       \"baselineRetained\": true",
+        "2026-10-16T12:53:38.7558584Z       \"point\": \"during-publish\",",
+        "2026-10-16T12:53:38.7561003Z       \"baselineRetained\": true",
+        "2026-10-16T12:53:38.7561957Z       \"point\": \"after-publish\",",
+        "2026-10-16T12:53:38.7563875Z       \"baselineRetained\": true",
+        "2026-10-16T12:53:38.7564420Z   \"corruption\": {",
+        "2026-10-16T12:53:38.7564630Z     \"refused\": true,",
+        "2026-10-16T12:53:38.7564835Z     \"unchanged\": true",
+        "2026-10-16T12:53:38.8022950Z Verified 196 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, complete build, four recovery probes and corruption refusal"
+      ]
+    },
+    {
+      "id": 116979262278,
+      "name": "regression (22)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        }
+      ],
+      "decodedLogEvidence": [
+        "2026-10-16T12:50:07.9271703Z      ✓ unknown schemas are refused without modifying the database; query plans use adjacency indexes  1945ms",
+        "2026-10-16T12:50:13.2939565Z  ✓ tests/semantic-artifacts.test.ts (13 tests) 5032ms",
+        "2026-10-16T12:50:32.0639812Z    ✓ Rust build scripts are refused without effects or snapshot replacement  598ms",
+        "2026-10-16T12:50:40.7303705Z  ✓ tests/semantic-clang-inputs.test.ts (8 tests) 7683ms",
+        "2026-10-16T12:51:00.3040692Z  ✓ tests/semantic-inputs.test.ts (7 tests) 13060ms",
+        "2026-10-16T12:52:13.2533602Z    ✓ compiler document ownership reuses unrelated outputs and invalidates unchanged callers after exported signature changes  3515ms",
+        "2026-10-16T12:56:20.2516771Z       Tests  196 passed (196)",
+        "2026-10-16T12:56:39.6945378Z       \"point\": \"before-seal\",",
+        "2026-10-16T12:56:39.6949034Z       \"baselineRetained\": true",
+        "2026-10-16T12:56:39.6950540Z       \"point\": \"before-publish\",",
+        "2026-10-16T12:56:39.6953988Z       \"baselineRetained\": true",
+        "2026-10-16T12:56:39.6955695Z       \"point\": \"during-publish\",",
+        "2026-10-16T12:56:39.6958632Z       \"baselineRetained\": true",
+        "2026-10-16T12:56:39.6960490Z       \"point\": \"after-publish\",",
+        "2026-10-16T12:56:39.6963681Z       \"baselineRetained\": true",
+        "2026-10-16T12:56:39.6964809Z   \"corruption\": {",
+        "2026-10-16T12:56:39.6965509Z     \"refused\": true,",
+        "2026-10-16T12:56:39.6965964Z     \"unchanged\": true",
+        "2026-10-16T12:56:39.7556851Z Verified 196 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, complete build, four recovery probes and corruption refusal"
+      ]
+    },
+    {
+      "id": 116979262491,
+      "name": "regression (20)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        }
+      ],
+      "decodedLogEvidence": [
+        "2026-10-16T12:49:57.8958015Z      ✓ unknown schemas are refused without modifying the database; query plans use adjacency indexes  1089ms",
+        "2026-10-16T12:50:01.5370646Z  ✓ tests/semantic-artifacts.test.ts (13 tests) 3464ms",
+        "2026-10-16T12:50:12.6605473Z    ✓ Rust build scripts are refused without effects or snapshot replacement  382ms",
+        "2026-10-16T12:50:18.7078563Z  ✓ tests/semantic-clang-inputs.test.ts (8 tests) 5420ms",
+        "2026-10-16T12:50:27.6043405Z  ✓ tests/semantic-inputs.test.ts (7 tests) 7947ms",
+        "2026-10-16T12:51:15.0510875Z    ✓ compiler document ownership reuses unrelated outputs and invalidates unchanged callers after exported signature changes  2273ms",
+        "2026-10-16T12:53:41.3983778Z       Tests  196 passed (196)",
+        "2026-10-16T12:53:55.3179239Z       \"point\": \"before-seal\",",
+        "2026-10-16T12:53:55.3180460Z       \"baselineRetained\": true",
+        "2026-10-16T12:53:55.3180869Z       \"point\": \"before-publish\",",
+        "2026-10-16T12:53:55.3181897Z       \"baselineRetained\": true",
+        "2026-10-16T12:53:55.3182281Z       \"point\": \"during-publish\",",
+        "2026-10-16T12:53:55.3183511Z       \"baselineRetained\": true",
+        "2026-10-16T12:53:55.3183892Z       \"point\": \"after-publish\",",
+        "2026-10-16T12:53:55.3184995Z       \"baselineRetained\": true",
+        "2026-10-16T12:53:55.3185520Z   \"corruption\": {",
+        "2026-10-16T12:53:55.3185655Z     \"refused\": true,",
+        "2026-10-16T12:53:55.3185792Z     \"unchanged\": true",
+        "2026-10-16T12:53:55.3597552Z Verified 196 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, complete build, four recovery probes and corruption refusal"
+      ]
+    }
+  ],
+  "scope": "Each matrix job executed 196 tests with zero skips; actual original providers and six registered replay paths, eight Clang input tests, seven compiler/root tests, thirteen maintenance tests, lint, full Node/UI build, four recovery probes and unchanged corruption refusal. Decoded logs and required executed steps inspected."
+}
