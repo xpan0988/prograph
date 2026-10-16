@@ -9,7 +9,7 @@ import { importScip, type ScipManifest } from "./scip-import.js";
 import { deriveScipNative, type NativeLanguage } from "./scip-native.js";
 import { runProviderProcess } from "./process.js";
 import { javac0131Range, python066Symbol } from "./scip-dialects.js";
-import { toolReceipt } from "./tool-receipt.js";
+import { toolReceipt, toolInputResource } from "./tool-receipt.js";
 export { toolReceipt } from "./tool-receipt.js";
 import { inventoryFromDisk } from "./provider-runs.js";
 
@@ -69,8 +69,8 @@ export async function indexManagedProject(repository: string, configuration: str
   const tool = async (receipt: ToolReceipt): Promise<string> => {
     if (!receipt || !/^[a-f0-9]{64}$/.test(receipt.sha256) || receipt.entry !== undefined && !safeRelative(receipt.entry)) throw Error("Explicit tool path, SHA-256 and safe entry required");
     const captured = await toolReceipt(receipt.path, options.signal); if (captured.sha256 !== receipt.sha256) throw Error(`Managed tool receipt mismatch: ${receipt.path}`);
-    if ((await lstat(receipt.path)).isDirectory()) inputs[`tree:${await realpath(receipt.path)}`] = captured.sha256;
-    else Object.assign(inputs, captured.inputs);
+    // Preserve the configured alias: retargeting a symlink must invalidate the run.
+    inputs[await toolInputResource(receipt.path)] = captured.sha256;
     receipts.push({ receipt, hash: captured.sha256, files: captured.files, bytes: captured.bytes });
     const executable = receipt.entry ? path.join(receipt.path, receipt.entry) : receipt.path;
     const resolved = await realpath(executable); if (receipt.entry && !resolved.startsWith(`${await realpath(receipt.path)}${path.sep}`)) throw Error("Tool entry escapes receipt"); return executable;

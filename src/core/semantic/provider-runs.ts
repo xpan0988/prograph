@@ -6,14 +6,14 @@ import { digestFile } from "./inputs.js";
 import { repositoryInputPaths } from "../repository/repository.js";
 import Database from "better-sqlite3";
 import { READABLE_SEMANTIC_SCHEMAS, SEMANTIC_FORMAT_VERSION } from "./model.js";
-import { toolReceipt } from "./tool-receipt.js";
+import { inputMatches, recordedDigest, recordedPath } from "./input-check.js";
 import { qualifiedCallProjection } from "./passes.js";
 const semanticInput = (file: string) => /\.(?:[cm]?tsx?|jsx?|pyi?|rs|c|h|cpp|cc|cxx|hpp|hxx|java|go|cs|proto|gql|graphql)$/.test(file) || /(?:package(?:-lock)?\.json|tsconfig[^/]*\.json|jsconfig[^/]*\.json|Cargo\.(?:toml|lock)|go\.(?:mod|work|sum)|pyproject\.toml|pyrightconfig\.json|pom\.xml|build\.gradle(?:\.kts)?|compile_commands\.json|\.csproj|\.sln)$/.test(file);
 const passSuffix = /\/pass:[A-Za-z0-9._-]+@[A-Za-z0-9._-]+$/;
 interface Inventory { root: string; inventory: string }
 export interface RecordedInputStatus { state: "checked-recorded" | "changed" | "unavailable" | "unchecked"; checked: number; additionalChanges: number; reason?: string }
 
-/** Positive dependency checks supplement scanner freshness; they never imply complete build coverage. */
+/** Recorded positive and negative dependencies supplement scanner freshness; not complete build coverage. */
 export async function recordedInputStatus(filename: string, snapshot: RepositorySnapshot, scannerChanges: Set<string>): Promise<RecordedInputStatus> {
   let db: Database.Database | undefined;
   try {
@@ -29,9 +29,13 @@ export async function recordedInputStatus(filename: string, snapshot: Repository
     let checked = 0; let changed = false; let additionalChanges = 0;
     for (const input of inputs) {
       const file = input.resource.startsWith("source:") ? path.join(snapshot.repository.root, input.resource.slice(7)) : input.resource.startsWith("physical:") || input.resource.startsWith("artifact:") ? input.resource.slice(9) : undefined;
-      if (input.resource.startsWith("tree:")) {
-        let matches = false; try { matches = (await toolReceipt(input.resource.slice(5))).sha256 === input.digest; } catch { /* Missing or escaping tree is stale. */ }
-        checked++; if (!matches) { changed = true; additionalChanges++; } continue;
+      if (input.resource.startsWith("tree:") || input.resource.startsWith("probe-")) {
+        checked++;
+        if (!await inputMatches(input, snapshot.repository.root)) {
+          changed = true; const observed = recordedPath(input.resource);
+          if (!observed || !scannerChanges.has(path.relative(snapshot.repository.root, observed).split(path.sep).join("/"))) additionalChanges++;
+        }
+        continue;
       }
       if (!file) continue;
       const relative = path.relative(snapshot.repository.root, file).split(path.sep).join("/");
@@ -67,7 +71,7 @@ export async function retainProviders(store: SemanticStore, snapshot: Repository
     const key = row.partition_key.startsWith("scip/") ? row.partition_key.split("/").slice(0, 2).join("/") : row.partition_key.startsWith("clang/") ? row.partition_key.replace(passSuffix, "") : undefined;
     if (!key || key === exclude) continue; const group = groups.get(key) ?? []; group.push(row); groups.set(key, group);
   }
-  const retained: number[] = [];
+  const retained: number[] = []; const checked = new Map<string, boolean>();
   for (const group of groups.values()) {
     let eligible = true; let hasInventory = false;
     for (const row of group) {
@@ -79,11 +83,12 @@ export async function retainProviders(store: SemanticStore, snapshot: Repository
       const inputs = store.sql("SELECT resource,digest FROM sc_inputs WHERE run=?").all(row.run) as Array<{ resource: string; digest: string }>;
       for (const input of inputs) {
         if (input.resource === "project-inventory") { hasInventory = true; if (input.digest !== inventory) eligible = false; continue; }
-        if (input.resource.startsWith("tree:")) {
-          try { if ((await toolReceipt(input.resource.slice(5))).sha256 !== input.digest) eligible = false; } catch { eligible = false; } continue;
+        const key = canonical(input); let matches = checked.get(key);
+        if (matches === undefined) {
+          try { const actual = await recordedDigest(input.resource, root); matches = actual === undefined || actual === input.digest; } catch { matches = false; }
+          checked.set(key, matches);
         }
-        const filename = input.resource.startsWith("source:") ? path.join(root, input.resource.slice(7)) : input.resource.startsWith("physical:") ? input.resource.slice(9) : input.resource.startsWith("artifact:") ? input.resource.slice(9) : undefined;
-        if (filename) { try { if (await digestFile(filename) !== input.digest) eligible = false; } catch { eligible = false; } }
+        if (!matches) eligible = false;
       }
     }
     if (eligible && hasInventory) {

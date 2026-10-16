@@ -11,6 +11,8 @@ import { SemanticStore } from "./store.js";
 import { discoverProjects, type ProjectUnit } from "./projects.js";
 import { executePasses, qualifiedCallProjection } from "./passes.js";
 import { retainProviders } from "./provider-runs.js";
+import { inputMatches } from "./input-check.js";
+import { traceCompilerInputs } from "./typescript-inputs.js";
 
 export interface SemanticIndexResult { snapshot: number; context: string; inputFingerprint: string; coverage: Record<string, unknown>; durationMs: number }
 
@@ -20,12 +22,16 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
   const compilerBundle = require.resolve("@ts-morph/common");
   const selected = unit.sources;
   const project = new Project({ skipAddingFilesFromTsConfig: true, compilerOptions: unit.compilerOptions ?? {} });
-  project.addSourceFilesAtPaths(selected.map(file => snapshot.absoluteFiles.get(file)!).filter(Boolean));
+  const compilerInputs = traceCompilerInputs(project.getFileSystem());
+  // These are exact scanner-selected files, not glob patterns. Glob expansion also
+  // enumerates unrelated output directories and cannot qualify module-search inputs.
+  for (const file of selected) project.addSourceFileAtPath(snapshot.absoluteFiles.get(file)!);
   const program = project?.getProgram().compilerObject;
   const context = unit.context;
   const inputFingerprint = digest(canonical({ plan: unit.fingerprint, compiler: program.getSourceFiles().map(source => [source.fileName, digest(source.text)]).sort() }));
   const provenance: Provenance = { provider: "typescript/compiler-api", version: `${ts.version}/${TYPESCRIPT_SEMANTIC_VERSION}`, basis: "compiler", method: "compiler-binding", context, inputFingerprint };
   const run = store.begin(unit.key, context, inputFingerprint);
+  store.batch(run, () => { for (const input of unit.probes) store.input(run, input.resource, input.digest); });
   const documentRuns: number[] = [];
   let pending: FactInput[] = []; let pendingBytes = 0;
   const emit = (fact: FactInput): string => {
@@ -195,11 +201,14 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
       store.batch(run, () => { for (const file of selected) store.input(run, `source:${file}`, digest(snapshot.fileContents.get(file)!)); for (const [file, hash] of Object.entries(unit.inputs)) store.input(run, `physical:${file}`, hash); for (const [file, hash] of inputFiles) store.input(run, `physical:${file}`, hash); store.input(run, "inventory", unit.fingerprint); store.selector(run, `typescript:${context}:inventory`, inputFingerprint); });
       // Verify loaded compiler dependencies too; missing/changing ambient inputs cannot be called fresh.
       for (const [file, hash] of inputFiles) if (digest(await readFile(file)) !== hash) throw new Error(`Compiler input changed during extraction: ${relative(file)}`);
+      await compilerInputs.verify();
+      store.batch(run, () => { for (const input of compilerInputs.entries()) store.input(run, input.resource, input.digest); });
       coverage = { ...coverage, status: "partial", sourceFiles: selected.length, occurrences: occurrenceCount, unresolved, compilerErrors, externalImports, gaps: [...coverage.gaps as string[], "Declarations/references from supported compiler AST forms; not an exhaustive native type index"] };
     } else coverage = { language: "typescript", status: "unavailable", gaps: ["TypeScript adapter disabled or no applicable sources"] };
     // No source/config edit during the second pass may be silently published.
     for (const file of selected) if (digest(await readFile(snapshot.absoluteFiles.get(file)!)) !== digest(snapshot.fileContents.get(file)!)) throw new Error(`Repository input changed during semantic indexing: ${file}`);
     for (const [file, hash] of Object.entries(unit.inputs)) if (digest(await readFile(file)) !== hash) throw Error(`Project configuration changed during extraction: ${file}`);
+    for (const input of unit.probes) if (!await inputMatches(input, snapshot.repository.root)) throw Error(`Project resolution input changed during extraction: ${input.resource}`);
     store.seal(run, coverage);
     return { runs: [run, ...documentRuns], context, inputFingerprint, coverage };
   } catch (error) { store.diagnostic(run, "provider-failure", String(error)); throw error; }
@@ -210,11 +219,12 @@ async function reusableUnit(store: SemanticStore, snapshot: RepositorySnapshot, 
   if (!run) return undefined;
   const row = store.sql("SELECT context,coverage_json FROM sc_runs WHERE id=?").get(run) as { context: string; coverage_json: string };
   const coverage = JSON.parse(row.coverage_json) as Record<string, unknown>;
-  // Until module-search negative dependencies are qualified, only closed, error-free local units reuse.
+  // Reuse remains conservative: closed, error-free local units plus observed negative search inputs.
   if (row.context !== unit.context || coverage.mappingVersion !== TYPESCRIPT_SEMANTIC_VERSION || coverage.unresolved !== 0 || coverage.compilerErrors !== 0 || coverage.externalImports !== 0) return undefined;
   const inputs = store.sql("SELECT resource,digest FROM sc_inputs WHERE run=?").all(run) as Array<{ resource: string; digest: string }>;
   if (!inputs.some(input => input.resource === "inventory" && input.digest === unit.fingerprint)) return undefined;
   for (const input of inputs) {
+    if (input.resource.startsWith("probe-") && !await inputMatches(input, snapshot.repository.root)) return undefined;
     if (input.resource.startsWith("source:")) { const text = snapshot.fileContents.get(input.resource.slice(7)); if (text === undefined || digest(text) !== input.digest) return undefined; }
     else if (input.resource.startsWith("physical:")) {
       const file = input.resource.slice(9);
@@ -273,6 +283,13 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
       }
     }
     const nativeRuns = await retainProviders(store, snapshot, parent); runs.push(...nativeRuns);
+    // One final cross-unit barrier: an earlier unit's dependency can change while
+    // a later compiler is running. Verify selected inputs before the single CAS.
+    const checked = new Set<string>();
+    for (const run of runs) for (const input of store.sql("SELECT resource,digest FROM sc_inputs WHERE run=?").all(run) as Array<{ resource: string; digest: string }>) {
+      const key = canonical(input); if (checked.has(key)) continue; checked.add(key);
+      if (!await inputMatches(input, snapshot.repository.root)) throw Error(`Semantic input changed before publication: ${input.resource}`);
+    }
     const snapshotId = store.publish(runs, parent);
     const tsUnits = plan.units.filter(unit => unit.language === "typescript");
     return { snapshot: snapshotId, context: (tsUnits.find(unit => unit.key === "typescript/root") ?? tsUnits[0])?.context ?? "none", inputFingerprint, coverage: { status: outcomes.length || nativeRuns.length ? "partial" : "unavailable", projects: tsUnits.length, units: outcomes, reusedUnits: outcomes.filter(outcome => outcome.reused).length, retainedNativeRuns: nativeRuns.length }, durationMs: Math.round(performance.now() - started) };

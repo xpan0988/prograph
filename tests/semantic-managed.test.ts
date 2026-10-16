@@ -105,7 +105,7 @@ for (const language of ["python", "go", "java", "csharp"] as const) test.skipIf(
     const run = (q.execute("find", ["go", "csharp"].includes(language) ? "Run" : "run").items as Array<{ key: string }>)[0]!;
     const callees = q.execute("callees", run.key).items as Array<{ key: string }>;
     expect(callees.length).toBe(["python", "go"].includes(language) ? 2 : 1);
-    expect(q.execute("context", called!.key).items).toEqual(expect.arrayContaining([expect.objectContaining({ value: expect.objectContaining({ execution: expect.objectContaining({ version: "managed-scip-2" }) }) })]));
+    expect(q.execute("context", called!.key).items).toEqual(expect.arrayContaining([expect.objectContaining({ value: expect.objectContaining({ execution: expect.objectContaining({ version: MANAGED_SCIP_VERSION }) }) })]));
   } finally { q.close(); }
   const store = new SemanticStore(path.join(index, "semantic.sqlite"));
   try {

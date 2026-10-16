@@ -3,6 +3,8 @@ import { readFileSync } from "node:fs";
 import { ts } from "ts-morph";
 import type { RepositorySnapshot } from "../adapters/contracts.js";
 import { canonical, digest, semanticKey } from "./model.js";
+import { traceConfigInputs } from "./typescript-inputs.js";
+import type { RecordedInput } from "./input-check.js";
 
 export interface ProjectUnit {
   key: string;
@@ -12,6 +14,7 @@ export interface ProjectUnit {
   fingerprint: string;
   sources: string[];
   inputs: Record<string, string>;
+  probes: RecordedInput[];
   options: Record<string, unknown>;
   gaps: string[];
   compilerOptions?: ts.CompilerOptions;
@@ -29,11 +32,11 @@ export function discoverProjects(snapshot: RepositorySnapshot): ProjectPlan {
   const tsConfigs = snapshot.files.filter(file => /(?:^|\/)(?:tsconfig|jsconfig)(?:\.[^/]+)?\.json$/.test(file)).sort();
   const manifests = snapshot.files.filter(file => /(?:^|\/)(?:package(?:-lock)?\.json|Cargo\.(?:toml|lock)|go\.(?:mod|work|sum)|pyproject\.toml|pyrightconfig\.json|pom\.xml|build\.gradle(?:\.kts)?|compile_commands\.json)$|\.(?:csproj|sln)$/.test(file));
   const manifestDigests = Object.fromEntries(manifests.map(file => [file, digest(snapshot.fileContents.get(file) ?? "")]));
-  const add = (project: string, language: string, sources: string[], inputs: Record<string, string>, options: Record<string, unknown>, gaps: string[], compilerOptions?: ts.CompilerOptions) => {
+  const add = (project: string, language: string, sources: string[], inputs: Record<string, string>, options: Record<string, unknown>, gaps: string[], compilerOptions?: ts.CompilerOptions, probes: RecordedInput[] = []) => {
     const key = language === "typescript" && project === "tsconfig.json" ? "typescript/root" : `${language}/project:${project}`;
     const fingerprint = digest(canonical([inputs, options, sources]));
     const context = semanticKey("context", [snapshot.repository.identity, key, inputs, options, language === "typescript" ? ts.version : null]);
-    units.push({ key, project, language, context, fingerprint, sources, inputs, options, gaps, ...(compilerOptions ? { compilerOptions } : {}) });
+    units.push({ key, project, language, context, fingerprint, sources, inputs, probes, options, gaps, ...(compilerOptions ? { compilerOptions } : {}) });
   };
   for (const config of tsConfigs) {
     const inputs: Record<string, string> = {};
@@ -46,7 +49,8 @@ export function discoverProjects(snapshot: RepositorySnapshot): ProjectPlan {
     inputs[normalize(absolute)] = digest(text);
     const parsed = ts.parseConfigFileTextToJson(absolute, text);
     if (parsed.error) { diagnostics.push(`Invalid TypeScript project: ${config}: ${ts.flattenDiagnosticMessageText(parsed.error.messageText, " ")}`); continue; }
-    const command = ts.parseJsonConfigFileContent(parsed.config, { ...ts.sys, readFile: read }, path.dirname(absolute), undefined, absolute);
+    const configInputs = traceConfigInputs(read);
+    const command = ts.parseJsonConfigFileContent(parsed.config, configInputs.host, path.dirname(absolute), undefined, absolute);
     const compilerOptions = command.options;
     const { configFile: _configFile, ...plainOptions } = compilerOptions;
     const options = JSON.parse(JSON.stringify(plainOptions)) as Record<string, unknown>;
@@ -56,7 +60,7 @@ export function discoverProjects(snapshot: RepositorySnapshot): ProjectPlan {
     const references = command.projectReferences?.map(ref => normalize(ref.path)).sort() ?? [];
     const gaps = command.errors.map(error => ts.flattenDiagnosticMessageText(error.messageText, " ")).slice(0, 8);
     if (references.length) gaps.push("Referenced projects are separate units; emitted declaration build outputs must already exist");
-    add(config, "typescript", sources, inputs, { compilerOptions: options, references, mode: "compiler-config" }, gaps, compilerOptions);
+    add(config, "typescript", sources, inputs, { compilerOptions: options, references, mode: "compiler-config" }, gaps, compilerOptions, configInputs.entries());
   }
   const assigned = new Set(units.flatMap(unit => unit.sources));
   const orphan = allTs.filter(file => !assigned.has(file));

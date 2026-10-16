@@ -1,7 +1,13 @@
 import path from "node:path";
-import { lstat, realpath, readlink, readdir } from "node:fs/promises";
+import { lstat, stat, realpath, readlink, readdir } from "node:fs/promises";
 import { canonical, digest } from "./model.js";
 import { digestFile } from "./inputs.js";
+
+/** Retain the configured path rather than resolving away a mutable SDK alias. */
+export async function toolInputResource(filename: string): Promise<string> {
+  if (!path.isAbsolute(filename)) throw Error("Tool receipt requires an absolute path");
+  return `${(await stat(filename)).isDirectory() ? "tree" : "physical"}:${filename}`;
+}
 
 /** A tool directory is immutable input, including bundled stubs, DLLs and SDK files, not just its launcher. */
 export async function toolReceipt(filename: string, signal?: AbortSignal): Promise<{ sha256: string; inputs: Record<string, string>; bytes: number; files: number }> {

@@ -129,7 +129,7 @@ export async function repositoryStatus(input = ".", index?: string): Promise<Rep
   const adapterVersionsChanged = stored ? JSON.stringify(stored.adapterVersions) !== JSON.stringify(ADAPTER_VERSIONS) : false;
   const schemaChanged = stored ? stored.schemaVersion !== GRAPH_SCHEMA_VERSION : false;
   const semanticInputs = await recordedInputStatus(path.join(indexDirectory, "semantic.sqlite"), scan.snapshot, new Set([...addedFiles, ...modifiedFiles, ...deletedFiles]));
-  const semanticInputsChanged = semanticInputs.additionalChanges > 0;
+  const semanticInputsChanged = semanticInputs.additionalChanges > 0 || !!manifest?.semanticCore && ["unavailable", "unchecked"].includes(semanticInputs.state);
   const stale = !stored || addedFiles.length > 0 || modifiedFiles.length > 0 || deletedFiles.length > 0 || configChanged || adapterVersionsChanged || schemaChanged || semanticInputsChanged;
   return {
     repositoryRoot,
