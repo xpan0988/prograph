@@ -10,7 +10,8 @@ import { SourceCoordinates } from "./coordinates.js";
 import { SemanticStore } from "./store.js";
 import { discoverProjects, type ProjectUnit } from "./projects.js";
 import { executePasses, qualifiedCallProjection } from "./passes.js";
-import { retainProviders } from "./provider-runs.js";
+import { retainProviders, inventoryFromDisk, semanticInventory } from "./provider-runs.js";
+import { replayProviders } from "./provider-replay.js";
 import { inputMatches } from "./input-check.js";
 import { traceCompilerInputs } from "./typescript-inputs.js";
 
@@ -282,7 +283,8 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
         else { const indexed = await indexTypeScriptUnit(snapshot, unit, store); runs.push(...indexed.runs); outcomes.push(indexed.coverage); }
       }
     }
-    const nativeRuns = await retainProviders(store, snapshot, parent); runs.push(...nativeRuns);
+    const retained = await retainProviders(store, snapshot, parent);
+    const native = await replayProviders(store, snapshot, parent, retained); const nativeRuns = native.runs; runs.push(...nativeRuns);
     // One final cross-unit barrier: an earlier unit's dependency can change while
     // a later compiler is running. Verify selected inputs before the single CAS.
     const checked = new Set<string>();
@@ -290,8 +292,9 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
       const key = canonical(input); if (checked.has(key)) continue; checked.add(key);
       if (!await inputMatches(input, snapshot.repository.root)) throw Error(`Semantic input changed before publication: ${input.resource}`);
     }
-    const snapshotId = store.publish(runs, parent);
+    if ((await inventoryFromDisk(snapshot.repository.root, path.dirname(filename), 200000)).inventory !== semanticInventory(snapshot)) throw Error("Repository inventory changed before semantic publication");
+    const snapshotId = store.publish(runs, parent, native.registrations);
     const tsUnits = plan.units.filter(unit => unit.language === "typescript");
-    return { snapshot: snapshotId, context: (tsUnits.find(unit => unit.key === "typescript/root") ?? tsUnits[0])?.context ?? "none", inputFingerprint, coverage: { status: outcomes.length || nativeRuns.length ? "partial" : "unavailable", projects: tsUnits.length, units: outcomes, reusedUnits: outcomes.filter(outcome => outcome.reused).length, retainedNativeRuns: nativeRuns.length }, durationMs: Math.round(performance.now() - started) };
+    return { snapshot: snapshotId, context: (tsUnits.find(unit => unit.key === "typescript/root") ?? tsUnits[0])?.context ?? "none", inputFingerprint, coverage: { status: outcomes.length || nativeRuns.length ? "partial" : "unavailable", projects: tsUnits.length, units: outcomes, providers: native.outcomes, reusedUnits: outcomes.filter(outcome => outcome.reused).length, retainedNativeRuns: retained.length }, durationMs: Math.round(performance.now() - started) };
   } finally { store.close(); }
 }

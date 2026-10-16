@@ -7,7 +7,7 @@ import { toolReceipt } from "./tool-receipt.js";
 export interface RecordedInput { resource: string; digest: string }
 export function recordedPath(resource: string): string | undefined {
   if (resource.startsWith("probe-read:")) return (JSON.parse(resource.slice(11)) as [string, string])[0];
-  for (const prefix of ["probe-file:", "probe-dir:", "probe-realpath:", "probe-list:"]) if (resource.startsWith(prefix)) return resource.slice(prefix.length);
+  for (const prefix of ["probe-file:", "probe-dir:", "probe-present:", "probe-realpath:", "probe-list:"]) if (resource.startsWith(prefix)) return resource.slice(prefix.length);
   return undefined;
 }
 export const missingInput = (error: unknown): boolean => ["ENOENT", "ENOTDIR"].includes((error as NodeJS.ErrnoException).code ?? "");
@@ -22,8 +22,8 @@ export async function recordedDigest(resource: string, root: string, signal?: Ab
   if (resource.startsWith("source:")) return digestFile(path.join(root, resource.slice(7)), undefined, signal);
   if (resource.startsWith("physical:") || resource.startsWith("artifact:")) return digestFile(resource.slice(9), undefined, signal);
   if (resource.startsWith("tree:")) return (await toolReceipt(resource.slice(5), signal)).sha256;
-  if (resource.startsWith("probe-file:") || resource.startsWith("probe-dir:")) {
-    try { const info = await stat(resource.slice(resource.indexOf(":") + 1)); return digest(String(resource.startsWith("probe-file:") ? info.isFile() : info.isDirectory())); }
+  if (resource.startsWith("probe-file:") || resource.startsWith("probe-dir:") || resource.startsWith("probe-present:")) {
+    try { const info = await stat(resource.slice(resource.indexOf(":") + 1)); return digest(String(resource.startsWith("probe-present:") || (resource.startsWith("probe-file:") ? info.isFile() : info.isDirectory()))); }
     catch (error) { if (missingInput(error)) return digest("false"); throw error; }
   }
   if (resource.startsWith("probe-realpath:")) return digest(await realpath(resource.slice(15)));

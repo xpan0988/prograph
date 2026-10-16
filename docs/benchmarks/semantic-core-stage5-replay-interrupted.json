@@ -1,0 +1,28 @@
+{
+  "scope": "Rejected local validation attempt: machine slept during test deadlines. Not a passing or performance receipt.",
+  "node": "v25.9.0",
+  "reportSha256": "85d96d55d9754eb7ad0893a045d7e7b75ea048904617e7f28ecdc2e01045dcfc",
+  "counts": {
+    "success": false,
+    "numTotalTests": 173,
+    "numPassedTests": 119,
+    "numFailedTests": 6,
+    "numPendingTests": 48
+  },
+  "sleepEvents": [
+    "2026-10-16 17:33:11 +1100 Sleep               \tEntering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:69%) 193 secs  ",
+    "2026-10-16 17:36:24 +1100 DarkWake            \tDarkWake from Deep Idle [CDNP] : due to smc.sysState.Wake(0x70070000) wifibt SMC.OutboxNotEmpty centauri-beta/ Using BATT (Charge:69%) 45 secs   ",
+    "2026-10-16 17:37:09 +1100 Sleep               \tEntering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:68%) 5 secs    ",
+    "2026-10-16 17:37:14 +1100 DarkWake            \tDarkWake from Deep Idle [CDNP] : due to smc.sysState.Wake(0x70070000) wifibt SMC.OutboxNotEmpty centauri-beta/ Using BATT (Charge:68%) 45 secs   ",
+    "2026-10-16 17:37:59 +1100 Sleep               \tEntering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:68%) 3 secs    ",
+    "2026-10-16 17:38:02 +1100 DarkWake            \tDarkWake from Deep Idle [CDNP] : due to smc.sysState.Wake(0x70070000) wifibt SMC.OutboxNotEmpty centauri-alpha E_TKO_SEQ_NUM_INVALID ARPT/ Using BATT (Charge:68%) 45 secs   ",
+    "2026-10-16 17:38:47 +1100 Sleep               \tEntering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:68%) 12 secs   ",
+    "2026-10-16 17:38:59 +1100 DarkWake            \tDarkWake from Deep Idle [CDNP] : due to smc.sysState.Wake(0x70070000) wifibt SMC.OutboxNotEmpty centauri-beta/ Using BATT (Charge:68%) 45 secs   ",
+    "2026-10-16 17:39:44 +1100 Sleep               \tEntering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:68%) 84 secs   ",
+    "2026-10-16 17:41:08 +1100 DarkWake            \tDarkWake from Deep Idle [CDNP] : due to smc.sysState.Wake(0x70070000) wifibt SMC.OutboxNotEmpty centauri-beta/ Using BATT (Charge:68%) 45 secs   ",
+    "2026-10-16 17:41:53 +1100 Sleep               \tEntering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:68%) 143 secs  "
+  ],
+  "sleepOverlap": "Validation began 17:33:02 Australia/Sydney. Maintenance Sleep began 17:33:11 and lasted 193 seconds; multiple further sleeps occurred. This aligns with the approximately 200-second stalled tests.",
+  "retest": "All tests and original deadlines retained; process-scoped caffeinate -i and four test workers. No permanent power-setting change.",
+  "snapshotPublicationBenchmark": "This failure is not used to revise or excuse the separate measured 100-partition publication gate."
+}

@@ -1,0 +1,122 @@
+{
+  "node": "v25.9.0",
+  "counts": {
+    "success": true,
+    "numTotalTests": 173,
+    "numPassedTests": 173,
+    "numFailedTests": 0,
+    "numPendingTests": 0
+  },
+  "testReportSha256": "b631c4078d9abd148774e76a2047fc19cc4d760439853d854e20a1f203d31559",
+  "testDurationSeconds": 216.0,
+  "testWorkers": 4,
+  "temporaryIdleSleepAssertion": "caffeinate -i; process-scoped, original deadlines unchanged",
+  "recovery": {
+    "node": "v25.9.0",
+    "probes": [
+      {
+        "point": "before-seal",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "before-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "during-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "after-publish",
+        "exitCode": 57,
+        "activeSnapshot": 2,
+        "visible": [
+          "other"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      }
+    ],
+    "corruption": {
+      "refused": true,
+      "unchanged": true
+    }
+  },
+  "typecheck": "passed",
+  "build": "Node/UI passed",
+  "evidenceVerifier": "173 tests, actual five original producers and six registered replay paths; four recovery points and corruption refusal",
+  "registeredReplay": [
+    {
+      "name": "provider grants bind recipe, repository and index; a copied or modified registration is not execution authority",
+      "status": "passed",
+      "durationMs": 9.719458000000031
+    },
+    {
+      "name": "an index cannot forge permission to launch a different Rust binary; failure publishes owned coverage without stale native output",
+      "status": "passed",
+      "durationMs": 170.05512499999998
+    },
+    {
+      "name": "registered Clang prepares without publication, then source/config changes publish once and failed replay removes precise output",
+      "status": "passed",
+      "durationMs": 1410.6715
+    },
+    {
+      "name": "registered Rust replays manifest features atomically and ambient Cargo additions become owned fail-closed gaps",
+      "status": "passed",
+      "durationMs": 5343.737083
+    },
+    {
+      "name": "registered python uses the actual qualified producer on changes, reuses documentation-only output, and publishes a single snapshot",
+      "status": "passed",
+      "durationMs": 102738.409834
+    },
+    {
+      "name": "registered go uses the actual qualified producer on changes, reuses documentation-only output, and publishes a single snapshot",
+      "status": "passed",
+      "durationMs": 40240.26974999999
+    },
+    {
+      "name": "registered java uses the actual qualified producer on changes, reuses documentation-only output, and publishes a single snapshot",
+      "status": "passed",
+      "durationMs": 9502.684791000007
+    },
+    {
+      "name": "registered csharp uses the actual qualified producer on changes, reuses documentation-only output, and publishes a single snapshot",
+      "status": "passed",
+      "durationMs": 33896.93804200002
+    }
+  ],
+  "compiledHashes": {
+    "dist/core/semantic/provider-grants.js": "ff95eaf489665f0791754dccbe112deb23fd940e2b9719c28b360c416b5f60cb",
+    "dist/core/semantic/provider-replay.js": "5a955825b925b261d28fe14fd8eaa51bb47a0f88e08dfea9fe11a5d31673a9a9",
+    "dist/core/semantic/provider-plan.js": "ea34097e807b645139a0e3adb536df6fca7d669a832f6d4e914825f8affc137a",
+    "dist/core/semantic/typescript.js": "1da47764fdd2291fc9ca012ecde279cfb1e22325de1088b9a60629ee09f30055",
+    "dist/core/semantic/scip-import.js": "4751a8a089c316400eb961444f55722d5a4a3fd5bc2f3d190158523b6c6422f2",
+    "dist/core/semantic/managed-scip.js": "993c3ce03f7ae6d90bf40ec37e97c1ff4e1b94b597267e0c890a8307444a1fc6",
+    "dist/core/semantic/rust.js": "9a4457095d2298238234838e6daafa67beeda30a15718449714b5f8ee2383f87",
+    "dist/core/semantic/clang.js": "095c672cd48fc8146ef57f634da5ac1f448d0764d0f9488555eca79a53bf3df1",
+    "dist/core/semantic/store.js": "33f360dd0601415b8fa3fb2ed13595d43fb59c29248612069c78020358b8f554",
+    "dist/core/semantic/schema.js": "39546e00658ec29975376c8ae5af962a0ad7d2bdeb81ce6aeaa07020b1d5cdf3",
+    "dist/core/semantic/model.js": "83f8fb927d1c5f1e4579ffd9a4ed1410b3e3cf51897b77799fecb8a6b6f86d2c"
+  },
+  "scope": "Authenticated provider preparation/replay milestone, not final Stage 5/Core acceptance. No compiler/LOC/production throughput claim."
+}

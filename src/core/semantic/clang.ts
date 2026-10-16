@@ -10,6 +10,8 @@ import { canonical, digest, semanticKey, CLANG_SEMANTIC_VERSION, type Provenance
 import { executePasses } from "./passes.js";
 import { semanticInventory, retainProviders } from "./provider-runs.js";
 import { boundedInput, digestFile } from "./inputs.js";
+import type { ProviderPreparation } from "./provider-plan.js";
+import { authorizeProvider, verifyProviderAuthorization } from "./provider-grants.js";
 
 const exec = promisify(execFile);
 const COMPILER = "/usr/bin/clang";
@@ -51,7 +53,7 @@ function dependencyPaths(output: string): string[] {
 }
 
 /** Explicit opt-in, fixed trusted executable and allowlisted syntax-only arguments. No discovered shell execution. */
-export async function indexClang(repository: string, unitKey: string, index?: string): Promise<Record<string, unknown>> {
+export async function indexClang(repository: string, unitKey: string, index?: string, options: ProviderPreparation = {}): Promise<Record<string, unknown>> {
   const started = performance.now();
   const scan = await scanRepository(await resolveRepositoryRoot(repository), index); const root = scan.snapshot.repository.root;
   const unit = discoverProjects(scan.snapshot).units.find(value => value.key === unitKey && ["c", "cpp"].includes(value.language));
@@ -59,19 +61,22 @@ export async function indexClang(repository: string, unitKey: string, index?: st
   const source = path.resolve(root, unit.sources[0]!); const actualRoot = await realpath(root);
   if (!(await realpath(source)).startsWith(`${actualRoot}${path.sep}`)) throw Error("Compilation source escapes repository");
   const argv = compilerArguments(unit, source); const cwd = String(unit.options.directory);
+  const directory = path.resolve(index?.endsWith(".sqlite") ? path.dirname(index) : index ?? path.join(root, ".prograph")); await mkdir(directory, { recursive: true });
+  const executableDigest = await digestFile(COMPILER); const executablePath = await realpath(COMPILER);
+  const trust = digest(canonical([COMPILER, executablePath, executableDigest]));
+  if (options.authorization && (!await verifyProviderAuthorization(options.authorization, root, directory) || options.authorization.kind !== "clang" || options.authorization.trust !== trust)) throw Error("Clang tool inputs changed; explicit requalification required");
   const env = { PATH: "/usr/bin:/bin", LANG: "C" };
   const tool = await exec(COMPILER, ["--version"], { env, timeout: bounds.timeoutMs, maxBuffer: 65536 });
   const version = tool.stdout.split("\n")[0]!;
   const flags = [...argv, "-x", unit.language === "cpp" ? "c++" : "c", "--no-default-config", "-fno-implicit-modules", "-fno-implicit-module-maps"];
   const deps = await exec(COMPILER, [...flags, "-M", "-MT", "prograph", source], { cwd, env, timeout: bounds.timeoutMs, maxBuffer: bounds.maxOutputBytes });
   const inputs: Record<string, string> = { ...unit.inputs };
-  inputs[await realpath(COMPILER)] = await digestFile(COMPILER);
+  inputs[COMPILER] = executableDigest;
   for (const file of dependencyPaths(deps.stdout)) { const absolute = path.resolve(cwd, file); inputs[absolute] = await digestFile(absolute); }
   const result = await exec(COMPILER, [...flags, "-fsyntax-only", "-Xclang", "-ast-dump=json", source], { cwd, env, timeout: bounds.timeoutMs, maxBuffer: bounds.maxOutputBytes });
   const ast = JSON.parse(result.stdout) as Ast;
   const context = semanticKey("clang-context", [unit.context, COMPILER, version, flags, CLANG_SEMANTIC_VERSION]);
   const inputFingerprint = digest(canonical([inputs, context]));
-  const directory = path.resolve(index?.endsWith(".sqlite") ? path.dirname(index) : index ?? path.join(root, ".prograph")); await mkdir(directory, { recursive: true });
   const store = new SemanticStore(path.join(directory, "semantic.sqlite")); const parent = store.activeSnapshot(); const partition = `clang/${unit.key}`;
   const run = store.begin(partition, context, inputFingerprint);
   const provenance: Provenance = { provider: "clang/compiler-ast", version, basis: "compiler", method: `clang-ast-binding-v${CLANG_SEMANTIC_VERSION}`, context, inputFingerprint };
@@ -164,9 +169,14 @@ export async function indexClang(repository: string, unitKey: string, index?: st
     const coverage = { status: "partial", provider: provenance.provider, mappingVersion: CLANG_SEMANTIC_VERSION, language: unit.language, definitions: "partial", references: "partial", calls: "partial", unresolved, macroSkipped,
       gaps: ["Static declaration binding, not runtime dispatch or cross-translation-unit linking", "Macro expansion anchors, constructors without target IDs and external declarations are not qualified", "Recorded build may use another compiler; this is explicit Clang syntax-only extraction"] };
     store.seal(run, coverage); const passes = executePasses(store, run, partition, provenance, `clang:${context}:inventory`);
+    const registration = await authorizeProvider({ key: options.authorization?.key ?? `clang-${digest(unit.key).slice(0, 32)}`, kind: "clang", recipe: { unitKey, source: unit.sources[0]!, database: unit.project.split("#")[0]!, prefix: partition }, trust, version: CLANG_SEMANTIC_VERSION }, root, directory);
+    if (options.prepare) {
+      options.prepare({ parent, prefix: partition, runs: [run, ...passes], registration });
+      return { status: "prepared", context, coverage, durationMs: Math.round(performance.now() - started), compiler: { executable: COMPILER, version }, bounds };
+    }
     const native = await retainProviders(store, scan.snapshot, parent, partition);
     const others = parent ? (store.sql("SELECT partition_key,run FROM sc_partitions WHERE snapshot=?").all(parent) as Array<{ partition_key: string; run: number }>).filter(row => !row.partition_key.startsWith("scip/") && !row.partition_key.startsWith("clang/")).map(row => row.run) : [];
-    const published = store.publish([...others, ...native, run, ...passes], parent);
+    const published = store.publish([...others, ...native, run, ...passes], parent, [registration]);
     return { snapshot: published, context, coverage, durationMs: Math.round(performance.now() - started), compiler: { executable: COMPILER, version }, bounds };
   } finally { store.close(); }
 }

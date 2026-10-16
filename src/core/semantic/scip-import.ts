@@ -10,6 +10,7 @@ import { ScipStream, SCIP_PROTOCOL_DIGEST, decodeScip, validateDocumentSize } fr
 import { parseScipSymbol, type ScipSymbol } from "./scip-symbol.js";
 import { inventoryFromDisk, retainProviders } from "./provider-runs.js";
 import { boundedInput, digestFile } from "./inputs.js";
+import type { ProviderRegistration, PreparedProvider } from "./provider-plan.js";
 
 export interface ScipManifest {
   format: 1;
@@ -39,6 +40,8 @@ export interface ScipExecution {
   parseSymbol?(raw: string): ScipSymbol;
   sourceRange?(coordinates: SourceCoordinates, range: number[], encoding: number): [number, number];
   verify(signal?: AbortSignal): Promise<void>;
+  registration?: ProviderRegistration;
+  prepare?: (plan: PreparedProvider) => void;
 }
 export interface ScipLimits { maxIndexBytes: number; maxDocumentBytes: number; maxSourceBytes: number; maxOccurrencesPerDocument: number; maxRelationshipsPerSymbol: number; maxDocuments: number; batch: number }
 export const SCIP_LIMITS: ScipLimits = { maxIndexBytes: 10 * 1024 ** 3, maxDocumentBytes: 16 * 1024 ** 2, maxSourceBytes: 8 * 1024 ** 2, maxOccurrencesPerDocument: 100000, maxRelationshipsPerSymbol: 1024, maxDocuments: 100000, batch: 500 };
@@ -262,10 +265,15 @@ export async function importScip(repository: string, artifact: string, manifest:
     if ((await inventoryFromDisk(root, directory, limits.maxDocuments * 2, signal)).inventory !== inventory.inventory) throw Error("SCIP repository inventory changed during ingestion");
     const derived = await execution?.derive?.(store, accepted, context, inputFingerprint, prefix.slice(0, -1)) ?? [];
     await execution?.verify(signal);
+    if (execution?.prepare) {
+      if (!execution.registration) throw Error("Prepared execution requires a qualified registration");
+      execution.prepare({ parent, prefix: prefix.slice(0, -1), runs: [summary, ...externals, ...accepted, ...derived], registration: execution.registration });
+      return { status: "prepared", context, documents: documentCount, accepted: accepted.length, reusedDocuments, rejected, occurrences, calls: "unsupported", durationMs: Math.round(performance.now() - started) };
+    }
     const native = await retainProviders(store, inventory, parent, prefix.slice(0, -1));
     const others = parent ? (store.sql("SELECT partition_key,run FROM sc_partitions WHERE snapshot=?").all(parent) as Array<{ partition_key: string; run: number }>).filter(row => !row.partition_key.startsWith("scip/") && !row.partition_key.startsWith("clang/")).map(row => row.run) : [];
     signal?.throwIfAborted(); const publicationStarted = performance.now();
-    const published = store.publish([...others, ...native, summary, ...externals, ...accepted, ...derived], parent);
+    const published = store.publish([...others, ...native, summary, ...externals, ...accepted, ...derived], parent, execution?.registration ? [execution.registration] : []);
     const publicationMs = +(performance.now() - publicationStarted).toFixed(3);
     return { snapshot: published, context, status: "partial", documents: documentCount, accepted: accepted.length, reusedDocuments, rejected, occurrences, excludedExternalLocals, calls: "unsupported", durationMs: Math.round(performance.now() - started), publicationMs, publicationStagesMs: stages, sqlitePragmas: Object.fromEntries(["journal_mode", "synchronous"].map(name => [name, store.db.pragma(name, { simple: true })])), limits, protocolDigest: SCIP_PROTOCOL_DIGEST };
   } finally { try { await stream?.close(); } finally { store.close(); } }

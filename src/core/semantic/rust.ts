@@ -10,10 +10,13 @@ import { runProviderProcess } from "./process.js";
 import { qualifyRustAnalyzer } from "./rust-qualification.js";
 import { deriveScipNative } from "./scip-native.js";
 import { inventoryFromDisk } from "./provider-runs.js";
+import { inputMatches } from "./input-check.js";
+import type { ProviderPreparation } from "./provider-plan.js";
+import { authorizeProvider, verifyProviderAuthorization } from "./provider-grants.js";
 
 export { RUST_PROVIDER_VERSION } from "./model.js";
 export const RUST_PROVIDER_CAPABILITIES = { symbols: "partial", definitions: "partial", references: "partial", imports: "partial", calls: "partial-declared-static-targets", types: "reported-signatures", traits: "reported-symbols", associatedItems: "reported-symbols", macros: "unqualified", dynamicDispatch: "unsupported" } as const;
-export interface RustOptions {
+export interface RustOptions extends ProviderPreparation {
   analyzer: string;
   analyzerSha256: string;
   toolchain: string;
@@ -42,6 +45,15 @@ export async function indexRust(repository: string, manifestFile: string, option
   if (features.length > 128 || features.some(feature => !/^[A-Za-z0-9_][A-Za-z0-9_./+-]{0,255}$/.test(feature)) || options.target && !/^[A-Za-z0-9_-]{1,128}$/.test(options.target)) throw Error("Unsupported Rust feature/target selection");
   if (await digestFile(options.analyzer) !== options.analyzerSha256) throw Error("Rust analyzer digest mismatch");
   const root = await resolveRepositoryRoot(repository); const directory = path.resolve(index?.endsWith(".sqlite") ? path.dirname(index) : index ?? path.join(root, ".prograph"));
+  const cargo = path.join(options.toolchain, "cargo"), rustc = path.join(options.toolchain, "rustc");
+  const toolInputs = { [`physical:${options.analyzer}`]: options.analyzerSha256, [`physical:${cargo}`]: await digestFile(cargo), [`physical:${rustc}`]: await digestFile(rustc) };
+  const trust = digest(canonical([options.analyzer, options.toolchain, toolInputs]));
+  if (options.authorization && (!await verifyProviderAuthorization(options.authorization, root, directory) || options.authorization.kind !== "rust" || options.authorization.trust !== trust)) throw Error("Rust tool inputs changed; explicit requalification required");
+  const searches: Record<string, string> = {};
+  const noCargoConfig = async (file: string, ambient = false) => {
+    try { await stat(file); throw Error(`Managed Rust ${ambient ? "ambient " : ""}Cargo configuration is not qualified`); }
+    catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; searches[`probe-present:${file}`] = digest("false"); }
+  };
   const initialInventory = await inventoryFromDisk(root, directory, 200000, options.signal);
   const scan = await scanRepository(root, directory);
   const manifest = path.relative(root, path.resolve(root, manifestFile)).split(path.sep).join("/");
@@ -52,7 +64,7 @@ export async function indexRust(repository: string, manifestFile: string, option
   for (const file of files.filter(file => file.endsWith("Cargo.toml"))) {
     let parent = path.dirname(path.join(root, file));
     while (parent === root || parent.startsWith(`${root}${path.sep}`)) {
-      for (const name of ["config", "config.toml"]) { try { await stat(path.join(parent, ".cargo", name)); throw Error("Managed Rust Cargo configuration is not qualified; use a pre-generated index with declared inputs"); } catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; } }
+      for (const name of ["config", "config.toml"]) await noCargoConfig(path.join(parent, ".cargo", name));
       if (parent === root) break; parent = path.dirname(parent);
     }
   }
@@ -62,14 +74,13 @@ export async function indexRust(repository: string, manifestFile: string, option
   // Cargo also searches cwd ancestors outside CARGO_HOME (including custom index parents).
   for (let parent = sourceRoot;; parent = path.dirname(parent)) {
     for (const name of ["config", "config.toml"]) {
-      try { await stat(path.join(parent, ".cargo", name)); throw Error("Managed Rust ambient Cargo configuration is not qualified"); }
-      catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; }
+      await noCargoConfig(path.join(parent, ".cargo", name), true);
     }
     if (path.dirname(parent) === parent) break;
   }
   // Reuse only cache directories, never credential/config files; networking stays offline.
   for (const name of ["registry", "git"]) { const cache = path.join(os.homedir(), ".cargo", name); try { await stat(cache); await symlink(cache, path.join(cargoHome, name), "dir"); } catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; } }
-  const inputs: Record<string, string> = {}; const sources: Record<string, string> = {}; const buildInputs: Record<string, string> = {}; let sourceBytes = 0;
+  const inputs: Record<string, string> = { ...toolInputs, ...searches }; const sources: Record<string, string> = {}; const buildInputs: Record<string, string> = {}; let sourceBytes = 0;
   for (const file of files) {
     options.signal?.throwIfAborted(); const original = path.join(root, file); const info = await lstat(original);
     if (!info.isFile() || info.isSymbolicLink() || !(await realpath(original)).startsWith(`${await realpath(root)}${path.sep}`)) throw Error("Rust source escapes repository");
@@ -79,9 +90,6 @@ export async function indexRust(repository: string, manifestFile: string, option
     if (file.endsWith(".rs")) sources[file] = expected; else buildInputs[file] = expected;
     const destination = path.join(sourceRoot, file); await mkdir(path.dirname(destination), { recursive: true }); await writeFile(destination, bytes);
   }
-  const cargo = path.join(options.toolchain, "cargo"); const rustc = path.join(options.toolchain, "rustc");
-  inputs[`physical:${options.analyzer}`] = options.analyzerSha256;
-  for (const tool of [cargo, rustc]) inputs[`physical:${tool}`] = await digestFile(tool);
   const env = { PATH: `${options.toolchain}${path.delimiter}/usr/bin${path.delimiter}/bin`, CARGO_HOME: cargoHome, CARGO_NET_OFFLINE: "true", CARGO_TARGET_DIR: path.join(runDirectory, "target"), RUSTC: rustc, LANG: "C", TMPDIR: runDirectory };
   const stages: Record<string, number> = {};
   const run = async (name: string, executable: string, args: string[], cwd = sourceRoot) => {
@@ -127,13 +135,16 @@ export async function indexRust(repository: string, manifestFile: string, option
     ...(prefix ? { documentPathPrefix: prefix } : {}), enclosingPolicy: "diagnose" };
   const verify = async (signal?: AbortSignal) => {
     signal?.throwIfAborted(); if (performance.now() - started > timeout) throw Error("Rust provider total deadline exceeded before publication");
-    for (const [resource, expected] of Object.entries(inputs)) { const file = resource.startsWith("source:") ? path.join(root, resource.slice(7)) : resource.slice(9); if (await digestFile(file, 10 * 1024 ** 3, signal) !== expected) throw Error(`Rust recorded input changed: ${resource}`); }
+    for (const [resource, expected] of Object.entries(inputs)) if (!await inputMatches({ resource, digest: expected }, root, signal)) throw Error(`Rust recorded input changed: ${resource}`);
     if ((await inventoryFromDisk(root, directory, 200000, signal)).inventory !== initialInventory.inventory) throw Error("Rust source/config inventory changed during production");
     signal?.throwIfAborted(); if (performance.now() - started > timeout) throw Error("Rust provider total deadline exceeded before publication");
   };
   await verify(options.signal);
+  const recipeOptions = { analyzer: options.analyzer, analyzerSha256: options.analyzerSha256, toolchain: options.toolchain, features, noDefaultFeatures: !!options.noDefaultFeatures, target, timeoutMs: timeout };
+  const registration = await authorizeProvider({ key: `rust-${digest(canonical([manifest, features, !!options.noDefaultFeatures, target])).slice(0, 32)}`, kind: "rust", recipe: { manifest, options: recipeOptions, prefix: `scip/${sidecar.id}` }, trust, version: RUST_PROVIDER_VERSION }, root, directory);
   const imported = await importScip(root, artifact, sidecar, directory, { maxIndexBytes: 64 * 1024 ** 2, maxDocuments: 1000 }, options.signal,
     { version: RUST_PROVIDER_VERSION, environment, inputs, diagnostics: [compiler.stderr, extracted.stderr].filter(Boolean).map(message => message.slice(0, 2048)), requireAllDocuments: true, verify,
+      registration, ...(options.prepare ? { prepare: options.prepare } : {}),
       derive: (store, documents, ctx, fingerprint) => deriveScipNative(store, documents, root, "rust", ctx, fingerprint, options.signal) });
   return { ...imported, calls: "partial-declared-static-targets", provider: "rust-analyzer", capabilities: RUST_PROVIDER_CAPABILITIES, environment, executionDirectory: runDirectory, stagesMs: stages, totalMs: Math.round(performance.now() - started) };
 }

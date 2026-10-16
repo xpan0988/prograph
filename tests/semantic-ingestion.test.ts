@@ -298,6 +298,7 @@ test("filename-only inventory matches scanner input identity without hydrating s
   const root = await temporary(); await writeFile(path.join(root, "a.py"), "def example(): return 1\n"); await writeFile(path.join(root, "README.md"), "# Not a semantic input");
   const inventory = await inventoryFromDisk(root, path.join(root, ".prograph"), 100);
   expect(inventory.inventory).toBe(semanticInventory((await scanRepository(root)).snapshot));
+  expect((await inventoryFromDisk(root, root, 1000)).inventory).toBe(semanticInventory((await scanRepository(root)).snapshot));
   await expect(inventoryFromDisk(root, path.join(root, ".prograph"), 1)).rejects.toThrow("quota");
 });
 test("cooperative cancellation during document batches leaves the active snapshot intact", async () => {

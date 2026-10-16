@@ -1,6 +1,7 @@
 /** Schema 2 is additive: the 1.2 graph remains a separately versioned compatibility domain. */
 export const SEMANTIC_SQL = `
 CREATE TABLE IF NOT EXISTS sc_meta(key TEXT PRIMARY KEY,value TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS sc_provider_recipes(key TEXT PRIMARY KEY,kind TEXT NOT NULL,recipe_json TEXT NOT NULL,trust TEXT NOT NULL,version TEXT NOT NULL,authorization TEXT NOT NULL,updated_at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS sc_entities(id INTEGER PRIMARY KEY,key TEXT NOT NULL UNIQUE,kind TEXT NOT NULL,canonical TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS sc_symbols(entity INTEGER PRIMARY KEY REFERENCES sc_entities(id),name TEXT NOT NULL,qualified_name TEXT NOT NULL,kind TEXT NOT NULL,file TEXT NOT NULL,context TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS sc_sources(id INTEGER PRIMARY KEY,path TEXT NOT NULL,digest TEXT NOT NULL,size INTEGER NOT NULL,UNIQUE(path,digest));

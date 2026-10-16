@@ -12,6 +12,8 @@ import { javac0131Range, python066Symbol } from "./scip-dialects.js";
 import { toolReceipt, toolInputResource } from "./tool-receipt.js";
 export { toolReceipt } from "./tool-receipt.js";
 import { inventoryFromDisk } from "./provider-runs.js";
+import type { ProviderPreparation } from "./provider-plan.js";
+import { authorizeProvider, managedToolTrust, verifyProviderAuthorization } from "./provider-grants.js";
 
 export interface ToolReceipt { path: string; sha256: string; entry?: string }
 export interface ManagedProject {
@@ -37,7 +39,7 @@ const xml = (text: string) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt
 const msbuildPath = (text: string) => xml(text.replace(/[%$@;?*()']/g, character => `%${character.charCodeAt(0).toString(16).toUpperCase()}`));
 
 /** Explicit compiler contexts; never invokes repository build scripts, package installation or network discovery. */
-export async function indexManagedProject(repository: string, configuration: string, index?: string, options: { timeoutMs?: number; signal?: AbortSignal } = {}): Promise<Record<string, unknown>> {
+export async function indexManagedProject(repository: string, configuration: string, index?: string, options: { timeoutMs?: number; signal?: AbortSignal } & ProviderPreparation = {}): Promise<Record<string, unknown>> {
   const started = performance.now(); const timeout = options.timeoutMs ?? 300000;
   if (process.platform === "win32" || !Number.isSafeInteger(timeout) || timeout < 100 || timeout > 600000) throw Error("Managed SCIP requires POSIX and a 100..600000ms total deadline");
   const root = await resolveRepositoryRoot(repository); const configFile = path.resolve(root, configuration);
@@ -45,6 +47,10 @@ export async function indexManagedProject(repository: string, configuration: str
   if (config.format !== 1 || !/^[A-Za-z0-9._-]{1,128}$/.test(config.id) || !Object.hasOwn(MANAGED_CAPABILITIES, config.language) || !safeRelative(config.root) || !config.package?.name || !config.package.version || [config.package.name, config.package.version].some(v => typeof v !== "string" || v.length > 256 || /[\s\0]/.test(v))) throw Error("Unsupported managed project configuration");
   if (config.sources?.some(f => !safeRelative(f)) || config.sourceRoots?.some(f => !safeRelative(f)) || Buffer.byteLength(canonical(config)) > 32768) throw Error("Managed source selection is invalid or configuration exceeds 32 KiB");
   const directory = path.resolve(index?.endsWith(".sqlite") ? path.dirname(index) : index ?? path.join(root, ".prograph")); await mkdir(directory, { recursive: true });
+  if (options.authorization) {
+    const grant = options.authorization;
+    if (!await verifyProviderAuthorization(grant, root, directory) || grant.kind !== "managed" || grant.recipe.configuration !== configFile || grant.recipe.id !== config.id || grant.recipe.language !== config.language || grant.trust !== managedToolTrust(config)) throw Error("Managed tool or execution scope changed; explicit requalification required");
+  }
   const initialInventory = await inventoryFromDisk(root, directory, 200000, options.signal);
   const scan = await scanRepository(root, directory); const projectRoot = path.resolve(root, config.root);
   if ((await realpath(projectRoot)) !== (await realpath(root)) && !(await realpath(projectRoot)).startsWith(`${await realpath(root)}${path.sep}`)) throw Error("Managed project root escapes repository");
@@ -170,7 +176,10 @@ export async function indexManagedProject(repository: string, configuration: str
     if ((await inventoryFromDisk(root, directory, 200000, signal)).inventory !== initialInventory.inventory) throw Error("Managed source/config inventory changed during production");
   };
   await writeFile(path.join(executionDirectory, "execution.json"), JSON.stringify({ sidecar, environment, stages }, null, 2));
+  await verify(options.signal);
+  const registration = await authorizeProvider({ key: `managed-${config.id}`, kind: "managed", recipe: { configuration: configFile, id: config.id, language: config.language }, trust: managedToolTrust(config), version: MANAGED_SCIP_VERSION }, root, directory);
   const result = await importScip(root, artifact, sidecar, directory, { maxDocuments: 10000, maxIndexBytes: 256 * 1024 ** 2 }, options.signal, { version: MANAGED_SCIP_VERSION, environment, inputs, diagnostics: [], capabilities: MANAGED_CAPABILITIES[config.language], requireAllDocuments: true, verify,
+    registration, ...(options.prepare ? { prepare: options.prepare } : {}),
     ...(config.language === "python" ? { parseSymbol: python066Symbol } : {}), ...(config.language === "java" ? { sourceRange: javac0131Range } : {}),
     derive: (store, documents, ctx, fingerprint) => deriveScipNative(store, documents, root, config.language, ctx, fingerprint, options.signal) });
   return { ...result, calls: "partial-declared-static-targets", provider, capabilities: MANAGED_CAPABILITIES[config.language], environment, executionDirectory, stagesMs: stages, totalMs: Math.round(performance.now() - started) };

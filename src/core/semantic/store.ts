@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { SEMANTIC_SQL } from "./schema.js";
 import { collectSemanticGarbage, type GarbageCollectionOptions } from "./gc.js";
 import { publishProjections } from "./publication.js";
+import type { ProviderRegistration } from "./provider-plan.js";
 import { canonical, semanticKey, PREDICATES, SEMANTIC_FORMAT_VERSION, SEMANTIC_SCHEMA_VERSION, READABLE_SEMANTIC_SCHEMAS, validateFact,
   type EntityKind, type FactInput, type OccurrenceInput, type SemanticSymbol, type SupportAlternative } from "./model.js";
 
@@ -206,7 +207,7 @@ export class SemanticStore {
     this.sql("INSERT INTO sc_run_digests VALUES(?,?)").run(run, result);
     return result;
   }
-  publish(runs: number[], expectedParent?: number): number {
+  publish(runs: number[], expectedParent?: number, registrations: ProviderRegistration[] = []): number {
     // An explicit undefined is a first-publication CAS, not permission to rebase a stale plan.
     const parent = arguments.length < 2 ? this.activeSnapshot() : expectedParent;
     this.hooks.fault?.("before-publish");
@@ -236,6 +237,12 @@ export class SemanticStore {
       if (this.sql(`SELECT 1 FROM sc_selector_gates g JOIN sc_partitions p ON p.run=g.run WHERE p.snapshot=? AND EXISTS(
         SELECT 1 FROM sc_selector_gates nested INDEXED BY sc_selector_gate_key JOIN sc_partitions owner ON owner.run=nested.run WHERE nested.key=g.required_key AND owner.snapshot=p.snapshot) LIMIT 1`).get(id)) throw Error("Selector admission requires unconditional input selectors");
       publishProjections(this, id, parent, measure);
+      for (const registration of registrations) {
+        if (!["managed", "rust", "clang"].includes(registration.kind) || !/^[A-Za-z0-9._-]{1,256}$/.test(registration.key) || !/^[a-f0-9]{64}$/.test(registration.trust) || !/^[a-f0-9]{64}$/.test(registration.authorization) || !registration.version || canonical(registration.recipe).length > 32768) throw Error("Invalid provider execution registration");
+        if (!this.sql("SELECT 1 FROM sc_provider_recipes WHERE key=?").get(registration.key) && (this.sql("SELECT COUNT(*) AS n FROM sc_provider_recipes").get() as { n: number }).n >= 256) throw Error("Provider registration catalogue exceeds 256 entries");
+        this.sql("INSERT INTO sc_provider_recipes VALUES(?,?,?,?,?,?,?) ON CONFLICT(key) DO UPDATE SET kind=excluded.kind,recipe_json=excluded.recipe_json,trust=excluded.trust,version=excluded.version,authorization=excluded.authorization,updated_at=excluded.updated_at")
+          .run(registration.key, registration.kind, canonical(registration.recipe), registration.trust, registration.version, registration.authorization, new Date().toISOString());
+      }
       this.sql("INSERT INTO sc_meta VALUES('active',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(String(id));
       return id;
     })();
