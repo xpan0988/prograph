@@ -16,7 +16,7 @@ const METADATA_FILES = ["**/package.json", "**/package-lock.json", "**/Cargo.tom
 export async function repositoryInputPaths(root: string, outputDirectory: string, maxFiles: number): Promise<string[]> {
   const config = await loadConfig(root);
   const relativeOutput = path.relative(root, outputDirectory).split(path.sep).join("/");
-  const ignore = [...config.exclude, ...(relativeOutput && !relativeOutput.startsWith("../") && relativeOutput !== "." ? [`${relativeOutput}/**`] : [])];
+  const ignore = [...config.exclude, ...(relativeOutput && relativeOutput !== ".." && !relativeOutput.startsWith("../") && relativeOutput !== "." ? [`${relativeOutput}/**`] : [])];
   const files = new Set<string>();
   const stream = fg.stream([...config.include, ...METADATA_FILES], { cwd: root, ignore, onlyFiles: true, unique: true, dot: true, followSymbolicLinks: false });
   for await (const file of stream) { files.add(String(file).split(path.sep).join("/")); if (files.size > maxFiles) throw Error("Repository input catalogue exceeds file quota"); }
@@ -85,7 +85,7 @@ export async function scanRepository(root: string, outputDirectory?: string): Pr
     });
   }
   const relativeOutput = outputDirectory ? path.relative(root, outputDirectory).split(path.sep).join("/") : undefined;
-  const ignore = [...config.exclude, ...(relativeOutput && !relativeOutput.startsWith("../") && relativeOutput !== "." ? [`${relativeOutput}/**`] : [])];
+  const ignore = [...config.exclude, ...(relativeOutput && relativeOutput !== ".." && !relativeOutput.startsWith("../") && relativeOutput !== "." ? [`${relativeOutput}/**`] : [])];
   const files = await fg(config.include, {
     cwd: root,
     ignore,

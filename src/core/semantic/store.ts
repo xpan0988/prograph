@@ -4,6 +4,9 @@ import { SEMANTIC_SQL } from "./schema.js";
 import { collectSemanticGarbage, type GarbageCollectionOptions } from "./gc.js";
 import { publishProjections } from "./publication.js";
 import type { ProviderRegistration } from "./provider-plan.js";
+import path from "node:path";
+import { realpathSync } from "node:fs";
+import { IndexLease } from "./maintenance-lock.js";
 import { canonical, semanticKey, PREDICATES, SEMANTIC_FORMAT_VERSION, SEMANTIC_SCHEMA_VERSION, READABLE_SEMANTIC_SCHEMAS, validateFact,
   type EntityKind, type FactInput, type OccurrenceInput, type SemanticSymbol, type SupportAlternative } from "./model.js";
 
@@ -15,9 +18,14 @@ export class SemanticStore {
   readonly db: Database.Database;
   private readonly statements = new Map<string, Database.Statement>();
   private readonly entityCache = new Map<string, number>();
-  constructor(readonly filename: string, readonly hooks: PublicationHooks = {}) {
-    this.db = new Database(filename);
+  private lease: IndexLease | undefined;
+  private readonly ownsLease: boolean;
+  constructor(readonly filename: string, readonly hooks: PublicationHooks = {}, borrowedLease?: IndexLease) {
+    this.lease = borrowedLease ?? (filename === ":memory:" ? undefined : new IndexLease(path.dirname(filename), "work")); this.ownsLease = !borrowedLease;
+    if (this.lease && (!this.lease.active || this.lease.directory !== realpathSync(path.dirname(filename)))) throw Error("Invalid borrowed index lease");
+    let opened: Database.Database | undefined;
     try {
+      this.db = new Database(filename); opened = this.db;
       const exists = this.db.prepare("SELECT 1 FROM sqlite_master WHERE name='sc_meta'").get();
       if (exists) {
         const format = this.db.prepare("SELECT value FROM sc_meta WHERE key='format'").get() as { value: string } | undefined;
@@ -33,14 +41,14 @@ export class SemanticStore {
         this.sql("INSERT OR IGNORE INTO sc_meta VALUES('format',?)").run(String(SEMANTIC_FORMAT_VERSION));
         this.sql("INSERT INTO sc_meta VALUES('schema',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(SEMANTIC_SCHEMA_VERSION);
       })();
-    } catch (error) { this.db.close(); throw error; }
+    } catch (error) { opened?.close(); if (this.ownsLease) this.lease?.close(); throw error; }
   }
   sql(query: string): Database.Statement {
     let statement = this.statements.get(query);
     if (!statement) { statement = this.db.prepare(query); this.statements.set(query, statement); }
     return statement;
   }
-  close(): void { this.db.close(); }
+  close(): void { this.db.close(); if (this.ownsLease) this.lease?.close(); }
   activeSnapshot(): number | undefined {
     const row = this.sql("SELECT value FROM sc_meta WHERE key='active'").get() as { value: string } | undefined;
     return row ? Number(row.value) : undefined;
@@ -256,7 +264,20 @@ export class SemanticStore {
   }
   unpinSnapshot(snapshot: number, label = "user"): void { this.sql("DELETE FROM sc_snapshot_pins WHERE snapshot=? AND label=?").run(snapshot, label); }
   collectGarbage(options: GarbageCollectionOptions = {}): Record<string, number> {
-    try { return collectSemanticGarbage(this, options); } finally { this.entityCache.clear(); }
+    if (this.db.inTransaction) throw Error("Garbage collection cannot run inside a staging transaction");
+    if (!this.lease || this.lease.mode === "maintenance") {
+      try { return collectSemanticGarbage(this, options); } finally { this.entityCache.clear(); }
+    }
+    if (!this.ownsLease) throw Error("Garbage collection cannot run inside an indexing job");
+    this.lease.close(); let maintenance: IndexLease | undefined;
+    try {
+      maintenance = new IndexLease(path.dirname(this.filename), "maintenance");
+      return collectSemanticGarbage(this, options);
+    } finally {
+      maintenance?.close(); this.entityCache.clear();
+      try { this.lease = new IndexLease(path.dirname(this.filename), "work"); }
+      catch (error) { this.db.close(); throw error; }
+    }
   }
   pruneHistory(keep = 3): void { this.collectGarbage({ keep }); }
 }

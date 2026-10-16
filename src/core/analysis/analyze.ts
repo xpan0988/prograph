@@ -14,6 +14,7 @@ import { createIndexState, writeIndexState } from "./state.js";
 import { runAdapter } from "./adapter-run.js";
 import { deriveOwnedAnalysis } from "../semantic/analysis-passes.js";
 import { indexSemanticFoundation } from "../semantic/typescript.js";
+import { withIndexWork } from "../semantic/maintenance-lock.js";
 
 export interface AnalyzeOptions {
   output?: string;
@@ -66,8 +67,12 @@ function baseGraph(snapshot: RepositorySnapshot): AdapterResult {
 
 
 export async function analyzeRepository(input = ".", options: AnalyzeOptions = {}): Promise<AnalysisResult> {
-  const started = performance.now();
   const root = await resolveRepositoryRoot(input);
+  return withIndexWork(path.resolve(options.output ?? path.join(root, ".prograph")), () => analyzeRepositoryWithLease(root, options));
+}
+
+async function analyzeRepositoryWithLease(root: string, options: AnalyzeOptions): Promise<AnalysisResult> {
+  const started = performance.now();
   const scan = await scanRepository(root, options.output ? path.resolve(options.output) : undefined);
   const builder = new GraphBuilder();
   builder.merge(baseGraph(scan.snapshot));

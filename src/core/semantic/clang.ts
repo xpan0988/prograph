@@ -12,6 +12,7 @@ import { semanticInventory, retainProviders } from "./provider-runs.js";
 import { boundedInput, digestFile } from "./inputs.js";
 import type { ProviderPreparation } from "./provider-plan.js";
 import { authorizeProvider, verifyProviderAuthorization } from "./provider-grants.js";
+import { withIndexWork } from "./maintenance-lock.js";
 
 const exec = promisify(execFile);
 const COMPILER = "/usr/bin/clang";
@@ -54,6 +55,11 @@ function dependencyPaths(output: string): string[] {
 
 /** Explicit opt-in, fixed trusted executable and allowlisted syntax-only arguments. No discovered shell execution. */
 export async function indexClang(repository: string, unitKey: string, index?: string, options: ProviderPreparation = {}): Promise<Record<string, unknown>> {
+  const root = await resolveRepositoryRoot(repository); const selected = path.resolve(index ?? path.join(root, ".prograph"));
+  return withIndexWork(selected.endsWith(".sqlite") ? path.dirname(selected) : selected, () => indexClangWithLease(root, unitKey, index, options));
+}
+
+async function indexClangWithLease(repository: string, unitKey: string, index: string | undefined, options: ProviderPreparation): Promise<Record<string, unknown>> {
   const started = performance.now();
   const scan = await scanRepository(await resolveRepositoryRoot(repository), index); const root = scan.snapshot.repository.root;
   const unit = discoverProjects(scan.snapshot).units.find(value => value.key === unitKey && ["c", "cpp"].includes(value.language));

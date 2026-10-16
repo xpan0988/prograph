@@ -13,6 +13,7 @@ import { orderPasses, callPass, executePasses, qualifiedCallProjection, CALL_PAS
 import { SemanticStore } from "../src/core/semantic/store.js";
 import { SemanticQuery, semanticQueryForRepository } from "../src/core/semantic/query.js";
 import { importScip, type ScipManifest } from "../src/core/semantic/scip-import.js";
+import { collectIndexGarbage } from "../src/core/semantic/provider-artifacts.js";
 import { scipType, validateDocumentSize } from "../src/core/semantic/scip-wire.js";
 import { parseScipSymbol } from "../src/core/semantic/scip-symbol.js";
 import { SourceCoordinates } from "../src/core/semantic/coordinates.js";
@@ -108,10 +109,17 @@ test("SCIP document and external ownership reuse survives artifact order changes
     try { return store.sql("SELECT partition_key,run FROM sc_partitions WHERE snapshot=? AND partition_key NOT LIKE '%/index' ORDER BY partition_key").all(store.activeSnapshot()) as Array<{ partition_key: string; run: number }>; } finally { store.close(); }
   };
   const original = partitions();
+  const evidence = new SemanticStore(path.join(root, ".prograph/semantic.sqlite"));
+  let retainedArtifact: string;
+  try { retainedArtifact = (evidence.sql("SELECT resource FROM sc_inputs WHERE run=? AND resource LIKE 'artifact:%'").get(original.find(row => row.partition_key === "scip/test/document:a.py")!.run) as { resource: string }).resource.slice(9); } finally { evidence.close(); }
+  expect(retainedArtifact!).not.toBe(first.filename);
   const reordered = doc("a.py"); reordered.occurrences.reverse();
   const second = await artifact(root, [doc("b.py"), reordered], external);
   expect(await importScip(root, second.filename, second.manifest)).toMatchObject({ reusedDocuments: 2 });
   expect(partitions()).toEqual(original);
+  expect(digest(await readFile(retainedArtifact!))).toBe(first.manifest.indexDigest);
+  await expect(collectIndexGarbage(path.join(root, ".prograph/semantic.sqlite"), { keep: 1 })).resolves.toHaveProperty("artifacts.state", "complete");
+  expect(digest(await readFile(retainedArtifact!))).toBe(first.manifest.indexDigest);
   const changed = doc("b.py"); changed.occurrences[1]!.symbol = "scip-python python fixture 1 module/other().";
   const third = await artifact(root, [doc("a.py"), changed], external);
   expect(await importScip(root, third.filename, third.manifest)).toMatchObject({ reusedDocuments: 1 });

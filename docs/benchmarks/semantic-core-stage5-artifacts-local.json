@@ -1,0 +1,68 @@
+{
+  "node": "v25.9.0",
+  "counts": {
+    "success": true,
+    "numTotalTests": 183,
+    "numPassedTests": 183,
+    "numFailedTests": 0,
+    "numPendingTests": 0
+  },
+  "testReportSha256": "e0e170a07e07405fc516708054db735e39bc5b438b36654de276f73241283718",
+  "testWorkers": 4,
+  "testDurationSeconds": 136.9,
+  "temporaryIdleSleepAssertion": "caffeinate -i, process scoped; original deadlines unchanged",
+  "recovery": {
+    "node": "v25.9.0",
+    "probes": [
+      {
+        "point": "before-seal",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "before-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "during-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "after-publish",
+        "exitCode": 57,
+        "activeSnapshot": 2,
+        "visible": [
+          "other"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      }
+    ],
+    "corruption": {
+      "refused": true,
+      "unchanged": true
+    }
+  },
+  "typecheck": "passed",
+  "completeNodeAndUiBuild": "passed",
+  "evidenceVerifier": "passed, including actual producers and registered replay, artifact/maintenance suite",
+  "compilerChildRss": "not measured",
+  "scope": "final Stage 5 owned artifact/maintenance revision; not all Core 2.0 acceptance"
+}

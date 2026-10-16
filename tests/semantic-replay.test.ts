@@ -14,6 +14,8 @@ import { discoverProjects } from "../src/core/semantic/projects.js";
 import { scanRepository } from "../src/core/repository/repository.js";
 import { authorizeProvider, verifyProviderAuthorization } from "../src/core/semantic/provider-grants.js";
 import { digest, RUST_PROVIDER_VERSION } from "../src/core/semantic/model.js";
+import { collectIndexGarbage, createProviderWorkspace } from "../src/core/semantic/provider-artifacts.js";
+import { repositoryStatus } from "../src/core/analysis/state.js";
 import type { ProviderRegistration, PreparedProvider } from "../src/core/semantic/provider-plan.js";
 
 const roots: string[] = [];
@@ -121,4 +123,19 @@ for (const language of ["python", "go", "java", "csharp"] as const) test.skipIf(
   const name = ["go", "csharp"].includes(language) ? "Target" : "target";
   expect(find(root, name)).toHaveLength(1); expect(find(root, name, Number(first.snapshot))).toHaveLength(1);
   const q = new SemanticQuery(path.join(root, ".prograph/semantic.sqlite")); try { const target = q.execute("find", name).items[0] as { key: string }; expect(q.execute("callers", target.key).items.length).toBeGreaterThan(0); } finally { q.close(); }
+  const filename = path.join(root, ".prograph/semantic.sqlite");
+  const pin = new SemanticStore(filename); pin.pinSnapshot(Number(first.snapshot), "artifact-audit"); pin.close();
+  const abandoned = await createProviderWorkspace(path.join(root, ".prograph"), root, language);
+  const collected = await collectIndexGarbage(filename, { keep: 1 }); expect(collected).toHaveProperty("artifacts.state", "complete"); expect(existsSync(abandoned)).toBe(false);
+  expect(find(root, name, Number(first.snapshot))).toHaveLength(1); expect((await repositoryStatus(root)).state).toBe("fresh");
+  const retained = new SemanticStore(filename);
+  try {
+    // Reused document and external buckets can retain an older full artifact than
+    // the current summary. Every retained original receipt must still be readable.
+    const inputs = retained.sql("SELECT resource,digest FROM sc_inputs WHERE resource LIKE 'artifact:%'").all() as Array<{ resource: string; digest: string }>;
+    expect(inputs.length).toBeGreaterThan(0);
+    for (const input of inputs) expect(digest(await readFile(input.resource.slice(9)))).toBe(input.digest);
+    retained.unpinSnapshot(Number(first.snapshot), "artifact-audit");
+  } finally { retained.close(); }
+  await collectIndexGarbage(filename, { keep: 1 }); expect(find(root, name)).toHaveLength(1); expect((await repositoryStatus(root)).state).toBe("fresh");
 }, 600000);

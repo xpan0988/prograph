@@ -14,6 +14,8 @@ for (const language of ['python', 'go', 'java', 'csharp']) assert.ok(managed?.as
 const replay = tests.testResults.find(file => /[/\\]semantic-replay\.test\.ts$/.test(file.name));
 assert.ok(replay && replay.assertionResults.length >= 8 && replay.assertionResults.every(test => test.status === 'passed'), 'Authenticated preparation/replay tests must all execute');
 for (const language of ['Clang', 'Rust', 'python', 'go', 'java', 'csharp']) assert.ok(replay.assertionResults.some(test => test.title.startsWith(`registered ${language}`) && test.status === 'passed'), `Actual registered ${language} replay must execute`);
+const maintenance = tests.testResults.find(file => /[/\\]semantic-artifacts\.test\.ts$/.test(file.name));
+assert.ok(maintenance && maintenance.assertionResults.length >= 9 && maintenance.assertionResults.every(test => test.status === 'passed'), 'Artifact retention and cross-process maintenance recovery must execute');
 const recovery = JSON.parse(await readFile(process.argv[3] ?? 'semantic-recovery-results.json', 'utf8'));
 assert.deepEqual(recovery.probes.map(probe => probe.point).sort(), ['after-publish', 'before-publish', 'before-seal', 'during-publish']);
 assert.ok(recovery.probes.every(probe => probe.integrity === 'ok' && probe.baselineRetained));

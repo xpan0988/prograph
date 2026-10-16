@@ -1,0 +1,1897 @@
+{
+  "measuredAt": "2026-10-16T11:07:08.835Z",
+  "node": "v25.9.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "scope": "one serial offline maintenance sample; separate from publication/LOC/provider throughput; setup not timed as GC",
+  "root": "/private/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-owned-artifact-bench-cCUvMN",
+  "synthetic": {
+    "shape": {
+      "workspaces": 1000,
+      "filesPerWorkspace": 10,
+      "payloadBytesPerFile": 4096,
+      "retained": 10
+    },
+    "setupMs": 6328.142375,
+    "gcMs": 938.1020410000001,
+    "result": {
+      "collected": {
+        "snapshots": 0,
+        "runs": 0,
+        "claims": 0,
+        "facts": 0,
+        "sources": 0,
+        "provenance": 0,
+        "groups": 0,
+        "entities": 0,
+        "origin_runs": 0
+      },
+      "active": 1,
+      "artifacts": {
+        "state": "complete",
+        "visitedResources": 10,
+        "retained": 10,
+        "deleted": 990,
+        "unowned": 0,
+        "failures": []
+      }
+    },
+    "allWorkspaceExistenceChecks": true,
+    "integrity": "ok",
+    "foreignKeys": []
+  },
+  "real": {
+    "upstreamDirectory": "/private/tmp/prograph-stage4-real/jsoup-4cf664cdb2e9d2cc2d40fdf3bb9c0be0be22f865",
+    "upstreamRevision": "4cf664cdb2e9d2cc2d40fdf3bb9c0be0be22f865",
+    "repository": "/private/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-owned-artifact-bench-cCUvMN/real-jsoup",
+    "selectedJavaFiles": 96,
+    "occurrenceBearingJavaFiles": 95,
+    "sourceLines": 29873,
+    "scope": "copied jsoup Java8 source slice, explicit pinned JDK21/scip-java/classpath; original source untouched; one serial warm sample, compiler child RSS not measured",
+    "results": [
+      {
+        "snapshot": 1,
+        "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+        "status": "partial",
+        "documents": 96,
+        "accepted": 96,
+        "reusedDocuments": 0,
+        "rejected": 0,
+        "occurrences": 41352,
+        "excludedExternalLocals": 0,
+        "calls": "partial-declared-static-targets",
+        "durationMs": 10455,
+        "publicationMs": 387.312,
+        "publicationStagesMs": {
+          "content-key": 0.663,
+          "membership": 36.782,
+          "support-eligibility": 20.546,
+          "navigation": 288.447,
+          "symbols": 0.009,
+          "call-summary": 17.196,
+          "pointer-and-commit": 23.594
+        },
+        "sqlitePragmas": {
+          "journal_mode": "wal",
+          "synchronous": 2
+        },
+        "limits": {
+          "maxIndexBytes": 268435456,
+          "maxDocumentBytes": 16777216,
+          "maxSourceBytes": 8388608,
+          "maxOccurrencesPerDocument": 100000,
+          "maxRelationshipsPerSymbol": 1024,
+          "maxDocuments": 10000,
+          "batch": 500
+        },
+        "protocolDigest": "b38021b65ef90cbbf6af9c829ff75192859ad9b5da05439ef154bea4ceb2bf03",
+        "provider": "scip-java",
+        "capabilities": {
+          "symbols": "partial",
+          "definitions": "partial",
+          "references": "partial",
+          "imports": "partial",
+          "calls": "partial-declared-static-targets",
+          "types": "reported-signatures",
+          "inheritance": "reported-relationships",
+          "generics": "reported-signatures",
+          "metaprogramming": "unsupported-processors-disabled",
+          "dynamicDispatch": "unsupported",
+          "nativeFacts": "partial",
+          "buildCompleteness": "declared-classpath-modulepath-release"
+        },
+        "environment": {
+          "language": "java",
+          "configuration": {
+            "format": 1,
+            "id": "real-java",
+            "language": "java",
+            "root": "src/main/java",
+            "package": {
+              "name": "org.jsoup:jsoup",
+              "version": "1.24.1-SNAPSHOT"
+            },
+            "runtime": {
+              "path": "/private/tmp/prograph-stage4-tools/jdk/jdk-21.0.12.1+1/Contents/Home",
+              "sha256": "091d18fd255db7b8f3d2189135547e0e8edd5392bfcca6e7578616e8144a8433",
+              "entry": "bin/java"
+            },
+            "producer": {
+              "path": "/private/tmp/prograph-stage4-scip-java",
+              "sha256": "a694cae143c32c5b6226362fb4bd268a8d13d3cd9b482819b3b0029a9a97b8fe"
+            },
+            "java": {
+              "release": 8,
+              "plugins": [
+                {
+                  "path": "/private/tmp/prograph-stage4-javac-0.13.1.jar",
+                  "sha256": "1c7ad1c8361f6ea9f9758e4b55decd4869b0ac7bb8610127aca045173ff590ef"
+                },
+                {
+                  "path": "/private/tmp/prograph-stage4-shared.jar",
+                  "sha256": "8c58e069af784b178347849f9b0e127781d9070210201ac6617947ace4f895be"
+                },
+                {
+                  "path": "/private/tmp/prograph-stage4-bindings.jar",
+                  "sha256": "ab1c627cb9ff6a8b0f05d91ee329c0ef281819ed011a2b2806fa7ea5f16c1006"
+                },
+                {
+                  "path": "/private/tmp/prograph-stage4-protobuf.jar",
+                  "sha256": "780e269712d59ae34b87b702ce26aede7982804299dd56a65aa84bda6c145268"
+                }
+              ],
+              "classpath": [
+                {
+                  "path": "/private/tmp/prograph-stage4-re2j.jar",
+                  "sha256": "7b52c72156dd7f98b3237a5b35c1d34fba381b21048c89208913ad80a45dfbd7"
+                },
+                {
+                  "path": "/private/tmp/prograph-stage4-jspecify.jar",
+                  "sha256": "070d75f261fe4c5b8202508366715f7f2d4660f88c8ef7e6d3575e48c9683b66"
+                }
+              ]
+            }
+          },
+          "runtimeVersion": "openjdk 21.0.12.1 2026-08-18 LTS\nOpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)\nOpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode, sharing)",
+          "producerDistribution": "0.13.1",
+          "artifactReportedVersion": "0.0.0-SNAPSHOT",
+          "coordinateConvention": "javac-tab-stops-8-utf16",
+          "symbolDialect": "scip",
+          "tools": [
+            {
+              "path": "/private/tmp/prograph-stage4-tools/jdk/jdk-21.0.12.1+1/Contents/Home",
+              "sha256": "091d18fd255db7b8f3d2189135547e0e8edd5392bfcca6e7578616e8144a8433",
+              "entry": "bin/java",
+              "files": 456,
+              "bytes": 350783484
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-scip-java",
+              "sha256": "a694cae143c32c5b6226362fb4bd268a8d13d3cd9b482819b3b0029a9a97b8fe",
+              "files": 1,
+              "bytes": 86321571
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-javac-0.13.1.jar",
+              "sha256": "1c7ad1c8361f6ea9f9758e4b55decd4869b0ac7bb8610127aca045173ff590ef",
+              "files": 1,
+              "bytes": 56375
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-shared.jar",
+              "sha256": "8c58e069af784b178347849f9b0e127781d9070210201ac6617947ace4f895be",
+              "files": 1,
+              "bytes": 17485
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-bindings.jar",
+              "sha256": "ab1c627cb9ff6a8b0f05d91ee329c0ef281819ed011a2b2806fa7ea5f16c1006",
+              "files": 1,
+              "bytes": 221360
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-protobuf.jar",
+              "sha256": "780e269712d59ae34b87b702ce26aede7982804299dd56a65aa84bda6c145268",
+              "files": 1,
+              "bytes": 1862727
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-re2j.jar",
+              "sha256": "7b52c72156dd7f98b3237a5b35c1d34fba381b21048c89208913ad80a45dfbd7",
+              "files": 1,
+              "bytes": 114335
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-jspecify.jar",
+              "sha256": "070d75f261fe4c5b8202508366715f7f2d4660f88c8ef7e6d3575e48c9683b66",
+              "files": 1,
+              "bytes": 3064
+            }
+          ],
+          "capabilities": {
+            "symbols": "partial",
+            "definitions": "partial",
+            "references": "partial",
+            "imports": "partial",
+            "calls": "partial-declared-static-targets",
+            "types": "reported-signatures",
+            "inheritance": "reported-relationships",
+            "generics": "reported-signatures",
+            "metaprogramming": "unsupported-processors-disabled",
+            "dynamicDispatch": "unsupported",
+            "nativeFacts": "partial",
+            "buildCompleteness": "declared-classpath-modulepath-release"
+          },
+          "selectedFiles": 96,
+          "sourceBytes": 1156944,
+          "network": "disabled-by-tool-configuration",
+          "effects": "controlled-copy-no-repository-build-scripts",
+          "gaps": [
+            "Explicit context, not a claim of equivalence to arbitrary repository builds",
+            "Runtime dispatch, reflection, generated code and metaprogramming remain unqualified",
+            "No kernel sandbox or network firewall is claimed; only trusted pinned tools execute"
+          ]
+        },
+        "executionDirectory": "/private/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-owned-artifact-bench-cCUvMN/real-index/providers/java/24f6f3d5-740d-45f3-bed5-b659e9af6355",
+        "stagesMs": {
+          "runtime-version": 28.22,
+          "compiler-index": 1063.868,
+          "aggregate": 1160.903
+        },
+        "totalMs": 13443
+      },
+      {
+        "snapshot": 2,
+        "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+        "status": "partial",
+        "documents": 96,
+        "accepted": 96,
+        "reusedDocuments": 96,
+        "rejected": 0,
+        "occurrences": 41352,
+        "excludedExternalLocals": 0,
+        "calls": "partial-declared-static-targets",
+        "durationMs": 553,
+        "publicationMs": 2.514,
+        "publicationStagesMs": {
+          "content-key": 0.557,
+          "membership": 1.234,
+          "support-eligibility": 0.04,
+          "navigation": 0.107,
+          "symbols": 0.001,
+          "call-summary": 0.115,
+          "pointer-and-commit": 0.376
+        },
+        "sqlitePragmas": {
+          "journal_mode": "wal",
+          "synchronous": 2
+        },
+        "limits": {
+          "maxIndexBytes": 268435456,
+          "maxDocumentBytes": 16777216,
+          "maxSourceBytes": 8388608,
+          "maxOccurrencesPerDocument": 100000,
+          "maxRelationshipsPerSymbol": 1024,
+          "maxDocuments": 10000,
+          "batch": 500
+        },
+        "protocolDigest": "b38021b65ef90cbbf6af9c829ff75192859ad9b5da05439ef154bea4ceb2bf03",
+        "provider": "scip-java",
+        "capabilities": {
+          "symbols": "partial",
+          "definitions": "partial",
+          "references": "partial",
+          "imports": "partial",
+          "calls": "partial-declared-static-targets",
+          "types": "reported-signatures",
+          "inheritance": "reported-relationships",
+          "generics": "reported-signatures",
+          "metaprogramming": "unsupported-processors-disabled",
+          "dynamicDispatch": "unsupported",
+          "nativeFacts": "partial",
+          "buildCompleteness": "declared-classpath-modulepath-release"
+        },
+        "environment": {
+          "language": "java",
+          "configuration": {
+            "format": 1,
+            "id": "real-java",
+            "language": "java",
+            "root": "src/main/java",
+            "package": {
+              "name": "org.jsoup:jsoup",
+              "version": "1.24.1-SNAPSHOT"
+            },
+            "runtime": {
+              "path": "/private/tmp/prograph-stage4-tools/jdk/jdk-21.0.12.1+1/Contents/Home",
+              "sha256": "091d18fd255db7b8f3d2189135547e0e8edd5392bfcca6e7578616e8144a8433",
+              "entry": "bin/java"
+            },
+            "producer": {
+              "path": "/private/tmp/prograph-stage4-scip-java",
+              "sha256": "a694cae143c32c5b6226362fb4bd268a8d13d3cd9b482819b3b0029a9a97b8fe"
+            },
+            "java": {
+              "release": 8,
+              "plugins": [
+                {
+                  "path": "/private/tmp/prograph-stage4-javac-0.13.1.jar",
+                  "sha256": "1c7ad1c8361f6ea9f9758e4b55decd4869b0ac7bb8610127aca045173ff590ef"
+                },
+                {
+                  "path": "/private/tmp/prograph-stage4-shared.jar",
+                  "sha256": "8c58e069af784b178347849f9b0e127781d9070210201ac6617947ace4f895be"
+                },
+                {
+                  "path": "/private/tmp/prograph-stage4-bindings.jar",
+                  "sha256": "ab1c627cb9ff6a8b0f05d91ee329c0ef281819ed011a2b2806fa7ea5f16c1006"
+                },
+                {
+                  "path": "/private/tmp/prograph-stage4-protobuf.jar",
+                  "sha256": "780e269712d59ae34b87b702ce26aede7982804299dd56a65aa84bda6c145268"
+                }
+              ],
+              "classpath": [
+                {
+                  "path": "/private/tmp/prograph-stage4-re2j.jar",
+                  "sha256": "7b52c72156dd7f98b3237a5b35c1d34fba381b21048c89208913ad80a45dfbd7"
+                },
+                {
+                  "path": "/private/tmp/prograph-stage4-jspecify.jar",
+                  "sha256": "070d75f261fe4c5b8202508366715f7f2d4660f88c8ef7e6d3575e48c9683b66"
+                }
+              ]
+            }
+          },
+          "runtimeVersion": "openjdk 21.0.12.1 2026-08-18 LTS\nOpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)\nOpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode, sharing)",
+          "producerDistribution": "0.13.1",
+          "artifactReportedVersion": "0.0.0-SNAPSHOT",
+          "coordinateConvention": "javac-tab-stops-8-utf16",
+          "symbolDialect": "scip",
+          "tools": [
+            {
+              "path": "/private/tmp/prograph-stage4-tools/jdk/jdk-21.0.12.1+1/Contents/Home",
+              "sha256": "091d18fd255db7b8f3d2189135547e0e8edd5392bfcca6e7578616e8144a8433",
+              "entry": "bin/java",
+              "files": 456,
+              "bytes": 350783484
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-scip-java",
+              "sha256": "a694cae143c32c5b6226362fb4bd268a8d13d3cd9b482819b3b0029a9a97b8fe",
+              "files": 1,
+              "bytes": 86321571
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-javac-0.13.1.jar",
+              "sha256": "1c7ad1c8361f6ea9f9758e4b55decd4869b0ac7bb8610127aca045173ff590ef",
+              "files": 1,
+              "bytes": 56375
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-shared.jar",
+              "sha256": "8c58e069af784b178347849f9b0e127781d9070210201ac6617947ace4f895be",
+              "files": 1,
+              "bytes": 17485
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-bindings.jar",
+              "sha256": "ab1c627cb9ff6a8b0f05d91ee329c0ef281819ed011a2b2806fa7ea5f16c1006",
+              "files": 1,
+              "bytes": 221360
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-protobuf.jar",
+              "sha256": "780e269712d59ae34b87b702ce26aede7982804299dd56a65aa84bda6c145268",
+              "files": 1,
+              "bytes": 1862727
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-re2j.jar",
+              "sha256": "7b52c72156dd7f98b3237a5b35c1d34fba381b21048c89208913ad80a45dfbd7",
+              "files": 1,
+              "bytes": 114335
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-jspecify.jar",
+              "sha256": "070d75f261fe4c5b8202508366715f7f2d4660f88c8ef7e6d3575e48c9683b66",
+              "files": 1,
+              "bytes": 3064
+            }
+          ],
+          "capabilities": {
+            "symbols": "partial",
+            "definitions": "partial",
+            "references": "partial",
+            "imports": "partial",
+            "calls": "partial-declared-static-targets",
+            "types": "reported-signatures",
+            "inheritance": "reported-relationships",
+            "generics": "reported-signatures",
+            "metaprogramming": "unsupported-processors-disabled",
+            "dynamicDispatch": "unsupported",
+            "nativeFacts": "partial",
+            "buildCompleteness": "declared-classpath-modulepath-release"
+          },
+          "selectedFiles": 96,
+          "sourceBytes": 1156944,
+          "network": "disabled-by-tool-configuration",
+          "effects": "controlled-copy-no-repository-build-scripts",
+          "gaps": [
+            "Explicit context, not a claim of equivalence to arbitrary repository builds",
+            "Runtime dispatch, reflection, generated code and metaprogramming remain unqualified",
+            "No kernel sandbox or network firewall is claimed; only trusted pinned tools execute"
+          ]
+        },
+        "executionDirectory": "/private/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-owned-artifact-bench-cCUvMN/real-index/providers/java/8b57535e-ef60-497c-8899-8148eb966ec8",
+        "stagesMs": {
+          "runtime-version": 19.244,
+          "compiler-index": 1064.312,
+          "aggregate": 1258.471
+        },
+        "totalMs": 3507
+      },
+      {
+        "snapshot": 3,
+        "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+        "status": "partial",
+        "documents": 96,
+        "accepted": 96,
+        "reusedDocuments": 95,
+        "rejected": 0,
+        "occurrences": 41352,
+        "excludedExternalLocals": 0,
+        "calls": "partial-declared-static-targets",
+        "durationMs": 821,
+        "publicationMs": 32.455,
+        "publicationStagesMs": {
+          "content-key": 0.52,
+          "membership": 6.885,
+          "support-eligibility": 0.309,
+          "navigation": 21.212,
+          "symbols": 0.002,
+          "call-summary": 2.174,
+          "pointer-and-commit": 1.27
+        },
+        "sqlitePragmas": {
+          "journal_mode": "wal",
+          "synchronous": 2
+        },
+        "limits": {
+          "maxIndexBytes": 268435456,
+          "maxDocumentBytes": 16777216,
+          "maxSourceBytes": 8388608,
+          "maxOccurrencesPerDocument": 100000,
+          "maxRelationshipsPerSymbol": 1024,
+          "maxDocuments": 10000,
+          "batch": 500
+        },
+        "protocolDigest": "b38021b65ef90cbbf6af9c829ff75192859ad9b5da05439ef154bea4ceb2bf03",
+        "provider": "scip-java",
+        "capabilities": {
+          "symbols": "partial",
+          "definitions": "partial",
+          "references": "partial",
+          "imports": "partial",
+          "calls": "partial-declared-static-targets",
+          "types": "reported-signatures",
+          "inheritance": "reported-relationships",
+          "generics": "reported-signatures",
+          "metaprogramming": "unsupported-processors-disabled",
+          "dynamicDispatch": "unsupported",
+          "nativeFacts": "partial",
+          "buildCompleteness": "declared-classpath-modulepath-release"
+        },
+        "environment": {
+          "language": "java",
+          "configuration": {
+            "format": 1,
+            "id": "real-java",
+            "language": "java",
+            "root": "src/main/java",
+            "package": {
+              "name": "org.jsoup:jsoup",
+              "version": "1.24.1-SNAPSHOT"
+            },
+            "runtime": {
+              "path": "/private/tmp/prograph-stage4-tools/jdk/jdk-21.0.12.1+1/Contents/Home",
+              "sha256": "091d18fd255db7b8f3d2189135547e0e8edd5392bfcca6e7578616e8144a8433",
+              "entry": "bin/java"
+            },
+            "producer": {
+              "path": "/private/tmp/prograph-stage4-scip-java",
+              "sha256": "a694cae143c32c5b6226362fb4bd268a8d13d3cd9b482819b3b0029a9a97b8fe"
+            },
+            "java": {
+              "release": 8,
+              "plugins": [
+                {
+                  "path": "/private/tmp/prograph-stage4-javac-0.13.1.jar",
+                  "sha256": "1c7ad1c8361f6ea9f9758e4b55decd4869b0ac7bb8610127aca045173ff590ef"
+                },
+                {
+                  "path": "/private/tmp/prograph-stage4-shared.jar",
+                  "sha256": "8c58e069af784b178347849f9b0e127781d9070210201ac6617947ace4f895be"
+                },
+                {
+                  "path": "/private/tmp/prograph-stage4-bindings.jar",
+                  "sha256": "ab1c627cb9ff6a8b0f05d91ee329c0ef281819ed011a2b2806fa7ea5f16c1006"
+                },
+                {
+                  "path": "/private/tmp/prograph-stage4-protobuf.jar",
+                  "sha256": "780e269712d59ae34b87b702ce26aede7982804299dd56a65aa84bda6c145268"
+                }
+              ],
+              "classpath": [
+                {
+                  "path": "/private/tmp/prograph-stage4-re2j.jar",
+                  "sha256": "7b52c72156dd7f98b3237a5b35c1d34fba381b21048c89208913ad80a45dfbd7"
+                },
+                {
+                  "path": "/private/tmp/prograph-stage4-jspecify.jar",
+                  "sha256": "070d75f261fe4c5b8202508366715f7f2d4660f88c8ef7e6d3575e48c9683b66"
+                }
+              ]
+            }
+          },
+          "runtimeVersion": "openjdk 21.0.12.1 2026-08-18 LTS\nOpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)\nOpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode, sharing)",
+          "producerDistribution": "0.13.1",
+          "artifactReportedVersion": "0.0.0-SNAPSHOT",
+          "coordinateConvention": "javac-tab-stops-8-utf16",
+          "symbolDialect": "scip",
+          "tools": [
+            {
+              "path": "/private/tmp/prograph-stage4-tools/jdk/jdk-21.0.12.1+1/Contents/Home",
+              "sha256": "091d18fd255db7b8f3d2189135547e0e8edd5392bfcca6e7578616e8144a8433",
+              "entry": "bin/java",
+              "files": 456,
+              "bytes": 350783484
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-scip-java",
+              "sha256": "a694cae143c32c5b6226362fb4bd268a8d13d3cd9b482819b3b0029a9a97b8fe",
+              "files": 1,
+              "bytes": 86321571
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-javac-0.13.1.jar",
+              "sha256": "1c7ad1c8361f6ea9f9758e4b55decd4869b0ac7bb8610127aca045173ff590ef",
+              "files": 1,
+              "bytes": 56375
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-shared.jar",
+              "sha256": "8c58e069af784b178347849f9b0e127781d9070210201ac6617947ace4f895be",
+              "files": 1,
+              "bytes": 17485
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-bindings.jar",
+              "sha256": "ab1c627cb9ff6a8b0f05d91ee329c0ef281819ed011a2b2806fa7ea5f16c1006",
+              "files": 1,
+              "bytes": 221360
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-protobuf.jar",
+              "sha256": "780e269712d59ae34b87b702ce26aede7982804299dd56a65aa84bda6c145268",
+              "files": 1,
+              "bytes": 1862727
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-re2j.jar",
+              "sha256": "7b52c72156dd7f98b3237a5b35c1d34fba381b21048c89208913ad80a45dfbd7",
+              "files": 1,
+              "bytes": 114335
+            },
+            {
+              "path": "/private/tmp/prograph-stage4-jspecify.jar",
+              "sha256": "070d75f261fe4c5b8202508366715f7f2d4660f88c8ef7e6d3575e48c9683b66",
+              "files": 1,
+              "bytes": 3064
+            }
+          ],
+          "capabilities": {
+            "symbols": "partial",
+            "definitions": "partial",
+            "references": "partial",
+            "imports": "partial",
+            "calls": "partial-declared-static-targets",
+            "types": "reported-signatures",
+            "inheritance": "reported-relationships",
+            "generics": "reported-signatures",
+            "metaprogramming": "unsupported-processors-disabled",
+            "dynamicDispatch": "unsupported",
+            "nativeFacts": "partial",
+            "buildCompleteness": "declared-classpath-modulepath-release"
+          },
+          "selectedFiles": 96,
+          "sourceBytes": 1156979,
+          "network": "disabled-by-tool-configuration",
+          "effects": "controlled-copy-no-repository-build-scripts",
+          "gaps": [
+            "Explicit context, not a claim of equivalence to arbitrary repository builds",
+            "Runtime dispatch, reflection, generated code and metaprogramming remain unqualified",
+            "No kernel sandbox or network firewall is claimed; only trusted pinned tools execute"
+          ]
+        },
+        "executionDirectory": "/private/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-owned-artifact-bench-cCUvMN/real-index/providers/java/7b29cb29-7f80-4a1c-8366-953cbe51a7e3",
+        "stagesMs": {
+          "runtime-version": 21.497,
+          "compiler-index": 1079.704,
+          "aggregate": 1175.699
+        },
+        "totalMs": 3708
+      }
+    ],
+    "gcMs": 448.02566600000137,
+    "result": {
+      "collected": {
+        "snapshots": 1,
+        "runs": 1,
+        "claims": 1,
+        "facts": 1,
+        "sources": 0,
+        "provenance": 1,
+        "groups": 0,
+        "entities": 1,
+        "origin_runs": 0
+      },
+      "active": 3,
+      "artifacts": {
+        "state": "complete",
+        "visitedResources": 117,
+        "retained": 2,
+        "deleted": 2,
+        "unowned": 0,
+        "failures": []
+      }
+    },
+    "before": {
+      "active": {
+        "claims": 130928,
+        "hash": "83cf380e973743a1dddab3880549e777792649990aaa834729f72f8647ce6575"
+      },
+      "pinned": {
+        "claims": 130928,
+        "hash": "d5512cebbac14fcaa0a8fd54205d1deffceb9909f6e21cde4f1075e2c4407f22"
+      },
+      "samples": {
+        "active": {
+          "found": [
+            {
+              "key": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+              "name": "Jsoup",
+              "qualified_name": "scip-java maven . . org/jsoup/Jsoup#",
+              "kind": "scip-global",
+              "file": "src/main/java/org/jsoup/Jsoup.java",
+              "variant": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+              "evidenceClaim": "sc2:claim:a7b49795b989f60e1e2e90712bae86f9b1ba4e80a3f0ee0731087eb0aa072644",
+              "confidence": "exact"
+            }
+          ],
+          "queries": [
+            {
+              "definition": [
+                {
+                  "occurrence": "sc2:occurrence:2d4c514c7aba003f5af8e1fbbbc3fa723745ca95c54db66712adfc7300bfc1bf",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/Jsoup.java",
+                  "sourceDigest": "08efd20ddec51728d05d6aa70091468d6adcd4be703bb578e164012a882c3bf7",
+                  "range": {
+                    "startByte": 592,
+                    "endByte": 597,
+                    "line": 25,
+                    "column": 14,
+                    "endLine": 25,
+                    "endColumn": 19
+                  },
+                  "role": "definition",
+                  "confidence": "exact",
+                  "evidenceClaim": "sc2:claim:b87d84e56809c718aec887ebe05067131848dab5a044a6980e721f2e930dcc6f",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "b7d1e3f4f3a1f66e3765ee204f54b2a5f98bdb9a43c7a382ee5dc3732aa1e4c5",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                }
+              ],
+              "references": [
+                {
+                  "occurrence": "sc2:occurrence:93f66702440a5369b57365021037a2cdf95889456a854d13ba143fea2b8899ca",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/ListLinks.java",
+                  "sourceDigest": "a4e4260d8e9671de4fa49d9a0016bec7170631efed2dc5422e4a7583a60cd86e",
+                  "range": {
+                    "startByte": 46,
+                    "endByte": 51,
+                    "line": 3,
+                    "column": 18,
+                    "endLine": 3,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:e4aa4b0420d93d9bf425f7e626e45af12d8d132398123edaa8e5302f790600db",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "a929e27bdce32df4ec2602df13e74b4078f136df6b092b5e7e621a932a85392c",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:46cd54ccf379b47b53fc21bb4b157404c85300d3b630305b87b370319aa09e74",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/ListLinks.java",
+                  "sourceDigest": "a4e4260d8e9671de4fa49d9a0016bec7170631efed2dc5422e4a7583a60cd86e",
+                  "range": {
+                    "startByte": 761,
+                    "endByte": 766,
+                    "line": 24,
+                    "column": 24,
+                    "endLine": 24,
+                    "endColumn": 29
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:6b7e81aa18836855c1bf48fe92588c66602b9b2233cea52e89eb4e1a9c411a48",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "a929e27bdce32df4ec2602df13e74b4078f136df6b092b5e7e621a932a85392c",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:31c19dd13e8d624d2a796540993cc4b67cff2722966c360cc2b01c03f8dd1172",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/Wikipedia.java",
+                  "sourceDigest": "abf753f2d99f3b5bbd83e55d8af178ebc5a01749a544cb5a0ec1d4f8331a0aa1",
+                  "range": {
+                    "startByte": 46,
+                    "endByte": 51,
+                    "line": 3,
+                    "column": 18,
+                    "endLine": 3,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:dd92cabd133882b95a121e357ca41ba87beaf4693d797fa11b3146e60a08a5e8",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "8ab3e569ad84ef1a1e26683f2e4fe33388301e99b389f2d5fbb0915608bb6d8f",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:592bf3552846f9180957fc46c87861f3c3bb3674cb9aa6d04b49c282e9ecca2e",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/Wikipedia.java",
+                  "sourceDigest": "abf753f2d99f3b5bbd83e55d8af178ebc5a01749a544cb5a0ec1d4f8331a0aa1",
+                  "range": {
+                    "startByte": 551,
+                    "endByte": 556,
+                    "line": 18,
+                    "column": 24,
+                    "endLine": 18,
+                    "endColumn": 29
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:0048d7fab815d7c256c70f9870a52aa91682c9b2b794bca68b4e1d66c8d53b62",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "8ab3e569ad84ef1a1e26683f2e4fe33388301e99b389f2d5fbb0915608bb6d8f",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:243c484600a3e4babbed122241535ecc8e709fd6063f7f9bdfb770db8308a212",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/FormElement.java",
+                  "sourceDigest": "400e23f8f7ede595e2063bb1611bc796de6d7b920fd835f11ffb4afc6b1ab6e5",
+                  "range": {
+                    "startByte": 72,
+                    "endByte": 77,
+                    "line": 4,
+                    "column": 18,
+                    "endLine": 4,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:1081986e9a1995be8c8857feb061362234f054865b26802c08207bbc4a6ffe7e",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "5c206d8c110a3c41f0ef3f909017d5b3c8e49a7d0b83297232a2fa4abc21f8ff",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:c529dbb2860760d4b99b3bb374a851b5388346da8c37c5403d056bd6b4aee588",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/FormElement.java",
+                  "sourceDigest": "400e23f8f7ede595e2063bb1611bc796de6d7b920fd835f11ffb4afc6b1ab6e5",
+                  "range": {
+                    "startByte": 3559,
+                    "endByte": 3564,
+                    "line": 87,
+                    "column": 82,
+                    "endLine": 87,
+                    "endColumn": 87
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:f425b1fa9d16ec77305d11847c9f67b2e6d219033b6f4495005f9b75c6d205fa",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "5c206d8c110a3c41f0ef3f909017d5b3c8e49a7d0b83297232a2fa4abc21f8ff",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:499b8943ae745be5b96f5edbe8ab6dc5f63e64dc76173744ed332894b61e71cd",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/HtmlToPlainText.java",
+                  "sourceDigest": "3f7e6718b8518240a8d538f60030edeab37648c0b7e70b6c620ee26a434bac7e",
+                  "range": {
+                    "startByte": 75,
+                    "endByte": 80,
+                    "line": 4,
+                    "column": 18,
+                    "endLine": 4,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:b213216aa50be7da6c4b65381fa7394402be441f6754aac4d5cf09c1b343186a",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "82b2f73f50e52a0f189490f172efd2c2a99573e61ceb23bf0ceb4404c311b153",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:d8a2cb45ce08ea15faa1af36777ab1fcd43082f2b3edec51ee9f9bc9f7dcbc40",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/HtmlToPlainText.java",
+                  "sourceDigest": "3f7e6718b8518240a8d538f60030edeab37648c0b7e70b6c620ee26a434bac7e",
+                  "range": {
+                    "startByte": 1681,
+                    "endByte": 1686,
+                    "line": 39,
+                    "column": 30,
+                    "endLine": 39,
+                    "endColumn": 35
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:d68c721587aeac42df52d3ab86cd2217459e1aeb49697ecb1c6d0a8d5bfab687",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "82b2f73f50e52a0f189490f172efd2c2a99573e61ceb23bf0ceb4404c311b153",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:7e1f02472acb28c194ae888444199da7730e5cba69a9eb49937aaa256045727c",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/Document.java",
+                  "sourceDigest": "cad397b7c5c767c294f27edf7971932c0d531ae8a368827e6ec34e1267a17502",
+                  "range": {
+                    "startByte": 72,
+                    "endByte": 77,
+                    "line": 4,
+                    "column": 18,
+                    "endLine": 4,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:fdd5884eb3ee146e3bfee1b1bbe1ad12a0c3a5d00415d06b8a9f9f8aaf011035",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "349c404002eddff69e525d6aee91931311a73e0c3bd0c170d57fae6283f13b16",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:77a273b4ed0d624af7f6c6989380ac7a7453f95be28a75f8aa458ee803d5a2dc",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/Document.java",
+                  "sourceDigest": "cad397b7c5c767c294f27edf7971932c0d531ae8a368827e6ec34e1267a17502",
+                  "range": {
+                    "startByte": 3220,
+                    "endByte": 3225,
+                    "line": 94,
+                    "column": 20,
+                    "endLine": 94,
+                    "endColumn": 25
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:1c0c2193975e16f552c7ff7c9c4a6bb1fa12140c6f255bb33609f1e7f1e25bee",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "349c404002eddff69e525d6aee91931311a73e0c3bd0c170d57fae6283f13b16",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                }
+              ],
+              "callers": [],
+              "callees": []
+            }
+          ]
+        },
+        "pinned": {
+          "found": [
+            {
+              "key": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+              "name": "Jsoup",
+              "qualified_name": "scip-java maven . . org/jsoup/Jsoup#",
+              "kind": "scip-global",
+              "file": "src/main/java/org/jsoup/Jsoup.java",
+              "variant": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+              "evidenceClaim": "sc2:claim:a7b49795b989f60e1e2e90712bae86f9b1ba4e80a3f0ee0731087eb0aa072644",
+              "confidence": "exact"
+            }
+          ],
+          "queries": [
+            {
+              "definition": [
+                {
+                  "occurrence": "sc2:occurrence:2d4c514c7aba003f5af8e1fbbbc3fa723745ca95c54db66712adfc7300bfc1bf",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/Jsoup.java",
+                  "sourceDigest": "08efd20ddec51728d05d6aa70091468d6adcd4be703bb578e164012a882c3bf7",
+                  "range": {
+                    "startByte": 592,
+                    "endByte": 597,
+                    "line": 25,
+                    "column": 14,
+                    "endLine": 25,
+                    "endColumn": 19
+                  },
+                  "role": "definition",
+                  "confidence": "exact",
+                  "evidenceClaim": "sc2:claim:b87d84e56809c718aec887ebe05067131848dab5a044a6980e721f2e930dcc6f",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "b7d1e3f4f3a1f66e3765ee204f54b2a5f98bdb9a43c7a382ee5dc3732aa1e4c5",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                }
+              ],
+              "references": [
+                {
+                  "occurrence": "sc2:occurrence:93f66702440a5369b57365021037a2cdf95889456a854d13ba143fea2b8899ca",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/ListLinks.java",
+                  "sourceDigest": "a4e4260d8e9671de4fa49d9a0016bec7170631efed2dc5422e4a7583a60cd86e",
+                  "range": {
+                    "startByte": 46,
+                    "endByte": 51,
+                    "line": 3,
+                    "column": 18,
+                    "endLine": 3,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:e4aa4b0420d93d9bf425f7e626e45af12d8d132398123edaa8e5302f790600db",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "a929e27bdce32df4ec2602df13e74b4078f136df6b092b5e7e621a932a85392c",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:46cd54ccf379b47b53fc21bb4b157404c85300d3b630305b87b370319aa09e74",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/ListLinks.java",
+                  "sourceDigest": "a4e4260d8e9671de4fa49d9a0016bec7170631efed2dc5422e4a7583a60cd86e",
+                  "range": {
+                    "startByte": 761,
+                    "endByte": 766,
+                    "line": 24,
+                    "column": 24,
+                    "endLine": 24,
+                    "endColumn": 29
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:6b7e81aa18836855c1bf48fe92588c66602b9b2233cea52e89eb4e1a9c411a48",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "a929e27bdce32df4ec2602df13e74b4078f136df6b092b5e7e621a932a85392c",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:31c19dd13e8d624d2a796540993cc4b67cff2722966c360cc2b01c03f8dd1172",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/Wikipedia.java",
+                  "sourceDigest": "abf753f2d99f3b5bbd83e55d8af178ebc5a01749a544cb5a0ec1d4f8331a0aa1",
+                  "range": {
+                    "startByte": 46,
+                    "endByte": 51,
+                    "line": 3,
+                    "column": 18,
+                    "endLine": 3,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:dd92cabd133882b95a121e357ca41ba87beaf4693d797fa11b3146e60a08a5e8",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "8ab3e569ad84ef1a1e26683f2e4fe33388301e99b389f2d5fbb0915608bb6d8f",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:592bf3552846f9180957fc46c87861f3c3bb3674cb9aa6d04b49c282e9ecca2e",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/Wikipedia.java",
+                  "sourceDigest": "abf753f2d99f3b5bbd83e55d8af178ebc5a01749a544cb5a0ec1d4f8331a0aa1",
+                  "range": {
+                    "startByte": 551,
+                    "endByte": 556,
+                    "line": 18,
+                    "column": 24,
+                    "endLine": 18,
+                    "endColumn": 29
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:0048d7fab815d7c256c70f9870a52aa91682c9b2b794bca68b4e1d66c8d53b62",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "8ab3e569ad84ef1a1e26683f2e4fe33388301e99b389f2d5fbb0915608bb6d8f",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:243c484600a3e4babbed122241535ecc8e709fd6063f7f9bdfb770db8308a212",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/FormElement.java",
+                  "sourceDigest": "400e23f8f7ede595e2063bb1611bc796de6d7b920fd835f11ffb4afc6b1ab6e5",
+                  "range": {
+                    "startByte": 72,
+                    "endByte": 77,
+                    "line": 4,
+                    "column": 18,
+                    "endLine": 4,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:1081986e9a1995be8c8857feb061362234f054865b26802c08207bbc4a6ffe7e",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "5c206d8c110a3c41f0ef3f909017d5b3c8e49a7d0b83297232a2fa4abc21f8ff",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:c529dbb2860760d4b99b3bb374a851b5388346da8c37c5403d056bd6b4aee588",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/FormElement.java",
+                  "sourceDigest": "400e23f8f7ede595e2063bb1611bc796de6d7b920fd835f11ffb4afc6b1ab6e5",
+                  "range": {
+                    "startByte": 3559,
+                    "endByte": 3564,
+                    "line": 87,
+                    "column": 82,
+                    "endLine": 87,
+                    "endColumn": 87
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:f425b1fa9d16ec77305d11847c9f67b2e6d219033b6f4495005f9b75c6d205fa",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "5c206d8c110a3c41f0ef3f909017d5b3c8e49a7d0b83297232a2fa4abc21f8ff",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:499b8943ae745be5b96f5edbe8ab6dc5f63e64dc76173744ed332894b61e71cd",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/HtmlToPlainText.java",
+                  "sourceDigest": "3f7e6718b8518240a8d538f60030edeab37648c0b7e70b6c620ee26a434bac7e",
+                  "range": {
+                    "startByte": 75,
+                    "endByte": 80,
+                    "line": 4,
+                    "column": 18,
+                    "endLine": 4,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:b213216aa50be7da6c4b65381fa7394402be441f6754aac4d5cf09c1b343186a",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "82b2f73f50e52a0f189490f172efd2c2a99573e61ceb23bf0ceb4404c311b153",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:d8a2cb45ce08ea15faa1af36777ab1fcd43082f2b3edec51ee9f9bc9f7dcbc40",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/HtmlToPlainText.java",
+                  "sourceDigest": "3f7e6718b8518240a8d538f60030edeab37648c0b7e70b6c620ee26a434bac7e",
+                  "range": {
+                    "startByte": 1681,
+                    "endByte": 1686,
+                    "line": 39,
+                    "column": 30,
+                    "endLine": 39,
+                    "endColumn": 35
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:d68c721587aeac42df52d3ab86cd2217459e1aeb49697ecb1c6d0a8d5bfab687",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "82b2f73f50e52a0f189490f172efd2c2a99573e61ceb23bf0ceb4404c311b153",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:7e1f02472acb28c194ae888444199da7730e5cba69a9eb49937aaa256045727c",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/Document.java",
+                  "sourceDigest": "cad397b7c5c767c294f27edf7971932c0d531ae8a368827e6ec34e1267a17502",
+                  "range": {
+                    "startByte": 72,
+                    "endByte": 77,
+                    "line": 4,
+                    "column": 18,
+                    "endLine": 4,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:fdd5884eb3ee146e3bfee1b1bbe1ad12a0c3a5d00415d06b8a9f9f8aaf011035",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "349c404002eddff69e525d6aee91931311a73e0c3bd0c170d57fae6283f13b16",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:77a273b4ed0d624af7f6c6989380ac7a7453f95be28a75f8aa458ee803d5a2dc",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/Document.java",
+                  "sourceDigest": "cad397b7c5c767c294f27edf7971932c0d531ae8a368827e6ec34e1267a17502",
+                  "range": {
+                    "startByte": 3220,
+                    "endByte": 3225,
+                    "line": 94,
+                    "column": 20,
+                    "endLine": 94,
+                    "endColumn": 25
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:1c0c2193975e16f552c7ff7c9c4a6bb1fa12140c6f255bb33609f1e7f1e25bee",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "349c404002eddff69e525d6aee91931311a73e0c3bd0c170d57fae6283f13b16",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                }
+              ],
+              "callers": [],
+              "callees": []
+            }
+          ]
+        }
+      }
+    },
+    "after": {
+      "active": {
+        "claims": 130928,
+        "hash": "83cf380e973743a1dddab3880549e777792649990aaa834729f72f8647ce6575"
+      },
+      "pinned": {
+        "claims": 130928,
+        "hash": "d5512cebbac14fcaa0a8fd54205d1deffceb9909f6e21cde4f1075e2c4407f22"
+      },
+      "samples": {
+        "active": {
+          "found": [
+            {
+              "key": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+              "name": "Jsoup",
+              "qualified_name": "scip-java maven . . org/jsoup/Jsoup#",
+              "kind": "scip-global",
+              "file": "src/main/java/org/jsoup/Jsoup.java",
+              "variant": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+              "evidenceClaim": "sc2:claim:a7b49795b989f60e1e2e90712bae86f9b1ba4e80a3f0ee0731087eb0aa072644",
+              "confidence": "exact"
+            }
+          ],
+          "queries": [
+            {
+              "definition": [
+                {
+                  "occurrence": "sc2:occurrence:2d4c514c7aba003f5af8e1fbbbc3fa723745ca95c54db66712adfc7300bfc1bf",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/Jsoup.java",
+                  "sourceDigest": "08efd20ddec51728d05d6aa70091468d6adcd4be703bb578e164012a882c3bf7",
+                  "range": {
+                    "startByte": 592,
+                    "endByte": 597,
+                    "line": 25,
+                    "column": 14,
+                    "endLine": 25,
+                    "endColumn": 19
+                  },
+                  "role": "definition",
+                  "confidence": "exact",
+                  "evidenceClaim": "sc2:claim:b87d84e56809c718aec887ebe05067131848dab5a044a6980e721f2e930dcc6f",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "b7d1e3f4f3a1f66e3765ee204f54b2a5f98bdb9a43c7a382ee5dc3732aa1e4c5",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                }
+              ],
+              "references": [
+                {
+                  "occurrence": "sc2:occurrence:93f66702440a5369b57365021037a2cdf95889456a854d13ba143fea2b8899ca",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/ListLinks.java",
+                  "sourceDigest": "a4e4260d8e9671de4fa49d9a0016bec7170631efed2dc5422e4a7583a60cd86e",
+                  "range": {
+                    "startByte": 46,
+                    "endByte": 51,
+                    "line": 3,
+                    "column": 18,
+                    "endLine": 3,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:e4aa4b0420d93d9bf425f7e626e45af12d8d132398123edaa8e5302f790600db",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "a929e27bdce32df4ec2602df13e74b4078f136df6b092b5e7e621a932a85392c",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:46cd54ccf379b47b53fc21bb4b157404c85300d3b630305b87b370319aa09e74",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/ListLinks.java",
+                  "sourceDigest": "a4e4260d8e9671de4fa49d9a0016bec7170631efed2dc5422e4a7583a60cd86e",
+                  "range": {
+                    "startByte": 761,
+                    "endByte": 766,
+                    "line": 24,
+                    "column": 24,
+                    "endLine": 24,
+                    "endColumn": 29
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:6b7e81aa18836855c1bf48fe92588c66602b9b2233cea52e89eb4e1a9c411a48",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "a929e27bdce32df4ec2602df13e74b4078f136df6b092b5e7e621a932a85392c",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:31c19dd13e8d624d2a796540993cc4b67cff2722966c360cc2b01c03f8dd1172",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/Wikipedia.java",
+                  "sourceDigest": "abf753f2d99f3b5bbd83e55d8af178ebc5a01749a544cb5a0ec1d4f8331a0aa1",
+                  "range": {
+                    "startByte": 46,
+                    "endByte": 51,
+                    "line": 3,
+                    "column": 18,
+                    "endLine": 3,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:dd92cabd133882b95a121e357ca41ba87beaf4693d797fa11b3146e60a08a5e8",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "8ab3e569ad84ef1a1e26683f2e4fe33388301e99b389f2d5fbb0915608bb6d8f",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:592bf3552846f9180957fc46c87861f3c3bb3674cb9aa6d04b49c282e9ecca2e",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/Wikipedia.java",
+                  "sourceDigest": "abf753f2d99f3b5bbd83e55d8af178ebc5a01749a544cb5a0ec1d4f8331a0aa1",
+                  "range": {
+                    "startByte": 551,
+                    "endByte": 556,
+                    "line": 18,
+                    "column": 24,
+                    "endLine": 18,
+                    "endColumn": 29
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:0048d7fab815d7c256c70f9870a52aa91682c9b2b794bca68b4e1d66c8d53b62",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "8ab3e569ad84ef1a1e26683f2e4fe33388301e99b389f2d5fbb0915608bb6d8f",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:243c484600a3e4babbed122241535ecc8e709fd6063f7f9bdfb770db8308a212",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/FormElement.java",
+                  "sourceDigest": "400e23f8f7ede595e2063bb1611bc796de6d7b920fd835f11ffb4afc6b1ab6e5",
+                  "range": {
+                    "startByte": 72,
+                    "endByte": 77,
+                    "line": 4,
+                    "column": 18,
+                    "endLine": 4,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:1081986e9a1995be8c8857feb061362234f054865b26802c08207bbc4a6ffe7e",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "5c206d8c110a3c41f0ef3f909017d5b3c8e49a7d0b83297232a2fa4abc21f8ff",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:c529dbb2860760d4b99b3bb374a851b5388346da8c37c5403d056bd6b4aee588",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/FormElement.java",
+                  "sourceDigest": "400e23f8f7ede595e2063bb1611bc796de6d7b920fd835f11ffb4afc6b1ab6e5",
+                  "range": {
+                    "startByte": 3559,
+                    "endByte": 3564,
+                    "line": 87,
+                    "column": 82,
+                    "endLine": 87,
+                    "endColumn": 87
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:f425b1fa9d16ec77305d11847c9f67b2e6d219033b6f4495005f9b75c6d205fa",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "5c206d8c110a3c41f0ef3f909017d5b3c8e49a7d0b83297232a2fa4abc21f8ff",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:499b8943ae745be5b96f5edbe8ab6dc5f63e64dc76173744ed332894b61e71cd",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/HtmlToPlainText.java",
+                  "sourceDigest": "3f7e6718b8518240a8d538f60030edeab37648c0b7e70b6c620ee26a434bac7e",
+                  "range": {
+                    "startByte": 75,
+                    "endByte": 80,
+                    "line": 4,
+                    "column": 18,
+                    "endLine": 4,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:b213216aa50be7da6c4b65381fa7394402be441f6754aac4d5cf09c1b343186a",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "82b2f73f50e52a0f189490f172efd2c2a99573e61ceb23bf0ceb4404c311b153",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:d8a2cb45ce08ea15faa1af36777ab1fcd43082f2b3edec51ee9f9bc9f7dcbc40",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/HtmlToPlainText.java",
+                  "sourceDigest": "3f7e6718b8518240a8d538f60030edeab37648c0b7e70b6c620ee26a434bac7e",
+                  "range": {
+                    "startByte": 1681,
+                    "endByte": 1686,
+                    "line": 39,
+                    "column": 30,
+                    "endLine": 39,
+                    "endColumn": 35
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:d68c721587aeac42df52d3ab86cd2217459e1aeb49697ecb1c6d0a8d5bfab687",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "82b2f73f50e52a0f189490f172efd2c2a99573e61ceb23bf0ceb4404c311b153",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:7e1f02472acb28c194ae888444199da7730e5cba69a9eb49937aaa256045727c",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/Document.java",
+                  "sourceDigest": "cad397b7c5c767c294f27edf7971932c0d531ae8a368827e6ec34e1267a17502",
+                  "range": {
+                    "startByte": 72,
+                    "endByte": 77,
+                    "line": 4,
+                    "column": 18,
+                    "endLine": 4,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:fdd5884eb3ee146e3bfee1b1bbe1ad12a0c3a5d00415d06b8a9f9f8aaf011035",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "349c404002eddff69e525d6aee91931311a73e0c3bd0c170d57fae6283f13b16",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:77a273b4ed0d624af7f6c6989380ac7a7453f95be28a75f8aa458ee803d5a2dc",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/Document.java",
+                  "sourceDigest": "cad397b7c5c767c294f27edf7971932c0d531ae8a368827e6ec34e1267a17502",
+                  "range": {
+                    "startByte": 3220,
+                    "endByte": 3225,
+                    "line": 94,
+                    "column": 20,
+                    "endLine": 94,
+                    "endColumn": 25
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:1c0c2193975e16f552c7ff7c9c4a6bb1fa12140c6f255bb33609f1e7f1e25bee",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "349c404002eddff69e525d6aee91931311a73e0c3bd0c170d57fae6283f13b16",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                }
+              ],
+              "callers": [],
+              "callees": []
+            }
+          ]
+        },
+        "pinned": {
+          "found": [
+            {
+              "key": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+              "name": "Jsoup",
+              "qualified_name": "scip-java maven . . org/jsoup/Jsoup#",
+              "kind": "scip-global",
+              "file": "src/main/java/org/jsoup/Jsoup.java",
+              "variant": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+              "evidenceClaim": "sc2:claim:a7b49795b989f60e1e2e90712bae86f9b1ba4e80a3f0ee0731087eb0aa072644",
+              "confidence": "exact"
+            }
+          ],
+          "queries": [
+            {
+              "definition": [
+                {
+                  "occurrence": "sc2:occurrence:2d4c514c7aba003f5af8e1fbbbc3fa723745ca95c54db66712adfc7300bfc1bf",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/Jsoup.java",
+                  "sourceDigest": "08efd20ddec51728d05d6aa70091468d6adcd4be703bb578e164012a882c3bf7",
+                  "range": {
+                    "startByte": 592,
+                    "endByte": 597,
+                    "line": 25,
+                    "column": 14,
+                    "endLine": 25,
+                    "endColumn": 19
+                  },
+                  "role": "definition",
+                  "confidence": "exact",
+                  "evidenceClaim": "sc2:claim:b87d84e56809c718aec887ebe05067131848dab5a044a6980e721f2e930dcc6f",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "b7d1e3f4f3a1f66e3765ee204f54b2a5f98bdb9a43c7a382ee5dc3732aa1e4c5",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                }
+              ],
+              "references": [
+                {
+                  "occurrence": "sc2:occurrence:93f66702440a5369b57365021037a2cdf95889456a854d13ba143fea2b8899ca",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/ListLinks.java",
+                  "sourceDigest": "a4e4260d8e9671de4fa49d9a0016bec7170631efed2dc5422e4a7583a60cd86e",
+                  "range": {
+                    "startByte": 46,
+                    "endByte": 51,
+                    "line": 3,
+                    "column": 18,
+                    "endLine": 3,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:e4aa4b0420d93d9bf425f7e626e45af12d8d132398123edaa8e5302f790600db",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "a929e27bdce32df4ec2602df13e74b4078f136df6b092b5e7e621a932a85392c",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:46cd54ccf379b47b53fc21bb4b157404c85300d3b630305b87b370319aa09e74",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/ListLinks.java",
+                  "sourceDigest": "a4e4260d8e9671de4fa49d9a0016bec7170631efed2dc5422e4a7583a60cd86e",
+                  "range": {
+                    "startByte": 761,
+                    "endByte": 766,
+                    "line": 24,
+                    "column": 24,
+                    "endLine": 24,
+                    "endColumn": 29
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:6b7e81aa18836855c1bf48fe92588c66602b9b2233cea52e89eb4e1a9c411a48",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "a929e27bdce32df4ec2602df13e74b4078f136df6b092b5e7e621a932a85392c",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:31c19dd13e8d624d2a796540993cc4b67cff2722966c360cc2b01c03f8dd1172",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/Wikipedia.java",
+                  "sourceDigest": "abf753f2d99f3b5bbd83e55d8af178ebc5a01749a544cb5a0ec1d4f8331a0aa1",
+                  "range": {
+                    "startByte": 46,
+                    "endByte": 51,
+                    "line": 3,
+                    "column": 18,
+                    "endLine": 3,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:dd92cabd133882b95a121e357ca41ba87beaf4693d797fa11b3146e60a08a5e8",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "8ab3e569ad84ef1a1e26683f2e4fe33388301e99b389f2d5fbb0915608bb6d8f",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:592bf3552846f9180957fc46c87861f3c3bb3674cb9aa6d04b49c282e9ecca2e",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/Wikipedia.java",
+                  "sourceDigest": "abf753f2d99f3b5bbd83e55d8af178ebc5a01749a544cb5a0ec1d4f8331a0aa1",
+                  "range": {
+                    "startByte": 551,
+                    "endByte": 556,
+                    "line": 18,
+                    "column": 24,
+                    "endLine": 18,
+                    "endColumn": 29
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:0048d7fab815d7c256c70f9870a52aa91682c9b2b794bca68b4e1d66c8d53b62",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "8ab3e569ad84ef1a1e26683f2e4fe33388301e99b389f2d5fbb0915608bb6d8f",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:243c484600a3e4babbed122241535ecc8e709fd6063f7f9bdfb770db8308a212",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/FormElement.java",
+                  "sourceDigest": "400e23f8f7ede595e2063bb1611bc796de6d7b920fd835f11ffb4afc6b1ab6e5",
+                  "range": {
+                    "startByte": 72,
+                    "endByte": 77,
+                    "line": 4,
+                    "column": 18,
+                    "endLine": 4,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:1081986e9a1995be8c8857feb061362234f054865b26802c08207bbc4a6ffe7e",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "5c206d8c110a3c41f0ef3f909017d5b3c8e49a7d0b83297232a2fa4abc21f8ff",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:c529dbb2860760d4b99b3bb374a851b5388346da8c37c5403d056bd6b4aee588",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/FormElement.java",
+                  "sourceDigest": "400e23f8f7ede595e2063bb1611bc796de6d7b920fd835f11ffb4afc6b1ab6e5",
+                  "range": {
+                    "startByte": 3559,
+                    "endByte": 3564,
+                    "line": 87,
+                    "column": 82,
+                    "endLine": 87,
+                    "endColumn": 87
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:f425b1fa9d16ec77305d11847c9f67b2e6d219033b6f4495005f9b75c6d205fa",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "5c206d8c110a3c41f0ef3f909017d5b3c8e49a7d0b83297232a2fa4abc21f8ff",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:499b8943ae745be5b96f5edbe8ab6dc5f63e64dc76173744ed332894b61e71cd",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/HtmlToPlainText.java",
+                  "sourceDigest": "3f7e6718b8518240a8d538f60030edeab37648c0b7e70b6c620ee26a434bac7e",
+                  "range": {
+                    "startByte": 75,
+                    "endByte": 80,
+                    "line": 4,
+                    "column": 18,
+                    "endLine": 4,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:b213216aa50be7da6c4b65381fa7394402be441f6754aac4d5cf09c1b343186a",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "82b2f73f50e52a0f189490f172efd2c2a99573e61ceb23bf0ceb4404c311b153",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:d8a2cb45ce08ea15faa1af36777ab1fcd43082f2b3edec51ee9f9bc9f7dcbc40",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/examples/HtmlToPlainText.java",
+                  "sourceDigest": "3f7e6718b8518240a8d538f60030edeab37648c0b7e70b6c620ee26a434bac7e",
+                  "range": {
+                    "startByte": 1681,
+                    "endByte": 1686,
+                    "line": 39,
+                    "column": 30,
+                    "endLine": 39,
+                    "endColumn": 35
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:d68c721587aeac42df52d3ab86cd2217459e1aeb49697ecb1c6d0a8d5bfab687",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "82b2f73f50e52a0f189490f172efd2c2a99573e61ceb23bf0ceb4404c311b153",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:7e1f02472acb28c194ae888444199da7730e5cba69a9eb49937aaa256045727c",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/Document.java",
+                  "sourceDigest": "cad397b7c5c767c294f27edf7971932c0d531ae8a368827e6ec34e1267a17502",
+                  "range": {
+                    "startByte": 72,
+                    "endByte": 77,
+                    "line": 4,
+                    "column": 18,
+                    "endLine": 4,
+                    "endColumn": 23
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:fdd5884eb3ee146e3bfee1b1bbe1ad12a0c3a5d00415d06b8a9f9f8aaf011035",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "349c404002eddff69e525d6aee91931311a73e0c3bd0c170d57fae6283f13b16",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                },
+                {
+                  "occurrence": "sc2:occurrence:77a273b4ed0d624af7f6c6989380ac7a7453f95be28a75f8aa458ee803d5a2dc",
+                  "symbol": "sc2:scip-symbol:cf96d48b37a6c4ddf31a5721f3e81b6487d0d26cfdbc7d0beb63afb10789e48b",
+                  "file": "src/main/java/org/jsoup/nodes/Document.java",
+                  "sourceDigest": "cad397b7c5c767c294f27edf7971932c0d531ae8a368827e6ec34e1267a17502",
+                  "range": {
+                    "startByte": 3220,
+                    "endByte": 3225,
+                    "line": 94,
+                    "column": 20,
+                    "endLine": 94,
+                    "endColumn": 25
+                  },
+                  "role": "reference",
+                  "confidence": "resolved",
+                  "evidenceClaim": "sc2:claim:1c0c2193975e16f552c7ff7c9c4a6bb1fa12140c6f255bb33609f1e7f1e25bee",
+                  "provenance": {
+                    "basis": "compiler",
+                    "context": "sc2:context:05f6c58b1458e3275d6da1853729d75f6edee5369e367fd345b48eb9b2799ad6",
+                    "inputFingerprint": "349c404002eddff69e525d6aee91931311a73e0c3bd0c170d57fae6283f13b16",
+                    "method": "source-verified-scip",
+                    "provider": "scip-java",
+                    "version": "0.0.0-SNAPSHOT/scip-map-4"
+                  }
+                }
+              ],
+              "callers": [],
+              "callees": []
+            }
+          ]
+        }
+      }
+    },
+    "retainedArtifactFiles": 2,
+    "retainedArtifactDigestsVerified": true,
+    "sourceCopyRestored": true,
+    "pragmas": {
+      "journal_mode": "wal",
+      "synchronous": 2
+    },
+    "integrity": "ok",
+    "foreignKeys": [],
+    "databaseBytes": 204824576,
+    "sourceLineMethod": "newline count; trailing empty split element excluded (older split-based 29,969 count includes 96 terminal empty entries)"
+  },
+  "nodePeakRssKiB": 367424,
+  "earlierTrial": {
+    "syntheticGcMs": 903.5831250000001,
+    "realGcMs": 457.14770900000076,
+    "realVisibleClaimChecks": {
+      "active": {
+        "claims": 130928,
+        "hash": "d3232ea206400137e7357db19286306663307c2484bf122b7221491d194065ab"
+      },
+      "pinned": {
+        "claims": 130928,
+        "hash": "49c79175072723dd8863d75a282f279c876bfa9174022c0be8ab58c402b56088"
+      }
+    },
+    "note": "Same payload/retention checks. Initial source counter selected only 95 occurrence-bearing files; final inventory includes all 96 selected files including zero-occurrence package-info.java. Timed GC contract unchanged."
+  }
+}

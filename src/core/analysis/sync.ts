@@ -4,7 +4,7 @@ import type { AdapterRun, AnalysisManifest, GraphData } from "../graph/schema.js
 import type { AdapterResult, RepositorySnapshot } from "../adapters/contracts.js";
 import { analyzeRepository } from "./analyze.js";
 import { createIndexState, repositoryStatus, writeIndexState, type RepositoryStatus } from "./state.js";
-import { scanRepository } from "../repository/repository.js";
+import { scanRepository, resolveRepositoryRoot } from "../repository/repository.js";
 import { typescriptAdapter, isTypeScriptFile } from "../../adapters/language/typescript/index.js";
 import { rustAdapter } from "../../adapters/language/rust/index.js";
 import { persistGraph } from "../storage/sqlite.js";
@@ -14,6 +14,7 @@ import { readSyntaxProjection } from "../semantic/owned-projection.js";
 import { deriveOwnedAnalysis } from "../semantic/analysis-passes.js";
 import { GraphBuilder } from "../graph/builder.js";
 import { indexSemanticFoundation } from "../semantic/typescript.js";
+import { withIndexWork } from "../semantic/maintenance-lock.js";
 
 export interface SyncResult {
   statusBefore: RepositoryStatus;
@@ -188,6 +189,11 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
 }
 
 export async function syncRepository(input = ".", index?: string): Promise<SyncResult> {
+  const root = await resolveRepositoryRoot(input); const selected = path.resolve(index ?? path.join(root, ".prograph"));
+  return withIndexWork(selected.endsWith(".sqlite") ? path.dirname(selected) : selected, () => syncRepositoryWithLease(root, index));
+}
+
+async function syncRepositoryWithLease(input: string, index?: string): Promise<SyncResult> {
   const started = performance.now();
   const statusBefore = await repositoryStatus(input, index);
   if (!statusBefore.stale) {

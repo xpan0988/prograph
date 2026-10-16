@@ -1,7 +1,6 @@
 import path from "node:path";
 import os from "node:os";
 import { mkdir, lstat, realpath, writeFile, symlink, stat } from "node:fs/promises";
-import { randomUUID } from "node:crypto";
 import { scanRepository, resolveRepositoryRoot } from "../repository/repository.js";
 import { boundedInput, digestFile } from "./inputs.js";
 import { canonical, digest, RUST_PROVIDER_VERSION } from "./model.js";
@@ -13,6 +12,8 @@ import { inventoryFromDisk } from "./provider-runs.js";
 import { inputMatches } from "./input-check.js";
 import type { ProviderPreparation } from "./provider-plan.js";
 import { authorizeProvider, verifyProviderAuthorization } from "./provider-grants.js";
+import { withIndexWork } from "./maintenance-lock.js";
+import { createProviderWorkspace } from "./provider-artifacts.js";
 
 export { RUST_PROVIDER_VERSION } from "./model.js";
 export const RUST_PROVIDER_CAPABILITIES = { symbols: "partial", definitions: "partial", references: "partial", imports: "partial", calls: "partial-declared-static-targets", types: "reported-signatures", traits: "reported-symbols", associatedItems: "reported-symbols", macros: "unqualified", dynamicDispatch: "unsupported" } as const;
@@ -37,6 +38,11 @@ interface CargoMetadata {
 
 /** Explicit, offline execution in a persistent isolated copy. No indexer runs during discovery/sync. */
 export async function indexRust(repository: string, manifestFile: string, options: RustOptions, index?: string): Promise<Record<string, unknown>> {
+  const root = await resolveRepositoryRoot(repository); const selected = path.resolve(index ?? path.join(root, ".prograph"));
+  return withIndexWork(selected.endsWith(".sqlite") ? path.dirname(selected) : selected, () => indexRustWithLease(root, manifestFile, options, index));
+}
+
+async function indexRustWithLease(repository: string, manifestFile: string, options: RustOptions, index?: string): Promise<Record<string, unknown>> {
   const started = performance.now(); const timeout = options.timeoutMs ?? 120000;
   if (process.platform === "win32") throw Error("Rust managed process-tree cancellation is not qualified on Windows");
   if (!Number.isSafeInteger(timeout) || timeout < 100 || timeout > 600000) throw Error("Rust deadline must be 100..600000ms");
@@ -69,7 +75,7 @@ export async function indexRust(repository: string, manifestFile: string, option
     }
   }
   await mkdir(directory, { recursive: true });
-  const runDirectory = path.join(await realpath(directory), "providers", "rust", randomUUID()); const sourceRoot = path.join(runDirectory, "source"); const cargoHome = path.join(runDirectory, "cargo-home");
+  const runDirectory = await createProviderWorkspace(directory, root, "rust"); const sourceRoot = path.join(runDirectory, "source"); const cargoHome = path.join(runDirectory, "cargo-home");
   await mkdir(sourceRoot, { recursive: true }); await mkdir(cargoHome);
   // Cargo also searches cwd ancestors outside CARGO_HOME (including custom index parents).
   for (let parent = sourceRoot;; parent = path.dirname(parent)) {

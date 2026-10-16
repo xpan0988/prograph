@@ -22,6 +22,7 @@ import { SEMANTIC_OPERATIONS, type SemanticOperation } from "../core/semantic/qu
 import { importScip, type ScipManifest } from "../core/semantic/scip-import.js";
 import { indexClang } from "../core/semantic/clang.js";
 import { SemanticStore } from "../core/semantic/store.js";
+import { collectIndexGarbage } from "../core/semantic/provider-artifacts.js";
 import { indexRust, type RustOptions } from "../core/semantic/rust.js";
 import { readFile, stat } from "node:fs/promises";
 
@@ -267,10 +268,10 @@ for (const operation of ["gc", "pin", "unpin"] as const) addFormat(addIndex(sema
     const root = await resolveRepositoryRoot(input); const selected = path.resolve(options.index ?? path.join(root, ".prograph"));
     const filename = path.join(selected.endsWith(".sqlite") ? path.dirname(selected) : selected, "semantic.sqlite");
     await access(filename); // Maintenance cannot silently create an empty replacement index.
+    if (operation === "gc") { writeResult(await collectIndexGarbage(filename, { keep: options.keep }), options.format); return; }
     const store = new SemanticStore(filename);
     try {
-      if (operation === "gc") writeResult({ collected: store.collectGarbage({ keep: options.keep }), active: store.activeSnapshot() }, options.format);
-      else { if (!Number.isSafeInteger(options.snapshot)) throw Error("--snapshot is required"); store[operation === "pin" ? "pinSnapshot" : "unpinSnapshot"](options.snapshot!, options.label); writeResult({ operation, snapshot: options.snapshot, label: options.label }, options.format); }
+      if (!Number.isSafeInteger(options.snapshot)) throw Error("--snapshot is required"); store[operation === "pin" ? "pinSnapshot" : "unpinSnapshot"](options.snapshot!, options.label); writeResult({ operation, snapshot: options.snapshot, label: options.label }, options.format);
     } finally { store.close(); }
   });
 

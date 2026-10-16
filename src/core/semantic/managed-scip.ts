@@ -1,5 +1,4 @@
 import path from "node:path";
-import { randomUUID } from "node:crypto";
 import { mkdir, readdir, lstat, realpath, readFile, writeFile, chmod, cp } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import { scanRepository, resolveRepositoryRoot } from "../repository/repository.js";
@@ -14,6 +13,8 @@ export { toolReceipt } from "./tool-receipt.js";
 import { inventoryFromDisk } from "./provider-runs.js";
 import type { ProviderPreparation } from "./provider-plan.js";
 import { authorizeProvider, managedToolTrust, verifyProviderAuthorization } from "./provider-grants.js";
+import { withIndexWork } from "./maintenance-lock.js";
+import { createProviderWorkspace } from "./provider-artifacts.js";
 
 export interface ToolReceipt { path: string; sha256: string; entry?: string }
 export interface ManagedProject {
@@ -40,6 +41,11 @@ const msbuildPath = (text: string) => xml(text.replace(/[%$@;?*()']/g, character
 
 /** Explicit compiler contexts; never invokes repository build scripts, package installation or network discovery. */
 export async function indexManagedProject(repository: string, configuration: string, index?: string, options: { timeoutMs?: number; signal?: AbortSignal } & ProviderPreparation = {}): Promise<Record<string, unknown>> {
+  const root = await resolveRepositoryRoot(repository); const selected = path.resolve(index ?? path.join(root, ".prograph"));
+  return withIndexWork(selected.endsWith(".sqlite") ? path.dirname(selected) : selected, () => indexManagedProjectWithLease(root, configuration, index, options));
+}
+
+async function indexManagedProjectWithLease(repository: string, configuration: string, index: string | undefined, options: { timeoutMs?: number; signal?: AbortSignal } & ProviderPreparation): Promise<Record<string, unknown>> {
   const started = performance.now(); const timeout = options.timeoutMs ?? 300000;
   if (process.platform === "win32" || !Number.isSafeInteger(timeout) || timeout < 100 || timeout > 600000) throw Error("Managed SCIP requires POSIX and a 100..600000ms total deadline");
   const root = await resolveRepositoryRoot(repository); const configFile = path.resolve(root, configuration);
@@ -54,7 +60,7 @@ export async function indexManagedProject(repository: string, configuration: str
   const initialInventory = await inventoryFromDisk(root, directory, 200000, options.signal);
   const scan = await scanRepository(root, directory); const projectRoot = path.resolve(root, config.root);
   if ((await realpath(projectRoot)) !== (await realpath(root)) && !(await realpath(projectRoot)).startsWith(`${await realpath(root)}${path.sep}`)) throw Error("Managed project root escapes repository");
-  const executionDirectory = path.join(await realpath(directory), "providers", config.language, randomUUID()); const source = path.join(executionDirectory, "source"); await mkdir(source, { recursive: true });
+  const executionDirectory = await createProviderWorkspace(directory, root, config.language); const source = path.join(executionDirectory, "source"); await mkdir(source, { recursive: true });
   const inputs: Record<string, string> = { [`physical:${configFile}`]: digest(configBytes) }; const sources: Record<string, string> = {}; const buildInputs: Record<string, string> = {};
   const extension = { python: /\.pyi?$/, go: /\.go$/, java: /\.java$/, csharp: /\.cs$/ }[config.language];
   const metadata = /(?:^|\/)(?:pyproject\.toml|pyrightconfig\.json|go\.(?:mod|sum|work)|pom\.xml|build\.gradle(?:\.kts)?|[^/]+\.(?:csproj|sln))$/;
