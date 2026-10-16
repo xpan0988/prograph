@@ -1,0 +1,48 @@
+{
+  "scope": "Serial 1M-occurrence publication recheck with original production benchmark contract; no production publication code change accepted. Storage workload, not LOC/compiler/monorepo qualification.",
+  "sourceSha256": "8be76d5ebda5f685ddc8d3f78999942492f640f39ed5e653de18d228ec949c6a",
+  "powerObservation": "AC Power, lowpowermode 0, 80 percent battery, observed before and after; no power setting changed by the task. Earlier low-power/battery samples remain in semantic-core-stage5-owned-delta.json.",
+  "control": {
+    "firstMs": 22041.487,
+    "noOpMs": 20.632,
+    "one": [
+      14.077,
+      13.505,
+      35.88
+    ],
+    "ten": [
+      136.076,
+      186.265,
+      180.385
+    ],
+    "hundred": [
+      1739.344,
+      1699.43,
+      1517.066
+    ]
+  },
+  "prototype": {
+    "firstMs": 22767.615,
+    "hundred": [
+      1918.733,
+      1929.644,
+      1759.849
+    ]
+  },
+  "rejectedChanges": [
+    "Use already classified call-target navigation instead of joining claims and facts during competing-call invalidation",
+    "Skip eligibility pruning only when the entire partial supported-claim index is empty"
+  ],
+  "prototypeCorrectness": {
+    "testsPassed": 13,
+    "skipped": 0,
+    "reportSha256": "0e6673f0b4f859e9108fac49a59a8095fa5765f05f909235503bdd61e6159f7a"
+  },
+  "decision": "Reject the prototype: its 100-partition median is worse and full-first publication also regresses. No measured overall improvement justifies changing production code. Three serial observations are insufficient to assign the slowdown to one join or establish a general hardware guarantee.",
+  "acceptance": {
+    "originalOneSecondFullPublication": "Unmet; control 22.041487 seconds with complete navigation/membership/support/FULL-WAL commit",
+    "refinedAcWorkloadGates": "Observed passing first<=30s/noop<=100ms/<=10 partitions<=1s/100 partitions<=3s/100k support removal<=1s on this host under recorded AC conditions",
+    "earlierLowPowerHundredPartitionGate": "Still unmet; retained measurements 3.045684/3.322801/3.375231s are not replaced or attributed to this rejected optimization",
+    "methodology": "Same benchmark script, 1M occurrences, 2000012 baseline claims, 1011 owners, 2000-claim full shards, all three trials, full historical/ownership/support/integrity/FK oracles and unchanged source digest. Staging reported separately; no required publication work moved outside timing."
+  }
+}
