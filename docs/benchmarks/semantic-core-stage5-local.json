@@ -1,0 +1,82 @@
+{
+  "baseline": "c8fd0b7 + Stage 5 ownership/GC changes",
+  "node": "v25.9.0",
+  "totalTests": 156,
+  "passedTests": 156,
+  "failedTests": 0,
+  "pendingTests": 0,
+  "qualifiedProducerCases": [
+    "project discovery preserves ordered compile variants and real extends inputs",
+    "real Clang resolves C/C++ declarations, overloads and references under distinct build contexts",
+    "real python producer qualifies definitions, references, imports/types and owned declared calls",
+    "real go producer qualifies definitions, references, imports/types and owned declared calls",
+    "real java producer qualifies definitions, references, imports/types and owned declared calls",
+    "real csharp producer qualifies definitions, references, imports/types and owned declared calls",
+    "real Rust producer qualifies traits, path dependencies, feature variants and stable navigation"
+  ],
+  "rawTestReportSha256": "5f6695896659097571ba1d630df5a8d8f8de5b65ddffc5c74f9ab2db0c9adad0",
+  "recovery": {
+    "node": "v25.9.0",
+    "probes": [
+      {
+        "point": "before-seal",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "before-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "during-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "after-publish",
+        "exitCode": 57,
+        "activeSnapshot": 2,
+        "visible": [
+          "other"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      }
+    ],
+    "corruption": {
+      "refused": true,
+      "unchanged": true
+    }
+  },
+  "typecheck": "passed",
+  "nodeUiBuild": "passed",
+  "ciEvidenceVerifier": "passed; 156 tests, five actual producers, build, four recovery probes and corruption refusal",
+  "compiledHashes": {
+    "dist/core/semantic/scip-import.js": "48a17d413e9da25f1b25d7596d97f291202e46057bbced04ac2a0c83c7fceadd",
+    "dist/core/semantic/scip-native.js": "c00488eb2ae9f9b4f96931a08e424eccf2e79e7998284cca09cf9a856d336bc9",
+    "dist/core/semantic/typescript.js": "ce1c96781cf7b019f7bcc70deff1f56c407789d1ec423b64eb49858348bebae3",
+    "dist/core/semantic/store.js": "48b68a0a1d668a2ca6707aeb1547e75737eafc01d88440c483e0bf67d316a94b",
+    "dist/core/semantic/gc.js": "a98801ec8ec1ce75a7986a9ef3d5a712af1fde07dd3f553e7b6afc4cf2d5c19d",
+    "dist/core/semantic/managed-scip.js": "ef1c1b96475c902f52f273ed83181dcb278cb17460c4a7fc06085f02d8f54c86",
+    "dist/core/semantic/provider-runs.js": "b03aa7b67f8f79ce0e8e8a05dd2199d992ff20e3582745e8584f5188648c5544",
+    "dist/core/semantic/tool-receipt.js": "90931ebc47fddb041935a0a348c8e247e592a3e0b1e1a7333ede5792908e0327"
+  },
+  "postSuiteChange": "External metadata batch accumulation now enforces both byte and emitted-fact limits; typecheck and 37 affected ingestion/GC tests passed after that guard. Full CI will qualify the final commit. Origin receipts additionally record staging/sealed state and include the seal digest in identity; build:node and two focused GC tests passed afterwards. The 39 affected ingestion/GC/incremental tests passed before that state-only receipt refinement.",
+  "scope": "Stage 5 sub-milestone only, no default-authority cutover or complete multi-provider randomized oracle claim."
+}

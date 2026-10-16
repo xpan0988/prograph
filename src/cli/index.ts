@@ -21,6 +21,7 @@ import packageJson from "../../package.json" with { type: "json" };
 import { SEMANTIC_OPERATIONS, type SemanticOperation } from "../core/semantic/query.js";
 import { importScip, type ScipManifest } from "../core/semantic/scip-import.js";
 import { indexClang } from "../core/semantic/clang.js";
+import { SemanticStore } from "../core/semantic/store.js";
 import { indexRust, type RustOptions } from "../core/semantic/rust.js";
 import { readFile, stat } from "node:fs/promises";
 
@@ -258,6 +259,21 @@ addFormat(addConfidence(addIndex(program.command("boundaries [path]").descriptio
 });
 
 const semanticCommand = program.command("semantic").description("Semantic Core snapshot navigation and verified interchange");
+for (const operation of ["gc", "pin", "unpin"] as const) addFormat(addIndex(semanticCommand.command(`${operation} [path]`).description(operation === "gc" ? "Collect unreachable Semantic Core history, preserving active and pinned snapshots" : `${operation} a retained Semantic Core snapshot`)))
+  .option("--keep <number>", "latest snapshots retained by garbage collection", Number, 3)
+  .option("--snapshot <number>", "snapshot to pin or unpin", Number)
+  .option("--label <text>", "pin owner label", "user")
+  .action(async (input = ".", options: FormatOptions & { index?: string; keep: number; snapshot?: number; label: string }) => {
+    const root = await resolveRepositoryRoot(input); const selected = path.resolve(options.index ?? path.join(root, ".prograph"));
+    const filename = path.join(selected.endsWith(".sqlite") ? path.dirname(selected) : selected, "semantic.sqlite");
+    await access(filename); // Maintenance cannot silently create an empty replacement index.
+    const store = new SemanticStore(filename);
+    try {
+      if (operation === "gc") writeResult({ collected: store.collectGarbage({ keep: options.keep }), active: store.activeSnapshot() }, options.format);
+      else { if (!Number.isSafeInteger(options.snapshot)) throw Error("--snapshot is required"); store[operation === "pin" ? "pinSnapshot" : "unpinSnapshot"](options.snapshot!, options.label); writeResult({ operation, snapshot: options.snapshot, label: options.label }, options.format); }
+    } finally { store.close(); }
+  });
+
 addFormat(semanticCommand.command("tool-receipt <path>").description("Hash an explicit immutable semantic tool or SDK directory"))
   .action(async (file: string, options: FormatOptions) => { const receipt = await toolReceipt(path.resolve(file)); writeResult({ path: path.resolve(file), sha256: receipt.sha256, files: receipt.files, bytes: receipt.bytes }, options.format); });
 addFormat(addIndex(semanticCommand.command("index-project <configuration>").description("Explicit pinned Python/Go/Java/C# SCIP production from a declared compiler context")))

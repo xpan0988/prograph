@@ -1,4 +1,5 @@
 import path from "node:path";
+import { createRequire } from "node:module";
 import { readFile } from "node:fs/promises";
 import { Project, ts } from "ts-morph";
 import { isTypeScriptFile } from "../../adapters/language/typescript/index.js";
@@ -15,6 +16,8 @@ export interface SemanticIndexResult { snapshot: number; context: string; inputF
 
 async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUnit, store: SemanticStore): Promise<{ runs: number[]; context: string; inputFingerprint: string; coverage: Record<string, unknown> }> {
   const started = performance.now();
+  const require = createRequire(import.meta.url);
+  const compilerBundle = require.resolve("@ts-morph/common");
   const selected = unit.sources;
   const project = new Project({ skipAddingFilesFromTsConfig: true, compilerOptions: unit.compilerOptions ?? {} });
   project.addSourceFilesAtPaths(selected.map(file => snapshot.absoluteFiles.get(file)!).filter(Boolean));
@@ -23,6 +26,13 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
   const inputFingerprint = digest(canonical({ plan: unit.fingerprint, compiler: program.getSourceFiles().map(source => [source.fileName, digest(source.text)]).sort() }));
   const provenance: Provenance = { provider: "typescript/compiler-api", version: `${ts.version}/${TYPESCRIPT_SEMANTIC_VERSION}`, basis: "compiler", method: "compiler-binding", context, inputFingerprint };
   const run = store.begin(unit.key, context, inputFingerprint);
+  const documentRuns: number[] = [];
+  let pending: FactInput[] = []; let pendingBytes = 0;
+  const emit = (fact: FactInput): string => {
+    pendingBytes += Buffer.byteLength(canonical(fact));
+    if (pending.length >= 250000 || pendingBytes > 32 * 1024 ** 2) throw Error("TypeScript document exceeds semantic fact budget");
+    pending.push(fact); return fact.subject; // Declaration bookkeeping uses membership only.
+  };
   let occurrenceCount = 0; let unresolved = 0; let compilerErrors = 0; let externalImports = 0;
   let coverage: Record<string, unknown> = { language: "typescript", provider: provenance.provider, mappingVersion: TYPESCRIPT_SEMANTIC_VERSION, symbols: "partial", definitions: "partial", references: "partial", calls: "partial", project: unit.project, projectMode: unit.options.mode, gaps: [...unit.gaps, "Static targets do not enumerate runtime dispatch"] };
   try {
@@ -32,7 +42,6 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
       const scopes = new Map<ts.Node, string>();
       const declarationClaims = new Map<string, string>();
       const inputFiles = new Map<string, string>();
-      const bundledLibraries = new Set<string>();
       const relative = (file: string) => path.relative(snapshot.repository.root, file).split(path.sep).join("/");
       const ensure = (symbol: ts.Symbol, declaration?: ts.Declaration): string => {
         let found = symbols.get(symbol); if (found) return found;
@@ -70,15 +79,18 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
       };
       for (const source of program.getSourceFiles()) {
         // Track actual compiler inputs, including libraries/config dependencies, without indexing dependency trees.
-        inputFiles.set(source.fileName, digest(source.text));
-        if (program.isSourceFileDefaultLibrary(source)) bundledLibraries.add(source.fileName);
+        // ts-morph embeds default library texts in this bundle under virtual paths.
+        // Track the physical bundle, rather than pretending /node_modules/... exists.
+        if (!program.isSourceFileDefaultLibrary(source)) inputFiles.set(source.fileName, digest(source.text));
       }
+      for (const file of [compilerBundle, path.join(path.dirname(compilerBundle), "typescript.js")]) inputFiles.set(file, digest(await readFile(file)));
       // A compiler must see the exact scanner snapshot; do not publish a mixed source version.
       for (const file of selected) {
         const source = program.getSourceFile(snapshot.absoluteFiles.get(file)!);
         if (!source || source.text !== snapshot.fileContents.get(file)) throw new Error(`Source changed before semantic extraction: ${file}`);
       }
       for (const file of selected) {
+        pending = []; pendingBytes = 0;
         const source = program.getSourceFile(snapshot.absoluteFiles.get(file)!)!;
         const errors = program.getSemanticDiagnostics(source).filter(d => d.category === ts.DiagnosticCategory.Error && d.start !== undefined);
         compilerErrors += errors.length;
@@ -89,8 +101,8 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
         store.batch(run, () => {
           module = moduleScope(source);
           const o = coordinates.range(0, 0, context, "module"); store.addOccurrence(o, bytes);
-          store.addFact(run, { predicate: "common.Declaration", context, subject: module, occurrence: o.key, confidence: "exact", provenance });
-          store.addFact(run, { predicate: "common.Definition", context, subject: module, object: module, occurrence: o.key, confidence: "exact", provenance });
+          emit({ predicate: "common.Declaration", context, subject: module, occurrence: o.key, confidence: "exact", provenance });
+          emit({ predicate: "common.Definition", context, subject: module, object: module, occurrence: o.key, confidence: "exact", provenance });
         });
         // First pass creates declarations and execution-scope identities, including nested lambdas.
         for (let offset = 0; offset < nodes.length; offset += 1000) store.batch(run, () => {
@@ -101,10 +113,10 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
               if (symbol) {
                 const target = ensure(symbol, node as ts.Declaration);
                 const o = coordinates.range(named.name.getStart(source), named.name.getEnd(), context, "definition"); store.addOccurrence(o, bytes); occurrenceCount++;
-                const declaration = store.addFact(run, { predicate: "common.Declaration", context, subject: target, occurrence: o.key, value: { signature: node.getText(source).slice(0, 512) }, confidence: "exact", provenance });
+                const declaration = emit({ predicate: "common.Declaration", context, subject: target, occurrence: o.key, value: { signature: node.getText(source).slice(0, 512) }, confidence: "exact", provenance });
                 declarationClaims.set(target, declaration);
-                if (ts.isFunctionLike(node)) store.addFact(run, { predicate: "typescript.Signature", context, subject: target, occurrence: o.key, value: { syntaxKind: ts.SyntaxKind[node.kind], signature: node.getText(source).slice(0, 1024), compilerVersion: ts.version }, confidence: "exact", provenance });
-                store.addFact(run, { predicate: "common.Definition", context, subject: target, object: target, occurrence: o.key, value: { hasBody: "body" in node && !!node.body }, confidence: "exact", provenance });
+                if (ts.isFunctionLike(node)) emit({ predicate: "typescript.Signature", context, subject: target, occurrence: o.key, value: { syntaxKind: ts.SyntaxKind[node.kind], signature: node.getText(source).slice(0, 1024), compilerVersion: ts.version }, confidence: "exact", provenance });
+                emit({ predicate: "common.Definition", context, subject: target, object: target, occurrence: o.key, value: { hasBody: "body" in node && !!node.body }, confidence: "exact", provenance });
                 if (ts.isFunctionLike(node)) scopes.set(node, target);
               }
             }
@@ -115,7 +127,7 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
               if (!symbol) store.addSymbol({ key, name: `<lambda@${node.getStart(source)}>`, qualifiedName: `${file}::<lambda@${node.getStart(source)}>`, kind: "lambda", file, context });
               scopes.set(node, key);
               const o = coordinates.range(node.getStart(source), node.getStart(source), context, "execution-scope"); store.addOccurrence(o, bytes);
-              if (!declarationClaims.has(key)) declarationClaims.set(key, store.addFact(run, { predicate: "common.Declaration", context, subject: key, occurrence: o.key, confidence: "exact", provenance }));
+              if (!declarationClaims.has(key)) declarationClaims.set(key, emit({ predicate: "common.Declaration", context, subject: key, occurrence: o.key, confidence: "exact", provenance }));
             }
           }
         });
@@ -131,18 +143,18 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
               const symbol = originalSymbol(node);
               if (symbol) {
                 const target = ensure(symbol); const o = coordinates.range(node.getStart(source), node.getEnd(), context, "reference"); store.addOccurrence(o, bytes); occurrenceCount++;
-                store.addFact(run, { predicate: "common.Reference", context, subject: owner(node), object: target, occurrence: o.key, confidence: "resolved", provenance });
+                emit({ predicate: "common.Reference", context, subject: owner(node), object: target, occurrence: o.key, confidence: "resolved", provenance });
               }
             }
             if (ts.isImportDeclaration(node)) {
               if (ts.isStringLiteral(node.moduleSpecifier) && !node.moduleSpecifier.text.startsWith(".")) externalImports++;
               const symbol = originalSymbol(node.moduleSpecifier); const o = coordinates.range(node.moduleSpecifier.getStart(source), node.moduleSpecifier.getEnd(), context, "import"); store.addOccurrence(o, bytes);
-              if (symbol) store.addFact(run, { predicate: "common.Import", context, subject: module, object: ensure(symbol), occurrence: o.key, value: { specifier: node.moduleSpecifier.getText(source) }, confidence: "resolved", provenance });
+              if (symbol) emit({ predicate: "common.Import", context, subject: module, object: ensure(symbol), occurrence: o.key, value: { specifier: node.moduleSpecifier.getText(source) }, confidence: "resolved", provenance });
               else { unresolved++; store.diagnostic(run, "unresolved-import", node.moduleSpecifier.getText(source)); }
             }
             if (ts.isCallExpression(node) || ts.isNewExpression(node)) {
               const caller = owner(node); const o = coordinates.range(node.getStart(source), node.getEnd(), context, "call"); store.addOccurrence(o, bytes); occurrenceCount++;
-              const site = store.addFact(run, { predicate: "common.CallSite", context, subject: caller, occurrence: o.key, value: { expression: node.expression.getText(source).slice(0, 256) }, confidence: "exact", provenance: { ...provenance, basis: "syntax", method: "call-expression" } });
+              const site = emit({ predicate: "common.CallSite", context, subject: caller, occurrence: o.key, value: { expression: node.expression.getText(source).slice(0, 256) }, confidence: "exact", provenance: { ...provenance, basis: "syntax", method: "call-expression" } });
               const signature = checker.getResolvedSignature(node); const declaration = signature?.declaration;
               const targetNode = declaration && (declaration as ts.NamedDeclaration).name;
               const symbol = targetNode ? originalSymbol(targetNode) : originalSymbol(node.expression);
@@ -150,34 +162,52 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
               const erroneous = errors.some(d => d.start! < node.getEnd() && d.start! + (d.length ?? 0) >= node.getStart(source));
               if (symbol && declaration && !hasErrorType && !erroneous) {
                 const target = ensure(symbol, declaration);
-                const binding = store.addFact(run, { predicate: "common.CallTarget", context, subject: caller, object: target, occurrence: o.key, value: { dispatch: "static", signature: checker.signatureToString(signature!).slice(0, 512) }, confidence: "resolved", provenance });
+                const binding = emit({ predicate: "common.CallTarget", context, subject: caller, object: target, occurrence: o.key, value: { dispatch: "static", signature: checker.signatureToString(signature!).slice(0, 512) }, confidence: "resolved", provenance });
               } else { unresolved++; store.diagnostic(run, "unresolved-call", node.expression.getText(source)); }
             }
             if (ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node)) {
               const o = coordinates.range(node.getStart(source), node.getEnd(), context, "jsx"); store.addOccurrence(o, bytes);
-              store.addFact(run, { predicate: "common.Facet", context, subject: owner(node), occurrence: o.key, value: { facet: "jsx-bearing-function" }, confidence: "exact", provenance: { ...provenance, basis: "syntax", method: "jsx-observation" } });
+              emit({ predicate: "common.Facet", context, subject: owner(node), occurrence: o.key, value: { facet: "jsx-bearing-function" }, confidence: "exact", provenance: { ...provenance, basis: "syntax", method: "jsx-observation" } });
             }
           }
         });
+        // Resolution still observes the complete compiler project. Output ownership is per
+        // document: unchanged output (including inferred signatures/targets) reuses its seal.
+        const fingerprint = digest(canonical(["typescript-document-ownership-1", context, file, digest(source.text),
+          TYPESCRIPT_SEMANTIC_VERSION, pending.map(fact => ({ ...fact, provenance: { ...fact.provenance, inputFingerprint: "" } }))]));
+        const partition = `${unit.key}/document:${file}`; const selector = `typescript:${context}:document:${file}`;
+        const cached = store.reusable(partition, context, fingerprint);
+        if (cached?.coverage.mappingVersion === TYPESCRIPT_SEMANTIC_VERSION) {
+          const previous = store.reusable(`${partition}/pass:call-summary@1`, context, fingerprint);
+          documentRuns.push(cached.id, ...qualifiedCallProjection(store, cached.id, partition, previous?.id));
+        } else {
+          const document = store.begin(partition, context, fingerprint);
+          for (let at = 0; at < pending.length; at += 500) store.batch(document, () => {
+            for (const fact of pending.slice(at, at + 500)) store.addFact(document, { ...fact, provenance: { ...fact.provenance, inputFingerprint: fingerprint } });
+          });
+          store.input(document, `source:${file}`, digest(source.text)); store.selector(document, selector, fingerprint);
+          store.seal(document, { status: "partial", mappingVersion: TYPESCRIPT_SEMANTIC_VERSION, ownershipShard: "compiler-document", file, facts: pending.length });
+          documentRuns.push(document, ...executePasses(store, document, partition, { ...provenance, inputFingerprint: fingerprint }, selector));
+        }
       }
-      // This foundation is project-granular and records the whole source inventory as a selector.
-      store.batch(run, () => { for (const file of selected) store.input(run, `source:${file}`, digest(snapshot.fileContents.get(file)!)); for (const [file, hash] of Object.entries(unit.inputs)) store.input(run, `physical:${file}`, hash); for (const [file, hash] of inputFiles) store.input(run, `${bundledLibraries.has(file) ? "bundled" : "physical"}:${file}`, hash); store.input(run, "inventory", unit.fingerprint); store.selector(run, `typescript:${context}:inventory`, inputFingerprint); });
+      // Project-level inputs and negative search-space inventory qualify every document.
+      // A source/config change reruns resolution; identical document outputs reuse storage.
+      store.batch(run, () => { for (const file of selected) store.input(run, `source:${file}`, digest(snapshot.fileContents.get(file)!)); for (const [file, hash] of Object.entries(unit.inputs)) store.input(run, `physical:${file}`, hash); for (const [file, hash] of inputFiles) store.input(run, `physical:${file}`, hash); store.input(run, "inventory", unit.fingerprint); store.selector(run, `typescript:${context}:inventory`, inputFingerprint); });
       // Verify loaded compiler dependencies too; missing/changing ambient inputs cannot be called fresh.
-      for (const [file, hash] of inputFiles) if (!bundledLibraries.has(file) && digest(await readFile(file)) !== hash) throw new Error(`Compiler input changed during extraction: ${relative(file)}`);
+      for (const [file, hash] of inputFiles) if (digest(await readFile(file)) !== hash) throw new Error(`Compiler input changed during extraction: ${relative(file)}`);
       coverage = { ...coverage, status: "partial", sourceFiles: selected.length, occurrences: occurrenceCount, unresolved, compilerErrors, externalImports, gaps: [...coverage.gaps as string[], "Declarations/references from supported compiler AST forms; not an exhaustive native type index"] };
     } else coverage = { language: "typescript", status: "unavailable", gaps: ["TypeScript adapter disabled or no applicable sources"] };
     // No source/config edit during the second pass may be silently published.
     for (const file of selected) if (digest(await readFile(snapshot.absoluteFiles.get(file)!)) !== digest(snapshot.fileContents.get(file)!)) throw new Error(`Repository input changed during semantic indexing: ${file}`);
     for (const [file, hash] of Object.entries(unit.inputs)) if (digest(await readFile(file)) !== hash) throw Error(`Project configuration changed during extraction: ${file}`);
     store.seal(run, coverage);
-    const projections = executePasses(store, run, unit.key, provenance, `typescript:${context}:inventory`);
-    return { runs: [run, ...projections], context, inputFingerprint, coverage };
+    return { runs: [run, ...documentRuns], context, inputFingerprint, coverage };
   } catch (error) { store.diagnostic(run, "provider-failure", String(error)); throw error; }
 }
 
 async function reusableUnit(store: SemanticStore, snapshot: RepositorySnapshot, unit: ProjectUnit, previous: Map<string, number>): Promise<number[] | undefined> {
-  const run = previous.get(unit.key); const pass = previous.get(`${unit.key}/pass:call-summary@1`);
-  if (!run || !pass) return undefined;
+  const run = previous.get(unit.key);
+  if (!run) return undefined;
   const row = store.sql("SELECT context,coverage_json FROM sc_runs WHERE id=?").get(run) as { context: string; coverage_json: string };
   const coverage = JSON.parse(row.coverage_json) as Record<string, unknown>;
   // Until module-search negative dependencies are qualified, only closed, error-free local units reuse.
@@ -188,11 +218,13 @@ async function reusableUnit(store: SemanticStore, snapshot: RepositorySnapshot, 
     if (input.resource.startsWith("source:")) { const text = snapshot.fileContents.get(input.resource.slice(7)); if (text === undefined || digest(text) !== input.digest) return undefined; }
     else if (input.resource.startsWith("physical:")) {
       const file = input.resource.slice(9);
-      if (file.includes("/node_modules/") || !file.startsWith(`${snapshot.repository.root}/`)) return undefined;
+      // Project resolution is closed only when every recorded compiler input still matches.
       try { if (digest(await readFile(file)) !== input.digest) return undefined; } catch { return undefined; }
     }
   }
-  return [run, ...qualifiedCallProjection(store, run, unit.key, pass)];
+  const documents = [...previous].filter(([key]) => key.startsWith(`${unit.key}/document:`));
+  if (documents.filter(([key]) => !key.includes("/pass:")).length !== unit.sources.length) return undefined;
+  return [run, ...documents.map(([, id]) => id)];
 }
 
 export async function indexSemanticFoundation(snapshot: RepositorySnapshot, graph: GraphData, filename: string, owned?: { runs: number[]; parent: number | undefined }): Promise<SemanticIndexResult> {

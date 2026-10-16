@@ -6,6 +6,7 @@ import { digestFile } from "./inputs.js";
 import { repositoryInputPaths } from "../repository/repository.js";
 import Database from "better-sqlite3";
 import { READABLE_SEMANTIC_SCHEMAS, SEMANTIC_FORMAT_VERSION } from "./model.js";
+import { toolReceipt } from "./tool-receipt.js";
 import { qualifiedCallProjection } from "./passes.js";
 const semanticInput = (file: string) => /\.(?:[cm]?tsx?|jsx?|pyi?|rs|c|h|cpp|cc|cxx|hpp|hxx|java|go|cs|proto|gql|graphql)$/.test(file) || /(?:package(?:-lock)?\.json|tsconfig[^/]*\.json|jsconfig[^/]*\.json|Cargo\.(?:toml|lock)|go\.(?:mod|work|sum)|pyproject\.toml|pyrightconfig\.json|pom\.xml|build\.gradle(?:\.kts)?|compile_commands\.json|\.csproj|\.sln)$/.test(file);
 const passSuffix = /\/pass:[A-Za-z0-9._-]+@[A-Za-z0-9._-]+$/;
@@ -28,6 +29,10 @@ export async function recordedInputStatus(filename: string, snapshot: Repository
     let checked = 0; let changed = false; let additionalChanges = 0;
     for (const input of inputs) {
       const file = input.resource.startsWith("source:") ? path.join(snapshot.repository.root, input.resource.slice(7)) : input.resource.startsWith("physical:") || input.resource.startsWith("artifact:") ? input.resource.slice(9) : undefined;
+      if (input.resource.startsWith("tree:")) {
+        let matches = false; try { matches = (await toolReceipt(input.resource.slice(5))).sha256 === input.digest; } catch { /* Missing or escaping tree is stale. */ }
+        checked++; if (!matches) { changed = true; additionalChanges++; } continue;
+      }
       if (!file) continue;
       const relative = path.relative(snapshot.repository.root, file).split(path.sep).join("/");
       const text = snapshot.fileContents.get(relative); let matches = false;
@@ -74,6 +79,9 @@ export async function retainProviders(store: SemanticStore, snapshot: Repository
       const inputs = store.sql("SELECT resource,digest FROM sc_inputs WHERE run=?").all(row.run) as Array<{ resource: string; digest: string }>;
       for (const input of inputs) {
         if (input.resource === "project-inventory") { hasInventory = true; if (input.digest !== inventory) eligible = false; continue; }
+        if (input.resource.startsWith("tree:")) {
+          try { if ((await toolReceipt(input.resource.slice(5))).sha256 !== input.digest) eligible = false; } catch { eligible = false; } continue;
+        }
         const filename = input.resource.startsWith("source:") ? path.join(root, input.resource.slice(7)) : input.resource.startsWith("physical:") ? input.resource.slice(9) : input.resource.startsWith("artifact:") ? input.resource.slice(9) : undefined;
         if (filename) { try { if (await digestFile(filename) !== input.digest) eligible = false; } catch { eligible = false; } }
       }

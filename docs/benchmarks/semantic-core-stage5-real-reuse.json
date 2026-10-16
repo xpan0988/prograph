@@ -1,0 +1,914 @@
+{
+  "measuredAt": "2026-10-16T04:17:56.785Z",
+  "node": "v25.9.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "repository": "/private/tmp/prograph-stage4-real/jsoup-4cf664cdb2e9d2cc2d40fdf3bb9c0be0be22f865",
+  "commit": "4cf664cdb2e9d2cc2d40fdf3bb9c0be0be22f865",
+  "index": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-stage5-jsoup-w8qjM7",
+  "sourceRestored": true,
+  "scope": "real JDK21/scip-java 0.13.1; explicit Java8 base sources/classpath; one serial warm trial per shape, includes producer/source/SDK verification and all publication projections; no child RSS measurement",
+  "results": [
+    {
+      "label": "first",
+      "snapshot": 1,
+      "context": "sc2:context:e3797fb69f2f3777631cdf034d09cb741ec83b07c507b9d4db2ef64dde8dd05c",
+      "status": "partial",
+      "documents": 96,
+      "accepted": 96,
+      "reusedDocuments": 0,
+      "rejected": 0,
+      "occurrences": 41352,
+      "excludedExternalLocals": 0,
+      "calls": "partial-declared-static-targets",
+      "durationMs": 20211,
+      "publicationMs": 751.178,
+      "publicationStagesMs": {
+        "content-key": 1.317,
+        "membership": 70.336,
+        "support-eligibility": 42.91,
+        "navigation": 562.752,
+        "symbols": 0.016,
+        "call-summary": 32.901,
+        "pointer-and-commit": 40.825
+      },
+      "sqlitePragmas": {
+        "journal_mode": "wal",
+        "synchronous": 2
+      },
+      "limits": {
+        "maxIndexBytes": 268435456,
+        "maxDocumentBytes": 16777216,
+        "maxSourceBytes": 8388608,
+        "maxOccurrencesPerDocument": 100000,
+        "maxRelationshipsPerSymbol": 1024,
+        "maxDocuments": 10000,
+        "batch": 500
+      },
+      "protocolDigest": "b38021b65ef90cbbf6af9c829ff75192859ad9b5da05439ef154bea4ceb2bf03",
+      "provider": "scip-java",
+      "capabilities": {
+        "symbols": "partial",
+        "definitions": "partial",
+        "references": "partial",
+        "imports": "partial",
+        "calls": "partial-declared-static-targets",
+        "types": "reported-signatures",
+        "inheritance": "reported-relationships",
+        "generics": "reported-signatures",
+        "metaprogramming": "unsupported-processors-disabled",
+        "dynamicDispatch": "unsupported",
+        "nativeFacts": "partial",
+        "buildCompleteness": "declared-classpath-modulepath-release"
+      },
+      "environment": {
+        "language": "java",
+        "configuration": {
+          "format": 1,
+          "id": "real-java",
+          "language": "java",
+          "root": "src/main/java",
+          "package": {
+            "name": "org.jsoup:jsoup",
+            "version": "1.24.1-SNAPSHOT"
+          },
+          "runtime": {
+            "path": "/private/tmp/prograph-stage4-tools/jdk/jdk-21.0.12.1+1/Contents/Home",
+            "sha256": "091d18fd255db7b8f3d2189135547e0e8edd5392bfcca6e7578616e8144a8433",
+            "entry": "bin/java"
+          },
+          "producer": {
+            "path": "/private/tmp/prograph-stage4-scip-java",
+            "sha256": "a694cae143c32c5b6226362fb4bd268a8d13d3cd9b482819b3b0029a9a97b8fe"
+          },
+          "java": {
+            "release": 8,
+            "plugins": [
+              {
+                "path": "/private/tmp/prograph-stage4-javac-0.13.1.jar",
+                "sha256": "1c7ad1c8361f6ea9f9758e4b55decd4869b0ac7bb8610127aca045173ff590ef"
+              },
+              {
+                "path": "/private/tmp/prograph-stage4-shared.jar",
+                "sha256": "8c58e069af784b178347849f9b0e127781d9070210201ac6617947ace4f895be"
+              },
+              {
+                "path": "/private/tmp/prograph-stage4-bindings.jar",
+                "sha256": "ab1c627cb9ff6a8b0f05d91ee329c0ef281819ed011a2b2806fa7ea5f16c1006"
+              },
+              {
+                "path": "/private/tmp/prograph-stage4-protobuf.jar",
+                "sha256": "780e269712d59ae34b87b702ce26aede7982804299dd56a65aa84bda6c145268"
+              }
+            ],
+            "classpath": [
+              {
+                "path": "/private/tmp/prograph-stage4-re2j.jar",
+                "sha256": "7b52c72156dd7f98b3237a5b35c1d34fba381b21048c89208913ad80a45dfbd7"
+              },
+              {
+                "path": "/private/tmp/prograph-stage4-jspecify.jar",
+                "sha256": "070d75f261fe4c5b8202508366715f7f2d4660f88c8ef7e6d3575e48c9683b66"
+              }
+            ]
+          }
+        },
+        "runtimeVersion": "openjdk 21.0.12.1 2026-08-18 LTS\nOpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)\nOpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode, sharing)",
+        "producerDistribution": "0.13.1",
+        "artifactReportedVersion": "0.0.0-SNAPSHOT",
+        "coordinateConvention": "javac-tab-stops-8-utf16",
+        "symbolDialect": "scip",
+        "tools": [
+          {
+            "path": "/private/tmp/prograph-stage4-tools/jdk/jdk-21.0.12.1+1/Contents/Home",
+            "sha256": "091d18fd255db7b8f3d2189135547e0e8edd5392bfcca6e7578616e8144a8433",
+            "entry": "bin/java",
+            "files": 456,
+            "bytes": 350783484
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-scip-java",
+            "sha256": "a694cae143c32c5b6226362fb4bd268a8d13d3cd9b482819b3b0029a9a97b8fe",
+            "files": 1,
+            "bytes": 86321571
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-javac-0.13.1.jar",
+            "sha256": "1c7ad1c8361f6ea9f9758e4b55decd4869b0ac7bb8610127aca045173ff590ef",
+            "files": 1,
+            "bytes": 56375
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-shared.jar",
+            "sha256": "8c58e069af784b178347849f9b0e127781d9070210201ac6617947ace4f895be",
+            "files": 1,
+            "bytes": 17485
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-bindings.jar",
+            "sha256": "ab1c627cb9ff6a8b0f05d91ee329c0ef281819ed011a2b2806fa7ea5f16c1006",
+            "files": 1,
+            "bytes": 221360
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-protobuf.jar",
+            "sha256": "780e269712d59ae34b87b702ce26aede7982804299dd56a65aa84bda6c145268",
+            "files": 1,
+            "bytes": 1862727
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-re2j.jar",
+            "sha256": "7b52c72156dd7f98b3237a5b35c1d34fba381b21048c89208913ad80a45dfbd7",
+            "files": 1,
+            "bytes": 114335
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-jspecify.jar",
+            "sha256": "070d75f261fe4c5b8202508366715f7f2d4660f88c8ef7e6d3575e48c9683b66",
+            "files": 1,
+            "bytes": 3064
+          }
+        ],
+        "capabilities": {
+          "symbols": "partial",
+          "definitions": "partial",
+          "references": "partial",
+          "imports": "partial",
+          "calls": "partial-declared-static-targets",
+          "types": "reported-signatures",
+          "inheritance": "reported-relationships",
+          "generics": "reported-signatures",
+          "metaprogramming": "unsupported-processors-disabled",
+          "dynamicDispatch": "unsupported",
+          "nativeFacts": "partial",
+          "buildCompleteness": "declared-classpath-modulepath-release"
+        },
+        "selectedFiles": 96,
+        "sourceBytes": 1156944,
+        "network": "disabled-by-tool-configuration",
+        "effects": "controlled-copy-no-repository-build-scripts",
+        "gaps": [
+          "Explicit context, not a claim of equivalence to arbitrary repository builds",
+          "Runtime dispatch, reflection, generated code and metaprogramming remain unqualified",
+          "No kernel sandbox or network firewall is claimed; only trusted pinned tools execute"
+        ]
+      },
+      "executionDirectory": "/private/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-stage5-jsoup-w8qjM7/providers/java/e2f9db0e-17b7-49de-9f8f-25106d3b4014",
+      "stagesMs": {
+        "runtime-version": 36.442,
+        "compiler-index": 2016.07,
+        "aggregate": 2032.092
+      },
+      "totalMs": 24919,
+      "partitionCount": 289,
+      "reusedPartitions": 0,
+      "changedPartitions": [
+        "scip/managed-real-java/index",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/examples/ListLinks.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Comment.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/Regex.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/NamespaceBindings.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/examples/Wikipedia.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/Normalizer.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/RequestAuthenticator.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/DataNode.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/DocumentType.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/FormElement.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/RequestDispatch.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/NodeEvaluator.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/SimpleBufferedInput.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/QuietAppendable.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/NodeFilter.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/SimpleStreamReader.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/examples/HtmlToPlainText.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/SharedConstants.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/NodeTraversor.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/AuthenticationHandler.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/LeafNode.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/CookieUtil.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/examples/package-info.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/EntitiesData.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/Progress.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/HttpStatusException.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/SerializationException.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/UnsupportedMimeTypeException.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/StringUtil.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/package-info.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/ControllableInputStream.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/SoftPool.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Document.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/LineMap.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/package-info.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/Validate.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/ValidationException.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/TextNode.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/Jsoup.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/NodeUtils.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/XmlDeclaration.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Attributes.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/safety/Cleaner.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/CDataNode.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Printer.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Attribute.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/W3CDom.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/Connection.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Range.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/package-info.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/UrlBuilder.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/RequestExecutor.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/package-info.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/ProcessingInstruction.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/UrlConnectionExecutor.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/NodeInternals.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/safety/Safelist.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/package-info.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/NodeIterator.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/Collector.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/TokenQueue.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/Evaluator.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/CombiningEvaluator.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Element.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/safety/package-info.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/DataUtil.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/CharacterReader.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/HasEvaluator.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/Selector.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/HttpConnection.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/Re2jRegex.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/HtmlTreeBuilderState.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/HtmlTagOptions.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/ParseError.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/ParseErrorList.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Entities.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/Tag.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/ParseSettings.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/StructuralEvaluator.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/package-info.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/Tokeniser.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/ForeignNames.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/Elements.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/Parser.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/NodeVisitor.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/TokenData.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/Nodes.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Node.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/TagSet.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/StreamParser.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/TreeBuilder.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/XmlTreeBuilder.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/TokeniserState.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/QueryParser.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/Token.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/HtmlTreeBuilder.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/examples/ListLinks.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/examples/ListLinks.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Comment.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Comment.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/Regex.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/Regex.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/NamespaceBindings.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/NamespaceBindings.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/examples/Wikipedia.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/examples/Wikipedia.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/Normalizer.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/Normalizer.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/RequestAuthenticator.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/RequestAuthenticator.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/DataNode.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/DataNode.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/DocumentType.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/DocumentType.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/FormElement.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/FormElement.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/RequestDispatch.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/RequestDispatch.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/NodeEvaluator.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/NodeEvaluator.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/SimpleBufferedInput.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/SimpleBufferedInput.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/QuietAppendable.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/QuietAppendable.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/NodeFilter.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/NodeFilter.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/SimpleStreamReader.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/SimpleStreamReader.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/examples/HtmlToPlainText.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/examples/HtmlToPlainText.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/SharedConstants.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/SharedConstants.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/NodeTraversor.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/NodeTraversor.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/AuthenticationHandler.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/AuthenticationHandler.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/LeafNode.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/LeafNode.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/CookieUtil.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/CookieUtil.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/examples/package-info.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/examples/package-info.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/EntitiesData.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/EntitiesData.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/Progress.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/Progress.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/HttpStatusException.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/HttpStatusException.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/SerializationException.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/SerializationException.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/UnsupportedMimeTypeException.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/UnsupportedMimeTypeException.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/StringUtil.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/StringUtil.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/package-info.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/package-info.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/ControllableInputStream.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/ControllableInputStream.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/SoftPool.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/SoftPool.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Document.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Document.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/LineMap.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/internal/LineMap.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/package-info.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/package-info.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/Validate.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/Validate.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/ValidationException.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/ValidationException.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/TextNode.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/TextNode.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/Jsoup.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/Jsoup.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/NodeUtils.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/NodeUtils.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/XmlDeclaration.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/XmlDeclaration.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Attributes.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Attributes.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/safety/Cleaner.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/safety/Cleaner.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/CDataNode.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/CDataNode.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Printer.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Printer.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Attribute.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Attribute.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/W3CDom.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/W3CDom.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/Connection.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/Connection.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Range.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Range.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/package-info.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/package-info.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/UrlBuilder.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/UrlBuilder.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/RequestExecutor.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/RequestExecutor.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/package-info.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/package-info.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/ProcessingInstruction.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/ProcessingInstruction.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/UrlConnectionExecutor.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/UrlConnectionExecutor.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/NodeInternals.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/NodeInternals.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/safety/Safelist.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/safety/Safelist.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/package-info.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/package-info.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/NodeIterator.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/NodeIterator.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/Collector.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/Collector.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/TokenQueue.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/TokenQueue.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/Evaluator.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/Evaluator.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/CombiningEvaluator.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/CombiningEvaluator.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Element.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Element.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/safety/package-info.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/safety/package-info.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/DataUtil.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/DataUtil.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/CharacterReader.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/CharacterReader.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/HasEvaluator.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/HasEvaluator.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/Selector.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/Selector.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/HttpConnection.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/HttpConnection.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/Re2jRegex.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/helper/Re2jRegex.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/HtmlTreeBuilderState.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/HtmlTreeBuilderState.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/HtmlTagOptions.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/HtmlTagOptions.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/ParseError.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/ParseError.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/ParseErrorList.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/ParseErrorList.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Entities.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Entities.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/Tag.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/Tag.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/ParseSettings.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/ParseSettings.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/StructuralEvaluator.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/StructuralEvaluator.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/package-info.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/package-info.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/Tokeniser.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/Tokeniser.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/ForeignNames.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/ForeignNames.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/Elements.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/Elements.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/Parser.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/Parser.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/NodeVisitor.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/NodeVisitor.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/TokenData.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/TokenData.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/Nodes.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/Nodes.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Node.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/nodes/Node.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/TagSet.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/TagSet.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/StreamParser.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/StreamParser.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/TreeBuilder.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/TreeBuilder.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/XmlTreeBuilder.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/XmlTreeBuilder.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/TokeniserState.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/TokeniserState.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/QueryParser.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/select/QueryParser.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/Token.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/Token.java/pass:call-summary@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/HtmlTreeBuilder.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/parser/HtmlTreeBuilder.java/pass:call-summary@1"
+      ]
+    },
+    {
+      "label": "unchanged",
+      "snapshot": 2,
+      "context": "sc2:context:e3797fb69f2f3777631cdf034d09cb741ec83b07c507b9d4db2ef64dde8dd05c",
+      "status": "partial",
+      "documents": 96,
+      "accepted": 96,
+      "reusedDocuments": 96,
+      "rejected": 0,
+      "occurrences": 41352,
+      "excludedExternalLocals": 0,
+      "calls": "partial-declared-static-targets",
+      "durationMs": 940,
+      "publicationMs": 6.176,
+      "publicationStagesMs": {
+        "content-key": 0.992,
+        "membership": 4.073,
+        "support-eligibility": 0.092,
+        "navigation": 0.187,
+        "symbols": 0.002,
+        "call-summary": 0.237,
+        "pointer-and-commit": 0.505
+      },
+      "sqlitePragmas": {
+        "journal_mode": "wal",
+        "synchronous": 2
+      },
+      "limits": {
+        "maxIndexBytes": 268435456,
+        "maxDocumentBytes": 16777216,
+        "maxSourceBytes": 8388608,
+        "maxOccurrencesPerDocument": 100000,
+        "maxRelationshipsPerSymbol": 1024,
+        "maxDocuments": 10000,
+        "batch": 500
+      },
+      "protocolDigest": "b38021b65ef90cbbf6af9c829ff75192859ad9b5da05439ef154bea4ceb2bf03",
+      "provider": "scip-java",
+      "capabilities": {
+        "symbols": "partial",
+        "definitions": "partial",
+        "references": "partial",
+        "imports": "partial",
+        "calls": "partial-declared-static-targets",
+        "types": "reported-signatures",
+        "inheritance": "reported-relationships",
+        "generics": "reported-signatures",
+        "metaprogramming": "unsupported-processors-disabled",
+        "dynamicDispatch": "unsupported",
+        "nativeFacts": "partial",
+        "buildCompleteness": "declared-classpath-modulepath-release"
+      },
+      "environment": {
+        "language": "java",
+        "configuration": {
+          "format": 1,
+          "id": "real-java",
+          "language": "java",
+          "root": "src/main/java",
+          "package": {
+            "name": "org.jsoup:jsoup",
+            "version": "1.24.1-SNAPSHOT"
+          },
+          "runtime": {
+            "path": "/private/tmp/prograph-stage4-tools/jdk/jdk-21.0.12.1+1/Contents/Home",
+            "sha256": "091d18fd255db7b8f3d2189135547e0e8edd5392bfcca6e7578616e8144a8433",
+            "entry": "bin/java"
+          },
+          "producer": {
+            "path": "/private/tmp/prograph-stage4-scip-java",
+            "sha256": "a694cae143c32c5b6226362fb4bd268a8d13d3cd9b482819b3b0029a9a97b8fe"
+          },
+          "java": {
+            "release": 8,
+            "plugins": [
+              {
+                "path": "/private/tmp/prograph-stage4-javac-0.13.1.jar",
+                "sha256": "1c7ad1c8361f6ea9f9758e4b55decd4869b0ac7bb8610127aca045173ff590ef"
+              },
+              {
+                "path": "/private/tmp/prograph-stage4-shared.jar",
+                "sha256": "8c58e069af784b178347849f9b0e127781d9070210201ac6617947ace4f895be"
+              },
+              {
+                "path": "/private/tmp/prograph-stage4-bindings.jar",
+                "sha256": "ab1c627cb9ff6a8b0f05d91ee329c0ef281819ed011a2b2806fa7ea5f16c1006"
+              },
+              {
+                "path": "/private/tmp/prograph-stage4-protobuf.jar",
+                "sha256": "780e269712d59ae34b87b702ce26aede7982804299dd56a65aa84bda6c145268"
+              }
+            ],
+            "classpath": [
+              {
+                "path": "/private/tmp/prograph-stage4-re2j.jar",
+                "sha256": "7b52c72156dd7f98b3237a5b35c1d34fba381b21048c89208913ad80a45dfbd7"
+              },
+              {
+                "path": "/private/tmp/prograph-stage4-jspecify.jar",
+                "sha256": "070d75f261fe4c5b8202508366715f7f2d4660f88c8ef7e6d3575e48c9683b66"
+              }
+            ]
+          }
+        },
+        "runtimeVersion": "openjdk 21.0.12.1 2026-08-18 LTS\nOpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)\nOpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode, sharing)",
+        "producerDistribution": "0.13.1",
+        "artifactReportedVersion": "0.0.0-SNAPSHOT",
+        "coordinateConvention": "javac-tab-stops-8-utf16",
+        "symbolDialect": "scip",
+        "tools": [
+          {
+            "path": "/private/tmp/prograph-stage4-tools/jdk/jdk-21.0.12.1+1/Contents/Home",
+            "sha256": "091d18fd255db7b8f3d2189135547e0e8edd5392bfcca6e7578616e8144a8433",
+            "entry": "bin/java",
+            "files": 456,
+            "bytes": 350783484
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-scip-java",
+            "sha256": "a694cae143c32c5b6226362fb4bd268a8d13d3cd9b482819b3b0029a9a97b8fe",
+            "files": 1,
+            "bytes": 86321571
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-javac-0.13.1.jar",
+            "sha256": "1c7ad1c8361f6ea9f9758e4b55decd4869b0ac7bb8610127aca045173ff590ef",
+            "files": 1,
+            "bytes": 56375
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-shared.jar",
+            "sha256": "8c58e069af784b178347849f9b0e127781d9070210201ac6617947ace4f895be",
+            "files": 1,
+            "bytes": 17485
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-bindings.jar",
+            "sha256": "ab1c627cb9ff6a8b0f05d91ee329c0ef281819ed011a2b2806fa7ea5f16c1006",
+            "files": 1,
+            "bytes": 221360
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-protobuf.jar",
+            "sha256": "780e269712d59ae34b87b702ce26aede7982804299dd56a65aa84bda6c145268",
+            "files": 1,
+            "bytes": 1862727
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-re2j.jar",
+            "sha256": "7b52c72156dd7f98b3237a5b35c1d34fba381b21048c89208913ad80a45dfbd7",
+            "files": 1,
+            "bytes": 114335
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-jspecify.jar",
+            "sha256": "070d75f261fe4c5b8202508366715f7f2d4660f88c8ef7e6d3575e48c9683b66",
+            "files": 1,
+            "bytes": 3064
+          }
+        ],
+        "capabilities": {
+          "symbols": "partial",
+          "definitions": "partial",
+          "references": "partial",
+          "imports": "partial",
+          "calls": "partial-declared-static-targets",
+          "types": "reported-signatures",
+          "inheritance": "reported-relationships",
+          "generics": "reported-signatures",
+          "metaprogramming": "unsupported-processors-disabled",
+          "dynamicDispatch": "unsupported",
+          "nativeFacts": "partial",
+          "buildCompleteness": "declared-classpath-modulepath-release"
+        },
+        "selectedFiles": 96,
+        "sourceBytes": 1156944,
+        "network": "disabled-by-tool-configuration",
+        "effects": "controlled-copy-no-repository-build-scripts",
+        "gaps": [
+          "Explicit context, not a claim of equivalence to arbitrary repository builds",
+          "Runtime dispatch, reflection, generated code and metaprogramming remain unqualified",
+          "No kernel sandbox or network firewall is claimed; only trusted pinned tools execute"
+        ]
+      },
+      "executionDirectory": "/private/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-stage5-jsoup-w8qjM7/providers/java/b754d26a-2c03-4234-9d71-3b19bdae4037",
+      "stagesMs": {
+        "runtime-version": 33.288,
+        "compiler-index": 2159.408,
+        "aggregate": 2127.943
+      },
+      "totalMs": 5800,
+      "partitionCount": 289,
+      "reusedPartitions": 288,
+      "changedPartitions": [
+        "scip/managed-real-java/index"
+      ]
+    },
+    {
+      "label": "one-source-revision",
+      "snapshot": 3,
+      "context": "sc2:context:e3797fb69f2f3777631cdf034d09cb741ec83b07c507b9d4db2ef64dde8dd05c",
+      "status": "partial",
+      "documents": 96,
+      "accepted": 96,
+      "reusedDocuments": 95,
+      "rejected": 0,
+      "occurrences": 41352,
+      "excludedExternalLocals": 0,
+      "calls": "partial-declared-static-targets",
+      "durationMs": 1318,
+      "publicationMs": 37.321,
+      "publicationStagesMs": {
+        "content-key": 0.997,
+        "membership": 8.56,
+        "support-eligibility": 0.546,
+        "navigation": 22.196,
+        "symbols": 0.003,
+        "call-summary": 3.136,
+        "pointer-and-commit": 1.787
+      },
+      "sqlitePragmas": {
+        "journal_mode": "wal",
+        "synchronous": 2
+      },
+      "limits": {
+        "maxIndexBytes": 268435456,
+        "maxDocumentBytes": 16777216,
+        "maxSourceBytes": 8388608,
+        "maxOccurrencesPerDocument": 100000,
+        "maxRelationshipsPerSymbol": 1024,
+        "maxDocuments": 10000,
+        "batch": 500
+      },
+      "protocolDigest": "b38021b65ef90cbbf6af9c829ff75192859ad9b5da05439ef154bea4ceb2bf03",
+      "provider": "scip-java",
+      "capabilities": {
+        "symbols": "partial",
+        "definitions": "partial",
+        "references": "partial",
+        "imports": "partial",
+        "calls": "partial-declared-static-targets",
+        "types": "reported-signatures",
+        "inheritance": "reported-relationships",
+        "generics": "reported-signatures",
+        "metaprogramming": "unsupported-processors-disabled",
+        "dynamicDispatch": "unsupported",
+        "nativeFacts": "partial",
+        "buildCompleteness": "declared-classpath-modulepath-release"
+      },
+      "environment": {
+        "language": "java",
+        "configuration": {
+          "format": 1,
+          "id": "real-java",
+          "language": "java",
+          "root": "src/main/java",
+          "package": {
+            "name": "org.jsoup:jsoup",
+            "version": "1.24.1-SNAPSHOT"
+          },
+          "runtime": {
+            "path": "/private/tmp/prograph-stage4-tools/jdk/jdk-21.0.12.1+1/Contents/Home",
+            "sha256": "091d18fd255db7b8f3d2189135547e0e8edd5392bfcca6e7578616e8144a8433",
+            "entry": "bin/java"
+          },
+          "producer": {
+            "path": "/private/tmp/prograph-stage4-scip-java",
+            "sha256": "a694cae143c32c5b6226362fb4bd268a8d13d3cd9b482819b3b0029a9a97b8fe"
+          },
+          "java": {
+            "release": 8,
+            "plugins": [
+              {
+                "path": "/private/tmp/prograph-stage4-javac-0.13.1.jar",
+                "sha256": "1c7ad1c8361f6ea9f9758e4b55decd4869b0ac7bb8610127aca045173ff590ef"
+              },
+              {
+                "path": "/private/tmp/prograph-stage4-shared.jar",
+                "sha256": "8c58e069af784b178347849f9b0e127781d9070210201ac6617947ace4f895be"
+              },
+              {
+                "path": "/private/tmp/prograph-stage4-bindings.jar",
+                "sha256": "ab1c627cb9ff6a8b0f05d91ee329c0ef281819ed011a2b2806fa7ea5f16c1006"
+              },
+              {
+                "path": "/private/tmp/prograph-stage4-protobuf.jar",
+                "sha256": "780e269712d59ae34b87b702ce26aede7982804299dd56a65aa84bda6c145268"
+              }
+            ],
+            "classpath": [
+              {
+                "path": "/private/tmp/prograph-stage4-re2j.jar",
+                "sha256": "7b52c72156dd7f98b3237a5b35c1d34fba381b21048c89208913ad80a45dfbd7"
+              },
+              {
+                "path": "/private/tmp/prograph-stage4-jspecify.jar",
+                "sha256": "070d75f261fe4c5b8202508366715f7f2d4660f88c8ef7e6d3575e48c9683b66"
+              }
+            ]
+          }
+        },
+        "runtimeVersion": "openjdk 21.0.12.1 2026-08-18 LTS\nOpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)\nOpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode, sharing)",
+        "producerDistribution": "0.13.1",
+        "artifactReportedVersion": "0.0.0-SNAPSHOT",
+        "coordinateConvention": "javac-tab-stops-8-utf16",
+        "symbolDialect": "scip",
+        "tools": [
+          {
+            "path": "/private/tmp/prograph-stage4-tools/jdk/jdk-21.0.12.1+1/Contents/Home",
+            "sha256": "091d18fd255db7b8f3d2189135547e0e8edd5392bfcca6e7578616e8144a8433",
+            "entry": "bin/java",
+            "files": 456,
+            "bytes": 350783484
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-scip-java",
+            "sha256": "a694cae143c32c5b6226362fb4bd268a8d13d3cd9b482819b3b0029a9a97b8fe",
+            "files": 1,
+            "bytes": 86321571
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-javac-0.13.1.jar",
+            "sha256": "1c7ad1c8361f6ea9f9758e4b55decd4869b0ac7bb8610127aca045173ff590ef",
+            "files": 1,
+            "bytes": 56375
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-shared.jar",
+            "sha256": "8c58e069af784b178347849f9b0e127781d9070210201ac6617947ace4f895be",
+            "files": 1,
+            "bytes": 17485
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-bindings.jar",
+            "sha256": "ab1c627cb9ff6a8b0f05d91ee329c0ef281819ed011a2b2806fa7ea5f16c1006",
+            "files": 1,
+            "bytes": 221360
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-protobuf.jar",
+            "sha256": "780e269712d59ae34b87b702ce26aede7982804299dd56a65aa84bda6c145268",
+            "files": 1,
+            "bytes": 1862727
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-re2j.jar",
+            "sha256": "7b52c72156dd7f98b3237a5b35c1d34fba381b21048c89208913ad80a45dfbd7",
+            "files": 1,
+            "bytes": 114335
+          },
+          {
+            "path": "/private/tmp/prograph-stage4-jspecify.jar",
+            "sha256": "070d75f261fe4c5b8202508366715f7f2d4660f88c8ef7e6d3575e48c9683b66",
+            "files": 1,
+            "bytes": 3064
+          }
+        ],
+        "capabilities": {
+          "symbols": "partial",
+          "definitions": "partial",
+          "references": "partial",
+          "imports": "partial",
+          "calls": "partial-declared-static-targets",
+          "types": "reported-signatures",
+          "inheritance": "reported-relationships",
+          "generics": "reported-signatures",
+          "metaprogramming": "unsupported-processors-disabled",
+          "dynamicDispatch": "unsupported",
+          "nativeFacts": "partial",
+          "buildCompleteness": "declared-classpath-modulepath-release"
+        },
+        "selectedFiles": 96,
+        "sourceBytes": 1156992,
+        "network": "disabled-by-tool-configuration",
+        "effects": "controlled-copy-no-repository-build-scripts",
+        "gaps": [
+          "Explicit context, not a claim of equivalence to arbitrary repository builds",
+          "Runtime dispatch, reflection, generated code and metaprogramming remain unqualified",
+          "No kernel sandbox or network firewall is claimed; only trusted pinned tools execute"
+        ]
+      },
+      "executionDirectory": "/private/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-stage5-jsoup-w8qjM7/providers/java/80226975-ca4f-4094-95b0-c745f24b32d0",
+      "stagesMs": {
+        "runtime-version": 37.966,
+        "compiler-index": 2087.996,
+        "aggregate": 2151.029
+      },
+      "totalMs": 6164,
+      "partitionCount": 289,
+      "reusedPartitions": 285,
+      "changedPartitions": [
+        "scip/managed-real-java/index",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/Jsoup.java",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/Jsoup.java/pass:scip-native@1",
+        "scip/managed-real-java/document:src/main/java/org/jsoup/Jsoup.java/pass:call-summary@1"
+      ]
+    }
+  ],
+  "checks": {
+    "integrity": "ok",
+    "foreignKeys": [],
+    "snapshots": 3
+  },
+  "nodePeakRssKiB": 363632,
+  "baseline": "c8fd0b7df5bd34c6bac12a61bf0ea021d1526db9 + Stage 5 ownership/GC changes",
+  "compiledHashes": {
+    "dist/core/semantic/scip-import.js": "48a17d413e9da25f1b25d7596d97f291202e46057bbced04ac2a0c83c7fceadd",
+    "dist/core/semantic/scip-native.js": "c00488eb2ae9f9b4f96931a08e424eccf2e79e7998284cca09cf9a856d336bc9",
+    "dist/core/semantic/typescript.js": "ce1c96781cf7b019f7bcc70deff1f56c407789d1ec423b64eb49858348bebae3",
+    "dist/core/semantic/store.js": "48b68a0a1d668a2ca6707aeb1547e75737eafc01d88440c483e0bf67d316a94b",
+    "dist/core/semantic/gc.js": "a98801ec8ec1ce75a7986a9ef3d5a712af1fde07dd3f553e7b6afc4cf2d5c19d",
+    "dist/core/semantic/managed-scip.js": "ef1c1b96475c902f52f273ed83181dcb278cb17460c4a7fc06085f02d8f54c86",
+    "dist/core/semantic/provider-runs.js": "b03aa7b67f8f79ce0e8e8a05dd2199d992ff20e3582745e8584f5188648c5544",
+    "dist/core/semantic/tool-receipt.js": "90931ebc47fddb041935a0a348c8e247e592a3e0b1e1a7333ede5792908e0327"
+  },
+  "methodScript": "import {readFile,writeFile,mkdtemp} from 'node:fs/promises';import path from 'node:path';import os from 'node:os';\nimport {indexManagedProject} from '/Users/xiyuanpan/prograph/dist/core/semantic/managed-scip.js';\nimport {SemanticStore} from '/Users/xiyuanpan/prograph/dist/core/semantic/store.js';\nimport {digest} from '/Users/xiyuanpan/prograph/dist/core/semantic/model.js';\nconst repository='/private/tmp/prograph-stage4-real/jsoup-4cf664cdb2e9d2cc2d40fdf3bb9c0be0be22f865';const index=await mkdtemp(path.join(os.tmpdir(),'prograph-stage5-jsoup-'));\nconst file=path.join(repository,'src/main/java/org/jsoup/Jsoup.java'),before=await readFile(file);\nconst partitionMap=()=>{const s=new SemanticStore(path.join(index,'semantic.sqlite'));try{return new Map(s.sql('SELECT partition_key,run FROM sc_partitions WHERE snapshot=?').all(s.activeSnapshot()).map(r=>[r.partition_key,r.run]));}finally{s.close()}};\nconst results=[];let previous=new Map();\ntry{\n for(const label of ['first','unchanged','one-source-revision']){\n  if(label==='one-source-revision')await writeFile(file,Buffer.concat([before,Buffer.from('\\n// Semantic Core owned-publication validation.\\n')]));\n  const result=await indexManagedProject(repository,'semantic-project.json',index); const current=partitionMap();\n  results.push({label,...result,partitionCount:current.size,reusedPartitions:[...current].filter(([k,v])=>previous.get(k)===v).length,changedPartitions:[...current].filter(([k,v])=>previous.get(k)!==v).map(([k])=>k)});previous=current;\n }\n}finally{await writeFile(file,before)}\nconst s=new SemanticStore(path.join(index,'semantic.sqlite'));const checks={integrity:s.db.pragma('integrity_check',{simple:true}),foreignKeys:s.db.pragma('foreign_key_check'),snapshots:s.sql('SELECT COUNT(*) AS n FROM sc_snapshots').get().n};s.close();\nconst evidence={measuredAt:new Date().toISOString(),node:process.version,platform:process.platform,arch:process.arch,repository,commit:'4cf664cdb2e9d2cc2d40fdf3bb9c0be0be22f865',index,sourceRestored:digest(await readFile(file))===digest(before),scope:'real JDK21/scip-java 0.13.1; explicit Java8 base sources/classpath; one serial warm trial per shape, includes producer/source/SDK verification and all publication projections; no child RSS measurement',results,checks,nodePeakRssKiB:process.resourceUsage().maxRSS};\nawait writeFile('/private/tmp/prograph-stage5-real-reuse.json',JSON.stringify(evidence,null,2)+'\\n');console.log(JSON.stringify({...evidence,results:results.map(r=>({label:r.label,accepted:r.accepted,reusedDocuments:r.reusedDocuments,partitionCount:r.partitionCount,reusedPartitions:r.reusedPartitions,changedPartitions:r.changedPartitions.length,totalMs:r.totalMs,publicationMs:r.publicationMs,publicationStagesMs:r.publicationStagesMs}))}));\n",
+  "measurementQualification": "Compiled before final external-metadata byte/fact batch guard; same semantic output/publication algorithm. GC record reports net removed rows (negative origin_runs means preserved proof receipts were created)."
+}

@@ -1,6 +1,6 @@
 import path from "node:path";
 import { randomUUID } from "node:crypto";
-import { mkdir, readdir, lstat, realpath, readlink, readFile, writeFile, chmod, cp } from "node:fs/promises";
+import { mkdir, readdir, lstat, realpath, readFile, writeFile, chmod, cp } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import { scanRepository, resolveRepositoryRoot } from "../repository/repository.js";
 import { boundedInput, digestFile } from "./inputs.js";
@@ -9,6 +9,8 @@ import { importScip, type ScipManifest } from "./scip-import.js";
 import { deriveScipNative, type NativeLanguage } from "./scip-native.js";
 import { runProviderProcess } from "./process.js";
 import { javac0131Range, python066Symbol } from "./scip-dialects.js";
+import { toolReceipt } from "./tool-receipt.js";
+export { toolReceipt } from "./tool-receipt.js";
 import { inventoryFromDisk } from "./provider-runs.js";
 
 export interface ToolReceipt { path: string; sha256: string; entry?: string }
@@ -30,20 +32,6 @@ export const MANAGED_CAPABILITIES = {
   csharp: { symbols: "partial", definitions: "partial", references: "partial", imports: "partial", calls: "partial-declared-static-targets", types: "reported-documentation-and-source-roles", inheritance: "reported-relationships", generics: "reported-symbols", metaprogramming: "unsupported-generators-disabled", dynamicDispatch: "unsupported", nativeFacts: "partial", buildCompleteness: "explicit-project-framework-reference-variant" },
 } as const;
 
-/** A tool directory is immutable input, including bundled stubs, DLLs and SDK files, not just its launcher. */
-export async function toolReceipt(filename: string, signal?: AbortSignal): Promise<{ sha256: string; inputs: Record<string, string>; bytes: number; files: number }> {
-  if (!path.isAbsolute(filename)) throw Error("Tool receipt requires an absolute path");
-  const root = await realpath(filename); const inputs: Record<string, string> = {}; const entries: unknown[] = []; let bytes = 0; let files = 0;
-  const visit = async (file: string): Promise<void> => {
-    signal?.throwIfAborted(); const info = await lstat(file); const relative = path.relative(root, file).split(path.sep).join("/");
-    if (info.isSymbolicLink()) { const link = await readlink(file); let target: string; try { target = await realpath(file); } catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; target = path.resolve(path.dirname(file), link); } if (target !== root && !target.startsWith(`${root}${path.sep}`)) throw Error(`Tool symlink escapes receipt root: ${file} -> ${target}`); entries.push([relative, "link", link]); return; }
-    if (info.isDirectory()) { for (const child of (await readdir(file)).sort()) await visit(path.join(file, child)); return; }
-    if (!info.isFile() || ++files > 40000 || (bytes += info.size) > 3 * 1024 ** 3) throw Error("Tool receipt exceeds 40000 files / 3 GiB");
-    const hash = await digestFile(file, 512 * 1024 ** 2, signal); inputs[`physical:${file}`] = hash; entries.push([relative, hash]);
-  };
-  const info = await lstat(root); await visit(root);
-  return { sha256: info.isFile() ? inputs[`physical:${root}`]! : digest(canonical(entries)), inputs, bytes, files };
-}
 const safeRelative = (value: string) => typeof value === "string" && value.length <= 4096 && !value.includes("\\") && !value.includes("\0") && !path.posix.isAbsolute(value) && !value.split("/").some(part => part === ".." || !part);
 const xml = (text: string) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll('"', "&quot;").replaceAll("'", "&apos;");
 const msbuildPath = (text: string) => xml(text.replace(/[%$@;?*()']/g, character => `%${character.charCodeAt(0).toString(16).toUpperCase()}`));
@@ -81,7 +69,9 @@ export async function indexManagedProject(repository: string, configuration: str
   const tool = async (receipt: ToolReceipt): Promise<string> => {
     if (!receipt || !/^[a-f0-9]{64}$/.test(receipt.sha256) || receipt.entry !== undefined && !safeRelative(receipt.entry)) throw Error("Explicit tool path, SHA-256 and safe entry required");
     const captured = await toolReceipt(receipt.path, options.signal); if (captured.sha256 !== receipt.sha256) throw Error(`Managed tool receipt mismatch: ${receipt.path}`);
-    Object.assign(inputs, captured.inputs); receipts.push({ receipt, hash: captured.sha256, files: captured.files, bytes: captured.bytes });
+    if ((await lstat(receipt.path)).isDirectory()) inputs[`tree:${await realpath(receipt.path)}`] = captured.sha256;
+    else Object.assign(inputs, captured.inputs);
+    receipts.push({ receipt, hash: captured.sha256, files: captured.files, bytes: captured.bytes });
     const executable = receipt.entry ? path.join(receipt.path, receipt.entry) : receipt.path;
     const resolved = await realpath(executable); if (receipt.entry && !resolved.startsWith(`${await realpath(receipt.path)}${path.sep}`)) throw Error("Tool entry escapes receipt"); return executable;
   };
@@ -174,7 +164,7 @@ export async function indexManagedProject(repository: string, configuration: str
   const sidecar: ScipManifest = { format: 1, id: `managed-${config.id}`, projectContext: `${config.language}/${context}`, sourceRoot: root, originalProjectRoot: pathToFileURL(source + (config.language === "java" ? path.sep : "")).href,
     indexDigest: await digestFile(artifact), provider: { name: provider, version: producerVersion, basis: "compiler" }, sources, inputs: buildInputs, legacyPositionEncoding: encoding, ...(config.language === "python" ? { externalLocalPolicy: "diagnose" as const } : {}), ...(config.language === "java" ? { enclosingPolicy: "diagnose" as const } : {}), ...(prefix ? { documentPathPrefix: prefix } : {}) };
   const verify = async (signal?: AbortSignal) => {
-    for (const [resource, expected] of Object.entries(inputs)) { signal?.throwIfAborted(); if (performance.now() - started > timeout) throw Error("Managed SCIP deadline exceeded before publication"); const file = resource.startsWith("source:") ? path.join(root, resource.slice(7)) : resource.slice(9); if (await digestFile(file, 10 * 1024 ** 3, signal) !== expected) throw Error(`Managed input changed: ${resource}`); }
+    for (const [resource, expected] of Object.entries(inputs)) { signal?.throwIfAborted(); if (performance.now() - started > timeout) throw Error("Managed SCIP deadline exceeded before publication"); if (resource.startsWith("tree:")) continue; const file = resource.startsWith("source:") ? path.join(root, resource.slice(7)) : resource.slice(9); if (await digestFile(file, 10 * 1024 ** 3, signal) !== expected) throw Error(`Managed input changed: ${resource}`); }
     // Reenumeration detects added/removed libraries and stub files as well as modified positive inputs.
     for (const r of receipts) if ((await toolReceipt(r.receipt.path, signal)).sha256 !== r.hash) throw Error("Managed tool directory membership changed");
     if ((await inventoryFromDisk(root, directory, 200000, signal)).inventory !== initialInventory.inventory) throw Error("Managed source/config inventory changed during production");

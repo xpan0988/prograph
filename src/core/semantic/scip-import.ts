@@ -1,6 +1,7 @@
 import path from "node:path";
 import { mkdir, realpath, lstat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import { createHash } from "node:crypto";
 import { getRepositoryMetadata, resolveRepositoryRoot } from "../repository/repository.js";
 import { canonical, digest, semanticKey, SCIP_SEMANTIC_VERSION, type Provenance } from "./model.js";
 import { SemanticStore } from "./store.js";
@@ -87,21 +88,22 @@ export async function importScip(repository: string, artifact: string, manifest:
     const inputFingerprint = digest(canonical(manifest)); const prefix = `scip/${manifest.id}/`;
     const parseSymbol = execution?.parseSymbol ?? parseScipSymbol;
     const provenance: Provenance = { provider: manifest.provider.name, version: `${manifest.provider.version}/scip-map-${SCIP_SEMANTIC_VERSION}`, basis: manifest.provider.basis, method: "source-verified-scip", context, inputFingerprint };
-    const summary = store.begin(`${prefix}index`, context, inputFingerprint); const accepted: number[] = [];
+    const summary = store.begin(`${prefix}index`, context, inputFingerprint); const accepted: number[] = []; const externals: number[] = [];
     const inventory = await inventoryFromDisk(root, directory, limits.maxDocuments * 2, signal);
     store.input(summary, "project-inventory", inventory.inventory);
     store.input(summary, `artifact:${artifactPath}`, manifest.indexDigest);
     for (const [resource, hash] of Object.entries(execution?.inputs ?? {})) store.input(summary, resource, hash);
     for (const message of execution?.diagnostics ?? []) store.diagnostic(summary, "producer-diagnostic", message);
-    let documentCount = 0; let rejected = 0; let occurrences = 0; let metadata: Message | undefined; let externalSymbols = 0; let excludedExternalLocals = 0;
+    let documentCount = 0; let rejected = 0; let occurrences = 0; let metadata: Message | undefined; let externalSymbols = 0; let excludedExternalLocals = 0; let reusedDocuments = 0;
     stream = await ScipStream.open(artifactPath, limits.maxIndexBytes);
     store.db.exec("CREATE TEMP TABLE sc_import_seen(path TEXT PRIMARY KEY)");
+    store.db.exec("CREATE TEMP TABLE sc_import_external(bucket INTEGER NOT NULL,key TEXT PRIMARY KEY,json TEXT NOT NULL,weight INTEGER NOT NULL) WITHOUT ROWID; CREATE INDEX sc_import_external_order ON sc_import_external(bucket,key)");
     const symbol = (raw: string, file: string, sourceDigest: string): string => {
       const parsed = parseSymbol(raw);
       const key = semanticKey("scip-symbol", [repositoryInfo.identity, context, parsed.local ? [manifest.id, file, sourceDigest] : null, raw]);
       store.addSymbol({ key, name: parsed.name, qualifiedName: raw, kind: parsed.local ? "scip-local" : "scip-global", file: parsed.local ? file : "<scip-package>", context }); return key;
     };
-    const information = (run: number, info: Message, file: string, sourceDigest: string) => {
+    const information = (run: number, info: Message, file: string, sourceDigest: string, proof: Provenance = provenance) => {
       const raw = String(info.symbol ?? ""); const parsed = parseSymbol(raw);
       if (file === "<external>" && parsed.local) throw Error("SCIP external symbol cannot be document-local");
       if (file === "<external>" && messages(info.relationships).some(r => parseSymbol(String(r.symbol ?? "")).local)) throw Error("SCIP external relationship cannot be document-local");
@@ -109,10 +111,10 @@ export async function importScip(repository: string, artifact: string, manifest:
       const documentation = Array.isArray(info.documentation) ? info.documentation.slice(0, 4).map(value => String(value).slice(0, 2048)) : [];
       const signature = info.signature_documentation as Message | undefined;
       store.addFact(run, { predicate: "scip.SymbolInformation", context, subject, value: { rawSymbol: raw, package: parsed.local ? null : { scheme: parsed.scheme, manager: parsed.manager, name: parsed.package, version: parsed.version }, kind: info.kind ?? 0, displayName: String(info.display_name ?? "").slice(0, 512), documentation,
-        signature: signature ? String(signature.text ?? "").slice(0, 4096) : null, enclosingSymbol: String(info.enclosing_symbol ?? "").slice(0, 4096), documentationTruncated: Array.isArray(info.documentation) && (info.documentation.length > 4 || info.documentation.some(value => String(value).length > 2048)) }, confidence: "exact", provenance });
+        signature: signature ? String(signature.text ?? "").slice(0, 4096) : null, enclosingSymbol: String(info.enclosing_symbol ?? "").slice(0, 4096), documentationTruncated: Array.isArray(info.documentation) && (info.documentation.length > 4 || info.documentation.some(value => String(value).length > 2048)) }, confidence: "exact", provenance: proof });
       for (const relation of messages(info.relationships)) {
         store.addFact(run, { predicate: "scip.Relationship", context, subject, object: symbol(String(relation.symbol ?? ""), file, sourceDigest),
-          value: { isReference: !!relation.is_reference, isImplementation: !!relation.is_implementation, isTypeDefinition: !!relation.is_type_definition, isDefinition: !!relation.is_definition }, confidence: ["compiler", "lsp"].includes(provenance.basis) ? "resolved" : "probable", provenance });
+          value: { isReference: !!relation.is_reference, isImplementation: !!relation.is_implementation, isTypeDefinition: !!relation.is_type_definition, isDefinition: !!relation.is_definition }, confidence: ["compiler", "lsp"].includes(proof.basis) ? "resolved" : "probable", provenance: proof });
       }
     };
     for (const [file, expected] of Object.entries(manifest.inputs ?? {})) { relativePath(file); const input = path.join(root, file); if (!(await realpath(input)).startsWith(`${await realpath(root)}${path.sep}`) || await digestFile(input) !== expected) throw Error(`SCIP environment input mismatch: ${file}`); store.input(summary, `source:${file}`, expected); }
@@ -150,7 +152,11 @@ export async function importScip(repository: string, artifact: string, manifest:
         const info = decodeScip("SymbolInformation", bytes);
         const unscoped = parseSymbol(String(info.symbol ?? "")).local || messages(info.relationships).some(r => parseSymbol(String(r.symbol ?? "")).local);
         if (unscoped && manifest.externalLocalPolicy === "diagnose") { excludedExternalLocals++; store.diagnostic(summary, "scip-unscoped-external-local-excluded", "Excluded external symbol information without a document-local identity; no semantic binding inferred"); }
-        else store.batch(summary, () => information(summary, info, "<external>", manifest.indexDigest));
+        else {
+          if (unscoped) throw Error("SCIP external symbol/relationship cannot be document-local");
+          const json = canonical(info); const key = digest(json);
+          store.sql("INSERT OR IGNORE INTO sc_import_external VALUES(?,?,?,?)").run(parseInt(key.slice(0, 2), 16) % 64, key, json, 1 + messages(info.relationships).length);
+        }
         await yieldBatch(); continue;
       }
       let file = "<malformed>";
@@ -170,12 +176,20 @@ export async function importScip(repository: string, artifact: string, manifest:
         if (!encoding || ![1, 2, 3].includes(encoding)) throw Error("SCIP range encoding is unspecified");
         const coordinates = new SourceCoordinates(file, text, true); const observations = messages(doc.occurrences);
         const sourceRange = (location: number[]): [number, number] => execution?.sourceRange ? execution.sourceRange(coordinates, location, encoding) : [coordinates.offset(location[0]!, location[1]!, encoding), coordinates.offset(location[2]!, location[3]!, encoding)];
-        const run = store.begin(`${prefix}document:${file}`, context, inputFingerprint);
+        const infos = messages(doc.symbols);
+        // Artifact paths/metadata order are execution evidence, not document semantics.
+        // Exact current artifact + source verification still precedes any reuse decision.
+        const documentFingerprint = digest(canonical(["scip-document-ownership-1", context, file, expected, manifest.provider, encoding, execution?.version ?? null,
+          { ...doc, symbols: infos.map(canonical).sort(), occurrences: observations.map(canonical).sort() }]));
+        const partition = `${prefix}document:${file}`;
+        const cached = store.reusable(partition, context, documentFingerprint);
+        if (cached?.coverage.mappingVersion === SCIP_SEMANTIC_VERSION) { accepted.push(cached.id); reusedDocuments++; occurrences += observations.length; await yieldBatch(); continue; }
+        const run = store.begin(partition, context, documentFingerprint);
+        const documentProvenance = { ...provenance, inputFingerprint: documentFingerprint };
         const module = semanticKey("scip-document", [manifest.id, context, file]);
         store.batch(run, () => { store.addSymbol({ key: module, name: `<document:${file}>`, qualifiedName: file, kind: "scip-document", file, context }); });
-        const infos = messages(doc.symbols);
         const infoBatch = Math.max(1, Math.floor(limits.batch / (1 + infos.reduce((max, info) => Math.max(max, messages(info.relationships).length), 0))));
-        for (let offset = 0; offset < infos.length; offset += infoBatch) { signal?.throwIfAborted(); store.batch(run, () => infos.slice(offset, offset + infoBatch).forEach(value => information(run, value, file, expected))); await yieldBatch(); }
+        for (let offset = 0; offset < infos.length; offset += infoBatch) { signal?.throwIfAborted(); store.batch(run, () => infos.slice(offset, offset + infoBatch).forEach(value => information(run, value, file, expected, documentProvenance))); await yieldBatch(); }
         for (let offset = 0; offset < observations.length; offset += limits.batch) { store.batch(run, () => {
           signal?.throwIfAborted();
           for (const value of observations.slice(offset, offset + limits.batch)) {
@@ -192,14 +206,14 @@ export async function importScip(repository: string, artifact: string, manifest:
             catch (error) { if (manifest.enclosingPolicy !== "diagnose") throw error; enclosingInvalid = true; store.diagnostic(run, "scip-enclosing-advisory-invalid", `${file}: ${String(error)}`); }
             store.addFact(run, { predicate: "scip.Occurrence", context, subject: target, occurrence: occurrence.key, value: { rawSymbol: value.symbol ?? "", roles, syntaxKind: value.syntax_kind ?? 0, enclosing: enclosingInvalid ? null : enclosing ?? null,
               ...(diagnostics.length ? { diagnostics, diagnosticsTruncated: messages(value.diagnostics).length > diagnostics.length } : {}),
-              ...(enclosingInvalid ? { enclosingStatus: "invalid-advisory-excluded", reportedEnclosing: value.enclosing_range ?? [], reportedTypedEnclosing: value.single_line_enclosing_range ?? value.multi_line_enclosing_range ?? null } : {}) }, confidence: "exact", provenance });
+              ...(enclosingInvalid ? { enclosingStatus: "invalid-advisory-excluded", reportedEnclosing: value.enclosing_range ?? [], reportedTypedEnclosing: value.single_line_enclosing_range ?? value.multi_line_enclosing_range ?? null } : {}) }, confidence: "exact", provenance: documentProvenance });
             if (!value.symbol) continue;
             const confidence = ["compiler", "lsp"].includes(provenance.basis) ? "resolved" : "probable";
             if (definition) {
-              store.addFact(run, { predicate: "common.Declaration", context, subject: target, occurrence: occurrence.key, value: { forward: !!(roles & 64) }, confidence: "exact", provenance });
-              store.addFact(run, { predicate: "common.Definition", context, subject: target, object: target, occurrence: occurrence.key, value: { forward: !!(roles & 64), body: "not-established-by-scip" }, confidence: "exact", provenance });
-            } else store.addFact(run, { predicate: "common.Reference", context, subject: module, object: target, occurrence: occurrence.key, confidence, provenance });
-            if (roles & 2) store.addFact(run, { predicate: "common.Import", context, subject: module, object: target, occurrence: occurrence.key, confidence, provenance });
+              store.addFact(run, { predicate: "common.Declaration", context, subject: target, occurrence: occurrence.key, value: { forward: !!(roles & 64) }, confidence: "exact", provenance: documentProvenance });
+              store.addFact(run, { predicate: "common.Definition", context, subject: target, object: target, occurrence: occurrence.key, value: { forward: !!(roles & 64), body: "not-established-by-scip" }, confidence: "exact", provenance: documentProvenance });
+            } else store.addFact(run, { predicate: "common.Reference", context, subject: module, object: target, occurrence: occurrence.key, confidence, provenance: documentProvenance });
+            if (roles & 2) store.addFact(run, { predicate: "common.Import", context, subject: module, object: target, occurrence: occurrence.key, confidence, provenance: documentProvenance });
           }
         }); await yieldBatch(); }
         if (await digestFile(source, limits.maxSourceBytes, signal) !== expected) throw Error("SCIP source changed during ingestion");
@@ -209,6 +223,35 @@ export async function importScip(repository: string, artifact: string, manifest:
       } catch (error) { if (signal?.aborted) throw error; rejected++; store.diagnostic(summary, "scip-document-rejected", `${file}: ${String(error)}`); }
     }
     if (!metadata || stream.digest() !== manifest.indexDigest) throw Error("SCIP framing/artifact changed during ingestion");
+    // Bounded disk-backed external metadata shards. Artifact UUIDs, order and path changes
+    // do not rewrite otherwise identical package facts or their navigation projections.
+    for (let bucket = 0; bucket < 64; bucket++) {
+      const hash = createHash("sha256").update(canonical(["scip-external-ownership-1", context, manifest.provider, execution?.version ?? null]));
+      let count = 0;
+      for (const row of store.sql("SELECT key FROM sc_import_external WHERE bucket=? ORDER BY key").iterate(bucket) as Iterable<{ key: string }>) { hash.update(row.key); count++; }
+      if (!count) continue;
+      const fingerprint = hash.digest("hex"); const partition = `${prefix}externals:${bucket}`;
+      const cached = store.reusable(partition, context, fingerprint);
+      if (cached?.coverage.mappingVersion === SCIP_SEMANTIC_VERSION) { externals.push(cached.id); continue; }
+      const run = store.begin(partition, context, fingerprint); const proof = { ...provenance, inputFingerprint: fingerprint };
+      let cursor = "";
+      while (true) {
+        const rows: Array<{ key: string; json: string; weight: number }> = []; let bytes = 0; let weight = 0; let after = cursor;
+        // Both byte and fact budgets apply before accumulating a batch. A single
+        // validated record may exceed a batch budget, but never the document quota.
+        while (weight < limits.batch && bytes < 4 * 1024 ** 2) {
+          const row = store.sql("SELECT key,json,weight FROM sc_import_external WHERE bucket=? AND key>? ORDER BY key LIMIT 1").get(bucket, after) as { key: string; json: string; weight: number } | undefined;
+          if (!row) break;
+          if (rows.length && (weight + row.weight > limits.batch || bytes + Buffer.byteLength(row.json) > 4 * 1024 ** 2)) break;
+          rows.push(row); bytes += Buffer.byteLength(row.json); weight += row.weight; after = row.key;
+        }
+        if (!rows.length) break;
+        signal?.throwIfAborted();
+        store.batch(run, () => { for (const row of rows) information(run, JSON.parse(row.json) as Message, "<external>", fingerprint, proof); });
+        cursor = rows.at(-1)!.key; await yieldBatch();
+      }
+      store.seal(run, { status: "partial", mappingVersion: SCIP_SEMANTIC_VERSION, symbols: count, ownershipShard: "external-symbol-bucket" }); externals.push(run);
+    }
     for (const run of accepted) {
       const input = store.sql("SELECT resource,digest FROM sc_inputs WHERE run=?").get(run) as { resource: string; digest: string };
       if (await digestFile(path.join(root, input.resource.slice(7)), limits.maxSourceBytes, signal) !== input.digest) throw Error("Accepted SCIP source changed before publication");
@@ -222,8 +265,8 @@ export async function importScip(repository: string, artifact: string, manifest:
     const native = await retainProviders(store, inventory, parent, prefix.slice(0, -1));
     const others = parent ? (store.sql("SELECT partition_key,run FROM sc_partitions WHERE snapshot=?").all(parent) as Array<{ partition_key: string; run: number }>).filter(row => !row.partition_key.startsWith("scip/") && !row.partition_key.startsWith("clang/")).map(row => row.run) : [];
     signal?.throwIfAborted(); const publicationStarted = performance.now();
-    const published = store.publish([...others, ...native, summary, ...accepted, ...derived], parent);
+    const published = store.publish([...others, ...native, summary, ...externals, ...accepted, ...derived], parent);
     const publicationMs = +(performance.now() - publicationStarted).toFixed(3);
-    return { snapshot: published, context, status: "partial", documents: documentCount, accepted: accepted.length, rejected, occurrences, excludedExternalLocals, calls: "unsupported", durationMs: Math.round(performance.now() - started), publicationMs, publicationStagesMs: stages, sqlitePragmas: Object.fromEntries(["journal_mode", "synchronous"].map(name => [name, store.db.pragma(name, { simple: true })])), limits, protocolDigest: SCIP_PROTOCOL_DIGEST };
+    return { snapshot: published, context, status: "partial", documents: documentCount, accepted: accepted.length, reusedDocuments, rejected, occurrences, excludedExternalLocals, calls: "unsupported", durationMs: Math.round(performance.now() - started), publicationMs, publicationStagesMs: stages, sqlitePragmas: Object.fromEntries(["journal_mode", "synchronous"].map(name => [name, store.db.pragma(name, { simple: true })])), limits, protocolDigest: SCIP_PROTOCOL_DIGEST };
   } finally { try { await stream?.close(); } finally { store.close(); } }
 }

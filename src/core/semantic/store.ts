@@ -1,6 +1,7 @@
 import Database from "better-sqlite3";
 import { createHash } from "node:crypto";
 import { SEMANTIC_SQL } from "./schema.js";
+import { collectSemanticGarbage, type GarbageCollectionOptions } from "./gc.js";
 import { publishProjections } from "./publication.js";
 import { canonical, semanticKey, PREDICATES, SEMANTIC_FORMAT_VERSION, SEMANTIC_SCHEMA_VERSION, READABLE_SEMANTIC_SCHEMAS, validateFact,
   type EntityKind, type FactInput, type OccurrenceInput, type SemanticSymbol, type SupportAlternative } from "./model.js";
@@ -83,6 +84,13 @@ export class SemanticStore {
   begin(partition: string, context: string, inputFingerprint: string): number {
     if (!partition || !context || !inputFingerprint) throw new Error("Incomplete indexing unit");
     return Number(this.sql("INSERT INTO sc_runs(partition_key,context,input_fingerprint,state,created_at) VALUES(?,?,?,'staging',?)").run(partition, context, inputFingerprint, new Date().toISOString()).lastInsertRowid);
+  }
+  /** Reuse only a complete immutable partition already admitted by retained history.
+   * A producer must still verify its current source/artifact/environment before publishing it.
+   */
+  reusable(partition: string, context: string, inputFingerprint: string): { id: number; coverage: Record<string, unknown> } | undefined {
+    const row = this.sql("SELECT r.id,r.coverage_json FROM sc_runs r WHERE r.partition_key=? AND r.context=? AND r.input_fingerprint=? AND r.state='sealed' AND EXISTS(SELECT 1 FROM sc_partitions p WHERE p.run=r.id) ORDER BY r.id DESC LIMIT 1").get(partition, context, inputFingerprint) as { id: number; coverage_json: string } | undefined;
+    return row ? { id: row.id, coverage: JSON.parse(row.coverage_json) as Record<string, unknown> } : undefined;
   }
   private requireStaging(run: number): { context: string; input_fingerprint: string } {
     const row = this.sql("SELECT context,input_fingerprint,state FROM sc_runs WHERE id=?").get(run) as { context: string; input_fingerprint: string; state: string } | undefined;
@@ -224,14 +232,13 @@ export class SemanticStore {
     this.hooks.fault?.("after-publish");
     return snapshot;
   }
-  /** Explicit maintenance keeps published history; abandoned staging never becomes active. */
-  pruneHistory(keep = 3): void {
-    if (!Number.isSafeInteger(keep) || keep < 1) throw new Error("Retention must keep at least one snapshot");
-    this.db.transaction(() => {
-      this.db.exec("UPDATE sc_snapshots SET parent=NULL");
-      this.sql("DELETE FROM sc_snapshots WHERE id NOT IN(SELECT id FROM sc_snapshots ORDER BY id DESC LIMIT ?)").run(keep);
-      this.db.exec("DELETE FROM sc_run_selectors WHERE run NOT IN(SELECT run FROM sc_partitions); DELETE FROM sc_inputs WHERE run NOT IN(SELECT run FROM sc_partitions); DELETE FROM sc_diagnostics WHERE run NOT IN(SELECT run FROM sc_partitions); DELETE FROM sc_owned WHERE run NOT IN(SELECT run FROM sc_partitions); DELETE FROM sc_run_digests WHERE run NOT IN(SELECT run FROM sc_partitions); DELETE FROM sc_runs WHERE id NOT IN(SELECT run FROM sc_partitions)");
-    })();
-    // Fact/claim/entity GC is deliberately not attempted until shared-support reachability is qualified.
+  pinSnapshot(snapshot: number, label = "user"): void {
+    if (!Number.isSafeInteger(snapshot) || !this.sql("SELECT 1 FROM sc_snapshots WHERE id=?").get(snapshot) || !label || label.length > 256) throw Error("Invalid snapshot pin");
+    this.sql("INSERT OR IGNORE INTO sc_snapshot_pins VALUES(?,?)").run(snapshot, label);
   }
+  unpinSnapshot(snapshot: number, label = "user"): void { this.sql("DELETE FROM sc_snapshot_pins WHERE snapshot=? AND label=?").run(snapshot, label); }
+  collectGarbage(options: GarbageCollectionOptions = {}): Record<string, number> {
+    try { return collectSemanticGarbage(this, options); } finally { this.entityCache.clear(); }
+  }
+  pruneHistory(keep = 3): void { this.collectGarbage({ keep }); }
 }

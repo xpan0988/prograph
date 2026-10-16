@@ -9,6 +9,9 @@ import { digest } from "../src/core/semantic/model.js";
 import { python066Symbol, javac0131Offset, javac0131Range } from "../src/core/semantic/scip-dialects.js";
 import { parseScipSymbol } from "../src/core/semantic/scip-symbol.js";
 import { SourceCoordinates } from "../src/core/semantic/coordinates.js";
+import { scanRepository } from "../src/core/repository/repository.js";
+import { recordedInputStatus, semanticInventory, retainProviders } from "../src/core/semantic/provider-runs.js";
+import { MANAGED_SCIP_VERSION, SCIP_SEMANTIC_VERSION } from "../src/core/semantic/model.js";
 
 const roots: string[] = [];
 afterEach(async () => { for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true }); });
@@ -28,6 +31,22 @@ test("tool receipts capture directory membership, content and internal links; es
   await symlink("a", path.join(root, "link")); const linked = await toolReceipt(root); expect(linked.files).toBe(2);
   await writeFile(path.join(root, "a"), "new"); expect((await toolReceipt(root)).sha256).not.toBe(linked.sha256);
   await symlink(os.tmpdir(), path.join(root, "escape")); await expect(toolReceipt(root)).rejects.toThrow("escapes");
+});
+test("recorded SDK membership invalidates retained provider groups on added stubs without a source edit", async () => {
+  const root = await temporary(); const sdk = await temporary();
+  await writeFile(path.join(root, "a.py"), "pass\n"); await writeFile(path.join(sdk, "stub.pyi"), "class A: ...\n");
+  const snapshot = (await scanRepository(root)).snapshot;
+  const store = new SemanticStore(path.join(root, "semantic.sqlite"));
+  try {
+    const run = store.begin("scip/managed-test/index", "ctx", "input");
+    store.input(run, `tree:${sdk}`, (await toolReceipt(sdk)).sha256); store.input(run, "project-inventory", semanticInventory(snapshot));
+    store.seal(run, { mappingVersion: SCIP_SEMANTIC_VERSION, executionVersion: MANAGED_SCIP_VERSION }); const parent = store.publish([run]);
+    expect(await retainProviders(store, snapshot, parent)).toEqual([run]);
+    expect(await recordedInputStatus(store.filename, snapshot, new Set())).toMatchObject({ state: "checked-recorded", additionalChanges: 0 });
+    await writeFile(path.join(sdk, "new.pyi"), "class B: ...\n");
+    expect(await recordedInputStatus(store.filename, snapshot, new Set())).toMatchObject({ state: "changed", additionalChanges: 1 });
+    expect(await retainProviders(store, snapshot, parent)).toEqual([]);
+  } finally { store.close(); }
 });
 test("managed contexts reject unpinned tools before executing repository code", async () => {
   const root = await temporary(); await writeFile(path.join(root, "a.py"), "raise RuntimeError('must not execute')\n");
@@ -86,7 +105,7 @@ for (const language of ["python", "go", "java", "csharp"] as const) test.skipIf(
     const run = (q.execute("find", ["go", "csharp"].includes(language) ? "Run" : "run").items as Array<{ key: string }>)[0]!;
     const callees = q.execute("callees", run.key).items as Array<{ key: string }>;
     expect(callees.length).toBe(["python", "go"].includes(language) ? 2 : 1);
-    expect(q.execute("context", called!.key).items).toEqual(expect.arrayContaining([expect.objectContaining({ value: expect.objectContaining({ execution: expect.objectContaining({ version: "managed-scip-1" }) }) })]));
+    expect(q.execute("context", called!.key).items).toEqual(expect.arrayContaining([expect.objectContaining({ value: expect.objectContaining({ execution: expect.objectContaining({ version: "managed-scip-2" }) }) })]));
   } finally { q.close(); }
   const store = new SemanticStore(path.join(index, "semantic.sqlite"));
   try {
@@ -99,4 +118,10 @@ for (const language of ["python", "go", "java", "csharp"] as const) test.skipIf(
     const roles = store.db.prepare("SELECT COUNT(*) AS n FROM sc_active a JOIN sc_claims c ON c.id=a.claim JOIN sc_facts f ON f.id=c.fact WHERE a.snapshot=? AND f.predicate='scip.SourceRole'").get(store.activeSnapshot()) as { n: number }; expect(roles.n).toBeGreaterThan(0);
   } finally { store.close(); }
   for (const [file, text] of Object.entries(fixtures[language])) expect(digest(await readFile(path.join(root, file)))).toBe(digest(text));
+  const beforeReuse = new SemanticStore(path.join(index, "semantic.sqlite"));
+  const retained = beforeReuse.sql("SELECT partition_key,run FROM sc_partitions WHERE snapshot=? AND partition_key NOT LIKE '%/index' ORDER BY partition_key").all(beforeReuse.activeSnapshot()); beforeReuse.close();
+  const repeated = await indexManagedProject(root, "context.json", index);
+  expect(repeated).toMatchObject({ accepted: result.accepted, reusedDocuments: result.accepted });
+  const afterReuse = new SemanticStore(path.join(index, "semantic.sqlite"));
+  try { expect(afterReuse.sql("SELECT partition_key,run FROM sc_partitions WHERE snapshot=? AND partition_key NOT LIKE '%/index' ORDER BY partition_key").all(afterReuse.activeSnapshot())).toEqual(retained); } finally { afterReuse.close(); }
 }, 600000);

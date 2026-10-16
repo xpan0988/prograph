@@ -125,7 +125,7 @@ test("publication eligibility probes claim owners before selected partitions", a
     if (query.startsWith("INSERT INTO sc_eligible SELECT")) {
       const plan = store.db.prepare(`EXPLAIN QUERY PLAN ${query}`).all(1) as { detail: string }[];
       const owner = plan.findIndex(x => x.detail.includes("sc_owned_claim") && x.detail.includes("claim=?"));
-      const partition = plan.findIndex(x => x.detail.includes("sc_partitions_run") && x.detail.includes("snapshot=? AND run=?"));
+      const partition = plan.findIndex(x => /sc_partitions_(run|owner)/.test(x.detail) && (x.detail.includes("snapshot=? AND run=?") || x.detail.includes("run=? AND snapshot=?")));
       expect(owner).toBeGreaterThanOrEqual(0); expect(partition).toBeGreaterThan(owner); checked = true;
     }
     return sql(query);

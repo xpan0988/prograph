@@ -16,6 +16,9 @@ CREATE TABLE IF NOT EXISTS sc_owned(run INTEGER NOT NULL REFERENCES sc_runs(id),
 CREATE TABLE IF NOT EXISTS sc_run_selectors(run INTEGER NOT NULL REFERENCES sc_runs(id),key TEXT NOT NULL,digest TEXT NOT NULL,PRIMARY KEY(run,key));
 CREATE TABLE IF NOT EXISTS sc_inputs(run INTEGER NOT NULL REFERENCES sc_runs(id),resource TEXT NOT NULL,digest TEXT NOT NULL,PRIMARY KEY(run,resource));
 CREATE TABLE IF NOT EXISTS sc_snapshots(id INTEGER PRIMARY KEY,parent INTEGER REFERENCES sc_snapshots(id),key TEXT NOT NULL,created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS sc_snapshot_pins(snapshot INTEGER NOT NULL REFERENCES sc_snapshots(id),label TEXT NOT NULL,PRIMARY KEY(snapshot,label));
+CREATE TABLE IF NOT EXISTS sc_origin_runs(id TEXT PRIMARY KEY,partition_key TEXT NOT NULL,context TEXT NOT NULL,input_fingerprint TEXT NOT NULL,state TEXT NOT NULL,coverage_json TEXT NOT NULL,created_at TEXT NOT NULL,digest TEXT,inputs_json TEXT NOT NULL,selectors_json TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS sc_claim_origins(claim INTEGER NOT NULL REFERENCES sc_claims(id),origin TEXT NOT NULL REFERENCES sc_origin_runs(id),PRIMARY KEY(claim,origin));
 CREATE TABLE IF NOT EXISTS sc_partitions(snapshot INTEGER NOT NULL REFERENCES sc_snapshots(id) ON DELETE CASCADE,partition_key TEXT NOT NULL,run INTEGER NOT NULL REFERENCES sc_runs(id),PRIMARY KEY(snapshot,partition_key));
 CREATE TABLE IF NOT EXISTS sc_legacy_active(snapshot INTEGER NOT NULL REFERENCES sc_snapshots(id) ON DELETE CASCADE,claim INTEGER NOT NULL REFERENCES sc_claims(id),PRIMARY KEY(snapshot,claim));
 CREATE TABLE IF NOT EXISTS sc_legacy_navigation(snapshot INTEGER NOT NULL REFERENCES sc_snapshots(id) ON DELETE CASCADE,relation TEXT NOT NULL,subject INTEGER NOT NULL REFERENCES sc_entities(id),object INTEGER REFERENCES sc_entities(id),occurrence INTEGER REFERENCES sc_occurrences(entity),claim INTEGER NOT NULL REFERENCES sc_claims(id),confidence TEXT NOT NULL,PRIMARY KEY(snapshot,relation,claim));
@@ -62,6 +65,8 @@ CREATE INDEX IF NOT EXISTS sc_name ON sc_legacy_visible_symbols(snapshot,name,en
 CREATE INDEX IF NOT EXISTS sc_occ_source ON sc_occurrences(source,start_byte,end_byte);
 CREATE INDEX IF NOT EXISTS sc_inputs_reverse ON sc_inputs(resource,run);
 CREATE INDEX IF NOT EXISTS sc_partitions_run ON sc_partitions(snapshot,run);
+CREATE INDEX IF NOT EXISTS sc_partitions_owner ON sc_partitions(run,snapshot);
+CREATE INDEX IF NOT EXISTS sc_run_content ON sc_runs(partition_key,context,input_fingerprint,id DESC) WHERE state='sealed';
 CREATE INDEX IF NOT EXISTS sc_fact_occurrence ON sc_facts(predicate,context,occurrence,subject);
 CREATE INDEX IF NOT EXISTS sc_claim_fact ON sc_claims(fact,id);
 CREATE INDEX IF NOT EXISTS sc_claim_supported ON sc_claims(id,support_group) WHERE support_group IS NOT NULL;

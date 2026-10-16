@@ -9,7 +9,7 @@ import { repositoryStatus } from "../src/core/analysis/state.js";
 import { syncRepository } from "../src/core/analysis/sync.js";
 import { indexSemanticFoundation } from "../src/core/semantic/typescript.js";
 import { discoverProjects } from "../src/core/semantic/projects.js";
-import { orderPasses, callPass, executePasses, CALL_PASS_SQL } from "../src/core/semantic/passes.js";
+import { orderPasses, callPass, executePasses, qualifiedCallProjection, CALL_PASS_SQL } from "../src/core/semantic/passes.js";
 import { SemanticStore } from "../src/core/semantic/store.js";
 import { SemanticQuery, semanticQueryForRepository } from "../src/core/semantic/query.js";
 import { importScip, type ScipManifest } from "../src/core/semantic/scip-import.js";
@@ -97,6 +97,46 @@ test("document-local symbols do not unify across files; repeat import is idempot
   const before = new SemanticStore(path.join(root, ".prograph/semantic.sqlite")); const facts = (before.db.prepare("SELECT COUNT(*) AS n FROM sc_facts").get() as { n: number }).n; before.close();
   await importScip(root, input.filename, input.manifest); const after = new SemanticStore(path.join(root, ".prograph/semantic.sqlite"));
   try { expect((after.db.prepare("SELECT COUNT(*) AS n FROM sc_facts").get() as { n: number }).n).toBe(facts); } finally { after.close(); }
+});
+test("SCIP document and external ownership reuse survives artifact order changes and invalidates changed bindings", async () => {
+  const root = await temporary();
+  const external = field(3, "SymbolInformation", { symbol: global, documentation: ["external documentation"] });
+  const first = await artifact(root, [doc("a.py"), doc("b.py")], external);
+  await importScip(root, first.filename, first.manifest);
+  const partitions = () => {
+    const store = new SemanticStore(path.join(root, ".prograph/semantic.sqlite"));
+    try { return store.sql("SELECT partition_key,run FROM sc_partitions WHERE snapshot=? AND partition_key NOT LIKE '%/index' ORDER BY partition_key").all(store.activeSnapshot()) as Array<{ partition_key: string; run: number }>; } finally { store.close(); }
+  };
+  const original = partitions();
+  const reordered = doc("a.py"); reordered.occurrences.reverse();
+  const second = await artifact(root, [doc("b.py"), reordered], external);
+  expect(await importScip(root, second.filename, second.manifest)).toMatchObject({ reusedDocuments: 2 });
+  expect(partitions()).toEqual(original);
+  const changed = doc("b.py"); changed.occurrences[1]!.symbol = "scip-python python fixture 1 module/other().";
+  const third = await artifact(root, [doc("a.py"), changed], external);
+  expect(await importScip(root, third.filename, third.manifest)).toMatchObject({ reusedDocuments: 1 });
+  expect(partitions().filter(row => row.partition_key !== "scip/test/document:b.py")).toEqual(original.filter(row => row.partition_key !== "scip/test/document:b.py"));
+  expect(partitions().find(row => row.partition_key.endsWith("b.py"))!.run).not.toBe(original.find(row => row.partition_key.endsWith("b.py"))!.run);
+  await writeFile(path.join(root, "a.py"), "stale()\n");
+  expect(await importScip(root, third.filename, third.manifest)).toMatchObject({ accepted: 1, rejected: 1, reusedDocuments: 1 });
+});
+
+test("retained TypeScript call projection keeps compiler target provenance rather than syntax site provenance", () => {
+  const store = new SemanticStore(":memory:");
+  try {
+    const run = store.begin("typescript/test", "ctx", "fp");
+    store.batch(run, () => {
+      for (const key of ["owner", "target"]) store.addSymbol({ key, name: key, qualifiedName: key, kind: "function", file: "a.ts", context: "ctx" });
+      const occurrence = new SourceCoordinates("a.ts", "target()").range(0, 6, "ctx", "call"); store.addOccurrence(occurrence, 8);
+      const provenance = { provider: "typescript", version: "test", method: "test", context: "ctx", inputFingerprint: "fp" };
+      store.addFact(run, { predicate: "common.CallSite", context: "ctx", subject: "owner", occurrence: occurrence.key, confidence: "exact", provenance: { ...provenance, basis: "syntax" } });
+      store.addFact(run, { predicate: "common.CallTarget", context: "ctx", subject: "owner", object: "target", occurrence: occurrence.key, confidence: "resolved", provenance: { ...provenance, basis: "compiler" } });
+      store.selector(run, "unit", "fp");
+    }); store.seal(run, {});
+    const derived = qualifiedCallProjection(store, run, "typescript/test")[0]!;
+    const row = store.sql("SELECT p.json FROM sc_owned o JOIN sc_claims c ON c.id=o.claim JOIN sc_provenance p ON p.id=c.provenance WHERE o.run=?").get(derived) as { json: string };
+    expect(JSON.parse(row.json).basis).toBe("compiler");
+  } finally { store.close(); }
 });
 test("mismatched and unsafe documents are excluded while verified siblings survive", async () => {
   const root = await temporary(); const input = await artifact(root, [doc("a.py"), doc("b.py"), doc("../outside.py")]);
@@ -262,6 +302,8 @@ test("filename-only inventory matches scanner input identity without hydrating s
 });
 test("cooperative cancellation during document batches leaves the active snapshot intact", async () => {
   const root = await temporary(); const input = await artifact(root, [doc()]); const first = await importScip(root, input.filename, input.manifest);
+  const changed = doc(); changed.symbols[0]!.documentation = ["changed document requires a new owned partition"];
+  const replacement = await artifact(root, [changed]);
   const controller = new AbortController(); const batch = SemanticStore.prototype.batch;
   const injected = vi.spyOn(SemanticStore.prototype, "batch").mockImplementation(function(this: SemanticStore, run: number, action: () => unknown) {
     const result = batch.call(this, run, action);
@@ -269,7 +311,7 @@ test("cooperative cancellation during document batches leaves the active snapsho
     if (row?.partition_key.includes("/document:") && row.n >= 3) controller.abort(Error("injected cancellation"));
     return result;
   });
-  try { await expect(importScip(root, input.filename, input.manifest, undefined, { batch: 1 }, controller.signal)).rejects.toThrow("cancellation"); } finally { injected.mockRestore(); }
+  try { await expect(importScip(root, replacement.filename, replacement.manifest, undefined, { batch: 1 }, controller.signal)).rejects.toThrow("cancellation"); } finally { injected.mockRestore(); }
   const store = new SemanticStore(path.join(root, ".prograph/semantic.sqlite"));
   try { expect(store.activeSnapshot()).toBe(first.snapshot); expect(store.db.pragma("integrity_check", { simple: true })).toBe("ok"); } finally { store.close(); }
 });

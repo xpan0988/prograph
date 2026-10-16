@@ -7,14 +7,14 @@ import type { RepositorySnapshot } from "../adapters/contracts.js";
 import { GRAPH_SCHEMA_VERSION } from "../graph/schema.js";
 import { resolveRepositoryRoot, scanRepository } from "../repository/repository.js";
 import packageJson from "../../../package.json" with { type: "json" };
-import { SEMANTIC_SCHEMA_VERSION, TYPESCRIPT_SEMANTIC_VERSION, CLANG_SEMANTIC_VERSION, SCIP_SEMANTIC_VERSION, RUST_PROVIDER_VERSION } from "../semantic/model.js";
+import { SEMANTIC_SCHEMA_VERSION, TYPESCRIPT_SEMANTIC_VERSION, CLANG_SEMANTIC_VERSION, SCIP_SEMANTIC_VERSION, RUST_PROVIDER_VERSION, MANAGED_SCIP_VERSION } from "../semantic/model.js";
 import { recordedInputStatus, type RecordedInputStatus } from "../semantic/provider-runs.js";
 
 const require = createRequire(import.meta.url);
 
 export const ADAPTER_VERSIONS = {
   globalQueries: "1",
-  semanticCore: `${SEMANTIC_SCHEMA_VERSION}/ts:${TYPESCRIPT_SEMANTIC_VERSION}/clang:${CLANG_SEMANTIC_VERSION}/scip:${SCIP_SEMANTIC_VERSION}/rust:${RUST_PROVIDER_VERSION}`,
+  semanticCore: `${SEMANTIC_SCHEMA_VERSION}/ts:${TYPESCRIPT_SEMANTIC_VERSION}/clang:${CLANG_SEMANTIC_VERSION}/scip:${SCIP_SEMANTIC_VERSION}/rust:${RUST_PROVIDER_VERSION}/managed:${MANAGED_SCIP_VERSION}`,
   typescript: "2",
   polyglot: "1",
   architecture: "1",

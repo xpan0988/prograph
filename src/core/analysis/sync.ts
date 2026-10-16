@@ -67,6 +67,9 @@ function identityChanges(previous: Array<{ id: string }>, current: Array<{ id: s
 }
 
 async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphData, previousManifest: AnalysisManifest, started: number): Promise<SyncResult | undefined> {
+  // A new/deleted module can change an unchanged importer's resolution. An isolated
+  // reparse has no qualified negative search dependency closure for that case.
+  if (status.addedFiles.length || status.deletedFiles.length) return undefined;
   // Polyglot/module and boundary invalidation is conservative until dependency closure is proven.
   if (previousManifest.enabledAdapters.some(adapter => ["python", "java", "c", "cpp", "go", "csharp", "architecture"].includes(adapter))) return undefined;
   const changedFiles = [...status.addedFiles, ...status.modifiedFiles];

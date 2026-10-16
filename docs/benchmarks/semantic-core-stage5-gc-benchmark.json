@@ -1,0 +1,67 @@
+{
+  "measuredAt": "2026-10-16T04:20:57.083Z",
+  "node": "v25.9.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "shape": {
+    "baseClaims": 2,
+    "derivedClaims": 100000,
+    "alternativeSupports": 2
+  },
+  "root": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-stage5-gc-DRBo51",
+  "firstVisible": 100002,
+  "retainedProofClaims": 100002,
+  "origins": 2,
+  "gcMs": 363.1867910000001,
+  "sweepMs": 1178.8208329999998,
+  "collected": {
+    "snapshots": 1,
+    "runs": 2,
+    "claims": 0,
+    "facts": 0,
+    "sources": 0,
+    "provenance": 0,
+    "groups": 0,
+    "entities": 0,
+    "origin_runs": -2
+  },
+  "swept": {
+    "snapshots": 1,
+    "runs": 1,
+    "claims": 100002,
+    "facts": 100001,
+    "sources": 1,
+    "provenance": 3,
+    "groups": 1,
+    "entities": 3,
+    "origin_runs": 2
+  },
+  "empty": 3,
+  "integrity": "ok",
+  "foreignKeys": [],
+  "pragmas": {
+    "journal_mode": "wal",
+    "synchronous": 2
+  },
+  "nodePeakRssKiB": 118096,
+  "sqliteBytes": 87633920,
+  "scope": "offline GC, not publication or compiler scale; one warm trial",
+  "baseline": "c8fd0b7df5bd34c6bac12a61bf0ea021d1526db9 + Stage 5 ownership/GC changes",
+  "compiledHashes": {
+    "dist/core/semantic/store.js": "48b68a0a1d668a2ca6707aeb1547e75737eafc01d88440c483e0bf67d316a94b",
+    "dist/core/semantic/gc.js": "cb7690d49d772941a862643c2ee4686166ec909113e98e4fa132fa9bcc63881b",
+    "dist/core/semantic/schema.js": "7c3d6974fd00d696613b84a6ef963f948f972f04e057381b9f621768c730dde9",
+    "dist/core/semantic/model.js": "64a40c08b4befe1d3a9a548e513ffc0f56a16765d3abd36d88b1a2784f098b16"
+  },
+  "methodScript": "// Build first. Measures 100k retained alternative-support proofs and final reachability sweep.\nimport {mkdtemp,writeFile,stat} from 'node:fs/promises';\nimport os from 'node:os';import path from 'node:path';\nimport {SemanticStore} from '../dist/core/semantic/store.js';\nconst root=await mkdtemp(path.join(os.tmpdir(),'prograph-stage5-gc-')); const store=new SemanticStore(path.join(root,'semantic.sqlite'));\nconst p=name=>({provider:name,version:'1',basis:'compiler',method:'benchmark',context:'ctx',inputFingerprint:name});\nfor(const key of ['caller','target']) store.addSymbol({key,name:key,qualifiedName:key,kind:'function',file:'a.ts',context:'ctx'});\nstore.addOccurrence({key:'occ',file:'a.ts',sourceDigest:'source',context:'ctx',startByte:0,endByte:1,line:1,column:1,endLine:1,endColumn:2,role:'call'},1);\nconst base=name=>{const id=store.begin(name,'ctx',name);const c=store.batch(id,()=>store.addFact(id,{predicate:'common.Reference',context:'ctx',subject:'caller',object:'target',occurrence:'occ',confidence:'resolved',provenance:p(name)}));store.input(id,'source:a.ts','source');store.seal(id,{status:'partial'});return{id,c}};\nconst a=base('a'),b=base('b');const derived=store.begin('derived','ctx','derived');\nfor(let at=0;at<100000;at+=1000)store.batch(derived,()=>{for(let i=at;i<at+1000;i++)store.addFact(derived,{predicate:'common.CallSummary',context:'ctx',subject:'caller',object:'target',occurrence:'occ',value:{i},confidence:'resolved',provenance:p('derived'),supports:[[{claim:a.c}],[{claim:b.c}]]})});\nstore.seal(derived,{status:'partial'});const first=store.publish([a.id,b.id,derived]);const firstVisible=store.sql('SELECT COUNT(*) AS n FROM sc_active WHERE snapshot=?').get(first).n;store.publish([derived]);\nconst started=performance.now();const collected=store.collectGarbage({keep:1});const gcMs=performance.now()-started;\nconst retainedProofClaims=store.sql('SELECT COUNT(*) AS n FROM sc_claims').get().n;const origins=store.sql('SELECT COUNT(*) AS n FROM sc_origin_runs').get().n;\nconst empty=store.publish([]);const sweepStarted=performance.now();const swept=store.collectGarbage({keep:1});const sweepMs=performance.now()-sweepStarted;\nconst integrity=store.db.pragma('integrity_check',{simple:true}),foreignKeys=store.db.pragma('foreign_key_check');const pragmas=Object.fromEntries(['journal_mode','synchronous'].map(key=>[key,store.db.pragma(key,{simple:true})]));store.close();\nconst receipt={measuredAt:new Date().toISOString(),node:process.version,platform:process.platform,arch:process.arch,shape:{baseClaims:2,derivedClaims:100000,alternativeSupports:2},root,firstVisible,retainedProofClaims,origins,gcMs,sweepMs,collected,swept,empty,integrity,foreignKeys,pragmas,nodePeakRssKiB:process.resourceUsage().maxRSS,sqliteBytes:(await stat(path.join(root,'semantic.sqlite'))).size,scope:'offline GC, not publication or compiler scale; one warm trial'};\nawait writeFile(process.argv[2] ?? 'semantic-gc-benchmark.json',JSON.stringify(receipt,null,2)+'\\n');console.log(JSON.stringify(receipt));\n",
+  "earlierTrial": {
+    "measuredAt": "2026-10-16T04:16:09.271Z",
+    "gcMs": 347.0440829999998,
+    "sweepMs": 1095.7935420000003,
+    "retainedProofClaims": 100002,
+    "origins": 2,
+    "integrity": "ok",
+    "foreignKeys": []
+  },
+  "measurementQualification": "Final GC with original-run state and seal digest in origin identity. Net removed-row counts: negative origin_runs means preserving new immutable origin receipts."
+}

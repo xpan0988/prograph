@@ -32,12 +32,18 @@ function callable(n: SyntaxNode): SyntaxNode | null {
 }
 
 /** Syntax supplies roles, never a target. Every binding below requires an exact compiler occurrence. */
-export async function deriveScipNative(store: SemanticStore, runs: number[], root: string, language: NativeLanguage, context: string, fingerprint: string, signal?: AbortSignal): Promise<number[]> {
+export async function deriveScipNative(store: SemanticStore, runs: number[], root: string, language: NativeLanguage, context: string, _artifactFingerprint: string, signal?: AbortSignal): Promise<number[]> {
   const parser = new Parser(); parser.setLanguage((await import(`tree-sitter-${language === "csharp" ? "c-sharp" : language}`)).default);
   const outputs: number[] = [];
   for (const input of runs) {
     signal?.throwIfAborted();
-    const unit = store.sql("SELECT partition_key FROM sc_runs WHERE id=? AND state='sealed'").get(input) as { partition_key: string };
+    const unit = store.sql("SELECT partition_key,input_fingerprint FROM sc_runs WHERE id=? AND state='sealed'").get(input) as { partition_key: string; input_fingerprint: string };
+    const fingerprint = unit.input_fingerprint;
+    const cached = store.reusable(`${unit.partition_key}/pass:scip-native@1`, context, fingerprint);
+    const cachedCalls = store.reusable(`${unit.partition_key}/pass:call-summary@1`, context, fingerprint);
+    if (cached?.coverage.configurationFingerprint === "scip-ast-bound-static-1" && cachedCalls?.coverage.configurationFingerprint === "static-target-policy-1") {
+      outputs.push(cached.id, cachedCalls.id); continue;
+    }
     const fileInput = store.sql("SELECT resource,digest FROM sc_inputs WHERE run=? AND resource LIKE 'source:%'").get(input) as { resource: string; digest: string };
     const file = fileInput.resource.slice(7); const text = await readFile(path.join(root, file), "utf8");
     if (digest(Buffer.from(text)) !== fileInput.digest) throw Error("Native pass source changed");
