@@ -86,12 +86,13 @@ export async function importScip(repository: string, artifact: string, manifest:
   const store = new SemanticStore(path.join(directory, "semantic.sqlite"), { measure(stage, ms) { stages[stage] = +ms.toFixed(3); } });
   let stream: ScipStream | undefined;
   try {
+    store.bindSourceRoot(root);
     if (!execution) artifactPath = await retainScipArtifact(directory, root, artifactPath, manifest.indexDigest, limits.maxIndexBytes, signal);
     else await syncProviderArtifact(artifactPath);
     const parent = store.activeSnapshot();
     const context = semanticKey("context", [repositoryInfo.identity, "scip", manifest.projectContext, manifest.inputs ?? {}, SCIP_SEMANTIC_VERSION,
       ...(manifest.documentPathPrefix || manifest.enclosingPolicy || manifest.externalLocalPolicy ? [{ prefix: manifest.documentPathPrefix ?? "", enclosingPolicy: manifest.enclosingPolicy ?? "strict", ...(manifest.externalLocalPolicy ? { externalLocalPolicy: manifest.externalLocalPolicy } : {}) }] : [])]);
-    const inputFingerprint = digest(canonical(manifest)); const prefix = `scip/${manifest.id}/`;
+    const inputFingerprint = digest(canonical([manifest, store.sourceBindingFingerprint()])); const prefix = `scip/${manifest.id}/`;
     const parseSymbol = execution?.parseSymbol ?? parseScipSymbol;
     const provenance: Provenance = { provider: manifest.provider.name, version: `${manifest.provider.version}/scip-map-${SCIP_SEMANTIC_VERSION}`, basis: manifest.provider.basis, method: "source-verified-scip", context, inputFingerprint };
     const summary = store.begin(`${prefix}index`, context, inputFingerprint); const accepted: number[] = []; const externals: number[] = [];
@@ -183,9 +184,10 @@ export async function importScip(repository: string, artifact: string, manifest:
         const coordinates = new SourceCoordinates(file, text, true); const observations = messages(doc.occurrences);
         const sourceRange = (location: number[]): [number, number] => execution?.sourceRange ? execution.sourceRange(coordinates, location, encoding) : [coordinates.offset(location[0]!, location[1]!, encoding), coordinates.offset(location[2]!, location[3]!, encoding)];
         const infos = messages(doc.symbols);
-        // Artifact paths/metadata order are execution evidence, not document semantics.
+        // Artifact paths/metadata order are execution evidence. The original source
+        // root binding remains an input even when a new root has identical bytes.
         // Exact current artifact + source verification still precedes any reuse decision.
-        const documentFingerprint = digest(canonical(["scip-document-ownership-1", context, file, expected, manifest.provider, encoding, execution?.version ?? null,
+        const documentFingerprint = digest(canonical(["scip-document-ownership-1", context, store.sourceBindingFingerprint(), file, expected, manifest.provider, encoding, execution?.version ?? null,
           { ...doc, symbols: infos.map(canonical).sort(), occurrences: observations.map(canonical).sort() }]));
         const partition = `${prefix}document:${file}`;
         const cached = store.reusable(partition, context, documentFingerprint);

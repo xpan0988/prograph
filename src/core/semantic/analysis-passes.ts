@@ -22,7 +22,7 @@ import { partitionBoundaries } from "./boundary-shards.js";
 
 interface AnalysisPass extends PassContract { adapter?: FrameworkAdapter | undefined }
 function adapterPass(id: string, adapter: FrameworkAdapter, dependencies: string[] = []): AnalysisPass {
-  return { id, adapter, version: "2", configurationFingerprint: "assigned-per-execution", dependencies,
+  return { id, adapter, version: "3", configurationFingerprint: "assigned-per-execution", dependencies,
     reads: ["source.File", "syntax.Node", "syntax.Relation", "projection.Node", "projection.Relation"],
     writes: ["projection.Node", "projection.Relation", "support.Conjunction", "support.Disjunction"],
     requiredCapabilities: ["source-catalogue", "sealed-projections"], inputDomains: ["source", "syntax", ...dependencies],
@@ -46,7 +46,7 @@ export const analysisPasses: AnalysisPass[] = [
   { ...adapterPass("boundary-binding", architectureAdapter, ["framework-tauri", "schema-contracts"]), ownershipShard: "boundary-operation", adapter: undefined,
     writes: ["boundary.Operation", "boundary.Invokes", "boundary.Implements", "boundary.Registers", "boundary.Emits", "boundary.Listens", "boundary.Path", "support.Conjunction", "support.Disjunction"],
     coverageBehavior: "qualified-syntax-and-explicit-namespace-bindings;unsupported-families-unavailable" },
-  { ...adapterPass("dependency-projection", architectureAdapter, ["knowledge-links", "boundary-binding"]), version: "2", ownershipShard: "source-file", selectorDependencies: ["owned-input-claims", "repository-source-and-config-catalogue", "qualified-output-admission"], negativeDependencies: ["support-eligibility"], adapter: undefined, reads: ["syntax.Node", "syntax.Relation", "projection.Node", "projection.Relation", "boundary.Path"],
+  { ...adapterPass("dependency-projection", architectureAdapter, ["knowledge-links", "boundary-binding"]), version: "3", ownershipShard: "source-file", selectorDependencies: ["owned-input-claims", "repository-source-and-config-catalogue", "qualified-output-admission"], negativeDependencies: ["support-eligibility"], adapter: undefined, reads: ["syntax.Node", "syntax.Relation", "projection.Node", "projection.Relation", "boundary.Path"],
     writes: ["projection.Dependency", "support.Conjunction", "support.Disjunction"], coverageBehavior: "observed-file-dependencies;not-runtime-completeness" },
 ];
 
@@ -61,9 +61,10 @@ export async function deriveOwnedAnalysis(snapshot: RepositorySnapshot, source: 
   const ordered = orderPasses(analysisPasses); // Validate before creating any run.
   const store = new SemanticStore(filename);
   try {
+    store.bindSourceRoot(snapshot.repository.root, snapshot.sourceRoot);
     const parent = store.activeSnapshot();
     const context = semanticKey("analysis-context", [snapshot.repository.identity, OWNED_PASS_VERSION]);
-    const fingerprint = digest(canonical({ files: [...snapshot.fileContents].map(([file, text]) => [file, digest(text)]).sort(),
+    const fingerprint = digest(canonical({ sourceBinding: store.sourceBindingFingerprint(), files: [...snapshot.fileContents].map(([file, text]) => [file, digest(text)]).sort(),
       config: snapshot.config, passes: ordered.map(pass => passContract(pass)), nodes: [...source.nodes].sort((a, b) => a.id.localeCompare(b.id)), edges: [...source.edges].sort((a, b) => a.id.localeCompare(b.id)) }));
     const base = writeSyntaxBase(store, snapshot, source, context, fingerprint);
     const baseProjection = base.projection;

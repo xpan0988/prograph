@@ -15,10 +15,14 @@ const replay = tests.testResults.find(file => /[/\\]semantic-replay\.test\.ts$/.
 assert.ok(replay && replay.assertionResults.length >= 8 && replay.assertionResults.every(test => test.status === 'passed'), 'Authenticated preparation/replay tests must all execute');
 for (const language of ['Clang', 'Rust', 'python', 'go', 'java', 'csharp']) assert.ok(replay.assertionResults.some(test => test.title.startsWith(`registered ${language}`) && test.status === 'passed'), `Actual registered ${language} replay must execute`);
 const maintenance = tests.testResults.find(file => /[/\\]semantic-artifacts\.test\.ts$/.test(file.name));
-assert.ok(maintenance && maintenance.assertionResults.length >= 9 && maintenance.assertionResults.every(test => test.status === 'passed'), 'Artifact retention and cross-process maintenance recovery must execute');
+assert.ok(maintenance && maintenance.assertionResults.length >= 13 && maintenance.assertionResults.every(test => test.status === 'passed'), 'Artifact retention and cross-process maintenance recovery must execute');
+const clangInputs = tests.testResults.find(file => /[/\\]semantic-clang-inputs\.test\.ts$/.test(file.name));
+assert.ok(clangInputs && clangInputs.assertionResults.length >= 8 && clangInputs.assertionResults.every(test => test.status === 'passed'), 'Actual Clang negative-search, macro-anchor, host context and extraction input barriers must execute');
+const inputWitnesses = tests.testResults.find(file => /[/\\]semantic-inputs\.test\.ts$/.test(file.name));
+assert.ok(inputWitnesses && inputWitnesses.assertionResults.length >= 7 && inputWitnesses.assertionResults.every(test => test.status === 'passed'), 'Compiler inputs and source-root binding qualification must execute');
 const recovery = JSON.parse(await readFile(process.argv[3] ?? 'semantic-recovery-results.json', 'utf8'));
 assert.deepEqual(recovery.probes.map(probe => probe.point).sort(), ['after-publish', 'before-publish', 'before-seal', 'during-publish']);
 assert.ok(recovery.probes.every(probe => probe.integrity === 'ok' && probe.baselineRetained));
 assert.deepEqual(recovery.corruption, { refused: true, unchanged: true });
 await Promise.all(['dist/cli/index.js', 'dist/core/query/query-worker.js', 'dist/ui/index.html'].map(file => access(file)));
-console.log(`Verified ${tests.numPassedTests} passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, complete build, four recovery probes and corruption refusal`);
+console.log(`Verified ${tests.numPassedTests} passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, complete build, four recovery probes and corruption refusal`);

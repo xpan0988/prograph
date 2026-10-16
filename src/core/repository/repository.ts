@@ -1,4 +1,4 @@
-import { access, readFile, stat } from "node:fs/promises";
+import { access, readFile, stat, realpath } from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
@@ -68,6 +68,7 @@ export interface ScanResult {
 }
 
 export async function scanRepository(root: string, outputDirectory?: string): Promise<ScanResult> {
+  const sourceRoot = await realpath(root);
   const repository = await getRepositoryMetadata(root);
   const diagnostics: Diagnostic[] = [];
   let config;
@@ -129,8 +130,9 @@ export async function scanRepository(root: string, outputDirectory?: string): Pr
       // Source-file read failures are reported above; metadata detection is best effort.
     }
   }
+  if (await realpath(root) !== sourceRoot) throw Error("Repository source root changed during discovery");
   return {
-    snapshot: { repository, config, files: [...absoluteFiles.keys()], absoluteFiles, fileContents },
+    snapshot: { repository, sourceRoot, config, files: [...absoluteFiles.keys()], absoluteFiles, fileContents },
     diagnostics,
     excludedFileCount: 0,
   };

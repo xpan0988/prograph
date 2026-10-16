@@ -158,3 +158,31 @@ test("CLI maintenance preserves pin/unpin and custom sqlite index contracts with
   expect(await command("unpin", ["--snapshot", String(first)])).toMatchObject({ operation: "unpin", snapshot: first });
   expect(await command("gc", ["--keep", "1"])).toMatchObject({ active, collected: { snapshots: 1 }, artifacts: { state: "complete" } });
 }, 30000);
+
+test("compiler probes and rooted source aliases retain their workspaces through archived positive support receipts", async () => {
+  const { root, index, filename } = await fixture(); const sdk = await workspace(index, root, "python"), source = await workspace(index, root, "java"), obsolete = await workspace(index, root, "rust");
+  await symlink(path.join(sdk, "index.scip"), path.join(root, "read-alias")); await symlink(source, path.join(root, "source-alias"), "dir");
+  const s = new SemanticStore(filename); s.bindSourceRoot(root);
+  try { const base = run(s, "probe-source", [`probe-read:${JSON.stringify([path.join(root, "read-alias"), "utf8"])}`, "source:source-alias/index.scip"]); const derived = run(s, "derived", [], [[{ claim: base.claim }]]); s.publish([base.id, derived.id]); s.publish([derived.id]); } finally { s.close(); }
+  await expect(collectIndexGarbage(filename, { keep: 1 })).resolves.toHaveProperty("artifacts.deleted", 1); expect(existsSync(obsolete)).toBe(false); expect(existsSync(sdk)).toBe(true); expect(existsSync(source)).toBe(true);
+  const clear = new SemanticStore(filename); clear.publish([]); clear.close();
+  await expect(collectIndexGarbage(filename, { keep: 1 })).resolves.toHaveProperty("artifacts.deleted", 2);
+});
+
+test("directory membership and recursive SDK evidence protect all affected owned descendants", async () => {
+  const { root, index, filename } = await fixture(); const protectedWork = [];
+  for (const kind of ["go", "go", "csharp", "csharp"]) protectedWork.push(await workspace(index, root, kind)); const obsolete = await workspace(index, root, "rust");
+  const alias = path.join(root, "catalogue-alias"); await symlink(path.join(index, "providers/go"), alias, "dir");
+  const s = new SemanticStore(filename); try { const r = run(s, "directories", [`probe-list:${alias}`, `tree:${index}/providers/csharp`]); s.publish([r.id]); } finally { s.close(); }
+  const result = await collectIndexGarbage(filename, { keep: 1 }); expect(result).toHaveProperty("artifacts.retained", 4); expect(result).toHaveProperty("artifacts.deleted", 1); expect(existsSync(obsolete)).toBe(false);
+  for (const work of protectedWork) expect(existsSync(work)).toBe(true);
+});
+
+test("old source inputs without a root witness defer filesystem sweeping instead of guessing a repository", async () => {
+  const { root, index, filename } = await fixture(); const live = await workspace(index, root), obsolete = await workspace(index, root, "rust"); await symlink(live, path.join(root, "alias"), "dir");
+  const s = new SemanticStore(filename); try { const old = run(s, "unbound", ["source:alias/index.scip"]); s.publish([old.id]); } finally { s.close(); }
+  await expect(collectIndexGarbage(filename, { keep: 1 })).resolves.toHaveProperty("artifacts.state", "deferred"); expect(existsSync(live)).toBe(true); expect(existsSync(obsolete)).toBe(true);
+  const upgraded = new SemanticStore(filename); upgraded.bindSourceRoot(root);
+  try { const current = run(upgraded, "rooted", ["source:alias/index.scip"]); upgraded.publish([current.id]); } finally { upgraded.close(); }
+  await expect(collectIndexGarbage(filename, { keep: 1 })).resolves.toHaveProperty("artifacts.deleted", 1); expect(existsSync(live)).toBe(true); expect(existsSync(obsolete)).toBe(false);
+});

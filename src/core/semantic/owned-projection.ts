@@ -3,7 +3,7 @@ import type { GraphNode, GraphEdge, Diagnostic } from "../graph/schema.js";
 import { SemanticStore } from "./store.js";
 import { canonical, digest, semanticKey, type FactInput, type Provenance, type SupportAtom } from "./model.js";
 
-export const OWNED_PASS_VERSION = "analysis-passes-2";
+export const OWNED_PASS_VERSION = "analysis-passes-3";
 export interface OwnedProjection {
   run: number;
   result: AdapterResult;
@@ -147,6 +147,7 @@ export function readSyntaxProjection(store: SemanticStore, snapshot: number): Ow
 }
 
 export function writeSyntaxBase(store: SemanticStore, snapshot: RepositorySnapshot, graph: AdapterResult, context: string, fingerprint: string) {
+  store.bindSourceRoot(snapshot.repository.root, snapshot.sourceRoot);
   graph = normalizeProjection(graph);
   if (graph.nodes.length + graph.edges.length + graph.diagnostics.length + snapshot.files.length > 1000000) throw Error("Source observation layer exceeds offline row bound");
   const selector = { key: `analysis:catalogue:${snapshot.repository.identity}`, digest: fingerprint };
@@ -169,7 +170,7 @@ export function writeSyntaxBase(store: SemanticStore, snapshot: RepositorySnapsh
   let bytes = 0; let run = 0;
   for (const [file, result] of [...groups].sort(([a], [b]) => a.localeCompare(b))) {
     const source = file ? snapshot.fileContents.get(file)! : undefined;
-    const inputFingerprint = digest(canonical([OWNED_PASS_VERSION, context, snapshot.config, file, source === undefined ? null : digest(source), result]));
+    const inputFingerprint = digest(canonical([OWNED_PASS_VERSION, context, store.sourceBindingFingerprint(), snapshot.config, file, source === undefined ? null : digest(source), result]));
     const partition = file ? `analysis/source/file:${file}` : "analysis/source";
     const cached = store.reusable(partition, context, inputFingerprint);
     const current = cached?.coverage.version === OWNED_PASS_VERSION ? cached.id : store.begin(partition, context, inputFingerprint);

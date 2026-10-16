@@ -65,6 +65,7 @@ export async function replayProviders(store: SemanticStore, snapshot: Repository
       if (authenticated && typeof registration.recipe.configuration === "string") resources.add(`physical:${registration.recipe.configuration}`);
       for (const partition of authenticated ? previous.filter(partition => ownsProviderPartition(prefix, partition.partition_key) || partition.partition_key === `provider/failure:${row.key}`) : []) {
         for (const input of store.sql("SELECT resource FROM sc_inputs WHERE run=?").all(partition.run) as Array<{ resource: string }>) {
+          if (input.resource === "environment:host") { resources.add(input.resource); continue; }
           const file = recordedPath(input.resource) ?? (/^(?:physical|tree):/.test(input.resource) ? input.resource.slice(input.resource.indexOf(":") + 1) : undefined);
           if (file && file !== directory && !file.startsWith(`${directory}${path.sep}`)) resources.add(input.resource);
         }

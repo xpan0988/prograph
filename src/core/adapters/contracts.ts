@@ -2,6 +2,8 @@ import type { Diagnostic, GraphEdge, GraphNode, RepositoryMetadata } from "../gr
 import type { LoadedConfig } from "../config/config.js";
 
 export interface RepositorySnapshot {
+  /** Physical source root observed before discovery; retained separately from logical repository identity. */
+  sourceRoot?: string;
   repository: RepositoryMetadata;
   config: LoadedConfig;
   files: string[];

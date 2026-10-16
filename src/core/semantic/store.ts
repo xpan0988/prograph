@@ -20,6 +20,8 @@ export class SemanticStore {
   private readonly entityCache = new Map<string, number>();
   private lease: IndexLease | undefined;
   private readonly ownsLease: boolean;
+  private sourceRoot: string | undefined;
+  private sourceRootAlias: string | undefined;
   constructor(readonly filename: string, readonly hooks: PublicationHooks = {}, borrowedLease?: IndexLease) {
     this.lease = borrowedLease ?? (filename === ":memory:" ? undefined : new IndexLease(path.dirname(filename), "work")); this.ownsLease = !borrowedLease;
     if (this.lease && (!this.lease.active || this.lease.directory !== realpathSync(path.dirname(filename)))) throw Error("Invalid borrowed index lease");
@@ -99,7 +101,19 @@ export class SemanticStore {
    */
   reusable(partition: string, context: string, inputFingerprint: string): { id: number; coverage: Record<string, unknown> } | undefined {
     const row = this.sql("SELECT r.id,r.coverage_json FROM sc_runs r WHERE r.partition_key=? AND r.context=? AND r.input_fingerprint=? AND r.state='sealed' AND EXISTS(SELECT 1 FROM sc_partitions p WHERE p.run=r.id) ORDER BY r.id DESC LIMIT 1").get(partition, context, inputFingerprint) as { id: number; coverage_json: string } | undefined;
+    if (row && this.sourceRoot && this.sql("SELECT 1 FROM sc_inputs WHERE run=? AND resource LIKE 'source:%' LIMIT 1").get(row.id) && !this.hasSourceRoot(row.id)) return undefined;
     return row ? { id: row.id, coverage: JSON.parse(row.coverage_json) as Record<string, unknown> } : undefined;
+  }
+  bindSourceRoot(root: string, expected?: string): void {
+    const alias = path.resolve(root), resolved = realpathSync(root); if (expected && resolved !== expected) throw Error("Source root changed since repository discovery"); if (this.sourceRoot && (this.sourceRoot !== resolved || this.sourceRootAlias !== alias)) throw Error("One store operation cannot change its source root"); this.sourceRoot = resolved; this.sourceRootAlias = alias;
+  }
+  sourceBindingFingerprint(): string {
+    if (!this.sourceRoot || !this.sourceRootAlias) throw Error("Source root must be bound before fingerprinting source observations");
+    return createHash("sha256").update(canonical(["source-binding-1", this.sourceRootAlias, this.sourceRoot])).digest("hex");
+  }
+  hasSourceRoot(run: number): boolean {
+    if (!this.sourceRoot) return false; const hash = createHash("sha256").update(this.sourceRoot).digest("hex");
+    return !!this.sql("SELECT 1 FROM sc_inputs WHERE run=? AND resource=? AND digest=?").get(run, `source-root:${this.sourceRoot}`, hash) && !!this.sql("SELECT 1 FROM sc_inputs WHERE run=? AND resource=? AND digest=?").get(run, `probe-realpath:${this.sourceRootAlias}`, hash);
   }
   private requireStaging(run: number): { context: string; input_fingerprint: string } {
     const row = this.sql("SELECT context,input_fingerprint,state FROM sc_runs WHERE id=?").get(run) as { context: string; input_fingerprint: string; state: string } | undefined;
@@ -113,6 +127,13 @@ export class SemanticStore {
   input(run: number, resource: string, hash: string): void {
     this.requireStaging(run);
     this.sql("INSERT INTO sc_inputs VALUES(?,?,?) ON CONFLICT(run,resource) DO UPDATE SET digest=excluded.digest").run(run, resource, hash);
+    if (resource.startsWith("source:") && this.sourceRoot) {
+      const hash = createHash("sha256").update(this.sourceRoot).digest("hex"), probe = `probe-realpath:${this.sourceRootAlias}`;
+      const observed = this.sql("SELECT digest FROM sc_inputs WHERE run=? AND resource=?").get(run, probe) as { digest: string } | undefined;
+      if (observed && observed.digest !== hash) throw Error("Source root changed during compiler observation");
+      this.sql("INSERT OR IGNORE INTO sc_inputs VALUES(?,?,?)").run(run, `source-root:${this.sourceRoot}`, hash);
+      this.sql("INSERT OR IGNORE INTO sc_inputs VALUES(?,?,?)").run(run, probe, hash);
+    }
   }
   selector(run: number, key: string, hash: string, requires: Array<{ key: string; digest: string }> = []): void {
     this.requireStaging(run);

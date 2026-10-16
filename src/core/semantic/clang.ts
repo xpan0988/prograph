@@ -13,10 +13,12 @@ import { boundedInput, digestFile } from "./inputs.js";
 import type { ProviderPreparation } from "./provider-plan.js";
 import { authorizeProvider, verifyProviderAuthorization } from "./provider-grants.js";
 import { withIndexWork } from "./maintenance-lock.js";
+import { captureClangInputs, clangDriverSelection } from "./clang-inputs.js";
+import { inputMatches } from "./input-check.js";
 
 const exec = promisify(execFile);
 const COMPILER = "/usr/bin/clang";
-const bounds = { maxOutputBytes: 16777216, maxSourceBytes: 8388608, timeoutMs: 30000, batch: 500, maxNodes: 200000 };
+const bounds = { maxOutputBytes: 33554432, maxSourceBytes: 8388608, timeoutMs: 30000, batch: 500, maxNodes: 200000 };
 interface Ast {
   id?: string; kind: string; name?: string; mangledName?: string; isImplicit?: boolean; virtual?: boolean;
   type?: { qualType?: string }; loc?: Location; range?: { begin: Location; end: Location };
@@ -69,24 +71,38 @@ async function indexClangWithLease(repository: string, unitKey: string, index: s
   const argv = compilerArguments(unit, source); const cwd = String(unit.options.directory);
   const directory = path.resolve(index?.endsWith(".sqlite") ? path.dirname(index) : index ?? path.join(root, ".prograph")); await mkdir(directory, { recursive: true });
   const executableDigest = await digestFile(COMPILER); const executablePath = await realpath(COMPILER);
-  const trust = digest(canonical([COMPILER, executablePath, executableDigest]));
-  if (options.authorization && (!await verifyProviderAuthorization(options.authorization, root, directory) || options.authorization.kind !== "clang" || options.authorization.trust !== trust)) throw Error("Clang tool inputs changed; explicit requalification required");
+  const driver = await clangDriverSelection();
+  const compilerTrust = async (installed: string) => digest(canonical([COMPILER, executablePath, executableDigest, driver, installed, await realpath(installed), await digestFile(installed)]));
+  if (options.authorization) {
+    const grant = options.authorization, installed = grant.recipe.installedCompiler;
+    if (!await verifyProviderAuthorization(grant, root, directory) || grant.kind !== "clang" || grant.version !== CLANG_SEMANTIC_VERSION || typeof installed !== "string" || !path.isAbsolute(installed) || grant.trust !== await compilerTrust(installed)) throw Error("Clang tool/driver selection changed; explicit requalification required");
+  }
   const env = { PATH: "/usr/bin:/bin", LANG: "C" };
   const tool = await exec(COMPILER, ["--version"], { env, timeout: bounds.timeoutMs, maxBuffer: 65536 });
   const version = tool.stdout.split("\n")[0]!;
+  const implicitTarget = /^Target:\s*(.+)$/m.exec(tool.stdout)?.[1]?.trim() ?? "unreported";
+  const installedDirectory = /^InstalledDir:\s*(.+)$/m.exec(tool.stdout)?.[1]?.trim();
+  if (!installedDirectory || !path.isAbsolute(installedDirectory)) throw Error("Clang did not report a qualified absolute installed compiler directory");
+  const installedCompiler = path.join(installedDirectory, "clang"), trust = await compilerTrust(installedCompiler);
+  if (options.authorization && (options.authorization.recipe.installedCompiler !== installedCompiler || options.authorization.trust !== trust)) throw Error("Clang installed compiler changed; explicit requalification required");
   const flags = [...argv, "-x", unit.language === "cpp" ? "c++" : "c", "--no-default-config", "-fno-implicit-modules", "-fno-implicit-module-maps"];
   const deps = await exec(COMPILER, [...flags, "-M", "-MT", "prograph", source], { cwd, env, timeout: bounds.timeoutMs, maxBuffer: bounds.maxOutputBytes });
   const inputs: Record<string, string> = { ...unit.inputs };
   inputs[COMPILER] = executableDigest;
-  for (const file of dependencyPaths(deps.stdout)) { const absolute = path.resolve(cwd, file); inputs[absolute] = await digestFile(absolute); }
+  inputs[installedCompiler] = await digestFile(installedCompiler);
+  const dependencies = dependencyPaths(deps.stdout).map(file => path.resolve(cwd, file));
+  for (const file of dependencies) inputs[file] = await digestFile(file);
+  const trace = await exec(COMPILER, [...flags, "-E", "-dI", "-v", source], { cwd, env, timeout: bounds.timeoutMs, maxBuffer: bounds.maxOutputBytes });
+  const lookup = await captureClangInputs(trace.stdout, trace.stderr, cwd, source, dependencies, flags, driver);
+  lookup.inputs[`probe-realpath:${root}`] = digest(actualRoot);
   const result = await exec(COMPILER, [...flags, "-fsyntax-only", "-Xclang", "-ast-dump=json", source], { cwd, env, timeout: bounds.timeoutMs, maxBuffer: bounds.maxOutputBytes });
   const ast = JSON.parse(result.stdout) as Ast;
-  const context = semanticKey("clang-context", [unit.context, COMPILER, version, flags, CLANG_SEMANTIC_VERSION]);
-  const inputFingerprint = digest(canonical([inputs, context]));
+  const context = semanticKey("clang-context", [unit.context, COMPILER, version, implicitTarget, trust, flags, lookup.environment, CLANG_SEMANTIC_VERSION]);
+  const inputFingerprint = digest(canonical([inputs, lookup.inputs, context]));
   const store = new SemanticStore(path.join(directory, "semantic.sqlite")); const parent = store.activeSnapshot(); const partition = `clang/${unit.key}`;
   const run = store.begin(partition, context, inputFingerprint);
   const provenance: Provenance = { provider: "clang/compiler-ast", version, basis: "compiler", method: `clang-ast-binding-v${CLANG_SEMANTIC_VERSION}`, context, inputFingerprint };
-  const sourceFiles = new Map<string, { text: string; coordinates: SourceCoordinates; bytes: number }>();
+  const sourceFiles = new Map<string, { text: string; raw: Buffer; coordinates: SourceCoordinates; bytes: number }>();
   const symbols = new Map<string, string>(); const scopes = new Map<Ast, string>(); const callable = new Set<string>();
   const nodes: Array<{ node: Ast; file?: string; ancestry: string[]; owner?: Ast }> = [];
   let lastFile: string | undefined; let unresolved = 0; let macroSkipped = 0;
@@ -115,14 +131,16 @@ async function indexClangWithLease(repository: string, unitKey: string, index: s
       const bytes = await boundedInput(file, bounds.maxSourceBytes);
       if (!(await realpath(file)).startsWith(`${actualRoot}${path.sep}`)) throw Error("Clang source dependency escapes repository");
       const text = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(bytes);
-      const relative = path.relative(root, file).split(path.sep).join("/"); sourceFiles.set(file, { text, coordinates: new SourceCoordinates(relative, text, true), bytes: bytes.length });
+      const relative = path.relative(root, file).split(path.sep).join("/"); sourceFiles.set(file, { text, raw: bytes, coordinates: new SourceCoordinates(relative, text, true), bytes: bytes.length });
     }
     const module = semanticKey("clang-module", [context, unit.sources[0]]);
     store.batch(run, () => {
       store.addSymbol({ key: module, name: `<unit:${unit.sources[0]}>`, qualifiedName: unit.sources[0]!, kind: "compilation-unit", file: unit.sources[0]!, context });
       const key = semanticKey("project", [scan.snapshot.repository.identity, unit.key]); store.addEntity(key, "artifact", { key, kind: "project" });
-      store.addFact(run, { predicate: "context.Project", context, subject: key, value: { unit: unit.key, source: unit.sources[0], workingDirectory: cwd, language: unit.language, compiler: COMPILER, version, mappingVersion: CLANG_SEMANTIC_VERSION, flags, dependencyCount: Object.keys(inputs).length, bounds }, confidence: "exact", provenance });
+      store.addFact(run, { predicate: "context.Project", context, subject: key, value: { unit: unit.key, source: unit.sources[0], workingDirectory: cwd, language: unit.language, compiler: COMPILER, installedCompiler, implicitTarget, version, mappingVersion: CLANG_SEMANTIC_VERSION, flags, dependencyCount: Object.keys(inputs).length, searchInputs: Object.keys(lookup.inputs).length, negativeSearches: lookup.gaps.length ? "unqualified" : "qualified-expanded-includes", bounds }, confidence: "exact", provenance });
       for (const [file, hash] of Object.entries(inputs)) store.input(run, `physical:${file}`, hash);
+      store.input(run, `probe-realpath:${COMPILER}`, digest(executablePath));
+      for (const [resource, hash] of Object.entries(lookup.inputs)) store.input(run, resource, hash);
       store.input(run, "project-inventory", semanticInventory(scan.snapshot));
       store.selector(run, `clang:${context}:inventory`, inputFingerprint);
     });
@@ -130,8 +148,12 @@ async function indexClangWithLease(repository: string, unitKey: string, index: s
       for (const entry of nodes.slice(offset, offset + bounds.batch)) {
         const { node, file } = entry;
         const input = file ? sourceFiles.get(file) : undefined;
-        if (!input || !node.name || !node.id || !/Decl$/.test(node.kind) || node.isImplicit || node.loc?.offset === undefined) continue;
-        if (node.loc.spellingLoc || node.range?.begin.spellingLoc) { macroSkipped++; continue; }
+        if (!input || !node.name || !node.id || !/Decl$/.test(node.kind) || node.isImplicit) continue;
+        if (node.loc?.spellingLoc || node.loc?.expansionLoc) { macroSkipped++; continue; }
+        if (node.loc?.offset === undefined) continue;
+        // A macro return type/attribute does not invalidate the compiler's direct
+        // identifier anchor. Macro-expanded names still require expansion mapping.
+        if (/^[A-Za-z_]\w*$/.test(node.name) && input.raw.subarray(node.loc.offset, node.loc.offset + (node.loc.tokLen ?? Buffer.byteLength(node.name))).toString("utf8") !== node.name) { macroSkipped++; continue; }
         const local = /^(?:ParmVar|Var|Field)Decl$/.test(node.kind) && !node.mangledName;
         const arguments_ = (node.inner ?? []).filter(value => value.kind === "TemplateArgument").map(value => value.type?.qualType ?? value.name ?? value.kind);
         const qualified = declarationPath(entry).join("::");
@@ -172,10 +194,15 @@ async function indexClangWithLease(repository: string, unitKey: string, index: s
       }
     });
     for (const [file, hash] of Object.entries(inputs)) if (await digestFile(file) !== hash) throw Error("Clang input changed during extraction");
+    for (const [resource, hash] of Object.entries(lookup.inputs)) if (!resource.startsWith("unavailable-input:") && !await inputMatches({ resource, digest: hash }, root)) throw Error("Clang search input changed during extraction");
+    const finalDependencies = await exec(COMPILER, [...flags, "-M", "-MT", "prograph", source], { cwd, env, timeout: bounds.timeoutMs, maxBuffer: bounds.maxOutputBytes });
+    if (canonical(dependencyPaths(finalDependencies.stdout).map(file => path.resolve(cwd, file)).sort()) !== canonical([...dependencies].sort())) throw Error("Clang dependency selection changed during extraction");
+    if (await compilerTrust(installedCompiler) !== trust) throw Error("Clang tool inputs changed during extraction");
     const coverage = { status: "partial", provider: provenance.provider, mappingVersion: CLANG_SEMANTIC_VERSION, language: unit.language, definitions: "partial", references: "partial", calls: "partial", unresolved, macroSkipped,
-      gaps: ["Static declaration binding, not runtime dispatch or cross-translation-unit linking", "Macro expansion anchors, constructors without target IDs and external declarations are not qualified", "Recorded build may use another compiler; this is explicit Clang syntax-only extraction"] };
+      negativeSearches: lookup.gaps.length ? "unqualified" : "qualified-expanded-includes", searchInputs: Object.keys(lookup.inputs).length,
+      gaps: ["Static declaration binding, not runtime dispatch or cross-translation-unit linking", "Macro expansion anchors, constructors without target IDs and external declarations are not qualified", "Recorded build may use another compiler; this is explicit Clang syntax-only extraction", ...lookup.gaps] };
     store.seal(run, coverage); const passes = executePasses(store, run, partition, provenance, `clang:${context}:inventory`);
-    const registration = await authorizeProvider({ key: options.authorization?.key ?? `clang-${digest(unit.key).slice(0, 32)}`, kind: "clang", recipe: { unitKey, source: unit.sources[0]!, database: unit.project.split("#")[0]!, prefix: partition }, trust, version: CLANG_SEMANTIC_VERSION }, root, directory);
+    const registration = await authorizeProvider({ key: options.authorization?.key ?? `clang-${digest(unit.key).slice(0, 32)}`, kind: "clang", recipe: { unitKey, source: unit.sources[0]!, database: unit.project.split("#")[0]!, prefix: partition, installedCompiler }, trust, version: CLANG_SEMANTIC_VERSION }, root, directory);
     if (options.prepare) {
       options.prepare({ parent, prefix: partition, runs: [run, ...passes], registration });
       return { status: "prepared", context, coverage, durationMs: Math.round(performance.now() - started), compiler: { executable: COMPILER, version }, bounds };

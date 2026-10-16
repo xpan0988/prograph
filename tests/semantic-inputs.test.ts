@@ -1,8 +1,8 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { mkdtemp, mkdir, writeFile, rm, symlink } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, readFile, rm, symlink, realpath } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
-import { writeFileSync } from "node:fs";
+import { writeFileSync, unlinkSync, symlinkSync } from "node:fs";
 import { Project } from "ts-morph";
 import { analyzeRepository } from "../src/core/analysis/analyze.js";
 import { repositoryStatus } from "../src/core/analysis/state.js";
@@ -11,6 +11,7 @@ import { traceCompilerInputs } from "../src/core/semantic/typescript-inputs.js";
 import { toolInputResource, toolReceipt } from "../src/core/semantic/tool-receipt.js";
 import { recordedInputStatus, retainProviders, semanticInventory } from "../src/core/semantic/provider-runs.js";
 import { SemanticStore } from "../src/core/semantic/store.js";
+import { SemanticQuery } from "../src/core/semantic/query.js";
 import { canonical, digest, SCIP_SEMANTIC_VERSION, MANAGED_SCIP_VERSION } from "../src/core/semantic/model.js";
 import { scanRepository } from "../src/core/repository/repository.js";
 
@@ -100,3 +101,29 @@ test("a dependency changing after an earlier compiler unit seals cannot publish 
   finally { hook.mockRestore(); }
   const after = new SemanticStore(filename); try { expect(after.activeSnapshot()).toBe(parent); expect(after.db.pragma("integrity_check", { simple: true })).toBe("ok"); } finally { after.close(); }
 });
+
+test("retargeting an entire source root invalidates identical-byte owners and agrees with a clean rebuild", async () => {
+  const root = await temporary(), index = await temporary(), clean = await temporary();
+  for (const directory of ["one", "two"]) { const source = path.join(root, directory); await mkdir(source); await writeFile(path.join(source, "tsconfig.json"), '{"files":["app.ts"]}'); await writeFile(path.join(source, "app.ts"), "export function target(){return 1;} export function run(){return target();}\n"); }
+  const alias = path.join(root, "repository"); await symlink(path.join(root, "one"), alias, "dir"); await analyzeRepository(alias, { output: index }); expect((await repositoryStatus(alias, index)).state).toBe("fresh"); const original = visible(index);
+  const initialQuery = new SemanticQuery(path.join(index, "semantic.sqlite")); try { expect(initialQuery.execute("find", "target").items).toHaveLength(1); } finally { initialQuery.close(); }
+  await rm(alias); await symlink(path.join(root, "two"), alias, "dir");
+  const status = await repositoryStatus(alias, index); expect(status.modifiedFiles).toEqual([]); expect(status.semanticInputsChanged).toBe(true);
+  expect((await syncRepository(alias, index)).statusAfter.state).toBe("fresh"); expect(visible(index)).not.toBe(original);
+  await analyzeRepository(alias, { output: clean }); expect(visible(index)).toBe(visible(clean));
+  const s = new SemanticStore(path.join(index, "semantic.sqlite"));
+  try { expect(s.sql("SELECT DISTINCT i.resource FROM sc_partitions p JOIN sc_inputs i ON i.run=p.run WHERE p.snapshot=? AND i.resource LIKE 'source-root:%'").all(s.activeSnapshot())).toEqual([{ resource: `source-root:${await realpath(path.join(root, "two"))}` }]); } finally { s.close(); }
+}, 60000);
+
+test("a source root swap after discovery aborts before fact or compatibility publication", async () => {
+  const root = await temporary(), index = await temporary();
+  for (const directory of ["one", "two"]) { const source = path.join(root, directory); await mkdir(source); await writeFile(path.join(source, "tsconfig.json"), '{"files":["app.ts"]}'); await writeFile(path.join(source, "app.ts"), "export function target(){return 1;}\n"); }
+  const alias = path.join(root, "repository"); await symlink(path.join(root, "one"), alias, "dir"); await analyzeRepository(alias, { output: index }); const before = visible(index), manifest = digest(await readFile(path.join(index, "manifest.json")));
+  const bind = SemanticStore.prototype.bindSourceRoot; let changed = false;
+  const hook = vi.spyOn(SemanticStore.prototype, "bindSourceRoot").mockImplementation(function(this: SemanticStore, source, expected) {
+    if (!changed && expected) { changed = true; unlinkSync(alias); symlinkSync(path.join(root, "two"), alias, "dir"); }
+    return bind.call(this, source, expected);
+  });
+  try { await expect(analyzeRepository(alias, { output: index })).rejects.toThrow("Source root changed since repository discovery"); } finally { hook.mockRestore(); }
+  expect(changed).toBe(true); expect(visible(index)).toBe(before); expect(digest(await readFile(path.join(index, "manifest.json")))).toBe(manifest);
+}, 60000);

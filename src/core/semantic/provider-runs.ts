@@ -30,7 +30,7 @@ export async function recordedInputStatus(filename: string, snapshot: Repository
     for (const input of inputs) {
       if (input.resource.startsWith("unavailable-input:")) return { state: "unchecked", checked, additionalChanges, reason: "A failed provider dependency could not be fingerprinted; explicit coverage gap remains" };
       const file = input.resource.startsWith("source:") ? path.join(snapshot.repository.root, input.resource.slice(7)) : input.resource.startsWith("physical:") || input.resource.startsWith("artifact:") ? input.resource.slice(9) : undefined;
-      if (input.resource.startsWith("tree:") || input.resource.startsWith("probe-")) {
+      if (input.resource === "environment:host" || input.resource.startsWith("tree:") || input.resource.startsWith("probe-")) {
         checked++;
         if (!await inputMatches(input, snapshot.repository.root)) {
           changed = true; const observed = recordedPath(input.resource);
@@ -66,6 +66,7 @@ export async function retainProviders(store: SemanticStore, snapshot: Repository
   if (!parent) return [];
   const inventory = "inventory" in snapshot ? snapshot.inventory : semanticInventory(snapshot);
   const root = "root" in snapshot ? snapshot.root : snapshot.repository.root;
+  store.bindSourceRoot(root, "repository" in snapshot ? snapshot.sourceRoot : undefined);
   const rows = store.sql("SELECT partition_key,run FROM sc_partitions WHERE snapshot=?").all(parent) as Array<{ partition_key: string; run: number }>;
   const groups = new Map<string, typeof rows>();
   for (const row of rows) {
@@ -82,7 +83,9 @@ export async function retainProviders(store: SemanticStore, snapshot: Repository
         if (coverage.mappingVersion !== (row.partition_key.startsWith("clang/") ? CLANG_SEMANTIC_VERSION : SCIP_SEMANTIC_VERSION) || coverage.executionVersion && ![RUST_PROVIDER_VERSION, MANAGED_SCIP_VERSION].includes(coverage.executionVersion)) eligible = false;
       }
       const inputs = store.sql("SELECT resource,digest FROM sc_inputs WHERE run=?").all(row.run) as Array<{ resource: string; digest: string }>;
+      if (inputs.some(input => input.resource.startsWith("source:")) && !store.hasSourceRoot(row.run)) eligible = false;
       for (const input of inputs) {
+        if (input.resource.startsWith("unavailable-input:")) { eligible = false; continue; }
         if (input.resource === "project-inventory") { hasInventory = true; if (input.digest !== inventory) eligible = false; continue; }
         const key = canonical(input); let matches = checked.get(key);
         if (matches === undefined) {

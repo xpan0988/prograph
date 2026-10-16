@@ -1,0 +1,83 @@
+{
+  "node": "v25.9.0",
+  "counts": {
+    "success": true,
+    "numTotalTests": 196,
+    "numPassedTests": 196,
+    "numFailedTests": 0,
+    "numPendingTests": 0
+  },
+  "testReportSha256": "a2415c526b539e8a5f4d578a28bbce7330b9cf9a077a68a2b9604849540b5783",
+  "testDurationSeconds": 139.27,
+  "testWorkers": 4,
+  "temporaryIdleSleepAssertion": "caffeinate -i, process scoped; original deadlines unchanged",
+  "recovery": {
+    "node": "v25.9.0",
+    "probes": [
+      {
+        "point": "before-seal",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "before-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "during-publish",
+        "exitCode": 57,
+        "activeSnapshot": 1,
+        "visible": [
+          "callee"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      },
+      {
+        "point": "after-publish",
+        "exitCode": 57,
+        "activeSnapshot": 2,
+        "visible": [
+          "other"
+        ],
+        "integrity": "ok",
+        "baselineRetained": true
+      }
+    ],
+    "corruption": {
+      "refused": true,
+      "unchanged": true
+    }
+  },
+  "typecheck": "passed",
+  "completeNodeAndUiBuild": "passed",
+  "evidenceVerifier": "passed; actual original providers, registered replay, 8 native input tests, 13 maintenance tests, 7 compiler/root input tests",
+  "runtimeSourcesSha256": {
+    "src/core/adapters/contracts.ts": "59b915f3dd16fabddd63af4e7b990d980e4fbcdba097480b44745ee2a6db4986",
+    "src/core/repository/repository.ts": "05ebcf8d46ce732aca5bec0744a3417de286e126bdf1ed4c6df2badda122e253",
+    "src/core/semantic/analysis-passes.ts": "7ab7436917f083604d0be3d71c761ee356a2d1a524cb09cca85f7594d0506405",
+    "src/core/semantic/clang-inputs.ts": "ebb27fcfb6b802504a347737a580ab11d2b81fccd0b49e1a43acaf8ec90aae77",
+    "src/core/semantic/clang.ts": "d9b0cea646534a72f74ad5882d2a3c706dfee14f0bc0b5788b5922791f0d21f2",
+    "src/core/semantic/input-check.ts": "b9ccb6fc4605ef7265e587d34c7dcf11b1c7276cd20becf72f901f4c54e2d8ea",
+    "src/core/semantic/model.ts": "2633b84a962d3447fa5dfc1f8c8185f2da7bf3afa3cd55bae6f75eb8a137db73",
+    "src/core/semantic/owned-projection.ts": "d593e3f2d979025bc7ca92638ee6d9680f548762a5a025fe6af6fafba0dfc336",
+    "src/core/semantic/provider-artifacts.ts": "be1baf47465ad0951ec5f573c572485365bf618c0359e95e2a83eb63236127a2",
+    "src/core/semantic/provider-replay.ts": "84bda6dfc4321b4f70cdad08552d2b5fa063bf7091955a33cb3f4426254a5a44",
+    "src/core/semantic/provider-runs.ts": "8b76fc29c6102f3912bc494057a49ff27062f2e74789a7c1d6c40dbc0ac58ecf",
+    "src/core/semantic/scip-import.ts": "b29268d11f489df4f4ca3134cb5dc4dc12381976f563af09b1b04bd897c8e684",
+    "src/core/semantic/store.ts": "d0d3bb0195d0a94299725f6382e548ac04852b2f94aea0b004fc48c9a885c2ca",
+    "src/core/semantic/typescript.ts": "d2ae0ca1c2c7bb18f7d5510fbdefd255303a0aa1493efb1ff3604ccfcb688936"
+  },
+  "scope": "Stage 5 input context and resource evidence milestone; full randomized multi-provider oracle and default authority migration remain incomplete"
+}

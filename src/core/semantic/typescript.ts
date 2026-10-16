@@ -29,7 +29,7 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
   for (const file of selected) project.addSourceFileAtPath(snapshot.absoluteFiles.get(file)!);
   const program = project?.getProgram().compilerObject;
   const context = unit.context;
-  const inputFingerprint = digest(canonical({ plan: unit.fingerprint, compiler: program.getSourceFiles().map(source => [source.fileName, digest(source.text)]).sort() }));
+  const inputFingerprint = digest(canonical({ sourceBinding: store.sourceBindingFingerprint(), plan: unit.fingerprint, compiler: program.getSourceFiles().map(source => [source.fileName, digest(source.text)]).sort() }));
   const provenance: Provenance = { provider: "typescript/compiler-api", version: `${ts.version}/${TYPESCRIPT_SEMANTIC_VERSION}`, basis: "compiler", method: "compiler-binding", context, inputFingerprint };
   const run = store.begin(unit.key, context, inputFingerprint);
   store.batch(run, () => { for (const input of unit.probes) store.input(run, input.resource, input.digest); });
@@ -180,7 +180,7 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
         });
         // Resolution still observes the complete compiler project. Output ownership is per
         // document: unchanged output (including inferred signatures/targets) reuses its seal.
-        const fingerprint = digest(canonical(["typescript-document-ownership-1", context, file, digest(source.text),
+        const fingerprint = digest(canonical(["typescript-document-ownership-1", context, store.sourceBindingFingerprint(), file, digest(source.text),
           TYPESCRIPT_SEMANTIC_VERSION, pending.map(fact => ({ ...fact, provenance: { ...fact.provenance, inputFingerprint: "" } }))]));
         const partition = `${unit.key}/document:${file}`; const selector = `typescript:${context}:document:${file}`;
         const cached = store.reusable(partition, context, fingerprint);
@@ -221,7 +221,7 @@ async function reusableUnit(store: SemanticStore, snapshot: RepositorySnapshot, 
   const row = store.sql("SELECT context,coverage_json FROM sc_runs WHERE id=?").get(run) as { context: string; coverage_json: string };
   const coverage = JSON.parse(row.coverage_json) as Record<string, unknown>;
   // Reuse remains conservative: closed, error-free local units plus observed negative search inputs.
-  if (row.context !== unit.context || coverage.mappingVersion !== TYPESCRIPT_SEMANTIC_VERSION || coverage.unresolved !== 0 || coverage.compilerErrors !== 0 || coverage.externalImports !== 0) return undefined;
+  if (row.context !== unit.context || coverage.mappingVersion !== TYPESCRIPT_SEMANTIC_VERSION || coverage.unresolved !== 0 || coverage.compilerErrors !== 0 || coverage.externalImports !== 0 || !store.hasSourceRoot(run)) return undefined;
   const inputs = store.sql("SELECT resource,digest FROM sc_inputs WHERE run=?").all(run) as Array<{ resource: string; digest: string }>;
   if (!inputs.some(input => input.resource === "inventory" && input.digest === unit.fingerprint)) return undefined;
   for (const input of inputs) {
@@ -250,6 +250,7 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
   const inputFingerprint = digest(canonical([...snapshot.fileContents].map(([file, text]) => [file, digest(text)]).sort()));
   const runs: number[] = [...(owned?.runs ?? [])]; const outcomes: Record<string, unknown>[] = [];
   try {
+    store.bindSourceRoot(snapshot.repository.root, snapshot.sourceRoot);
     if (owned && owned.parent !== parent) throw Error("Owned analysis parent changed before publication");
     if (!owned) {
     const bridge = store.begin("legacy/full", "legacy", inputFingerprint);

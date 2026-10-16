@@ -1,0 +1,418 @@
+{
+  "scope": "measured pinned C99 source slice, not full C/C++ SDK/build/incremental qualification",
+  "current": {
+    "measuredAt": "2026-10-16T12:28:20.730Z",
+    "node": "v25.9.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "input": {
+      "repository": "DaveGamble/cJSON",
+      "tag": "v1.7.19",
+      "commit": "c859b25da02955fef659d658b8f324b5cde87be3",
+      "files": {
+        "cJSON.c": {
+          "sha256": "298581a04a36c0165da4b0aade235c23088cb2faa58651d720ea2f3706ed0b0d",
+          "bytes": 80399,
+          "newlines": 3191
+        },
+        "cJSON.h": {
+          "sha256": "25b0145150d500498e4d209cec69c18c42cf818bffcc54690be3b895a2a16dee",
+          "bytes": 16394,
+          "newlines": 306
+        },
+        "LICENSE": {
+          "sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+          "bytes": 1084,
+          "newlines": 20
+        },
+        "README.md": {
+          "sha256": "c588125722bcd6e91e7e322fe9ce90252a5eca5c9fdf81ec967a3d45102010d6",
+          "bytes": 27632,
+          "newlines": 590
+        }
+      }
+    },
+    "repository": "/private/tmp/prograph-stage5f-cjson-vgj_t25e",
+    "scope": "cJSON.c/cJSON.h from v1.7.19; fixed Clang C99 syntax-only context; warm local sample, not full project/build/platform qualification; child/compiler RSS not measured",
+    "first": {
+      "snapshot": 13,
+      "context": "sc2:clang-context:27a11eb92976d28378934359f94ba79ccaa74758e4be222d6974621c55c7adf3",
+      "coverage": {
+        "status": "partial",
+        "provider": "clang/compiler-ast",
+        "mappingVersion": "3",
+        "language": "c",
+        "definitions": "partial",
+        "references": "partial",
+        "calls": "partial",
+        "unresolved": 68,
+        "macroSkipped": 57,
+        "negativeSearches": "unqualified",
+        "searchInputs": 1334,
+        "gaps": [
+          "Static declaration binding, not runtime dispatch or cross-translation-unit linking",
+          "Macro expansion anchors, constructors without target IDs and external declarations are not qualified",
+          "Recorded build may use another compiler; this is explicit Clang syntax-only extraction",
+          "Unqualified include/import/include_next trace",
+          "Nonliteral/pasted/embedded header queries require native preprocessor callbacks; negative searches are unqualified",
+          "Header aliases/module pragmas require native preprocessor callbacks"
+        ]
+      },
+      "durationMs": 1128,
+      "compiler": {
+        "executable": "/usr/bin/clang",
+        "version": "Apple clang version 21.0.0 (clang-2100.0.123.102)"
+      },
+      "bounds": {
+        "maxOutputBytes": 33554432,
+        "maxSourceBytes": 8388608,
+        "timeoutMs": 30000,
+        "batch": 500,
+        "maxNodes": 200000
+      }
+    },
+    "documentation": {
+      "elapsedMs": 1757.869291,
+      "state": "stale",
+      "reusedNativeOwners": false
+    },
+    "headerEdit": {
+      "elapsedMs": 1879.737083,
+      "state": "stale",
+      "native": {
+        "snapshot": 16,
+        "claims": 4865,
+        "hash": "7a32a3c5e5d78e8a44f802b0f74f1b982223966cdcdbca4a7286d6c09dec34f4",
+        "runs": [
+          {
+            "partition_key": "clang/c/project:compile_commands.json#893f1c2209f521243a35",
+            "run": 249
+          },
+          {
+            "partition_key": "clang/c/project:compile_commands.json#893f1c2209f521243a35/pass:call-summary@1",
+            "run": 250
+          }
+        ],
+        "coverage": [
+          {
+            "calls": "partial",
+            "definitions": "partial",
+            "gaps": [
+              "Static declaration binding, not runtime dispatch or cross-translation-unit linking",
+              "Macro expansion anchors, constructors without target IDs and external declarations are not qualified",
+              "Recorded build may use another compiler; this is explicit Clang syntax-only extraction",
+              "Unqualified include/import/include_next trace",
+              "Nonliteral/pasted/embedded header queries require native preprocessor callbacks; negative searches are unqualified",
+              "Header aliases/module pragmas require native preprocessor callbacks"
+            ],
+            "language": "c",
+            "macroSkipped": 57,
+            "mappingVersion": "3",
+            "negativeSearches": "unqualified",
+            "provider": "clang/compiler-ast",
+            "references": "partial",
+            "searchInputs": 1334,
+            "status": "partial",
+            "unresolved": 68
+          },
+          {
+            "bounds": {
+              "batch": 1000,
+              "maxRows": 1000000
+            },
+            "configurationFingerprint": "static-target-policy-1",
+            "coverageBehavior": "partial-static-targets",
+            "dependencies": [],
+            "inputDomains": [
+              "native-semantic"
+            ],
+            "invalidation": "indexing-unit-and-selectors",
+            "negativeDependencies": [
+              "calltarget-candidate-set"
+            ],
+            "ownershipShard": "indexing-unit",
+            "pass": "call-summary",
+            "reads": [
+              "common.CallSite",
+              "common.CallTarget"
+            ],
+            "requiredCapabilities": [
+              "callsite",
+              "static-calltarget"
+            ],
+            "selectorDependencies": [
+              "indexing-unit-inputs"
+            ],
+            "status": "partial",
+            "version": "1",
+            "writes": [
+              "common.CallSummary"
+            ]
+          }
+        ]
+      }
+    },
+    "cleanOracle": {
+      "index": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-cjson-clean-1EZbbT",
+      "hash": "7a32a3c5e5d78e8a44f802b0f74f1b982223966cdcdbca4a7286d6c09dec34f4",
+      "claims": 4865,
+      "exactVisibleClaimKeys": true
+    },
+    "navigation": [
+      {
+        "key": "sc2:clang-symbol:1c007263792f7466af83cbec6a70702400ef9b95fd7a0975dc223a1da5645af9",
+        "definition": 2,
+        "callers": 0,
+        "callees": 1
+      }
+    ],
+    "integrity": {
+      "check": "ok",
+      "foreignKeys": []
+    },
+    "qualification": "partial-compiler-observations",
+    "negativeSearches": "unqualified",
+    "originalSourcesRestored": true,
+    "finalIndexState": "historical after restoring benchmark header/docs edits; no final freshness claim",
+    "elapsedMs": 8810.812249999999,
+    "nodePeakRssKiB": 487104
+  },
+  "rejected16MiB": {
+    "measuredAt": "2026-10-16T11:25:41.308Z",
+    "node": "v25.9.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "input": {
+      "repository": "DaveGamble/cJSON",
+      "tag": "v1.7.19",
+      "commit": "c859b25da02955fef659d658b8f324b5cde87be3",
+      "files": {
+        "cJSON.c": {
+          "sha256": "298581a04a36c0165da4b0aade235c23088cb2faa58651d720ea2f3706ed0b0d",
+          "bytes": 80399,
+          "newlines": 3191
+        },
+        "cJSON.h": {
+          "sha256": "25b0145150d500498e4d209cec69c18c42cf818bffcc54690be3b895a2a16dee",
+          "bytes": 16394,
+          "newlines": 306
+        },
+        "LICENSE": {
+          "sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+          "bytes": 1084,
+          "newlines": 20
+        },
+        "README.md": {
+          "sha256": "c588125722bcd6e91e7e322fe9ce90252a5eca5c9fdf81ec967a3d45102010d6",
+          "bytes": 27632,
+          "newlines": 590
+        }
+      }
+    },
+    "repository": "/private/tmp/prograph-stage5f-cjson-vgj_t25e",
+    "scope": "cJSON.c/cJSON.h from v1.7.19; fixed Clang C99 syntax-only context; warm local sample, not full project/build/platform qualification; child/compiler RSS not measured",
+    "qualification": "unavailable",
+    "reason": "RangeError [ERR_CHILD_PROCESS_STDIO_MAXBUFFER]: stdout maxBuffer length exceeded",
+    "originalSourcesRestored": true,
+    "finalIndexState": "historical after restoring benchmark header/docs edits; no final freshness claim",
+    "elapsedMs": 1040.777875,
+    "nodePeakRssKiB": 327184
+  },
+  "cap32OnlyPrototype": {
+    "measuredAt": "2026-10-16T11:41:43.069Z",
+    "node": "v25.9.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "input": {
+      "repository": "DaveGamble/cJSON",
+      "tag": "v1.7.19",
+      "commit": "c859b25da02955fef659d658b8f324b5cde87be3",
+      "files": {
+        "cJSON.c": {
+          "sha256": "298581a04a36c0165da4b0aade235c23088cb2faa58651d720ea2f3706ed0b0d",
+          "bytes": 80399,
+          "newlines": 3191
+        },
+        "cJSON.h": {
+          "sha256": "25b0145150d500498e4d209cec69c18c42cf818bffcc54690be3b895a2a16dee",
+          "bytes": 16394,
+          "newlines": 306
+        },
+        "LICENSE": {
+          "sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+          "bytes": 1084,
+          "newlines": 20
+        },
+        "README.md": {
+          "sha256": "c588125722bcd6e91e7e322fe9ce90252a5eca5c9fdf81ec967a3d45102010d6",
+          "bytes": 27632,
+          "newlines": 590
+        }
+      }
+    },
+    "repository": "/private/tmp/prograph-stage5f-cjson-vgj_t25e",
+    "scope": "cJSON.c/cJSON.h from v1.7.19; fixed Clang C99 syntax-only context; warm local sample, not full project/build/platform qualification; child/compiler RSS not measured",
+    "first": {
+      "snapshot": 3,
+      "context": "sc2:clang-context:2e0fd6b8500c0f1f0381d96768f4bc582fd0032020d98b9f1d5bf4656f74660a",
+      "coverage": {
+        "status": "partial",
+        "provider": "clang/compiler-ast",
+        "mappingVersion": "3",
+        "language": "c",
+        "definitions": "partial",
+        "references": "partial",
+        "calls": "partial",
+        "unresolved": 130,
+        "macroSkipped": 173,
+        "negativeSearches": "unqualified",
+        "searchInputs": 1332,
+        "gaps": [
+          "Static declaration binding, not runtime dispatch or cross-translation-unit linking",
+          "Macro expansion anchors, constructors without target IDs and external declarations are not qualified",
+          "Recorded build may use another compiler; this is explicit Clang syntax-only extraction",
+          "Unqualified include/import/include_next trace",
+          "Nonliteral/pasted/embedded header queries require native preprocessor callbacks; negative searches are unqualified"
+        ]
+      },
+      "durationMs": 1197,
+      "compiler": {
+        "executable": "/usr/bin/clang",
+        "version": "Apple clang version 21.0.0 (clang-2100.0.123.102)"
+      },
+      "bounds": {
+        "maxOutputBytes": 33554432,
+        "maxSourceBytes": 8388608,
+        "timeoutMs": 30000,
+        "batch": 500,
+        "maxNodes": 200000
+      }
+    },
+    "documentation": {
+      "elapsedMs": 1777.6273339999998,
+      "state": "stale",
+      "reusedNativeOwners": false
+    },
+    "headerEdit": {
+      "elapsedMs": 1845.1309579999997,
+      "state": "stale",
+      "native": {
+        "snapshot": 6,
+        "claims": 4379,
+        "hash": "adef71afa08e10223ff6ec4076e2ae5e3fb4ec094dbd2b5828dde487c1f23e11",
+        "runs": [
+          {
+            "partition_key": "clang/c/project:compile_commands.json#893f1c2209f521243a35",
+            "run": 102
+          },
+          {
+            "partition_key": "clang/c/project:compile_commands.json#893f1c2209f521243a35/pass:call-summary@1",
+            "run": 103
+          }
+        ],
+        "coverage": [
+          {
+            "calls": "partial",
+            "definitions": "partial",
+            "gaps": [
+              "Static declaration binding, not runtime dispatch or cross-translation-unit linking",
+              "Macro expansion anchors, constructors without target IDs and external declarations are not qualified",
+              "Recorded build may use another compiler; this is explicit Clang syntax-only extraction",
+              "Unqualified include/import/include_next trace",
+              "Nonliteral/pasted/embedded header queries require native preprocessor callbacks; negative searches are unqualified"
+            ],
+            "language": "c",
+            "macroSkipped": 173,
+            "mappingVersion": "3",
+            "negativeSearches": "unqualified",
+            "provider": "clang/compiler-ast",
+            "references": "partial",
+            "searchInputs": 1332,
+            "status": "partial",
+            "unresolved": 130
+          },
+          {
+            "bounds": {
+              "batch": 1000,
+              "maxRows": 1000000
+            },
+            "configurationFingerprint": "static-target-policy-1",
+            "coverageBehavior": "partial-static-targets",
+            "dependencies": [],
+            "inputDomains": [
+              "native-semantic"
+            ],
+            "invalidation": "indexing-unit-and-selectors",
+            "negativeDependencies": [
+              "calltarget-candidate-set"
+            ],
+            "ownershipShard": "indexing-unit",
+            "pass": "call-summary",
+            "reads": [
+              "common.CallSite",
+              "common.CallTarget"
+            ],
+            "requiredCapabilities": [
+              "callsite",
+              "static-calltarget"
+            ],
+            "selectorDependencies": [
+              "indexing-unit-inputs"
+            ],
+            "status": "partial",
+            "version": "1",
+            "writes": [
+              "common.CallSummary"
+            ]
+          }
+        ]
+      }
+    },
+    "cleanOracle": {
+      "index": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-cjson-clean-z0WRxK",
+      "hash": "adef71afa08e10223ff6ec4076e2ae5e3fb4ec094dbd2b5828dde487c1f23e11",
+      "claims": 4379,
+      "exactVisibleClaimKeys": true
+    },
+    "qualification": "unavailable",
+    "reason": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(found.length)\n",
+    "originalSourcesRestored": true,
+    "finalIndexState": "historical after restoring benchmark header/docs edits; no final freshness claim",
+    "elapsedMs": 7556.8523749999995,
+    "nodePeakRssKiB": 476240
+  },
+  "compilerOutputAndOsMetricExperiment": {
+    "scope": "isolated output-cap support experiment; production resource bound unchanged; not accepted native ingestion or publication benchmark",
+    "command": [
+      "/usr/bin/time",
+      "-l",
+      "-o",
+      "/private/tmp/prograph-stage5f-cjson-ast-time.txt",
+      "/usr/bin/clang",
+      "-std=c99",
+      "-I.",
+      "-x",
+      "c",
+      "--no-default-config",
+      "-fno-implicit-modules",
+      "-fno-implicit-module-maps",
+      "-fsyntax-only",
+      "-Xclang",
+      "-ast-dump=json",
+      "/private/tmp/prograph-stage5f-cjson-vgj_t25e/cJSON.c"
+    ],
+    "exitCode": 0,
+    "astBytes": 23572084,
+    "innerTreeNodes": 18378,
+    "productionMaxOutputBytes": 16777216,
+    "stderr": "",
+    "rawCompilerMetrics": "        0.07 real         0.04 user         0.01 sys\n            36241408  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                3956  page reclaims\n                 227  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                 111  voluntary context switches\n                  26  involuntary context switches\n           123290174  instructions retired\n            40242641  cycles elapsed\n             2605368  peak memory footprint\n",
+    "priorSandboxMetricAttempt": "time sysctl kern.clockrate denied; not used as accepted measurement"
+  },
+  "notes": [
+    "Prototype changed only compiled output admission in an isolated runtime and exposed missing macro-return-type public API anchors.",
+    "Final runtime validates direct identifier bytes, preserves expanded-name gaps, admits at most 32 MiB output and 200k AST nodes.",
+    "Compiler OS metric is a separate syntax-only run; Node peak covers the complete multi-analysis/oracle process.",
+    "Source originals are restored after benchmarking; the final saved test index is explicitly historical."
+  ]
+}
