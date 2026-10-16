@@ -1,0 +1,47 @@
+{
+  "run": 38926499734,
+  "attempt": 1,
+  "commit": "868766b1787dc60c88b827fe37fe62e5f40f296b",
+  "url": "https://github.com/xpan0988/prograph/actions/runs/38926499734",
+  "accepted": false,
+  "jobs": [
+    {
+      "node": 20,
+      "job": 117059267597,
+      "conclusion": "success",
+      "testsPassed": 198,
+      "skippedTests": 0,
+      "completedOracleCheckpoints": 18,
+      "reason": "Complete qualification, build/recovery/verifier executed",
+      "priorWriterUpgradePassed": true,
+      "timeoutEvidence": []
+    },
+    {
+      "node": 22,
+      "job": 117059267448,
+      "conclusion": "failure",
+      "testsPassed": 197,
+      "skippedTests": 0,
+      "completedOracleCheckpoints": 13,
+      "reason": "Aggregate 2400000 ms correctness test container timeout; downstream build/recovery/verifier skipped; not accepted",
+      "priorWriterUpgradePassed": true,
+      "timeoutEvidence": [
+        "2026-10-16T16:32:25.9300678Z Error: Test timed out in 2400000ms."
+      ]
+    },
+    {
+      "node": 24,
+      "job": 117059267581,
+      "conclusion": "failure",
+      "testsPassed": 197,
+      "skippedTests": 0,
+      "completedOracleCheckpoints": 11,
+      "reason": "Aggregate 2400000 ms correctness test container timeout; downstream build/recovery/verifier skipped; not accepted",
+      "priorWriterUpgradePassed": true,
+      "timeoutEvidence": [
+        "2026-10-16T16:32:27.4351025Z Error: Test timed out in 2400000ms."
+      ]
+    }
+  ],
+  "correction": "90-minute aggregate correctness container, 120-minute CI job; same 18 actual independent rebuilds, unchanged provider/query deadlines and publication benchmark contract"
+}

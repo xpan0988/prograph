@@ -133,8 +133,9 @@ test.skipIf(!profilesFile || !analyzer || !toolchain)("seeded multi-provider edi
   }
   expect(evidence).toHaveLength(18);
 // This is 18 independent seven-language extractions, not a production request.
-// Per-provider deadlines/admission limits remain unchanged.
-}, 2400000);
+// Linux Node 22/24 measured 2-6 minutes per checkpoint; the aggregate
+// correctness container must hold all 18. Production deadlines remain unchanged.
+}, 5400000);
 
 const baselineRuntime = process.env.PROGRAPH_TEST_BASELINE_RUNTIME;
 test.skipIf(!profilesFile || !baselineRuntime)("actual accepted writer upgrade invalidates prior mappings, replays registered producers and preserves pinned history through GC", async () => {
