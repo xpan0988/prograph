@@ -27,7 +27,7 @@ repository path
   -> CLI, localhost API/UI, and MCP stdio queries
 ```
 
-During this compatibility period, `graph.sqlite` keeps schema `1.2.0` and remains authoritative for legacy CLI/MCP/API/UI behavior. `semantic.sqlite` declares Format 2 / schema `2.0.0-step2.2` and serves additive `semantic` CLI commands, `query_semantic` MCP and `/api/semantic/:operation` routes. Those operations use indexed bounded navigation and communicate partial coverage and snapshot-only freshness. The two stores do not form one atomic all-domain publication; default activation and full precise polyglot qualification remain deferred.
+During this compatibility period, `graph.sqlite` keeps schema `1.2.0` and remains authoritative for legacy CLI/MCP/API/UI behavior. `semantic.sqlite` declares Format 2 / schema `2.0.0-step2.11` and serves additive `semantic` CLI commands, `query_semantic` MCP and `/api/semantic/:operation` routes. Those operations use indexed bounded navigation and communicate partial coverage and snapshot-only freshness. Analysis metadata now has an immutable snapshot-bound receipt in the semantic publication transaction; it explicitly does not certify compatibility readiness. Status marks interrupted compatibility metadata stale. The two stores do not form one atomic all-domain publication; default activation and full precise polyglot qualification remain deferred.
 
 ### Repository Scanner
 

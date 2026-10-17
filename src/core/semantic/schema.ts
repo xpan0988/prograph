@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS sc_selector_gates(run INTEGER NOT NULL,key TEXT NOT N
 CREATE INDEX IF NOT EXISTS sc_selector_gate_key ON sc_selector_gates(key,run);
 CREATE TABLE IF NOT EXISTS sc_inputs(run INTEGER NOT NULL REFERENCES sc_runs(id),resource TEXT NOT NULL,digest TEXT NOT NULL,PRIMARY KEY(run,resource));
 CREATE TABLE IF NOT EXISTS sc_snapshots(id INTEGER PRIMARY KEY,parent INTEGER REFERENCES sc_snapshots(id),key TEXT NOT NULL,created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS sc_snapshot_reports(snapshot INTEGER PRIMARY KEY REFERENCES sc_snapshots(id) ON DELETE CASCADE,key TEXT NOT NULL,json TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS sc_snapshot_pins(snapshot INTEGER NOT NULL REFERENCES sc_snapshots(id),label TEXT NOT NULL,PRIMARY KEY(snapshot,label));
 CREATE TABLE IF NOT EXISTS sc_origin_runs(id TEXT PRIMARY KEY,partition_key TEXT NOT NULL,context TEXT NOT NULL,input_fingerprint TEXT NOT NULL,state TEXT NOT NULL,coverage_json TEXT NOT NULL,created_at TEXT NOT NULL,digest TEXT,inputs_json TEXT NOT NULL,selectors_json TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS sc_claim_origins(claim INTEGER NOT NULL REFERENCES sc_claims(id),origin TEXT NOT NULL REFERENCES sc_origin_runs(id),PRIMARY KEY(claim,origin));

@@ -8,6 +8,7 @@ import type { GraphData } from "../graph/schema.js";
 import { canonical, digest, semanticKey, TYPESCRIPT_SEMANTIC_VERSION, type FactInput, type Provenance } from "./model.js";
 import { SourceCoordinates } from "./coordinates.js";
 import { SemanticStore } from "./store.js";
+import type { SnapshotReportInput } from "./snapshot-report.js";
 import { discoverProjects, type ProjectUnit } from "./projects.js";
 import { executePasses, qualifiedCallProjection } from "./passes.js";
 import { retainProviders, inventoryFromDisk, semanticInventory } from "./provider-runs.js";
@@ -242,7 +243,7 @@ async function reusableUnit(store: SemanticStore, snapshot: RepositorySnapshot, 
   return [run, ...documents.map(([, id]) => id)];
 }
 
-export async function indexSemanticFoundation(snapshot: RepositorySnapshot, graph: GraphData, filename: string, owned?: { runs: number[]; parent: number | undefined }): Promise<SemanticIndexResult> {
+export async function indexSemanticFoundation(snapshot: RepositorySnapshot, graph: GraphData, filename: string, owned?: { runs: number[]; parent: number | undefined }, publication?: SnapshotReportInput): Promise<SemanticIndexResult> {
   const started = performance.now(); const plan = discoverProjects(snapshot);
   if (plan.diagnostics.some(message => message.startsWith("Invalid TypeScript project")) && !plan.units.some(unit => unit.language === "typescript" && unit.project !== "<inferred>")) throw Error(plan.diagnostics.join("; "));
   const store = new SemanticStore(filename); const parent = store.activeSnapshot();
@@ -294,8 +295,10 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
       if (!await inputMatches(input, snapshot.repository.root)) throw Error(`Semantic input changed before publication: ${input.resource}`);
     }
     if ((await inventoryFromDisk(snapshot.repository.root, path.dirname(filename), 200000)).inventory !== semanticInventory(snapshot)) throw Error("Repository inventory changed before semantic publication");
-    const snapshotId = store.publish(runs, parent, native.registrations);
     const tsUnits = plan.units.filter(unit => unit.language === "typescript");
+    const context = (tsUnits.find(unit => unit.key === "typescript/root") ?? tsUnits[0])?.context ?? "none";
+    const report: SnapshotReportInput | undefined = publication ? { ...publication, manifest: { ...publication.manifest, semanticCore: { format: 2, status: outcomes.length || nativeRuns.length ? "partial" : "unavailable", context, durationMs: Math.round(performance.now() - started) } } } : undefined;
+    const snapshotId = store.publish(runs, parent, native.registrations, report);
     return { snapshot: snapshotId, context: (tsUnits.find(unit => unit.key === "typescript/root") ?? tsUnits[0])?.context ?? "none", inputFingerprint, coverage: { status: outcomes.length || nativeRuns.length ? "partial" : "unavailable", projects: tsUnits.length, units: outcomes, providers: native.outcomes, reusedUnits: outcomes.filter(outcome => outcome.reused).length, retainedNativeRuns: retained.length }, durationMs: Math.round(performance.now() - started) };
   } finally { store.close(); }
 }

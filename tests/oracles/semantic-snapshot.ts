@@ -5,6 +5,7 @@ import { readFile, realpath } from "node:fs/promises";
 import { SemanticStore } from "../../src/core/semantic/store.js";
 import { canonical, digest } from "../../src/core/semantic/model.js";
 import { ScipStream, decodeScip } from "../../src/core/semantic/scip-wire.js";
+import { readSnapshotReport } from "../../src/core/semantic/snapshot-report.js";
 
 type Row = Record<string, unknown>;
 /** Execution paths/raw byte digests differ in independent tool runs. Retain and
@@ -92,7 +93,17 @@ export async function semanticSnapshot(index: string) {
     const calls = store.sql(`SELECT s.key AS caller,o.key AS callee,c.site_count,c.confidence FROM sc_calls c JOIN sc_entities s ON s.id=c.caller JOIN sc_entities o ON o.id=c.callee WHERE snapshot=?`).all(snapshot);
     const projections = store.sql(`SELECT r.partition_key,p.kind,p.ordinal,c.key FROM sc_partitions r JOIN sc_projection_rows p ON p.run=r.run JOIN sc_claims c ON c.id=p.claim WHERE r.snapshot=?`).all(snapshot) as Array<Row & { key: string }>;
     assert.equal(store.db.pragma("integrity_check", { simple: true }), "ok"); assert.deepEqual(store.db.pragma("foreign_key_check"), []);
+    const report = readSnapshotReport(store.db, snapshot);
+    let analysisReport: unknown;
+    if (report) {
+      const { generatedAt: _generated, analysisDuration: _duration, adapterRuns, semanticCore, ...manifest } = report.manifest;
+      const { durationMs: _semanticDuration, snapshot: _snapshot, ...semantic } = semanticCore!;
+      const { generatedAt: _stateGenerated, ...stateHeader } = report.stateHeader;
+      analysisReport = { format: report.format, phase: report.phase, compatibilityReady: report.compatibilityReady, sourceCatalogue: report.sourceCatalogue, sourceBinding: report.sourceBinding, stateHeader,
+        manifest: { ...manifest, semanticCore: semantic, adapterRuns: adapterRuns.map(({ durationMs: _time, ...run }) => run) } };
+    }
     return {
+      analysisReports: analysisReport ? [canonical(analysisReport)] : [],
       facts: [...new Set(facts)].sort(), claims: visible.map(row => claimKey(row.claim)).sort(),
       coverage: runs.map(run => canonical([run.partition_key, JSON.parse(run.coverage_json)])).sort(),
       navigation: navigation.map(row => canonical({ ...row, claim: normalized(row.claim) })).sort(),

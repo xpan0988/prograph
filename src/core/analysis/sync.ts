@@ -153,9 +153,11 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
   const edgeChanges = identityChanges(previous.edges, graph.edges);
   await mkdir(path.join(status.indexDirectory, "exports"), { recursive: true });
   // Preserve the qualified legacy isolated-file path; the new slice still replaces its whole project.
+  const state = createIndexState(scan.snapshot, manifest);
+  const { files: _sourceFiles, ...stateHeader } = state;
   const semanticStarted = performance.now();
   try {
-    const semantic = await indexSemanticFoundation(scan.snapshot, graph, path.join(status.indexDirectory, "semantic.sqlite"), owned);
+    const semantic = await indexSemanticFoundation(scan.snapshot, graph, path.join(status.indexDirectory, "semantic.sqlite"), owned, { manifest, stateHeader });
     manifest.semanticCore = { format: 2, status: semantic.coverage.status === "unavailable" ? "unavailable" : "partial", snapshot: semantic.snapshot, context: semantic.context, durationMs: semantic.durationMs };
   } catch (error) {
     manifest.semanticCore = { format: 2, status: "failed", durationMs: Math.round(performance.now() - semanticStarted), reason: String(error) };
@@ -168,7 +170,7 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
     writeFile(path.join(status.indexDirectory, "exports", "graph.json"), `${JSON.stringify(graph, null, 2)}\n`),
     writeFile(path.join(status.indexDirectory, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`),
     writeFile(path.join(status.indexDirectory, "diagnostics.json"), `${JSON.stringify(graph.diagnostics, null, 2)}\n`),
-    writeIndexState(status.indexDirectory, createIndexState(scan.snapshot, manifest)),
+    writeIndexState(status.indexDirectory, state),
   ]);
   const statusAfter = await repositoryStatus(status.repositoryRoot, status.indexDirectory);
   return {
@@ -216,11 +218,13 @@ async function syncRepositoryWithLease(input: string, index?: string): Promise<S
     readJson<GraphData>(path.join(statusBefore.indexDirectory, "exports", "graph.json")),
     readJson<AnalysisManifest>(path.join(statusBefore.indexDirectory, "manifest.json")),
   ]);
-  if (previous && previousManifest && !statusBefore.schemaChanged && !statusBefore.adapterVersionsChanged && !statusBefore.configChanged && !statusBefore.semanticInputsChanged) {
+  if (previous && previousManifest && !statusBefore.repositoryChanged && statusBefore.semanticPublication?.state !== "out-of-sync" && !statusBefore.schemaChanged && !statusBefore.adapterVersionsChanged && !statusBefore.configChanged && !statusBefore.semanticInputsChanged) {
     const incremental = await tryIsolatedIncremental(statusBefore, previous, previousManifest, started);
     if (incremental) return incremental;
   }
-  const fallbackReason = statusBefore.schemaChanged
+  const fallbackReason = statusBefore.repositoryChanged
+    ? "repository identity or root changed"
+    : statusBefore.schemaChanged
     ? "graph schema changed"
     : statusBefore.adapterVersionsChanged
       ? "adapter version changed"
@@ -228,6 +232,8 @@ async function syncRepositoryWithLease(input: string, index?: string): Promise<S
         ? "configuration changed"
         : statusBefore.semanticInputsChanged
           ? "recorded semantic dependency input changed"
+        : statusBefore.semanticPublication?.state === "out-of-sync"
+          ? "semantic publication and compatibility metadata are out of sync"
         : "changed files have dependency, framework, or unresolved relationships requiring a full adapter rebuild";
   const analysis = await analyzeRepository(statusBefore.repositoryRoot, { output: statusBefore.indexDirectory });
   const statusAfter = await repositoryStatus(statusBefore.repositoryRoot, statusBefore.indexDirectory);

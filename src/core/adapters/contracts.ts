@@ -4,6 +4,8 @@ import type { LoadedConfig } from "../config/config.js";
 export interface RepositorySnapshot {
   /** Physical source root observed before discovery; retained separately from logical repository identity. */
   sourceRoot?: string;
+  /** Captured raw ProGraph configuration, even when excluded from source globs. */
+  configurationInput?: string;
   repository: RepositoryMetadata;
   config: LoadedConfig;
   files: string[];

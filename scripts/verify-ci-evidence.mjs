@@ -22,7 +22,7 @@ const inputWitnesses = tests.testResults.find(file => /[/\\]semantic-inputs\.tes
 assert.ok(inputWitnesses && inputWitnesses.assertionResults.length >= 7 && inputWitnesses.assertionResults.every(test => test.status === 'passed'), 'Compiler inputs and source-root binding qualification must execute');
 const oracle = tests.testResults.find(file => /[/\\]semantic-multiprovider\.test\.ts$/.test(file.name));
 assert.ok(oracle && oracle.assertionResults.length >= 2 && oracle.assertionResults.every(test => test.status === 'passed'), 'Actual multi-provider and accepted-writer upgrade oracles must execute');
-for (const [suite, count] of [['provider-guard', 3], ['index-execution', 5], ['watch-isolation', 2], ['index-provider-cli', 6], ['semantic-diagnostics', 3]]) {
+for (const [suite, count] of [['provider-guard', 3], ['index-execution', 5], ['watch-isolation', 2], ['index-provider-cli', 6], ['semantic-diagnostics', 3], ['snapshot-report', 5]]) {
   const file = tests.testResults.find(file => file.name.replaceAll('\\', '/').endsWith(`/${suite}.test.ts`));
   assert.ok(file && file.assertionResults.length >= count && file.assertionResults.every(test => test.status === 'passed'), `Actual ${suite} qualification must execute`);
 }

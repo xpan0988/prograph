@@ -122,7 +122,10 @@ test("a blocked legacy writer leaves status/navigation admitted and cancelled wo
   try {
     await workLeasePresent(index);
     await expect(executeIndex({ operation: "sync", repository, index }, { timeoutMs: 30 })).rejects.toMatchObject({ code: "INDEX_DEADLINE" });
-    expect((await executeIndex({ operation: "status", repository, index })).state).toBe("fresh");
+    const until = performance.now() + 10000;
+    while (Number((semantic.prepare("SELECT value FROM sc_meta WHERE key='active'").get() as { value: string }).value) === snapshot && performance.now() < until) await new Promise(resolve => setTimeout(resolve, 20));
+    expect(Number((semantic.prepare("SELECT value FROM sc_meta WHERE key='active'").get() as { value: string }).value)).toBeGreaterThan(snapshot);
+    expect(await executeIndex({ operation: "status", repository, index })).toMatchObject({ state: "stale", semanticPublication: { state: "out-of-sync" } });
     expect(await executeRead(path.join(index, "graph.sqlite"), "legacy", "symbol", ["__missing__"])).toBeUndefined();
     controller.abort(); const outcome = await running; expect(outcome, "error" in outcome ? String(outcome.error) : "unexpected completion").toHaveProperty("error.code", "INDEX_CANCELLED");
     expect(outcome).toHaveProperty("error.message", expect.stringContaining("may already have committed"));

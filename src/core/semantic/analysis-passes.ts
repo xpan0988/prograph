@@ -65,7 +65,7 @@ export async function deriveOwnedAnalysis(snapshot: RepositorySnapshot, source: 
     const parent = store.activeSnapshot();
     const context = semanticKey("analysis-context", [snapshot.repository.identity, OWNED_PASS_VERSION]);
     const fingerprint = digest(canonical({ sourceBinding: store.sourceBindingFingerprint(), files: [...snapshot.fileContents].map(([file, text]) => [file, digest(text)]).sort(),
-      config: snapshot.config, passes: ordered.map(pass => passContract(pass)), nodes: [...source.nodes].sort((a, b) => a.id.localeCompare(b.id)), edges: [...source.edges].sort((a, b) => a.id.localeCompare(b.id)) }));
+      config: snapshot.config, configurationInput: snapshot.configurationInput ?? "not-captured", passes: ordered.map(pass => passContract(pass)), nodes: [...source.nodes].sort((a, b) => a.id.localeCompare(b.id)), edges: [...source.edges].sort((a, b) => a.id.localeCompare(b.id)) }));
     const base = writeSyntaxBase(store, snapshot, source, context, fingerprint);
     const baseProjection = base.projection;
     const completed = new Map<string, OwnedProjection>(); const passOwners = new Map<string, number[]>(); const runs = [...base.runs]; const adapterRuns: AdapterRun[] = [];

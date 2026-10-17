@@ -28,6 +28,11 @@ export async function recordedInputStatus(filename: string, snapshot: Repository
     if (inputs.length > 100000) return { state: "unchecked", checked: 0, additionalChanges: 0, reason: "Recorded dependency catalogue exceeds status budget" };
     let checked = 0; let changed = false; let additionalChanges = 0;
     for (const input of inputs) {
+      if (input.resource === "configuration:prograph") {
+        checked++;
+        if (!await inputMatches(input, snapshot.repository.root)) { changed = true; additionalChanges++; }
+        continue;
+      }
       if (input.resource.startsWith("unavailable-input:")) return { state: "unchecked", checked, additionalChanges, reason: "A failed provider dependency could not be fingerprinted; explicit coverage gap remains" };
       const file = input.resource.startsWith("source:") ? path.join(snapshot.repository.root, input.resource.slice(7)) : input.resource.startsWith("physical:") || input.resource.startsWith("artifact:") ? input.resource.slice(9) : undefined;
       if (input.resource === "environment:host" || input.resource.startsWith("tree:") || input.resource.startsWith("probe-")) {

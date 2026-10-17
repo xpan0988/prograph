@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { createHash } from "node:crypto";
 import type { BoundaryProtocol } from "../graph/boundaries.js";
 
 export interface BoundaryConfiguration {
@@ -102,13 +103,23 @@ export function defaultConfig(): LoadedConfig {
   };
 }
 
-export async function loadConfig(repositoryRoot: string): Promise<LoadedConfig> {
+export async function readProGraphConfiguration(repositoryRoot: string): Promise<{ source: string | null; fingerprint: string }> {
+  try {
+    const source = await readFile(path.join(repositoryRoot, "prograph.config.json"), "utf8");
+    return { source, fingerprint: createHash("sha256").update(source).digest("hex") };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return { source: null, fingerprint: "absent" };
+    throw error;
+  }
+}
+
+export async function loadConfig(repositoryRoot: string, observedSource?: string | null): Promise<LoadedConfig> {
   const configPath = path.join(repositoryRoot, "prograph.config.json");
   let parsed: ProGraphConfig = {};
   let sourcePath: string | undefined;
   try {
-    parsed = JSON.parse(await readFile(configPath, "utf8")) as ProGraphConfig;
-    sourcePath = configPath;
+    const source = observedSource === undefined ? await readFile(configPath, "utf8") : observedSource;
+    if (source !== null) { parsed = JSON.parse(source) as ProGraphConfig; sourcePath = configPath; }
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
       throw new Error(`Invalid ProGraph configuration at ${configPath}: ${String(error)}`);

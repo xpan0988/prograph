@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import fg from "fast-glob";
-import { defaultConfig, loadConfig } from "../config/config.js";
+import { defaultConfig, loadConfig, readProGraphConfiguration } from "../config/config.js";
 import type { Diagnostic, RepositoryMetadata } from "../graph/schema.js";
 import type { RepositorySnapshot } from "../adapters/contracts.js";
 
@@ -72,9 +72,13 @@ export async function scanRepository(root: string, outputDirectory?: string): Pr
   const repository = await getRepositoryMetadata(root);
   const diagnostics: Diagnostic[] = [];
   let config;
+  let configurationInput: string;
   try {
-    config = await loadConfig(root);
+    const observed = await readProGraphConfiguration(root);
+    configurationInput = observed.fingerprint;
+    config = await loadConfig(root, observed.source);
   } catch (error) {
+    configurationInput ??= `unreadable:${(error as NodeJS.ErrnoException).code ?? "configuration"}`;
     config = defaultConfig();
     diagnostics.push({
       code: "invalid-configuration",
@@ -132,7 +136,7 @@ export async function scanRepository(root: string, outputDirectory?: string): Pr
   }
   if (await realpath(root) !== sourceRoot) throw Error("Repository source root changed during discovery");
   return {
-    snapshot: { repository, sourceRoot, config, files: [...absoluteFiles.keys()], absoluteFiles, fileContents },
+    snapshot: { repository, sourceRoot, configurationInput, config, files: [...absoluteFiles.keys()], absoluteFiles, fileContents },
     diagnostics,
     excludedFileCount: 0,
   };

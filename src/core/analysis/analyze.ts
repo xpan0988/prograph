@@ -88,7 +88,6 @@ async function analyzeRepositoryWithLease(root: string, options: AnalyzeOptions)
   await mkdir(outputDirectory, { recursive: true });
   const owned = await deriveOwnedAnalysis(scan.snapshot, builder.result(), path.join(outputDirectory, "semantic.sqlite"));
   builder.merge(owned.result); adapterRuns.push(...owned.adapterRuns);
-  builder.diagnostics.push(...validateIdentities([...builder.nodes.values()], [...builder.edges.values()]));
   const repositoryNode = [...builder.nodes.values()].find(node => node.kind === "repository");
   if (repositoryNode) repositoryNode.metadata.analysis = adapterRuns.map(({ adapter, detected, metadata }) => ({ adapter, detected, ...metadata }));
   const graph: GraphData = {
@@ -115,9 +114,11 @@ async function analyzeRepositoryWithLease(root: string, options: AnalyzeOptions)
     analysisDuration: Math.round(performance.now() - started),
   };
   await mkdir(path.join(outputDirectory, "exports"), { recursive: true });
+  const state = createIndexState(scan.snapshot, manifest);
+  const { files: _sourceFiles, ...stateHeader } = state;
   const semanticStarted = performance.now();
   try {
-    const semantic = await indexSemanticFoundation(scan.snapshot, graph, path.join(outputDirectory, "semantic.sqlite"), owned);
+    const semantic = await indexSemanticFoundation(scan.snapshot, graph, path.join(outputDirectory, "semantic.sqlite"), owned, { manifest, stateHeader });
     manifest.semanticCore = { format: 2, status: semantic.coverage.status === "unavailable" ? "unavailable" : "partial", snapshot: semantic.snapshot, context: semantic.context, durationMs: semantic.durationMs };
   } catch (error) {
     manifest.semanticCore = { format: 2, status: "failed", durationMs: Math.round(performance.now() - semanticStarted), reason: String(error) };
@@ -130,7 +131,7 @@ async function analyzeRepositoryWithLease(root: string, options: AnalyzeOptions)
     writeFile(path.join(outputDirectory, "exports", "graph.json"), `${JSON.stringify(graph, null, 2)}\n`),
     writeFile(path.join(outputDirectory, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`),
     writeFile(path.join(outputDirectory, "diagnostics.json"), `${JSON.stringify(graph.diagnostics, null, 2)}\n`),
-    writeIndexState(outputDirectory, createIndexState(scan.snapshot, manifest)),
+    writeIndexState(outputDirectory, state),
   ]);
   return { graph, manifest, adapterRuns, outputDirectory };
 }

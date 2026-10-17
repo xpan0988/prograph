@@ -167,6 +167,7 @@ export function writeSyntaxBase(store: SemanticStore, snapshot: RepositorySnapsh
   if (graph.nodes.length + graph.edges.length + graph.diagnostics.length + snapshot.files.length > 1000000) throw Error("Source observation layer exceeds offline row bound");
   const selector = { key: `analysis:catalogue:${snapshot.repository.identity}`, digest: fingerprint };
   const catalogue = store.begin("analysis/catalogue", context, fingerprint); store.selector(catalogue, selector.key, selector.digest);
+  if (snapshot.configurationInput) store.input(catalogue, "configuration:prograph", snapshot.configurationInput);
   store.seal(catalogue, { status: "partial", version: OWNED_PASS_VERSION, ownershipShard: "source-candidate-catalogue" });
   const runs = [catalogue]; const fileClaims = new Map<string, string>(); const nodeClaims = new Map<string, string>(); const edgeClaims = new Map<string, string>();
   const groups = new Map<string, AdapterResult>([["", { nodes: [], edges: [], diagnostics: [], metadata: {} }]]);

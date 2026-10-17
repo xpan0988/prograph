@@ -4,6 +4,7 @@ import { stat, readdir, realpath, readFile } from "node:fs/promises";
 import { canonical, digest } from "./model.js";
 import { digestFile } from "./inputs.js";
 import { toolReceipt } from "./tool-receipt.js";
+import { readProGraphConfiguration } from "../config/config.js";
 
 export interface RecordedInput { resource: string; digest: string }
 export function recordedPath(resource: string): string | undefined {
@@ -20,6 +21,7 @@ export function directoryFingerprint(entries: Array<{ name: string; isFile: bool
 /** Recheck observed compiler searches, including absence and alias paths. Undefined is a non-filesystem input. */
 export async function recordedDigest(resource: string, root: string, signal?: AbortSignal): Promise<string | undefined> {
   signal?.throwIfAborted();
+  if (resource === "configuration:prograph") return (await readProGraphConfiguration(root)).fingerprint;
   if (resource === "environment:host") return digest(canonical([process.platform, process.arch, os.machine(), os.release(), [...new Set(os.cpus().map(cpu => cpu.model))].sort()]));
   if (resource.startsWith("source:")) return digestFile(path.join(root, resource.slice(7)), undefined, signal);
   if (resource.startsWith("physical:") || resource.startsWith("artifact:")) return digestFile(resource.slice(9), undefined, signal);

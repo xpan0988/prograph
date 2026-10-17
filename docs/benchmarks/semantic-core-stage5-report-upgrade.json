@@ -1,0 +1,27 @@
+{
+  "scope": "Actual previous 2.10 self-analysis database online backup upgraded by the 2.11 writer without source reanalysis or fabricated historical reports. Complete visible claim/call hashes and eight bounded navigation results unchanged. Source index bytes unchanged. Not current-source freshness, default-authority migration or performance qualification.",
+  "baselineCommit": "cf6494eeac41e0cbee2695bb8679a2b742822af8",
+  "source": "/private/tmp/prograph-diagnostics-upgrade-5INcZz/semantic.sqlite",
+  "sourceSha256": "4d238b1ff2c54f0458dd27cfb13af1078694597c56f860d3da9fe34f89cab8e8",
+  "directory": "/private/tmp/prograph-report-upgrade-X80eeL",
+  "before": {
+    "snapshot": 1,
+    "schema": "2.0.0-step2.10",
+    "claims": "e285ca7e4780ae925de89ff2723b7153965ceb9718043599656f871fff8b8099",
+    "calls": "edec34fc8bf90f9f12250b5371d0636de3da13fb07af9fcb02a881c36715d22b",
+    "sampleCount": 8,
+    "samplesHash": "c26a17a6c97c7b6e8daf20f8df32a7559bee4c16dddfad8c8f0e543bd43d8fd3"
+  },
+  "after": {
+    "snapshot": 1,
+    "schema": "2.0.0-step2.11",
+    "claims": "e285ca7e4780ae925de89ff2723b7153965ceb9718043599656f871fff8b8099",
+    "calls": "edec34fc8bf90f9f12250b5371d0636de3da13fb07af9fcb02a881c36715d22b",
+    "sampleCount": 8,
+    "samplesHash": "c26a17a6c97c7b6e8daf20f8df32a7559bee4c16dddfad8c8f0e543bd43d8fd3"
+  },
+  "historicalReport": "absent; not fabricated",
+  "integrity": "ok",
+  "foreignKeys": [],
+  "hashEncoding": "SHA-256 of JSON.stringify(rows); SQL rows sorted by key (claims) or caller/callee (calls). Navigation hashes cover item payloads only; eight queries use four callee symbols, definition and references, limit 10."
+}

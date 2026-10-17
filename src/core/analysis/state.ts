@@ -9,6 +9,8 @@ import { resolveRepositoryRoot, scanRepository } from "../repository/repository.
 import packageJson from "../../../package.json" with { type: "json" };
 import { SEMANTIC_SCHEMA_VERSION, TYPESCRIPT_SEMANTIC_VERSION, CLANG_SEMANTIC_VERSION, SCIP_SEMANTIC_VERSION, RUST_PROVIDER_VERSION, MANAGED_SCIP_VERSION } from "../semantic/model.js";
 import { recordedInputStatus, type RecordedInputStatus } from "../semantic/provider-runs.js";
+import { canonical } from "../semantic/model.js";
+import { snapshotReportStatus, type SnapshotReportStatus } from "../semantic/snapshot-report.js";
 
 import { OWNED_PASS_VERSION } from "../semantic/owned-projection.js";
 
@@ -63,6 +65,8 @@ export interface RepositoryStatus {
   configChanged: boolean;
   adapterVersionsChanged: boolean;
   schemaChanged: boolean;
+  repositoryChanged?: boolean;
+  semanticPublication?: SnapshotReportStatus;
   semanticInputsChanged?: boolean;
   semanticInputs?: RecordedInputStatus;
   stale: boolean;
@@ -78,11 +82,7 @@ function fileHashes(snapshot: RepositorySnapshot): Record<string, string> {
 }
 
 function configHash(snapshot: RepositorySnapshot): string {
-  return hash(JSON.stringify({
-    include: snapshot.config.include,
-    exclude: snapshot.config.exclude,
-    adapters: snapshot.config.adapters,
-  }));
+  return hash(canonical({ config: snapshot.config, configurationInput: snapshot.configurationInput ?? "not-captured" }));
 }
 
 export function createIndexState(snapshot: RepositorySnapshot, manifest: AnalysisManifest): IndexState {
@@ -128,9 +128,13 @@ export async function repositoryStatus(input = ".", index?: string): Promise<Rep
   const configChanged = stored ? stored.configHash !== configHash(scan.snapshot) : false;
   const adapterVersionsChanged = stored ? JSON.stringify(stored.adapterVersions) !== JSON.stringify(ADAPTER_VERSIONS) : false;
   const schemaChanged = stored ? stored.schemaVersion !== GRAPH_SCHEMA_VERSION : false;
+  const repositoryChanged = !!stored && (stored.repositoryRoot !== scan.snapshot.repository.root || stored.repositoryIdentity !== scan.snapshot.repository.identity);
+  const { files: _files, ...stateHeader } = stored ?? { files: {} };
+  const semanticPublication = snapshotReportStatus(path.join(indexDirectory, "semantic.sqlite"), manifest, stored ? stateHeader as Omit<IndexState, "files"> : undefined);
   const semanticInputs = await recordedInputStatus(path.join(indexDirectory, "semantic.sqlite"), scan.snapshot, new Set([...addedFiles, ...modifiedFiles, ...deletedFiles]));
   const semanticInputsChanged = semanticInputs.additionalChanges > 0 || !!manifest?.semanticCore && ["unavailable", "unchecked"].includes(semanticInputs.state);
-  const stale = !stored || addedFiles.length > 0 || modifiedFiles.length > 0 || deletedFiles.length > 0 || configChanged || adapterVersionsChanged || schemaChanged || semanticInputsChanged;
+  const publicationChanged = semanticPublication.state === "out-of-sync" || !!manifest?.semanticCore && (manifest.semanticCore.status === "failed" || semanticPublication.state === "unavailable");
+  const stale = !stored || addedFiles.length > 0 || modifiedFiles.length > 0 || deletedFiles.length > 0 || configChanged || adapterVersionsChanged || schemaChanged || semanticInputsChanged || repositoryChanged || publicationChanged;
   return {
     repositoryRoot,
     indexDirectory,
@@ -148,6 +152,8 @@ export async function repositoryStatus(input = ".", index?: string): Promise<Rep
     configChanged,
     adapterVersionsChanged,
     schemaChanged,
+    repositoryChanged,
+    semanticPublication,
     semanticInputsChanged,
     semanticInputs,
     stale,

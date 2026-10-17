@@ -1,0 +1,284 @@
+{
+  "format": 1,
+  "stage": "5I complete owned adapter diagnostics",
+  "commit": "cf6494eeac41e0cbee2695bb8679a2b742822af8",
+  "run": 38940228555,
+  "url": "https://github.com/xpan0988/prograph/actions/runs/38940228555",
+  "attempt": 1,
+  "jobs": [
+    {
+      "id": 117105691304,
+      "name": "regression (24)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-16T17:30:38Z",
+      "completedAt": "2026-10-16T18:07:45Z",
+      "steps": [
+        {
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Compile accepted prior writer for actual upgrade oracle",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        }
+      ],
+      "decodedLogEvidence": [
+        "2026-10-16T18:07:29.1961628Z       Tests  217 passed (217)",
+        "2026-10-16T18:07:29.1966551Z    Duration  2076.88s (transform 2.19s, setup 0ms, import 11.18s, tests 2773.07s, environment 2ms)",
+        "2026-10-16T18:07:40.6824989Z       \"point\": \"before-seal\",",
+        "2026-10-16T18:07:40.6826769Z       \"baselineRetained\": true",
+        "2026-10-16T18:07:40.6827444Z       \"point\": \"before-publish\",",
+        "2026-10-16T18:07:40.6829022Z       \"baselineRetained\": true",
+        "2026-10-16T18:07:40.6829571Z       \"point\": \"during-publish\",",
+        "2026-10-16T18:07:40.6831213Z       \"baselineRetained\": true",
+        "2026-10-16T18:07:40.6831727Z       \"point\": \"after-publish\",",
+        "2026-10-16T18:07:40.6832803Z       \"baselineRetained\": true",
+        "2026-10-16T18:07:40.6833292Z     \"refused\": true,",
+        "2026-10-16T18:07:40.6833428Z     \"unchanged\": true",
+        "2026-10-16T18:07:40.7248428Z Verified 217 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer upgrade, guarded indexing cancellation/admission and actual provider CLI transport, complete build, four recovery probes and corruption refusal"
+      ]
+    },
+    {
+      "id": 117105691732,
+      "name": "regression (20)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-16T17:30:39Z",
+      "completedAt": "2026-10-16T18:13:33Z",
+      "steps": [
+        {
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Compile accepted prior writer for actual upgrade oracle",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        }
+      ],
+      "decodedLogEvidence": [
+        "2026-10-16T18:13:11.1120990Z       Tests  217 passed (217)",
+        "2026-10-16T18:13:11.1123772Z    Duration  2281.69s (transform 2.87s, setup 0ms, import 17.06s, tests 3076.73s, environment 3ms)",
+        "2026-10-16T18:13:28.2228594Z       \"point\": \"before-seal\",",
+        "2026-10-16T18:13:28.2231352Z       \"baselineRetained\": true",
+        "2026-10-16T18:13:28.2232417Z       \"point\": \"before-publish\",",
+        "2026-10-16T18:13:28.2235254Z       \"baselineRetained\": true",
+        "2026-10-16T18:13:28.2236373Z       \"point\": \"during-publish\",",
+        "2026-10-16T18:13:28.2239234Z       \"baselineRetained\": true",
+        "2026-10-16T18:13:28.2240516Z       \"point\": \"after-publish\",",
+        "2026-10-16T18:13:28.2243519Z       \"baselineRetained\": true",
+        "2026-10-16T18:13:28.2245032Z     \"refused\": true,",
+        "2026-10-16T18:13:28.2245514Z     \"unchanged\": true",
+        "2026-10-16T18:13:28.2780433Z Verified 217 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer upgrade, guarded indexing cancellation/admission and actual provider CLI transport, complete build, four recovery probes and corruption refusal"
+      ]
+    },
+    {
+      "id": 117105691739,
+      "name": "regression (22)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-16T17:30:39Z",
+      "completedAt": "2026-10-16T18:19:29Z",
+      "steps": [
+        {
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Compile accepted prior writer for actual upgrade oracle",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        }
+      ],
+      "decodedLogEvidence": [
+        "2026-10-16T18:19:05.4647792Z       Tests  217 passed (217)",
+        "2026-10-16T18:19:05.4650602Z    Duration  2762.88s (transform 2.94s, setup 0ms, import 17.41s, tests 3621.40s, environment 3ms)",
+        "2026-10-16T18:19:24.1356687Z       \"point\": \"before-seal\",",
+        "2026-10-16T18:19:24.1358702Z       \"baselineRetained\": true",
+        "2026-10-16T18:19:24.1359617Z       \"point\": \"before-publish\",",
+        "2026-10-16T18:19:24.1362046Z       \"baselineRetained\": true",
+        "2026-10-16T18:19:24.1362782Z       \"point\": \"during-publish\",",
+        "2026-10-16T18:19:24.1365375Z       \"baselineRetained\": true",
+        "2026-10-16T18:19:24.1366108Z       \"point\": \"after-publish\",",
+        "2026-10-16T18:19:24.1367855Z       \"baselineRetained\": true",
+        "2026-10-16T18:19:24.1368716Z     \"refused\": true,",
+        "2026-10-16T18:19:24.1368968Z     \"unchanged\": true",
+        "2026-10-16T18:19:24.1956205Z Verified 217 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer upgrade, guarded indexing cancellation/admission and actual provider CLI transport, complete build, four recovery probes and corruption refusal"
+      ]
+    }
+  ],
+  "scope": "All three Linux Node 20/22/24 jobs executed 217 tests with zero skips, including complete diagnostic ownership, actual native producers/replay/CLI, 18 independent seven-language rebuild checks with distinct seeds, actual prior-writer upgrade, guarded recovery, full lint/Node/UI build, four recovery probes, unchanged corruption refusal and the strict verifier. Does not qualify later uncommitted snapshot-report or native-retention changes."
+}
