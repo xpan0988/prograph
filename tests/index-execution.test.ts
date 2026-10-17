@@ -9,7 +9,6 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { executeIndex, type IndexRequest } from "../src/core/analysis/index-execution.js";
 import { repositoryStatus } from "../src/core/analysis/state.js";
-import { IndexLease } from "../src/core/semantic/maintenance-lock.js";
 import { SemanticStore } from "../src/core/semantic/store.js";
 import { executeRead } from "../src/core/query/isolation.js";
 import { startServer } from "../src/server/index.js";
@@ -25,15 +24,6 @@ async function fixture(indexed = true) {
   await writeFile(path.join(repository, "tsconfig.json"), '{"compilerOptions":{"strict":true},"include":["*.ts"]}');
   const analyzed = indexed ? await executeIndex({ operation: "analyze", repository, index }) : undefined;
   return { repository, index, analyzed };
-}
-async function workLeasePresent(index: string) {
-  const until = performance.now() + 10000;
-  while (performance.now() < until) {
-    try { const lease = new IndexLease(index, "maintenance"); lease.close(); }
-    catch (error) { if ((error as { code?: string }).code === "INDEX_MAINTENANCE_BUSY") return; throw error; }
-    await new Promise(resolve => setTimeout(resolve, 20));
-  }
-  throw Error("Index worker did not acquire its work lease");
 }
 
 test("index workers preserve custom-root summaries and CLI, HTTP and MCP status/sync contracts", async () => {
@@ -120,13 +110,25 @@ test("a blocked legacy writer leaves status/navigation admitted and cancelled wo
   db.exec("BEGIN IMMEDIATE"); const controller = new AbortController();
   const running = executeIndex({ operation: "analyze", repository, index }, { signal: controller.signal }).then(value => ({ value }), error => ({ error }));
   try {
-    await workLeasePresent(index);
-    await expect(executeIndex({ operation: "sync", repository, index }, { timeoutMs: 30 })).rejects.toMatchObject({ code: "INDEX_DEADLINE" });
+    // Read-only progress cannot steal the worker's SHARED lease. Repeated
+    // EXCLUSIVE probes can themselves make its timeout-zero acquisition fail.
+    let finished: Awaited<typeof running> | undefined;
+    void running.then(outcome => { finished = outcome; });
     const until = performance.now() + 10000;
-    while (Number((semantic.prepare("SELECT value FROM sc_meta WHERE key='active'").get() as { value: string }).value) === snapshot && performance.now() < until) await new Promise(resolve => setTimeout(resolve, 20));
+    while (Number((semantic.prepare("SELECT value FROM sc_meta WHERE key='active'").get() as { value: string }).value) === snapshot && performance.now() < until) {
+      if (finished) throw Error(`Index worker finished before semantic publication: ${"error" in finished ? String(finished.error) : "unexpected completion"}`);
+      await new Promise(resolve => setTimeout(resolve, 20));
+    }
     expect(Number((semantic.prepare("SELECT value FROM sc_meta WHERE key='active'").get() as { value: string }).value)).toBeGreaterThan(snapshot);
-    expect(await executeIndex({ operation: "status", repository, index })).toMatchObject({ state: "stale", semanticPublication: { state: "out-of-sync" } });
-    expect(await executeRead(path.join(index, "graph.sqlite"), "legacy", "symbol", ["__missing__"])).toBeUndefined();
+    expect(finished, "Writer must remain blocked after semantic publication").toBeUndefined();
+    const [queued, status, navigation] = await Promise.all([
+      executeIndex({ operation: "sync", repository, index }, { timeoutMs: 30 }).then(value => ({ value }), error => ({ error })),
+      executeIndex({ operation: "status", repository, index }),
+      executeRead(path.join(index, "graph.sqlite"), "legacy", "symbol", ["__missing__"]),
+    ]);
+    expect(queued).toHaveProperty("error.code", "INDEX_DEADLINE");
+    expect(status).toMatchObject({ state: "stale", semanticPublication: { state: "out-of-sync" } });
+    expect(navigation).toBeUndefined();
     controller.abort(); const outcome = await running; expect(outcome, "error" in outcome ? String(outcome.error) : "unexpected completion").toHaveProperty("error.code", "INDEX_CANCELLED");
     expect(outcome).toHaveProperty("error.message", expect.stringContaining("may already have committed"));
     expect(Number((semantic.prepare("SELECT value FROM sc_meta WHERE key='active'").get() as { value: string }).value)).toBeGreaterThanOrEqual(snapshot);

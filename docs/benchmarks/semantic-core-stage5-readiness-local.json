@@ -1,0 +1,112 @@
+{
+  "scope": "Test-only non-intrusive readiness correction, actual committed d38b47b source/dist; no production admission, cancellation, locking, deadlines or benchmark changes",
+  "focused": {
+    "success": true,
+    "numTotalTests": 5,
+    "numPassedTests": 5,
+    "numFailedTests": 0,
+    "numPendingTests": 0
+  },
+  "priorFullRuntimeQualification": "semantic-core-stage5-retention-local.json (236 passed, before this test-only correction)",
+  "predeclaredIndependentTrials": {
+    "complete": true,
+    "scope": "Ten predeclared serial independent executions of all five functional indexing cases, no retries; actual committed d38b47b source/runtime, same 10s readiness / 30ms queue / 2s read / 30s test bounds; concurrent with the actual compiler suite",
+    "baseline": {
+      "commit": "d38b47b1f3fc0f917f9c1052c868fe29b92b173b",
+      "runtime": "/private/tmp/prograph-source-reuse-baselines/accepted-MAT3Hc",
+      "node": "v25.9.0",
+      "compiler": "5.9.3",
+      "scope": "Accepted source compiled using current locked dependencies; not historical binary performance evidence",
+      "digests": {
+        "core/semantic/model.js": "ddf493a22601a830a3701e4db18d45805bdd671a4783530af2c53481703c5688",
+        "core/semantic/managed-scip.js": "333ad4e67ddc1570bf8b1a15834866489f468a3bee5b2f991c359098a6a1203c",
+        "core/semantic/provider-replay.js": "813d67834901f2c1860026e8480d91482491d515980261b4565550a125551cb0"
+      }
+    },
+    "testSha256": "e9a6451a57f1847c7331bc87b4e503f8ef55f4aa558d53e144df595970d0ba3f",
+    "trials": [
+      {
+        "trial": 1,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "raw": "/private/tmp/prograph-readiness-trial-1.json",
+        "sha256": "925f134b92c53bd9961970882ce430ebb6e62c42a7d76ad0e0044590790b6d07"
+      },
+      {
+        "trial": 2,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "raw": "/private/tmp/prograph-readiness-trial-2.json",
+        "sha256": "f69c1fcf7a3430c21e6f4399f6c7e52a8921f45f0802ee5b0573dde8bd9a3aea"
+      },
+      {
+        "trial": 3,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "raw": "/private/tmp/prograph-readiness-trial-3.json",
+        "sha256": "4976253e4030b310b8154a6b7b1f1e3e555fe7e151cfbb6925d4309455bcfb7e"
+      },
+      {
+        "trial": 4,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "raw": "/private/tmp/prograph-readiness-trial-4.json",
+        "sha256": "e08cac14683e610d48f8ed5aa06a86e41d3ea9a447da8b2d1e005d5c0c9d159d"
+      },
+      {
+        "trial": 5,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "raw": "/private/tmp/prograph-readiness-trial-5.json",
+        "sha256": "386d674d21fe2d8ba5dacee06c442a26fa5b850a6030bfa7c077670c7db488d5"
+      },
+      {
+        "trial": 6,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "raw": "/private/tmp/prograph-readiness-trial-6.json",
+        "sha256": "8f72a4f58059fdc0c660699e8807a841a75450dbbae28e11ade320aa2d4e1c8a"
+      },
+      {
+        "trial": 7,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "raw": "/private/tmp/prograph-readiness-trial-7.json",
+        "sha256": "708e8317c77c018bb65d72f187d5f281a5f75ff83d3eb0320bd5ad90e5f18857"
+      },
+      {
+        "trial": 8,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "raw": "/private/tmp/prograph-readiness-trial-8.json",
+        "sha256": "51ca783af62bb7548725cdacb9a31af94b8b58c5a17c5960e2526a24937e5372"
+      },
+      {
+        "trial": 9,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "raw": "/private/tmp/prograph-readiness-trial-9.json",
+        "sha256": "5f97474e725feda43c846903723c66d660a74ba8d4ec827523f5d5da58d15499"
+      },
+      {
+        "trial": 10,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "raw": "/private/tmp/prograph-readiness-trial-10.json",
+        "sha256": "0fdbea9b856d824811f637e1b182832b64287c6758ece9bb5671484ecadbcbb6"
+      }
+    ]
+  },
+  "sourcePolicyWork": "Separate uncommitted compiler-input work is excluded from this receipt and from the focused CI-fix commit",
+  "ci": "pending"
+}
