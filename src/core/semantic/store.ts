@@ -233,6 +233,7 @@ export class SemanticStore {
     for (const selector of this.sql("SELECT key,digest FROM sc_run_selectors WHERE run=? ORDER BY key").iterate(run)) content.update(canonical(selector));
     for (const gate of this.sql("SELECT key,required_key,expected FROM sc_selector_gates WHERE run=? ORDER BY key,required_key").iterate(run)) content.update(canonical(["selector-admission", gate]));
     for (const input of this.sql("SELECT resource,digest FROM sc_inputs WHERE run=? ORDER BY resource").iterate(run)) content.update(canonical(input));
+    for (const row of this.sql("SELECT resource FROM sc_observed_inputs WHERE run=? ORDER BY resource").iterate(run)) content.update(canonical(["observed-input", (row as { resource: string }).resource]));
     const result = content.digest("hex");
     this.sql("INSERT INTO sc_run_digests VALUES(?,?)").run(run, result);
     return result;

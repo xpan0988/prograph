@@ -6,10 +6,12 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 const exec = promisify(execFile);
-const commit = '6eefca04b5032f3416fcc95bda23dec4bb8f65db';
+const baselines = { previous: '6eefca04b5032f3416fcc95bda23dec4bb8f65db', report: '892d91833cfd22639da3f34948969a24a1ea96bb' };
+const commit = baselines[process.argv[3] ?? 'previous'];
+if (!commit) throw Error('Unsupported baseline selector');
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const destination = path.resolve(process.argv[2] ?? '');
-if (!process.argv[2]) throw Error('Usage: node scripts/prepare-semantic-baseline.mjs <parent-directory>');
+if (!process.argv[2]) throw Error('Usage: node scripts/prepare-semantic-baseline.mjs <parent-directory> [previous|report]');
 await mkdir(destination, { recursive: true });
 try { await exec('git', ['cat-file', '-e', `${commit}^{commit}`], { cwd: repository }); }
 catch { await exec('git', ['fetch', '--no-tags', '--depth=1', 'origin', commit], { cwd: repository, timeout: 120000, maxBuffer: 1024 ** 2 }); }

@@ -5,7 +5,7 @@ export interface GarbageCollectionOptions { keep?: number; retain?: number[] }
 export function collectSemanticGarbage(store: SemanticStore, options: GarbageCollectionOptions = {}): Record<string, number> {
   const keep = options.keep ?? 3;
   if (!Number.isSafeInteger(keep) || keep < 1) throw Error("Retention must keep at least one snapshot");
-  const tables = ["sc_snapshots", "sc_runs", "sc_claims", "sc_facts", "sc_sources", "sc_provenance", "sc_groups", "sc_entities", "sc_origin_runs"];
+  const tables = ["sc_snapshots", "sc_snapshot_reports", "sc_observed_inputs", "sc_runs", "sc_claims", "sc_facts", "sc_sources", "sc_provenance", "sc_groups", "sc_entities", "sc_origin_runs"];
   const count = () => Object.fromEntries(tables.map(table => [table, (store.sql(`SELECT COUNT(*) AS n FROM ${table}`).get() as { n: number }).n]));
   return store.db.transaction(() => {
     const before = count();

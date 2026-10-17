@@ -14,6 +14,8 @@ export interface RepositorySnapshot {
 }
 
 export interface AdapterResult {
+  /** Extraction input tracking; independent of semantic/build completeness. */
+  inputReceipt?: { qualified: boolean; inputs: Array<{ resource: string; digest: string }> };
   nodes: GraphNode[];
   edges: GraphEdge[];
   diagnostics: Diagnostic[];

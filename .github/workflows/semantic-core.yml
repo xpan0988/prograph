@@ -37,6 +37,8 @@ jobs:
         run: |
           baseline_runtime=$(node scripts/prepare-semantic-baseline.mjs "$RUNNER_TEMP/semantic-baselines")
           echo "PROGRAPH_TEST_BASELINE_RUNTIME=$baseline_runtime" >> "$GITHUB_ENV"
+          report_runtime=$(node scripts/prepare-semantic-baseline.mjs "$RUNNER_TEMP/semantic-baselines" report)
+          echo "PROGRAPH_TEST_REPORT_BASELINE_RUNTIME=$report_runtime" >> "$GITHUB_ENV"
       - uses: actions/setup-python@v5
         with:
           python-version: '3.14'
@@ -60,6 +62,7 @@ jobs:
           PROGRAPH_TEST_ORACLE_SEED: ${{ matrix.node }}
           PROGRAPH_TEST_ORACLE_EVIDENCE: semantic-oracle-results.json
           PROGRAPH_TEST_UPGRADE_EVIDENCE: semantic-upgrade-results.json
+          PROGRAPH_TEST_RETENTION_UPGRADE_EVIDENCE: semantic-retention-upgrade-results.json
         run: npm test -- --reporter=default --reporter=json --outputFile=semantic-test-results.json
       - name: Complete Node and UI build
         run: npm run build
@@ -76,4 +79,5 @@ jobs:
             semantic-recovery-results.json
             semantic-oracle-results.json
             semantic-upgrade-results.json
+            semantic-retention-upgrade-results.json
             ${{ runner.temp }}/semantic-producers/receipt.json

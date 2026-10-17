@@ -1,3 +1,4 @@
+import { ADAPTER_VERSIONS } from "../analysis/state.js";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { readFile } from "node:fs/promises";
@@ -11,7 +12,7 @@ import { SemanticStore } from "./store.js";
 import type { SnapshotReportInput } from "./snapshot-report.js";
 import { discoverProjects, type ProjectUnit } from "./projects.js";
 import { executePasses, qualifiedCallProjection } from "./passes.js";
-import { retainProviders, inventoryFromDisk, semanticInventory } from "./provider-runs.js";
+import { retainProviders, inventoryFromDisk, semanticInventory, sourceInventory } from "./provider-runs.js";
 import { replayProviders } from "./provider-replay.js";
 import { inputMatches } from "./input-check.js";
 import { traceCompilerInputs } from "./typescript-inputs.js";
@@ -33,7 +34,7 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
   const inputFingerprint = digest(canonical({ sourceBinding: store.sourceBindingFingerprint(), plan: unit.fingerprint, compiler: program.getSourceFiles().map(source => [source.fileName, digest(source.text)]).sort() }));
   const provenance: Provenance = { provider: "typescript/compiler-api", version: `${ts.version}/${TYPESCRIPT_SEMANTIC_VERSION}`, basis: "compiler", method: "compiler-binding", context, inputFingerprint };
   const run = store.begin(unit.key, context, inputFingerprint);
-  store.batch(run, () => { for (const input of unit.probes) store.input(run, input.resource, input.digest); });
+  store.batch(run, () => { for (const input of unit.probes) store.input(run, input.resource, input.digest); store.input(run, "analysis-versions", digest(canonical(ADAPTER_VERSIONS))); store.input(run, "project-inventory", semanticInventory(snapshot)); if(snapshot.configurationInput) store.input(run,"configuration:prograph",snapshot.configurationInput); });
   const documentRuns: number[] = [];
   let pending: FactInput[] = []; let pendingBytes = 0;
   const emit = (fact: FactInput): string => {
@@ -224,9 +225,11 @@ async function reusableUnit(store: SemanticStore, snapshot: RepositorySnapshot, 
   // Reuse remains conservative: closed, error-free local units plus observed negative search inputs.
   if (row.context !== unit.context || coverage.mappingVersion !== TYPESCRIPT_SEMANTIC_VERSION || coverage.unresolved !== 0 || coverage.compilerErrors !== 0 || coverage.externalImports !== 0 || !store.hasSourceRoot(run)) return undefined;
   const inputs = store.sql("SELECT resource,digest FROM sc_inputs WHERE run=?").all(run) as Array<{ resource: string; digest: string }>;
+  if (!inputs.some(input => input.resource === "analysis-versions" && input.digest === digest(canonical(ADAPTER_VERSIONS)))) return undefined;
+  if (!inputs.some(input => input.resource === "project-inventory" && input.digest === semanticInventory(snapshot))) return undefined;
   if (!inputs.some(input => input.resource === "inventory" && input.digest === unit.fingerprint)) return undefined;
   for (const input of inputs) {
-    if (input.resource.startsWith("probe-") && !await inputMatches(input, snapshot.repository.root)) return undefined;
+    if ((input.resource === "configuration:prograph" || input.resource.startsWith("probe-")) && !await inputMatches(input, snapshot.repository.root)) return undefined;
     if (input.resource.startsWith("source:")) { const text = snapshot.fileContents.get(input.resource.slice(7)); if (text === undefined || digest(text) !== input.digest) return undefined; }
     else if (input.resource.startsWith("physical:")) {
       const file = input.resource.slice(9);
@@ -275,10 +278,13 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
       const discoveryGaps = [...unit.gaps, ...plan.diagnostics.slice(0, 4).map(message => message.slice(0, 256))];
       const run = store.begin(`context/${unit.key}`, unit.context, unit.fingerprint);
       store.batch(run, () => {
+        store.input(run, "analysis-versions", digest(canonical(ADAPTER_VERSIONS))); store.input(run, "project-inventory", semanticInventory(snapshot)); if(snapshot.configurationInput) store.input(run,"configuration:prograph",snapshot.configurationInput); store.input(run, `probe-realpath:${snapshot.repository.root}`, digest(snapshot.sourceRoot!));
+        for (const [file, hash] of Object.entries(unit.inputs)) store.input(run, `physical:${file}`, hash);
+        for (const input of unit.probes) store.input(run, input.resource, input.digest);
         const key = semanticKey("project", [snapshot.repository.identity, unit.key]); store.addEntity(key, "artifact", { key, kind: "project" });
         store.addFact(run, { predicate: "context.Project", context: unit.context, subject: key, value: { unit: unit.key, project: unit.project, language: unit.language, options: unit.options, sourceCount: unit.sources.length, fingerprint: unit.fingerprint, gaps: discoveryGaps }, confidence: "exact", provenance: { provider: "project-discovery", version: "1", basis: "syntax", method: "read-only-project-context", context: unit.context, inputFingerprint: unit.fingerprint } });
       });
-      store.seal(run, { status: "partial", language: unit.language, gaps: discoveryGaps }); runs.push(run);
+      store.seal(run, { status: "partial", version: "project-discovery-2", language: unit.language, gaps: discoveryGaps }); runs.push(run);
       if (unit.language === "typescript" && snapshot.config.adapters.typescript && unit.sources.length) {
         const reused = await reusableUnit(store, snapshot, unit, previous);
         if (reused) { runs.push(...reused); outcomes.push({ status: "partial", project: unit.project, reused: true }); }
@@ -294,7 +300,8 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
       const key = canonical(input); if (checked.has(key)) continue; checked.add(key);
       if (!await inputMatches(input, snapshot.repository.root)) throw Error(`Semantic input changed before publication: ${input.resource}`);
     }
-    if ((await inventoryFromDisk(snapshot.repository.root, path.dirname(filename), 200000)).inventory !== semanticInventory(snapshot)) throw Error("Repository inventory changed before semantic publication");
+    const finalInventory = await inventoryFromDisk(snapshot.repository.root, path.dirname(filename), 200000);
+    if (finalInventory.inventory !== semanticInventory(snapshot) || finalInventory.sourceInventory !== sourceInventory(snapshot) || finalInventory.configurationInput !== snapshot.configurationInput) throw Error("Repository inventory changed before semantic publication");
     const tsUnits = plan.units.filter(unit => unit.language === "typescript");
     const context = (tsUnits.find(unit => unit.key === "typescript/root") ?? tsUnits[0])?.context ?? "none";
     const report: SnapshotReportInput | undefined = publication ? { ...publication, manifest: { ...publication.manifest, semanticCore: { format: 2, status: outcomes.length || nativeRuns.length ? "partial" : "unavailable", context, durationMs: Math.round(performance.now() - started) } } } : undefined;

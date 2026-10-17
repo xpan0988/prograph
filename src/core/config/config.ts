@@ -105,8 +105,8 @@ export function defaultConfig(): LoadedConfig {
 
 export async function readProGraphConfiguration(repositoryRoot: string): Promise<{ source: string | null; fingerprint: string }> {
   try {
-    const source = await readFile(path.join(repositoryRoot, "prograph.config.json"), "utf8");
-    return { source, fingerprint: createHash("sha256").update(source).digest("hex") };
+    const bytes = await readFile(path.join(repositoryRoot, "prograph.config.json"));
+    return { source: bytes.toString("utf8"), fingerprint: createHash("sha256").update(bytes).digest("hex") };
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return { source: null, fingerprint: "absent" };
     throw error;

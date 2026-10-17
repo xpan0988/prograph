@@ -1,4 +1,8 @@
-import { ts } from "ts-morph";
+import { ts, type FileSystemHost } from "ts-morph";
+import { createRequire } from "node:module";
+import { readFile } from "node:fs/promises";
+import { traceCompilerInputs } from "../../../core/semantic/typescript-inputs.js";
+import { digest } from "../../../core/semantic/model.js";
 import type { SemanticProvider } from "../../../core/adapters/providers.js";
 import { capabilities } from "../../../core/adapters/providers.js";
 import path from "node:path";
@@ -119,9 +123,28 @@ function makeSymbolNode(
   };
 }
 
-export function createProject(snapshot: RepositorySnapshot): Project {
+export function createProject(snapshot: RepositorySnapshot, fileSystem?: FileSystemHost): Project {
   const tsconfig = ["tsconfig.json", "jsconfig.json"].find((item) => snapshot.fileContents.has(item));
-  const project = new Project({
+  const host = fileSystem ?? new Project().getFileSystem();
+  const readDirectory = host.readDirSync;
+  // ts-morph parses include/exclude even with skipAddingFilesFromTsConfig.
+  // That unused discovery must use the scanner's selected input domain, rather
+  // than walking generated custom index directories. Actual compiler reads and
+  // module resolution below continue through the observed real filesystem.
+  const directories = new Map<string, Map<string, ReturnType<FileSystemHost["readDirSync"]>[number]>>();
+  for (const absolute of snapshot.absoluteFiles.values()) {
+    let child = path.resolve(absolute), isFile = true;
+    while (child !== snapshot.repository.root) {
+      const parent = path.dirname(child); if (parent === child) break;
+      const entries = directories.get(parent) ?? new Map();
+      entries.set(child, { name: child, isFile, isDirectory: !isFile, isSymlink: false });
+      directories.set(parent, entries); child = parent; isFile = false;
+    }
+  }
+  host.readDirSync = directory => [...(directories.get(path.resolve(directory))?.values() ?? [])];
+  let project: Project;
+  try { project = new Project({
+    fileSystem: host,
     ...(tsconfig ? { tsConfigFilePath: path.join(snapshot.repository.root, tsconfig) } : {}),
     skipAddingFilesFromTsConfig: true,
     compilerOptions: {
@@ -130,13 +153,12 @@ export function createProject(snapshot: RepositorySnapshot): Project {
       jsx: 1,
       target: ScriptTarget.ES2022,
     },
-  });
-  project.addSourceFilesAtPaths(
-    snapshot.files
-      .filter((file) => TYPESCRIPT_EXTENSIONS.has(path.extname(file)))
-      .map((file) => snapshot.absoluteFiles.get(file))
-      .filter((file): file is string => Boolean(file)),
-  );
+  }); } finally { host.readDirSync = readDirectory; }
+  // Scanner-selected paths are literal filenames, not globs. Expanding them can
+  // enumerate generated index trees and misinterpret bracket characters.
+  for (const file of snapshot.files.filter(file => TYPESCRIPT_EXTENSIONS.has(path.extname(file)))) {
+    const absolute = snapshot.absoluteFiles.get(file); if (absolute) project.addSourceFileAtPath(absolute);
+  }
   return project;
 }
 
@@ -148,9 +170,10 @@ export const compilerApiAdapter: LanguageAdapter = {
   async analyze(snapshot) {
     if (!snapshot.config.adapters.typescript) return emptyAdapterResult();
     const graph = new GraphBuilder();
+    const fileSystem = new Project().getFileSystem(), trace = traceCompilerInputs(fileSystem);
     let project: Project;
     try {
-      project = createProject(snapshot);
+      project = createProject(snapshot, fileSystem);
     } catch (error) {
       graph.addDiagnostic({
         code: "typescript-project-failure",
@@ -175,7 +198,10 @@ export const compilerApiAdapter: LanguageAdapter = {
         language: "typescript",
         file,
         adapter: "typescript",
-        metadata: {},
+        metadata: { isolatedModule: ts.isExternalModule(sourceFile.compilerNode) && !sourceFile.isDeclarationFile()
+          && sourceFile.getDescendantsOfKind(SyntaxKind.ModuleDeclaration).length === 0
+          && sourceFile.getDescendantsOfKind(SyntaxKind.NamespaceExportDeclaration).length === 0
+          && sourceFile.compilerNode.referencedFiles.length === 0 && sourceFile.compilerNode.typeReferenceDirectives.length === 0 && sourceFile.compilerNode.libReferenceDirectives.length === 0 },
       };
       graph.addNode(fileNode);
       fileNodes.set(file, fileNode);
@@ -403,7 +429,12 @@ export const compilerApiAdapter: LanguageAdapter = {
         );
       }
     }
-    return graph.result({ projectFileCount: project.getSourceFiles().length });
+    await trace.verify();
+    const require = createRequire(import.meta.url), common = require.resolve("@ts-morph/common");
+    const inputs = trace.entries();
+    for (const file of [require.resolve("ts-morph"), common, path.join(path.dirname(common), "typescript.js")]) inputs.push({ resource: `physical:${file}`, digest: digest(await readFile(file)) });
+    inputs.push({ resource: "environment:cwd", digest: digest(path.resolve(process.cwd())) });
+    return { ...graph.result({ projectFileCount: project.getSourceFiles().length }), inputReceipt: { qualified: true, inputs } };
   },
 };
 
@@ -420,13 +451,14 @@ export const typescriptCompilerProvider: SemanticProvider = {
 export function createTypescriptAdapter(provider: SemanticProvider = typescriptCompilerProvider): LanguageAdapter {
   return {
     ...compilerApiAdapter,
-    version: "2",
+    version: "3",
     appliesTo: file => TYPESCRIPT_EXTENSIONS.has(path.extname(file)),
     async analyze(snapshot) {
       let status = await provider.probe(snapshot);
       const result = status.available ? await provider.resolve(snapshot, emptyAdapterResult()) : emptyAdapterResult();
       if (result.diagnostics.some(d => d.code === "typescript-project-failure")) status = { ...status, available: false };
       if (!status.available) result.diagnostics.push({ code: "semantic-provider-unavailable", severity: "warning", message: status.reason ?? "TypeScript semantic provider unavailable", adapter: "typescript", metadata: {} });
+      if (!result.inputReceipt) result.inputReceipt = { qualified: false, inputs: [] };
       for (const edge of result.edges) for (const evidence of edge.evidence) {
         evidence.provider = provider.descriptor.id;
         evidence.basis = edge.confidence === "resolved" ? provider.descriptor.kind === "lsp" ? "lsp" : "compiler" : edge.confidence === "unresolved" ? "unresolved" : "syntax";

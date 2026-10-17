@@ -1,0 +1,37 @@
+{
+  "scope": "Actual accepted 892d918 writer versus current implementation, independent initial analyses of the same source; synthetic SCIP wire fixture isolates cross-provider retention and does not qualify a Python producer",
+  "root": "/private/tmp/prograph-retention-counterexample-6LftQL",
+  "baseline": {
+    "commit": "892d91833cfd22639da3f34948969a24a1ea96bb",
+    "runtime": "/private/tmp/prograph-retention-baselines/accepted-2OFQwD",
+    "node": "v25.9.0",
+    "compiler": "5.9.3",
+    "scope": "Accepted source compiled using current locked dependencies; not historical binary performance evidence",
+    "digests": {
+      "core/semantic/model.js": "cc36ed9de1f4c2fc2762dfa53f7d7448ea3d9475f9cc19c3ee8f60ab07a4e163",
+      "core/semantic/managed-scip.js": "333ad4e67ddc1570bf8b1a15834866489f468a3bee5b2f991c359098a6a1203c",
+      "core/semantic/provider-replay.js": "813d67834901f2c1860026e8480d91482491d515980261b4565550a125551cb0"
+    }
+  },
+  "sourceDigests": {
+    "before": "d6b41e7ebdf65fbaf4e0e29832824bc61194f2b45228bfd0d80f01351d75af24",
+    "after": "9f815e5aa5e31f0f8cc0b899c7c269f066b98b95f4f608a07b19f2cc1699ebd7"
+  },
+  "artifactDigest": "7ac0f45acaa8f5ff8dffc43b4042102244349a54e949112f43ad77861fd9f7e2",
+  "prior": {
+    "staleTarget": 1,
+    "nativeTarget": 1
+  },
+  "current": {
+    "staleTarget": 0,
+    "nativeTarget": 1
+  },
+  "priorHistorical": {
+    "staleTarget": 1,
+    "nativeTarget": 1
+  },
+  "currentHistorical": {
+    "staleTarget": 1,
+    "nativeTarget": 1
+  }
+}

@@ -2,11 +2,11 @@ import { createHash } from "node:crypto";
 import type { Confidence } from "../graph/schema.js";
 
 export const SEMANTIC_FORMAT_VERSION = 2;
-export const SEMANTIC_SCHEMA_VERSION = "2.0.0-step2.11";
-export const READABLE_SEMANTIC_SCHEMAS = ["2.0.0-step1", "2.0.0-step2.1", "2.0.0-step2.2", "2.0.0-step2.3", "2.0.0-step2.4", "2.0.0-step2.5", "2.0.0-step2.6", "2.0.0-step2.7", "2.0.0-step2.8", "2.0.0-step2.9", "2.0.0-step2.10", SEMANTIC_SCHEMA_VERSION] as const;
+export const SEMANTIC_SCHEMA_VERSION = "2.0.0-step2.12";
+export const READABLE_SEMANTIC_SCHEMAS = ["2.0.0-step1", "2.0.0-step2.1", "2.0.0-step2.2", "2.0.0-step2.3", "2.0.0-step2.4", "2.0.0-step2.5", "2.0.0-step2.6", "2.0.0-step2.7", "2.0.0-step2.8", "2.0.0-step2.9", "2.0.0-step2.10", "2.0.0-step2.11", SEMANTIC_SCHEMA_VERSION] as const;
 export const RUST_PROVIDER_VERSION = "rust-scip-runner-6";
 export const MANAGED_SCIP_VERSION = "managed-scip-3";
-export const TYPESCRIPT_SEMANTIC_VERSION = "5";
+export const TYPESCRIPT_SEMANTIC_VERSION = "6";
 export const CLANG_SEMANTIC_VERSION = "3";
 export const SCIP_SEMANTIC_VERSION = "5";
 export const CALL_PROJECTION_VERSION = "1";

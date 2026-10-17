@@ -1,0 +1,660 @@
+{
+  "scope": "Real ProGraph correctness validation concurrently with compiler suite; no performance qualification",
+  "index": "/private/tmp/prograph-retention-self-20261017",
+  "snapshot": 1,
+  "schema": "2.0.0-step2.12",
+  "sourceRevision": "892d91833cfd22639da3f34948969a24a1ea96bb",
+  "sourceInputsHash": "002b1c37c3a4176f6cd333ba65842a00d0507838e9d0894996d7dae8065be470",
+  "sourceFiles": 251,
+  "counts": {
+    "occurrences": 142841,
+    "visibleClaims": 252042,
+    "calls": 15089,
+    "observedInputs": 16458,
+    "owners": 1074
+  },
+  "integrity": "ok",
+  "foreignKeys": [],
+  "freshness": {
+    "repositoryRoot": "/Users/xiyuanpan/prograph",
+    "indexDirectory": "/private/tmp/prograph-retention-self-20261017",
+    "indexedCommit": "892d91833cfd22639da3f34948969a24a1ea96bb",
+    "currentCommit": "892d91833cfd22639da3f34948969a24a1ea96bb",
+    "indexGeneratedAt": "2026-10-17T07:37:58.502Z",
+    "schemaVersion": "1.2.0",
+    "toolVersion": "0.3.0",
+    "enabledAdapters": [
+      "typescript",
+      "rust",
+      "python",
+      "java",
+      "c",
+      "cpp",
+      "go",
+      "csharp",
+      "react",
+      "tauri",
+      "architecture",
+      "markdown",
+      "packageJson",
+      "cargoToml",
+      "tauriConfig",
+      "tauriCapability",
+      "tests",
+      "semanticLinker"
+    ],
+    "indexedFileCount": 251,
+    "currentSupportedFileCount": 251,
+    "addedFiles": [],
+    "modifiedFiles": [],
+    "deletedFiles": [],
+    "configChanged": false,
+    "adapterVersionsChanged": false,
+    "schemaChanged": false,
+    "repositoryChanged": false,
+    "semanticPublication": {
+      "state": "matches-legacy-report",
+      "snapshot": 1
+    },
+    "semanticInputsChanged": false,
+    "semanticInputs": {
+      "state": "checked-recorded",
+      "checked": 20535,
+      "additionalChanges": 0
+    },
+    "stale": false,
+    "state": "fresh"
+  },
+  "priorRuntimeEquivalence": {
+    "scope": "Actual report-writer versus current code over identical real ProGraph source; only deliberate TypeScript isolatedModule and adapter-version additions normalized",
+    "equal": true,
+    "hashes": [
+      "3e57410fd14abce205b4c7b5f85b438540f54cb223742adef415ec2cb275485e",
+      "3e57410fd14abce205b4c7b5f85b438540f54cb223742adef415ec2cb275485e"
+    ],
+    "counts": [
+      {
+        "nodes": 8341,
+        "edges": 20847,
+        "diagnostics": 4262
+      },
+      {
+        "nodes": 8341,
+        "edges": 20847,
+        "diagnostics": 4262
+      }
+    ],
+    "differences": {
+      "nodes": {
+        "oldOnly": [],
+        "newOnly": []
+      },
+      "edges": {
+        "oldOnly": [],
+        "newOnly": []
+      },
+      "diagnostics": {
+        "oldOnly": [],
+        "newOnly": []
+      }
+    }
+  },
+  "capturedBeforeDocumentationUpdate": true,
+  "boundedReads": {
+    "overview": {
+      "sha256": "88fe2bf513dd757e8394b593bfdf494425b66371ff7c16796727caf0a2513fe4",
+      "result": {
+        "repository": {
+          "root": "/Users/xiyuanpan/prograph",
+          "identity": "52f21d49288e74c1",
+          "gitCommit": "892d91833cfd22639da3f34948969a24a1ea96bb"
+        },
+        "counts": {
+          "files": 170,
+          "nodes": 7760,
+          "edges": 6978,
+          "diagnostics": 4262
+        },
+        "totalCounts": {
+          "files": 184,
+          "nodes": 8341,
+          "edges": 20847,
+          "diagnostics": 4262
+        },
+        "nodesByKind": [
+          {
+            "kind": "unresolved_symbol",
+            "count": 6537
+          },
+          {
+            "kind": "function",
+            "count": 466
+          },
+          {
+            "kind": "method",
+            "count": 195
+          },
+          {
+            "kind": "file",
+            "count": 170
+          },
+          {
+            "kind": "interface",
+            "count": 136
+          },
+          {
+            "kind": "directory",
+            "count": 62
+          },
+          {
+            "kind": "type_alias",
+            "count": 49
+          },
+          {
+            "kind": "external_package",
+            "count": 35
+          },
+          {
+            "kind": "class",
+            "count": 27
+          },
+          {
+            "kind": "module",
+            "count": 26
+          },
+          {
+            "kind": "react_component",
+            "count": 23
+          },
+          {
+            "kind": "struct",
+            "count": 10
+          },
+          {
+            "kind": "framework_event",
+            "count": 9
+          },
+          {
+            "kind": "framework_command",
+            "count": 6
+          },
+          {
+            "kind": "boundary",
+            "count": 5
+          },
+          {
+            "kind": "trait",
+            "count": 2
+          },
+          {
+            "kind": "enum",
+            "count": 1
+          },
+          {
+            "kind": "repository",
+            "count": 1
+          }
+        ],
+        "edgesByKind": [
+          {
+            "kind": "calls",
+            "count": 4561
+          },
+          {
+            "kind": "contains",
+            "count": 1002
+          },
+          {
+            "kind": "imports",
+            "count": 983
+          },
+          {
+            "kind": "uses_type",
+            "count": 407
+          },
+          {
+            "kind": "invokes",
+            "count": 10
+          },
+          {
+            "kind": "listens",
+            "count": 10
+          },
+          {
+            "kind": "registers",
+            "count": 4
+          },
+          {
+            "kind": "emits",
+            "count": 1
+          }
+        ],
+        "adapters": [
+          {
+            "adapter": "architecture",
+            "detected": 1,
+            "durationMs": 14,
+            "fileCount": 251,
+            "nodeCount": 10,
+            "edgeCount": 6,
+            "diagnosticCount": 0,
+            "metadata": {
+              "formats": [
+                "protobuf",
+                "openapi-json",
+                "openapi-yaml",
+                "graphql",
+                "github-workflow",
+                "compose"
+              ],
+              "limitations": [
+                "No external schema reference fetching",
+                "No generated client or handler matching without explicit API namespace"
+              ]
+            }
+          },
+          {
+            "adapter": "c",
+            "detected": 1,
+            "durationMs": 6,
+            "fileCount": 2,
+            "nodeCount": 15,
+            "edgeCount": 14,
+            "diagnosticCount": 0,
+            "metadata": {
+              "version": "1",
+              "capabilities": {
+                "syntax": "syntax",
+                "symbols": "syntax",
+                "modules": "syntax",
+                "references": "unsupported",
+                "calls": "heuristic",
+                "types": "syntax",
+                "inheritance": "unsupported",
+                "generics": "unsupported",
+                "macros": "syntax",
+                "dynamicDispatch": "unsupported"
+              },
+              "providers": [
+                {
+                  "id": "tree-sitter-c",
+                  "version": "0.24.1",
+                  "kind": "syntax",
+                  "available": true
+                }
+              ],
+              "semanticProviderAvailable": false
+            }
+          },
+          {
+            "adapter": "cargoToml",
+            "detected": 1,
+            "durationMs": 1,
+            "fileCount": 251,
+            "nodeCount": 16,
+            "edgeCount": 12,
+            "diagnosticCount": 0,
+            "metadata": {
+              "fileCount": 4
+            }
+          },
+          {
+            "adapter": "cpp",
+            "detected": 1,
+            "durationMs": 15,
+            "fileCount": 1,
+            "nodeCount": 15,
+            "edgeCount": 15,
+            "diagnosticCount": 0,
+            "metadata": {
+              "version": "1",
+              "capabilities": {
+                "syntax": "syntax",
+                "symbols": "syntax",
+                "modules": "syntax",
+                "references": "unsupported",
+                "calls": "heuristic",
+                "types": "syntax",
+                "inheritance": "syntax",
+                "generics": "syntax",
+                "macros": "syntax",
+                "dynamicDispatch": "unsupported"
+              },
+              "providers": [
+                {
+                  "id": "tree-sitter-cpp",
+                  "version": "0.23.4",
+                  "kind": "syntax",
+                  "available": true
+                }
+              ],
+              "semanticProviderAvailable": false
+            }
+          },
+          {
+            "adapter": "csharp",
+            "detected": 1,
+            "durationMs": 8,
+            "fileCount": 1,
+            "nodeCount": 17,
+            "edgeCount": 16,
+            "diagnosticCount": 0,
+            "metadata": {
+              "version": "1",
+              "capabilities": {
+                "syntax": "syntax",
+                "symbols": "syntax",
+                "modules": "syntax",
+                "references": "unsupported",
+                "calls": "heuristic",
+                "types": "syntax",
+                "inheritance": "syntax",
+                "generics": "syntax",
+                "macros": "unsupported",
+                "dynamicDispatch": "unsupported"
+              },
+              "providers": [
+                {
+                  "id": "tree-sitter-c-sharp",
+                  "version": "0.23.5",
+                  "kind": "syntax",
+                  "available": true
+                }
+              ],
+              "semanticProviderAvailable": false
+            }
+          },
+          {
+            "adapter": "go",
+            "detected": 1,
+            "durationMs": 5,
+            "fileCount": 1,
+            "nodeCount": 22,
+            "edgeCount": 22,
+            "diagnosticCount": 0,
+            "metadata": {
+              "version": "1",
+              "capabilities": {
+                "syntax": "syntax",
+                "symbols": "syntax",
+                "modules": "syntax",
+                "references": "unsupported",
+                "calls": "heuristic",
+                "types": "syntax",
+                "inheritance": "syntax",
+                "generics": "syntax",
+                "macros": "unsupported",
+                "dynamicDispatch": "unsupported"
+              },
+              "providers": [
+                {
+                  "id": "tree-sitter-go",
+                  "version": "0.25.0",
+                  "kind": "syntax",
+                  "available": true
+                }
+              ],
+              "semanticProviderAvailable": false
+            }
+          },
+          {
+            "adapter": "java",
+            "detected": 1,
+            "durationMs": 6,
+            "fileCount": 1,
+            "nodeCount": 18,
+            "edgeCount": 17,
+            "diagnosticCount": 0,
+            "metadata": {
+              "version": "1",
+              "capabilities": {
+                "syntax": "syntax",
+                "symbols": "syntax",
+                "modules": "syntax",
+                "references": "unsupported",
+                "calls": "heuristic",
+                "types": "syntax",
+                "inheritance": "syntax",
+                "generics": "syntax",
+                "macros": "unsupported",
+                "dynamicDispatch": "unsupported"
+              },
+              "providers": [
+                {
+                  "id": "tree-sitter-java",
+                  "version": "0.23.5",
+                  "kind": "syntax",
+                  "available": true
+                }
+              ],
+              "semanticProviderAvailable": false
+            }
+          },
+          {
+            "adapter": "markdown",
+            "detected": 1,
+            "durationMs": 28,
+            "fileCount": 251,
+            "nodeCount": 270,
+            "edgeCount": 355,
+            "diagnosticCount": 0,
+            "metadata": {
+              "fileCount": 6
+            }
+          },
+          {
+            "adapter": "packageJson",
+            "detected": 1,
+            "durationMs": 2,
+            "fileCount": 251,
+            "nodeCount": 65,
+            "edgeCount": 63,
+            "diagnosticCount": 0,
+            "metadata": {
+              "fileCount": 2
+            }
+          },
+          {
+            "adapter": "python",
+            "detected": 1,
+            "durationMs": 8,
+            "fileCount": 1,
+            "nodeCount": 24,
+            "edgeCount": 27,
+            "diagnosticCount": 0,
+            "metadata": {
+              "version": "1",
+              "capabilities": {
+                "syntax": "syntax",
+                "symbols": "syntax",
+                "modules": "syntax",
+                "references": "unsupported",
+                "calls": "heuristic",
+                "types": "syntax",
+                "inheritance": "syntax",
+                "generics": "syntax",
+                "macros": "unsupported",
+                "dynamicDispatch": "unsupported"
+              },
+              "providers": [
+                {
+                  "id": "tree-sitter-python",
+                  "version": "0.25.0",
+                  "kind": "syntax",
+                  "available": true
+                }
+              ],
+              "semanticProviderAvailable": false
+            }
+          },
+          {
+            "adapter": "react",
+            "detected": 1,
+            "durationMs": 17,
+            "fileCount": 251,
+            "nodeCount": 306,
+            "edgeCount": 306,
+            "diagnosticCount": 27,
+            "metadata": {
+              "componentCount": 23
+            }
+          },
+          {
+            "adapter": "rust",
+            "detected": 1,
+            "durationMs": 16,
+            "fileCount": 21,
+            "nodeCount": 115,
+            "edgeCount": 135,
+            "diagnosticCount": 15,
+            "metadata": {
+              "version": "4",
+              "capabilities": {
+                "syntax": "syntax",
+                "symbols": "syntax",
+                "modules": "heuristic",
+                "references": "heuristic",
+                "calls": "heuristic",
+                "types": "heuristic",
+                "inheritance": "syntax",
+                "generics": "unsupported",
+                "macros": "syntax",
+                "dynamicDispatch": "unsupported"
+              },
+              "moduleCount": 21,
+              "unresolvedNodePolicy": "scoped-and-common-method-aggregated",
+              "providers": [
+                {
+                  "id": "tree-sitter-rust",
+                  "version": "0.24.0",
+                  "kind": "syntax",
+                  "available": true
+                }
+              ],
+              "semanticProviderAvailable": false
+            }
+          },
+          {
+            "adapter": "semanticLinker",
+            "detected": 1,
+            "durationMs": 105,
+            "fileCount": 251,
+            "nodeCount": 0,
+            "edgeCount": 434,
+            "diagnosticCount": 0,
+            "metadata": {
+              "linkedEdgeCount": 434
+            }
+          },
+          {
+            "adapter": "tauri",
+            "detected": 1,
+            "durationMs": 20,
+            "fileCount": 251,
+            "nodeCount": 17,
+            "edgeCount": 30,
+            "diagnosticCount": 13,
+            "metadata": {
+              "commandCount": 6,
+              "eventCount": 9,
+              "unresolvedEventExpressionCount": 2
+            }
+          },
+          {
+            "adapter": "tauriCapability",
+            "detected": 1,
+            "durationMs": 1,
+            "fileCount": 251,
+            "nodeCount": 4,
+            "edgeCount": 3,
+            "diagnosticCount": 0,
+            "metadata": {
+              "fileCount": 1
+            }
+          },
+          {
+            "adapter": "tauriConfig",
+            "detected": 1,
+            "durationMs": 1,
+            "fileCount": 251,
+            "nodeCount": 8,
+            "edgeCount": 7,
+            "diagnosticCount": 0,
+            "metadata": {
+              "fileCount": 1
+            }
+          },
+          {
+            "adapter": "tests",
+            "detected": 1,
+            "durationMs": 10,
+            "fileCount": 251,
+            "nodeCount": 217,
+            "edgeCount": 219,
+            "diagnosticCount": 0,
+            "metadata": {
+              "fileCount": 33
+            }
+          },
+          {
+            "adapter": "typescript",
+            "detected": 1,
+            "durationMs": 5478,
+            "fileCount": 138,
+            "nodeCount": 7162,
+            "edgeCount": 19185,
+            "diagnosticCount": 4207,
+            "metadata": {
+              "version": "3",
+              "capabilities": {
+                "syntax": "syntax",
+                "symbols": "semantic",
+                "modules": "semantic",
+                "references": "semantic",
+                "calls": "semantic",
+                "types": "semantic",
+                "inheritance": "unsupported",
+                "generics": "unsupported",
+                "macros": "unsupported",
+                "dynamicDispatch": "unsupported"
+              },
+              "projectFileCount": 138,
+              "providers": [
+                {
+                  "id": "ts-morph/compiler-api",
+                  "version": "5.9.2",
+                  "kind": "compiler",
+                  "available": true
+                }
+              ],
+              "semanticProviderAvailable": true
+            }
+          }
+        ],
+        "scope": "code"
+      }
+    },
+    "symbol": {
+      "sha256": "179106902ef7bc5774eae6064e893c460bee160eca1f4725d04896fec4203888",
+      "result": [
+        {
+          "id": "typescript:function:6ad8cbb2e86b3b02",
+          "name": "qualifyRetainedAnalysis",
+          "kind": "function",
+          "file": "src/core/semantic/retention-qualification.ts",
+          "startLine": 12
+        }
+      ]
+    }
+  },
+  "codeFiles": {
+    "src/adapters/language/typescript/index.ts": "2f56275363de03323cad316f96496b7e4c2992f4092488ce310044524542088b",
+    "src/core/semantic/retention-qualification.ts": "838a61cbeaac3a39e8cb5d188db321821a5da63d7ce4c7b9b1fd6b4da865d23e",
+    "src/core/semantic/provider-runs.ts": "6351d4c73ab35f63a93bfb25a3d2f7c608c1e41333bb6343e239644c467feb5d",
+    "src/core/semantic/owned-projection.ts": "535cecacdb6018ece89e06e861aacdcccb883d4ce9b3f252204fc9442bd78419",
+    "src/core/semantic/model.ts": "1bb64c2af4da30e0eaf00e53fd5b37dd678580c88c5311e6f55f615f9e5bebed",
+    "src/core/analysis/sync.ts": "f3292234a1a14525878e1a57ed65ec9d0c2050622d3dac86b8e8859e3c48c859",
+    "src/core/semantic/schema.ts": "b3b5608b07eecae59d51275ac4f4fe8240423b93fbcc7d7e5ea4be34bfc9f0b0",
+    "tests/semantic-retention.test.ts": "6cbdb69f6321f0994c171c1416ed0152c8303009e7e26a7b7f3cc5869d4b98e1"
+  }
+}

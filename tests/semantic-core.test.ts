@@ -181,7 +181,7 @@ describe("TypeScript semantic vertical slice", () => {
     try { expect(visible(db, result.manifest.semanticCore!.snapshot!)).toEqual(visible(db, again.manifest.semanticCore!.snapshot!)); } finally { db.close(); }
   }, 60000);
   test("deletion leaves unresolved identity shells, pinned history, fresh snapshots and custom paths", async () => {
-    const root = await fixture(); const output = path.join(root, "my-index"); const first = await analyzeRepository(root, { output });
+    const root = await fixture(); const output = path.join(root, "my-index"); const first = await analyzeRepository(root, { output }); expect(first.manifest.semanticCore?.status, first.manifest.semanticCore?.reason).toBe("partial");
     const q = await semanticQueryForRepository(root, path.join(output, "graph.sqlite"));
     const obsolete = (q.execute("find", "obsolete").items as Array<{ key: string }>)[0]!.key;
     await writeFile(path.join(root, "src/lib.ts"), `export function target(x: string | number) { return x; }\n`);

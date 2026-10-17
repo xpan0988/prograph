@@ -12,6 +12,7 @@ import packageJson from "../../../package.json" with { type: "json" };
 import { SemanticStore } from "../semantic/store.js";
 import { readSyntaxProjection } from "../semantic/owned-projection.js";
 import { deriveOwnedAnalysis } from "../semantic/analysis-passes.js";
+import { inputMatches, recordedPath } from "../semantic/input-check.js";
 import { GraphBuilder } from "../graph/builder.js";
 import { indexSemanticFoundation } from "../semantic/typescript.js";
 import { withIndexWork } from "../semantic/maintenance-lock.js";
@@ -51,7 +52,7 @@ function adapterRunsFor(graph: GraphData, enabledAdapters: string[], previous: A
     detected: true,
     durationMs: 0,
     fileCount: graph.nodes.filter(node => node.kind === "file" && node.adapter === adapter).length,
-    metadata: previous.find(run => run.adapter === adapter)?.metadata ?? {},
+    ...(previous.find(run => run.adapter === adapter)?.metadata ? { metadata: previous.find(run => run.adapter === adapter)!.metadata! } : {}),
     nodeCount: graph.nodes.filter((node) => node.adapter === adapter).length,
     edgeCount: graph.edges.filter((edge) => edge.evidence.some((item) => item.adapter === adapter)).length,
     diagnosticCount: graph.diagnostics.filter((item) => item.adapter === adapter).length,
@@ -79,11 +80,12 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
   // Only provider observations may be reused as input. Reusing the compatibility graph would
   // turn yesterday's framework/knowledge conclusions into today's base authority.
   let source: GraphData;
+  let sourceReceipt: AdapterResult["inputReceipt"];
   const store = new SemanticStore(path.join(status.indexDirectory, "semantic.sqlite"));
   try {
     const observations = store.activeSnapshot() ? readSyntaxProjection(store, store.activeSnapshot()!) : undefined;
     if (!observations) return undefined; // Old indexes upgrade through a clean analysis.
-    source = { ...previous, ...observations.result };
+    source = { ...previous, ...observations.result }; sourceReceipt = observations.result.inputReceipt;
   } finally { store.close(); }
   const scan = await scanRepository(status.repositoryRoot, status.indexDirectory);
   if (changedFiles.some((file) => frameworkRelevant(file, scan.snapshot.fileContents.get(file) ?? ""))) return undefined;
@@ -101,11 +103,15 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
     absoluteFiles: new Map([...scan.snapshot.absoluteFiles].filter(([file]) => sourceFiles.includes(file) || !/\.(?:ts|tsx|js|jsx|mts|cts|rs)$/.test(file))),
     fileContents: new Map([...scan.snapshot.fileContents].filter(([file]) => sourceFiles.includes(file) || !/\.(?:ts|tsx|js|jsx|mts|cts|rs)$/.test(file))),
   };
+  // Global scripts/ambient declarations can affect an unchanged file without an
+  // existing reference edge. Only previously and currently isolated TS modules qualify.
+  if (sourceFiles.some(file => isTypeScriptFile(file) && (!/\.(?:ts|tsx|mts|cts)$/.test(file) || !source.nodes.some(node => node.kind === "file" && node.file === file && node.metadata.isolatedModule === true)))) return undefined;
   const results: AdapterResult[] = [];
   if (sourceFiles.some((file) => /\.(?:ts|tsx|js|jsx|mts|cts)$/.test(file))) results.push(await typescriptAdapter.analyze(partialSnapshot));
   if (sourceFiles.some((file) => file.endsWith(".rs"))) results.push(await rustAdapter.analyze(partialSnapshot));
   const partialNodes = results.flatMap((result) => result.nodes);
   const partialEdges = results.flatMap((result) => result.edges);
+  if (partialNodes.some(node => node.file && !sourceFiles.includes(node.file) || node.kind === "file" && isTypeScriptFile(node.file ?? "") && node.metadata.isolatedModule !== true)) return undefined;
   if (partialNodes.some((node) => node.kind === "unresolved_symbol" || node.kind.startsWith("framework_"))) return undefined;
   if (partialEdges.some((edge) => edge.confidence === "probable" || edge.confidence === "unresolved" || ["imports", "invokes", "registers", "emits", "listens", "renders", "passes_callback"].includes(edge.kind))) return undefined;
   const retainedNodes = source.nodes.filter((node) => !removedIds.has(node.id));
@@ -120,7 +126,19 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
     edges: [...source.edges.filter((edge) => !removedIds.has(edge.source) && !removedIds.has(edge.target)), ...partialEdges],
     diagnostics: [...source.diagnostics.filter((item) => !item.file || !affectedFiles.has(item.file)), ...results.flatMap((result) => result.diagnostics)],
   };
-  const owned = await deriveOwnedAnalysis(scan.snapshot, { ...graph, metadata: {} }, path.join(status.indexDirectory, "semantic.sqlite"));
+  let inputReceipt = sourceReceipt;
+  if (results.some(result => result.inputReceipt)) {
+    if (!sourceReceipt?.qualified || results.some(result => result.inputReceipt && !result.inputReceipt.qualified)) return undefined;
+    const inputs = new Map(sourceReceipt.inputs.map(input => [input.resource, input.digest]));
+    for (const result of results) for (const input of result.inputReceipt?.inputs ?? []) {
+      const previous = inputs.get(input.resource), file = recordedPath(input.resource) ?? (input.resource.startsWith("physical:") ? input.resource.slice(9) : undefined);
+      if (previous && previous !== input.digest && (!file || !affectedFiles.has(path.relative(status.repositoryRoot, file).split(path.sep).join("/")))) return undefined;
+      inputs.set(input.resource, input.digest);
+    }
+    inputReceipt = { qualified: true, inputs: [...inputs].sort(([a],[b])=>a<b?-1:a>b?1:0).map(([resource,digest])=>({resource,digest})) };
+  }
+  for (const input of inputReceipt?.inputs ?? []) if (!await inputMatches(input,status.repositoryRoot)) return undefined;
+  const owned = await deriveOwnedAnalysis(scan.snapshot, { ...graph, metadata: {}, ...(inputReceipt ? { inputReceipt } : {}) }, path.join(status.indexDirectory, "semantic.sqlite"));
   const combined = new GraphBuilder(); combined.merge({ ...graph, metadata: {} }); combined.merge(owned.result);
   graph.nodes = [...combined.nodes.values()]; graph.edges = [...combined.edges.values()]; graph.diagnostics = combined.diagnostics;
   const languageNames = new Set(["typescript", "rust", "python", "java", "c", "cpp", "go", "csharp"]);

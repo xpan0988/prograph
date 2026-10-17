@@ -7,10 +7,11 @@ import { repositoryInputPaths } from "../repository/repository.js";
 import Database from "better-sqlite3";
 import { READABLE_SEMANTIC_SCHEMAS, SEMANTIC_FORMAT_VERSION } from "./model.js";
 import { inputMatches, recordedDigest, recordedPath } from "./input-check.js";
+import { readProGraphConfiguration } from "../config/config.js";
 import { qualifiedCallProjection } from "./passes.js";
 const semanticInput = (file: string) => /\.(?:[cm]?tsx?|jsx?|pyi?|rs|c|h|cpp|cc|cxx|hpp|hxx|java|go|cs|proto|gql|graphql)$/.test(file) || /(?:package(?:-lock)?\.json|tsconfig[^/]*\.json|jsconfig[^/]*\.json|Cargo\.(?:toml|lock)|go\.(?:mod|work|sum)|pyproject\.toml|pyrightconfig\.json|pom\.xml|build\.gradle(?:\.kts)?|compile_commands\.json|\.csproj|\.sln)$/.test(file);
 const passSuffix = /\/pass:[A-Za-z0-9._-]+@[A-Za-z0-9._-]+$/;
-interface Inventory { root: string; inventory: string }
+export interface Inventory { root: string; inventory: string; sourceInventory: string; configurationInput: string }
 export interface RecordedInputStatus { state: "checked-recorded" | "changed" | "unavailable" | "unchecked"; checked: number; additionalChanges: number; reason?: string }
 
 /** Recorded positive and negative dependencies supplement scanner freshness; not complete build coverage. */
@@ -24,6 +25,7 @@ export async function recordedInputStatus(filename: string, snapshot: Repository
     const active = db.prepare("SELECT value FROM sc_meta WHERE key='active'").get() as { value: string } | undefined;
     if (!active) return { state: "unavailable", checked: 0, additionalChanges: 0, reason: "No published semantic snapshot" };
     if (!Number.isSafeInteger(Number(active.value)) || !db.prepare("SELECT 1 FROM sc_snapshots WHERE id=?").get(Number(active.value))) return { state: "unavailable", checked: 0, additionalChanges: 0, reason: "Published semantic snapshot is invalid" };
+    if (db.prepare("SELECT 1 FROM sc_partitions WHERE snapshot=? AND partition_key='retention/gaps'").get(Number(active.value))) return { state: "unchecked", checked: 0, additionalChanges: 0, reason: "Previous analysis groups were not qualified for native-only publication; run analyze/sync" };
     const inputs = db.prepare("SELECT DISTINCT i.resource,i.digest FROM sc_partitions p JOIN sc_inputs i ON i.run=p.run WHERE p.snapshot=? LIMIT 100001").all(Number(active.value)) as Array<{ resource: string; digest: string }>;
     if (inputs.length > 100000) return { state: "unchecked", checked: 0, additionalChanges: 0, reason: "Recorded dependency catalogue exceeds status budget" };
     let checked = 0; let changed = false; let additionalChanges = 0;
@@ -35,7 +37,7 @@ export async function recordedInputStatus(filename: string, snapshot: Repository
       }
       if (input.resource.startsWith("unavailable-input:")) return { state: "unchecked", checked, additionalChanges, reason: "A failed provider dependency could not be fingerprinted; explicit coverage gap remains" };
       const file = input.resource.startsWith("source:") ? path.join(snapshot.repository.root, input.resource.slice(7)) : input.resource.startsWith("physical:") || input.resource.startsWith("artifact:") ? input.resource.slice(9) : undefined;
-      if (input.resource === "environment:host" || input.resource.startsWith("tree:") || input.resource.startsWith("probe-")) {
+      if (["environment:host", "environment:cwd"].includes(input.resource) || input.resource.startsWith("tree:") || input.resource.startsWith("probe-")) {
         checked++;
         if (!await inputMatches(input, snapshot.repository.root)) {
           changed = true; const observed = recordedPath(input.resource);
@@ -56,11 +58,15 @@ export async function recordedInputStatus(filename: string, snapshot: Repository
 }
 
 export async function inventoryFromDisk(root: string, index: string, maxFiles: number, signal?: AbortSignal): Promise<Inventory> {
-  const paths = (await repositoryInputPaths(root, index, maxFiles)).filter(semanticInput);
+  const configuration = (await readProGraphConfiguration(root)).fingerprint;
+  const paths = await repositoryInputPaths(root, index, maxFiles);
   const pairs: string[][] = [];
   for (const file of paths) { signal?.throwIfAborted(); pairs.push([file, await digestFile(path.join(root, file), 10 * 1024 ** 3, signal)]); }
-  return { root, inventory: digest(canonical(pairs.sort())) };
+  if ((await readProGraphConfiguration(root)).fingerprint !== configuration) throw Error("Repository configuration changed during inventory");
+  return { root, inventory: digest(canonical(pairs.filter(([file]) => semanticInput(file!)).sort())), sourceInventory: digest(canonical(pairs.sort())), configurationInput: configuration };
 }
+
+export function sourceInventory(snapshot: RepositorySnapshot): string { return digest(canonical([...snapshot.fileContents].map(([file,text])=>[file,digest(text)]).sort())); }
 
 /** Conservative negative dependency: source/config additions also invalidate imported artifact/TU groups. */
 export function semanticInventory(snapshot: RepositorySnapshot): string {

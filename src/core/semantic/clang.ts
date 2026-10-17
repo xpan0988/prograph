@@ -1,3 +1,4 @@
+import { qualifyRetainedAnalysis, verifyPublicationInputs } from "./retention-qualification.js";
 import path from "node:path";
 import { mkdir, realpath } from "node:fs/promises";
 import { scanRepository, resolveRepositoryRoot } from "../repository/repository.js";
@@ -6,7 +7,7 @@ import { SemanticStore } from "./store.js";
 import { SourceCoordinates } from "./coordinates.js";
 import { canonical, digest, semanticKey, CLANG_SEMANTIC_VERSION, type Provenance } from "./model.js";
 import { executePasses } from "./passes.js";
-import { semanticInventory, retainProviders } from "./provider-runs.js";
+import { semanticInventory, retainProviders, inventoryFromDisk } from "./provider-runs.js";
 import { boundedInput, digestFile } from "./inputs.js";
 import type { ProviderPreparation } from "./provider-plan.js";
 import { authorizeProvider, verifyProviderAuthorization } from "./provider-grants.js";
@@ -207,7 +208,9 @@ async function indexClangWithLease(repository: string, unitKey: string, index: s
       return { status: "prepared", context, coverage, durationMs: Math.round(performance.now() - started), compiler: { executable: COMPILER, version }, bounds };
     }
     const native = await retainProviders(store, scan.snapshot, parent, partition);
-    const others = parent ? (store.sql("SELECT partition_key,run FROM sc_partitions WHERE snapshot=?").all(parent) as Array<{ partition_key: string; run: number }>).filter(row => !row.partition_key.startsWith("scip/") && !row.partition_key.startsWith("clang/")).map(row => row.run) : [];
+    const currentInventory = await inventoryFromDisk(root, directory, 200000);
+    const others = await qualifyRetainedAnalysis(store, currentInventory, parent);
+    await verifyPublicationInputs(store,[...others,...native,run,...passes],currentInventory,200000);
     const published = store.publish([...others, ...native, run, ...passes], parent, [registration]);
     return { snapshot: published, context, coverage, durationMs: Math.round(performance.now() - started), compiler: { executable: COMPILER, version }, bounds };
   } finally { store.close(); }

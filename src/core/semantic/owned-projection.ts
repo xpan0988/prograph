@@ -158,16 +158,26 @@ export function readSyntaxProjection(store: SemanticStore, snapshot: number): Ow
     for (const diagnostic of projection.result.diagnostics) combined.result.diagnostics.push(diagnostic);
     projection.nodeClaims.forEach((value, key) => combined.nodeClaims.set(key, value)); projection.edgeClaims.forEach((value, key) => combined.edgeClaims.set(key, value));
   }
+  const catalogue = store.sql("SELECT run FROM sc_partitions WHERE snapshot=? AND partition_key='analysis/catalogue'").get(snapshot) as { run: number } | undefined;
+  if (catalogue) {
+    const qualified = store.sql("SELECT digest FROM sc_inputs WHERE run=? AND resource='source-inputs-qualified'").get(catalogue.run) as { digest: string } | undefined;
+    const inputs = store.sql("SELECT i.resource,i.digest FROM sc_observed_inputs o JOIN sc_inputs i ON i.run=o.run AND i.resource=o.resource WHERE o.run=? ORDER BY i.resource LIMIT 100001").all(catalogue.run) as Array<{ resource: string; digest: string }>;
+    if (inputs.length > 100000) throw Error("Source input receipt exceeds read budget");
+    if (inputs.length || qualified?.digest === "false") combined.result.inputReceipt = { qualified: qualified?.digest === "true", inputs };
+  }
   return combined;
 }
 
-export function writeSyntaxBase(store: SemanticStore, snapshot: RepositorySnapshot, graph: AdapterResult, context: string, fingerprint: string) {
+export function writeSyntaxBase(store: SemanticStore, snapshot: RepositorySnapshot, graph: AdapterResult, context: string, fingerprint: string, qualification?: { inventory: string; versions: string }) {
   store.bindSourceRoot(snapshot.repository.root, snapshot.sourceRoot);
   graph = normalizeProjection(graph);
   if (graph.nodes.length + graph.edges.length + graph.diagnostics.length + snapshot.files.length > 1000000) throw Error("Source observation layer exceeds offline row bound");
   const selector = { key: `analysis:catalogue:${snapshot.repository.identity}`, digest: fingerprint };
   const catalogue = store.begin("analysis/catalogue", context, fingerprint); store.selector(catalogue, selector.key, selector.digest);
   if (snapshot.configurationInput) store.input(catalogue, "configuration:prograph", snapshot.configurationInput);
+  store.input(catalogue, "source-inputs-qualified", String(graph.inputReceipt?.qualified ?? !graph.nodes.some(node=>node.adapter==="typescript")));
+  for (const input of graph.inputReceipt?.inputs ?? []) { store.input(catalogue,input.resource,input.digest); store.sql("INSERT INTO sc_observed_inputs VALUES(?,?)").run(catalogue,input.resource); }
+  if (qualification) { store.input(catalogue, "source-inventory", qualification.inventory); store.input(catalogue, "analysis-versions", qualification.versions); store.input(catalogue, `probe-realpath:${snapshot.repository.root}`, digest(snapshot.sourceRoot!)); }
   store.seal(catalogue, { status: "partial", version: OWNED_PASS_VERSION, ownershipShard: "source-candidate-catalogue" });
   const runs = [catalogue]; const fileClaims = new Map<string, string>(); const nodeClaims = new Map<string, string>(); const edgeClaims = new Map<string, string>();
   const groups = new Map<string, AdapterResult>([["", { nodes: [], edges: [], diagnostics: [], metadata: {} }]]);

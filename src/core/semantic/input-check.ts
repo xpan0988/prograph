@@ -22,6 +22,7 @@ export function directoryFingerprint(entries: Array<{ name: string; isFile: bool
 export async function recordedDigest(resource: string, root: string, signal?: AbortSignal): Promise<string | undefined> {
   signal?.throwIfAborted();
   if (resource === "configuration:prograph") return (await readProGraphConfiguration(root)).fingerprint;
+  if (resource === "environment:cwd") return digest(path.resolve(process.cwd()));
   if (resource === "environment:host") return digest(canonical([process.platform, process.arch, os.machine(), os.release(), [...new Set(os.cpus().map(cpu => cpu.model))].sort()]));
   if (resource.startsWith("source:")) return digestFile(path.join(root, resource.slice(7)), undefined, signal);
   if (resource.startsWith("physical:") || resource.startsWith("artifact:")) return digestFile(resource.slice(9), undefined, signal);

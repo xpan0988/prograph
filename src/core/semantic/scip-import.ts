@@ -1,3 +1,4 @@
+import { qualifyRetainedAnalysis, verifyPublicationInputs } from "./retention-qualification.js";
 import path from "node:path";
 import { mkdir, realpath, lstat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -287,7 +288,9 @@ export async function importScip(repository: string, artifact: string, manifest:
       return { status: "prepared", context, documents: documentCount, accepted: accepted.length, reusedDocuments, rejected, occurrences, calls: "unsupported", durationMs: Math.round(performance.now() - started) };
     }
     const native = await retainProviders(store, inventory, parent, prefix.slice(0, -1));
-    const others = parent ? (store.sql("SELECT partition_key,run FROM sc_partitions WHERE snapshot=?").all(parent) as Array<{ partition_key: string; run: number }>).filter(row => !row.partition_key.startsWith("scip/") && !row.partition_key.startsWith("clang/")).map(row => row.run) : [];
+    const others = await qualifyRetainedAnalysis(store, inventory, parent);
+    await verifyPublicationInputs(store,[...others,...native,summary,...externals,...accepted,...derived],inventory,limits.maxDocuments*2,signal);
+    await execution?.verify(signal);
     signal?.throwIfAborted(); const publicationStarted = performance.now();
     const published = store.publish([...others, ...native, summary, ...externals, ...accepted, ...derived], parent, execution?.registration ? [execution.registration] : []);
     const publicationMs = +(performance.now() - publicationStarted).toFixed(3);
