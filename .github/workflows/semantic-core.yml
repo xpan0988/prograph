@@ -39,6 +39,8 @@ jobs:
           echo "PROGRAPH_TEST_BASELINE_RUNTIME=$baseline_runtime" >> "$GITHUB_ENV"
           report_runtime=$(node scripts/prepare-semantic-baseline.mjs "$RUNNER_TEMP/semantic-baselines" report)
           echo "PROGRAPH_TEST_REPORT_BASELINE_RUNTIME=$report_runtime" >> "$GITHUB_ENV"
+          retention_runtime=$(node scripts/prepare-semantic-baseline.mjs "$RUNNER_TEMP/semantic-baselines" retention)
+          echo "PROGRAPH_TEST_RETENTION_BASELINE_RUNTIME=$retention_runtime" >> "$GITHUB_ENV"
       - uses: actions/setup-python@v5
         with:
           python-version: '3.14'

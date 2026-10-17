@@ -6,6 +6,8 @@ import { digestFile } from "./inputs.js";
 import { toolReceipt } from "./tool-receipt.js";
 import { readProGraphConfiguration } from "../config/config.js";
 
+export function nodeRuntimeFingerprint(): string { return digest(canonical([process.versions, new Intl.Collator().resolvedOptions()])); }
+
 export interface RecordedInput { resource: string; digest: string }
 export function recordedPath(resource: string): string | undefined {
   if (resource.startsWith("probe-read:")) return (JSON.parse(resource.slice(11)) as [string, string])[0];
@@ -22,6 +24,7 @@ export function directoryFingerprint(entries: Array<{ name: string; isFile: bool
 export async function recordedDigest(resource: string, root: string, signal?: AbortSignal): Promise<string | undefined> {
   signal?.throwIfAborted();
   if (resource === "configuration:prograph") return (await readProGraphConfiguration(root)).fingerprint;
+  if (resource === "environment:node") return nodeRuntimeFingerprint();
   if (resource === "environment:cwd") return digest(path.resolve(process.cwd()));
   if (resource === "environment:host") return digest(canonical([process.platform, process.arch, os.machine(), os.release(), [...new Set(os.cpus().map(cpu => cpu.model))].sort()]));
   if (resource.startsWith("source:")) return digestFile(path.join(root, resource.slice(7)), undefined, signal);

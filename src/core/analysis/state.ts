@@ -9,6 +9,7 @@ import { resolveRepositoryRoot, scanRepository } from "../repository/repository.
 import packageJson from "../../../package.json" with { type: "json" };
 import { SEMANTIC_SCHEMA_VERSION, TYPESCRIPT_SEMANTIC_VERSION, CLANG_SEMANTIC_VERSION, SCIP_SEMANTIC_VERSION, RUST_PROVIDER_VERSION, MANAGED_SCIP_VERSION } from "../semantic/model.js";
 import { recordedInputStatus, type RecordedInputStatus } from "../semantic/provider-runs.js";
+import { PROJECT_DISCOVERY_VERSION } from "../semantic/projects.js";
 import { ANALYSIS_PASS_VERSIONS } from "../semantic/analysis-versions.js";
 import { canonical, digest } from "../semantic/model.js";
 import { snapshotReportStatus, type SnapshotReportStatus } from "../semantic/snapshot-report.js";
@@ -19,9 +20,10 @@ const require = createRequire(import.meta.url);
 
 export const ADAPTER_VERSIONS = {
   globalQueries: "1",
+  projectDiscovery: PROJECT_DISCOVERY_VERSION,
   ownedPasses: `${OWNED_PASS_VERSION}/${digest(canonical(ANALYSIS_PASS_VERSIONS))}`,
   semanticCore: `${SEMANTIC_SCHEMA_VERSION}/ts:${TYPESCRIPT_SEMANTIC_VERSION}/clang:${CLANG_SEMANTIC_VERSION}/scip:${SCIP_SEMANTIC_VERSION}/rust:${RUST_PROVIDER_VERSION}/managed:${MANAGED_SCIP_VERSION}`,
-  typescript: "3",
+  typescript: "4",
   polyglot: "1",
   architecture: "1",
   providers: JSON.stringify(["tree-sitter", "tree-sitter-python", "tree-sitter-java", "tree-sitter-c", "tree-sitter-cpp", "tree-sitter-go", "tree-sitter-c-sharp", "tree-sitter-rust", "ts-morph", "typescript", "yaml", "graphql", "protobufjs"].map(name => [name, require(`${name}/package.json`).version])),

@@ -11,6 +11,7 @@ import type { AdapterResult, RepositorySnapshot } from "../adapters/contracts.js
 import { persistGraph } from "../storage/sqlite.js";
 import packageJson from "../../../package.json" with { type: "json" };
 import { createIndexState, writeIndexState } from "./state.js";
+import { reuseTypeScriptObservations } from "../semantic/source-reuse.js";
 import { runAdapter } from "./adapter-run.js";
 import { deriveOwnedAnalysis } from "../semantic/analysis-passes.js";
 import { indexSemanticFoundation } from "../semantic/typescript.js";
@@ -78,13 +79,13 @@ async function analyzeRepositoryWithLease(root: string, options: AnalyzeOptions)
   builder.merge(baseGraph(scan.snapshot));
   builder.diagnostics.push(...scan.diagnostics);
   const adapterRuns: AdapterRun[] = [];
+  const outputDirectory = path.resolve(options.output ?? path.join(root, ".prograph"));
   for (const adapter of [typescriptAdapter, rustAdapter, ...polyglotAdapters]) {
-    const executed = await runAdapter(adapter, scan.snapshot, builder.result(), false);
+    const executed = (adapter === typescriptAdapter ? await reuseTypeScriptObservations(path.join(outputDirectory, "semantic.sqlite"), scan.snapshot) : undefined) ?? await runAdapter(adapter, scan.snapshot, builder.result(), false);
     adapterRuns.push(executed.run);
     builder.diagnostics.push(...validateIdentities(executed.result.nodes, executed.result.edges));
     builder.merge(executed.result);
   }
-  const outputDirectory = path.resolve(options.output ?? path.join(root, ".prograph"));
   await mkdir(outputDirectory, { recursive: true });
   const owned = await deriveOwnedAnalysis(scan.snapshot, builder.result(), path.join(outputDirectory, "semantic.sqlite"));
   builder.merge(owned.result); adapterRuns.push(...owned.adapterRuns);

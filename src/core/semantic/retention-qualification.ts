@@ -4,6 +4,7 @@ import { ADAPTER_VERSIONS } from "../analysis/state.js";
 import { canonical, digest, semanticKey, TYPESCRIPT_SEMANTIC_VERSION } from "./model.js";
 import { inputMatches, type RecordedInput } from "./input-check.js";
 import { inventoryFromDisk, type Inventory } from "./provider-runs.js";
+import { PROJECT_DISCOVERY_VERSION } from "./projects.js";
 import type { SemanticStore } from "./store.js";
 
 type Owner = { partition_key: string; run: number; coverage_json: string; input_fingerprint: string };
@@ -42,7 +43,7 @@ export async function qualifyRetainedAnalysis(store: SemanticStore, inventory: I
       // A TS unit's own selection fingerprint is covered by the complete current
       // project inventory/config/tool policy and its observed search inputs.
       else if (input.resource === "inventory" || input.resource.startsWith("source-root:")) eligible = true;
-      else if (/^(?:source:|physical:|artifact:|tree:|probe-)/.test(input.resource) || ["environment:host", "environment:cwd"].includes(input.resource)) {
+      else if (/^(?:source:|physical:|artifact:|tree:|probe-)/.test(input.resource) || ["environment:host", "environment:cwd", "environment:node"].includes(input.resource)) {
         const key = canonical(input); let cached = checked.get(key);
         if (cached === undefined) { cached = await inputMatches(input, inventory.root); checked.set(key, cached); }
         eligible = cached;
@@ -53,7 +54,7 @@ export async function qualifyRetainedAnalysis(store: SemanticStore, inventory: I
   };
   const source = rows.filter(row => row.partition_key.startsWith("analysis/"));
   if (source.length) {
-    const required = ["source-inputs-qualified", "source-inventory", "analysis-versions", "configuration:prograph", `probe-realpath:${inventory.root}`];
+    const required = ["environment:node", "source-inputs-qualified", "source-inventory", "analysis-versions", "configuration:prograph", `probe-realpath:${inventory.root}`];
     if (source.some(row => row.partition_key === "analysis/catalogue") && await matches(source, required)) retained.push(...source.map(row => row.run));
     else gaps.add("analysis/source-and-derived-passes");
   }
@@ -65,11 +66,11 @@ export async function qualifyRetainedAnalysis(store: SemanticStore, inventory: I
   for (const [key, group] of typescript) {
     const summary = group.find(row => row.partition_key === key), coverage = summary ? JSON.parse(summary.coverage_json) as Record<string, unknown> : {};
     if (summary && coverage.mappingVersion === TYPESCRIPT_SEMANTIC_VERSION && coverage.unresolved === 0 && coverage.compilerErrors === 0 && coverage.externalImports === 0
-      && await matches(group, ["project-inventory", "configuration:prograph", "analysis-versions"])) retained.push(...group.map(row => row.run));
+      && await matches(group, ["project-inventory", "configuration:prograph", "analysis-versions", "environment:host", "environment:cwd", "environment:node"])) retained.push(...group.map(row => row.run));
     else gaps.add(key);
   }
   for (const row of rows.filter(row => row.partition_key.startsWith("context/"))) {
-    if (JSON.parse(row.coverage_json).version === "project-discovery-2" && await matches([row], ["project-inventory", "configuration:prograph", "analysis-versions", `probe-realpath:${inventory.root}`])) retained.push(row.run);
+    if (JSON.parse(row.coverage_json).version === PROJECT_DISCOVERY_VERSION && await matches([row], ["project-inventory", "configuration:prograph", "analysis-versions", "environment:host", "environment:cwd", "environment:node", `probe-realpath:${inventory.root}`])) retained.push(row.run);
     else gaps.add("project-discovery");
   }
   for (const row of rows.filter(row => !["analysis/", "typescript/", "context/", "scip/", "clang/"].some(prefix => row.partition_key.startsWith(prefix)))) {

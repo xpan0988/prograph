@@ -10,11 +10,11 @@ import { canonical, digest, semanticKey, TYPESCRIPT_SEMANTIC_VERSION, type FactI
 import { SourceCoordinates } from "./coordinates.js";
 import { SemanticStore } from "./store.js";
 import type { SnapshotReportInput } from "./snapshot-report.js";
-import { discoverProjects, type ProjectUnit } from "./projects.js";
+import { PROJECT_DISCOVERY_VERSION, discoverProjects, type ProjectUnit } from "./projects.js";
 import { executePasses, qualifiedCallProjection } from "./passes.js";
 import { retainProviders, inventoryFromDisk, semanticInventory, sourceInventory } from "./provider-runs.js";
 import { replayProviders } from "./provider-replay.js";
-import { inputMatches } from "./input-check.js";
+import { inputMatches, recordedDigest } from "./input-check.js";
 import { traceCompilerInputs } from "./typescript-inputs.js";
 
 export interface SemanticIndexResult { snapshot: number; context: string; inputFingerprint: string; coverage: Record<string, unknown>; durationMs: number }
@@ -24,6 +24,7 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
   const require = createRequire(import.meta.url);
   const compilerBundle = require.resolve("@ts-morph/common");
   const selected = unit.sources;
+  const environment = await Promise.all(["environment:host","environment:cwd","environment:node"].map(async resource=>({resource,digest:(await recordedDigest(resource,snapshot.repository.root))!})));
   const project = new Project({ skipAddingFilesFromTsConfig: true, compilerOptions: unit.compilerOptions ?? {} });
   const compilerInputs = traceCompilerInputs(project.getFileSystem());
   // These are exact scanner-selected files, not glob patterns. Glob expansion also
@@ -34,7 +35,7 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
   const inputFingerprint = digest(canonical({ sourceBinding: store.sourceBindingFingerprint(), plan: unit.fingerprint, compiler: program.getSourceFiles().map(source => [source.fileName, digest(source.text)]).sort() }));
   const provenance: Provenance = { provider: "typescript/compiler-api", version: `${ts.version}/${TYPESCRIPT_SEMANTIC_VERSION}`, basis: "compiler", method: "compiler-binding", context, inputFingerprint };
   const run = store.begin(unit.key, context, inputFingerprint);
-  store.batch(run, () => { for (const input of unit.probes) store.input(run, input.resource, input.digest); store.input(run, "analysis-versions", digest(canonical(ADAPTER_VERSIONS))); store.input(run, "project-inventory", semanticInventory(snapshot)); if(snapshot.configurationInput) store.input(run,"configuration:prograph",snapshot.configurationInput); });
+  store.batch(run, () => { for(const input of environment)store.input(run,input.resource,input.digest); for (const input of unit.probes) store.input(run, input.resource, input.digest); store.input(run, "analysis-versions", digest(canonical(ADAPTER_VERSIONS))); store.input(run, "project-inventory", semanticInventory(snapshot)); if(snapshot.configurationInput) store.input(run,"configuration:prograph",snapshot.configurationInput); });
   const documentRuns: number[] = [];
   let pending: FactInput[] = []; let pendingBytes = 0;
   const emit = (fact: FactInput): string => {
@@ -92,7 +93,7 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
         // Track the physical bundle, rather than pretending /node_modules/... exists.
         if (!program.isSourceFileDefaultLibrary(source)) inputFiles.set(source.fileName, digest(source.text));
       }
-      for (const file of [compilerBundle, path.join(path.dirname(compilerBundle), "typescript.js")]) inputFiles.set(file, digest(await readFile(file)));
+      for (const file of [require.resolve("ts-morph"), compilerBundle, path.join(path.dirname(compilerBundle), "typescript.js")]) inputFiles.set(file, digest(await readFile(file)));
       // A compiler must see the exact scanner snapshot; do not publish a mixed source version.
       for (const file of selected) {
         const source = program.getSourceFile(snapshot.absoluteFiles.get(file)!);
@@ -229,12 +230,12 @@ async function reusableUnit(store: SemanticStore, snapshot: RepositorySnapshot, 
   if (!inputs.some(input => input.resource === "project-inventory" && input.digest === semanticInventory(snapshot))) return undefined;
   if (!inputs.some(input => input.resource === "inventory" && input.digest === unit.fingerprint)) return undefined;
   for (const input of inputs) {
-    if ((input.resource === "configuration:prograph" || input.resource.startsWith("probe-")) && !await inputMatches(input, snapshot.repository.root)) return undefined;
+    if ((["configuration:prograph","environment:host","environment:cwd","environment:node"].includes(input.resource) || input.resource.startsWith("probe-")) && !await inputMatches(input, snapshot.repository.root)) return undefined;
     if (input.resource.startsWith("source:")) { const text = snapshot.fileContents.get(input.resource.slice(7)); if (text === undefined || digest(text) !== input.digest) return undefined; }
     else if (input.resource.startsWith("physical:")) {
       const file = input.resource.slice(9);
       const require = createRequire(import.meta.url); const bundle = require.resolve("@ts-morph/common");
-      const sdk = new Set([bundle, path.join(path.dirname(bundle), "typescript.js")]);
+      const sdk = new Set([require.resolve("ts-morph"), bundle, path.join(path.dirname(bundle), "typescript.js")]);
       // Only embedded compiler artifacts are exempt from the closed local-unit rule.
       // Outside source/ambient/module search spaces still prevent compiler skipping.
       if (!sdk.has(file) && (file.includes("/node_modules/") || !file.startsWith(`${snapshot.repository.root}/`))) return undefined;
@@ -276,15 +277,17 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
     }
     for (const unit of plan.units) {
       const discoveryGaps = [...unit.gaps, ...plan.diagnostics.slice(0, 4).map(message => message.slice(0, 256))];
+      const environment = await Promise.all(["environment:host","environment:cwd","environment:node"].map(async resource=>({resource,digest:(await recordedDigest(resource,snapshot.repository.root))!})));
       const run = store.begin(`context/${unit.key}`, unit.context, unit.fingerprint);
       store.batch(run, () => {
+        for(const input of environment)store.input(run,input.resource,input.digest);
         store.input(run, "analysis-versions", digest(canonical(ADAPTER_VERSIONS))); store.input(run, "project-inventory", semanticInventory(snapshot)); if(snapshot.configurationInput) store.input(run,"configuration:prograph",snapshot.configurationInput); store.input(run, `probe-realpath:${snapshot.repository.root}`, digest(snapshot.sourceRoot!));
         for (const [file, hash] of Object.entries(unit.inputs)) store.input(run, `physical:${file}`, hash);
         for (const input of unit.probes) store.input(run, input.resource, input.digest);
         const key = semanticKey("project", [snapshot.repository.identity, unit.key]); store.addEntity(key, "artifact", { key, kind: "project" });
-        store.addFact(run, { predicate: "context.Project", context: unit.context, subject: key, value: { unit: unit.key, project: unit.project, language: unit.language, options: unit.options, sourceCount: unit.sources.length, fingerprint: unit.fingerprint, gaps: discoveryGaps }, confidence: "exact", provenance: { provider: "project-discovery", version: "1", basis: "syntax", method: "read-only-project-context", context: unit.context, inputFingerprint: unit.fingerprint } });
+        store.addFact(run, { predicate: "context.Project", context: unit.context, subject: key, value: { unit: unit.key, project: unit.project, language: unit.language, options: unit.options, sourceCount: unit.sources.length, fingerprint: unit.fingerprint, gaps: discoveryGaps }, confidence: "exact", provenance: { provider: "project-discovery", version: PROJECT_DISCOVERY_VERSION, basis: "syntax", method: "read-only-project-context", context: unit.context, inputFingerprint: unit.fingerprint } });
       });
-      store.seal(run, { status: "partial", version: "project-discovery-2", language: unit.language, gaps: discoveryGaps }); runs.push(run);
+      store.seal(run, { status: "partial", version: PROJECT_DISCOVERY_VERSION, language: unit.language, gaps: discoveryGaps }); runs.push(run);
       if (unit.language === "typescript" && snapshot.config.adapters.typescript && unit.sources.length) {
         const reused = await reusableUnit(store, snapshot, unit, previous);
         if (reused) { runs.push(...reused); outcomes.push({ status: "partial", project: unit.project, reused: true }); }

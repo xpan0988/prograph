@@ -6,6 +6,8 @@ import { canonical, digest, semanticKey } from "./model.js";
 import { traceConfigInputs } from "./typescript-inputs.js";
 import type { RecordedInput } from "./input-check.js";
 
+export const PROJECT_DISCOVERY_VERSION = "project-discovery-3";
+
 export interface ProjectUnit {
   key: string;
   project: string;
@@ -33,6 +35,7 @@ export function discoverProjects(snapshot: RepositorySnapshot): ProjectPlan {
   const manifests = snapshot.files.filter(file => /(?:^|\/)(?:package(?:-lock)?\.json|Cargo\.(?:toml|lock)|go\.(?:mod|work|sum)|pyproject\.toml|pyrightconfig\.json|pom\.xml|build\.gradle(?:\.kts)?|compile_commands\.json)$|\.(?:csproj|sln)$/.test(file));
   const manifestDigests = Object.fromEntries(manifests.map(file => [file, digest(snapshot.fileContents.get(file) ?? "")]));
   const add = (project: string, language: string, sources: string[], inputs: Record<string, string>, options: Record<string, unknown>, gaps: string[], compilerOptions?: ts.CompilerOptions, probes: RecordedInput[] = []) => {
+    if(language==='typescript') options={...options,compilerHost:{platform:process.platform,arch:process.arch,caseSensitiveFileNames:ts.sys.useCaseSensitiveFileNames}};
     const key = language === "typescript" && project === "tsconfig.json" ? "typescript/root" : `${language}/project:${project}`;
     const fingerprint = digest(canonical([inputs, options, sources]));
     const context = semanticKey("context", [snapshot.repository.identity, key, inputs, options, language === "typescript" ? ts.version : null]);

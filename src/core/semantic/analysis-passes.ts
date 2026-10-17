@@ -22,7 +22,7 @@ import { partitionBoundaries } from "./boundary-shards.js";
 
 import { ADAPTER_VERSIONS } from "../analysis/state.js";
 import { ANALYSIS_PASS_VERSIONS } from "./analysis-versions.js";
-import { sourceInventory } from "./provider-runs.js";
+import { sourceInventory, semanticInventory } from "./provider-runs.js";
 interface AnalysisPass extends PassContract { adapter?: FrameworkAdapter | undefined }
 function adapterPass(id: string, adapter: FrameworkAdapter, dependencies: string[] = []): AnalysisPass {
   return { id, adapter, version: ANALYSIS_PASS_VERSIONS[id]!, configurationFingerprint: "assigned-per-execution", dependencies,
@@ -69,7 +69,7 @@ export async function deriveOwnedAnalysis(snapshot: RepositorySnapshot, source: 
     const context = semanticKey("analysis-context", [snapshot.repository.identity, OWNED_PASS_VERSION]);
     const fingerprint = digest(canonical({ sourceBinding: store.sourceBindingFingerprint(), files: [...snapshot.fileContents].map(([file, text]) => [file, digest(text)]).sort(),
       inputs: source.inputReceipt ?? null, config: snapshot.config, configurationInput: snapshot.configurationInput ?? "not-captured", passes: ordered.map(pass => passContract(pass)), nodes: [...source.nodes].sort((a, b) => a.id.localeCompare(b.id)), edges: [...source.edges].sort((a, b) => a.id.localeCompare(b.id)) }));
-    const base = writeSyntaxBase(store, snapshot, source, context, fingerprint, { inventory: sourceInventory(snapshot), versions: digest(canonical(ADAPTER_VERSIONS)) });
+    const base = writeSyntaxBase(store, snapshot, source, context, fingerprint, { inventory: sourceInventory(snapshot), semanticInventory: semanticInventory(snapshot), versions: digest(canonical(ADAPTER_VERSIONS)) });
     const baseProjection = base.projection;
     const completed = new Map<string, OwnedProjection>(); const passOwners = new Map<string, number[]>(); const runs = [...base.runs]; const adapterRuns: AdapterRun[] = [];
     const final = new GraphBuilder();

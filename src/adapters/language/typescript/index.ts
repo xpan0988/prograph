@@ -2,6 +2,7 @@ import { ts, type FileSystemHost } from "ts-morph";
 import { createRequire } from "node:module";
 import { readFile } from "node:fs/promises";
 import { traceCompilerInputs } from "../../../core/semantic/typescript-inputs.js";
+import { recordedDigest } from "../../../core/semantic/input-check.js";
 import { digest } from "../../../core/semantic/model.js";
 import type { SemanticProvider } from "../../../core/adapters/providers.js";
 import { capabilities } from "../../../core/adapters/providers.js";
@@ -433,6 +434,8 @@ export const compilerApiAdapter: LanguageAdapter = {
     const require = createRequire(import.meta.url), common = require.resolve("@ts-morph/common");
     const inputs = trace.entries();
     for (const file of [require.resolve("ts-morph"), common, path.join(path.dirname(common), "typescript.js")]) inputs.push({ resource: `physical:${file}`, digest: digest(await readFile(file)) });
+    inputs.push({ resource: "environment:host", digest: (await recordedDigest("environment:host", snapshot.repository.root))! });
+    inputs.push({ resource: "environment:node", digest: (await recordedDigest("environment:node", snapshot.repository.root))! });
     inputs.push({ resource: "environment:cwd", digest: digest(path.resolve(process.cwd())) });
     return { ...graph.result({ projectFileCount: project.getSourceFiles().length }), inputReceipt: { qualified: true, inputs } };
   },
@@ -451,7 +454,7 @@ export const typescriptCompilerProvider: SemanticProvider = {
 export function createTypescriptAdapter(provider: SemanticProvider = typescriptCompilerProvider): LanguageAdapter {
   return {
     ...compilerApiAdapter,
-    version: "3",
+    version: "4",
     appliesTo: file => TYPESCRIPT_EXTENSIONS.has(path.extname(file)),
     async analyze(snapshot) {
       let status = await provider.probe(snapshot);

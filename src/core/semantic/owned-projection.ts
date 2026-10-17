@@ -1,3 +1,4 @@
+import { nodeRuntimeFingerprint } from "./input-check.js";
 import type { AdapterResult, RepositorySnapshot } from "../adapters/contracts.js";
 import type { GraphNode, GraphEdge, Diagnostic } from "../graph/schema.js";
 import { SemanticStore } from "./store.js";
@@ -27,7 +28,7 @@ export function normalizeProjection(result: AdapterResult): AdapterResult {
 
 
 /** Mutable objects exist only as offline algorithm inputs/compatibility views, never as authority. */
-export function readOwnedProjection(store: SemanticStore, run: number): OwnedProjection {
+export function readOwnedProjection(store: Pick<SemanticStore, "sql">, run: number): OwnedProjection {
   const state = store.sql("SELECT state FROM sc_runs WHERE id=?").get(run) as { state: string } | undefined;
   if (state?.state !== "sealed") throw Error("Projection input is not sealed");
   const result: AdapterResult = { nodes: [], edges: [], diagnostics: [], metadata: {} };
@@ -143,7 +144,7 @@ export class OwnedWriter {
 }
 
 /** Reconstruct offline adapter input from source-owned partitions, never derived output. */
-export function readSyntaxProjection(store: SemanticStore, snapshot: number): OwnedProjection | undefined {
+export function readSyntaxProjection(store: Pick<SemanticStore, "sql">, snapshot: number): OwnedProjection | undefined {
   const rows = store.sql("SELECT partition_key,run FROM sc_partitions WHERE snapshot=? AND (partition_key='analysis/source' OR partition_key LIKE 'analysis/source/file:%') ORDER BY partition_key").all(snapshot) as Array<{ partition_key: string; run: number }>;
   if (!rows.some(row => row.partition_key === "analysis/source")) return undefined;
   const combined: OwnedProjection = { run: rows.find(row => row.partition_key === "analysis/source")!.run, result: { nodes: [], edges: [], diagnostics: [], metadata: {} }, nodeClaims: new Map(), edgeClaims: new Map() };
@@ -168,16 +169,17 @@ export function readSyntaxProjection(store: SemanticStore, snapshot: number): Ow
   return combined;
 }
 
-export function writeSyntaxBase(store: SemanticStore, snapshot: RepositorySnapshot, graph: AdapterResult, context: string, fingerprint: string, qualification?: { inventory: string; versions: string }) {
+export function writeSyntaxBase(store: SemanticStore, snapshot: RepositorySnapshot, graph: AdapterResult, context: string, fingerprint: string, qualification?: { inventory: string; semanticInventory: string; versions: string }) {
   store.bindSourceRoot(snapshot.repository.root, snapshot.sourceRoot);
   graph = normalizeProjection(graph);
   if (graph.nodes.length + graph.edges.length + graph.diagnostics.length + snapshot.files.length > 1000000) throw Error("Source observation layer exceeds offline row bound");
   const selector = { key: `analysis:catalogue:${snapshot.repository.identity}`, digest: fingerprint };
   const catalogue = store.begin("analysis/catalogue", context, fingerprint); store.selector(catalogue, selector.key, selector.digest);
+  store.input(catalogue,"environment:node",nodeRuntimeFingerprint());
   if (snapshot.configurationInput) store.input(catalogue, "configuration:prograph", snapshot.configurationInput);
   store.input(catalogue, "source-inputs-qualified", String(graph.inputReceipt?.qualified ?? !graph.nodes.some(node=>node.adapter==="typescript")));
   for (const input of graph.inputReceipt?.inputs ?? []) { store.input(catalogue,input.resource,input.digest); store.sql("INSERT INTO sc_observed_inputs VALUES(?,?)").run(catalogue,input.resource); }
-  if (qualification) { store.input(catalogue, "source-inventory", qualification.inventory); store.input(catalogue, "analysis-versions", qualification.versions); store.input(catalogue, `probe-realpath:${snapshot.repository.root}`, digest(snapshot.sourceRoot!)); }
+  if (qualification) { store.input(catalogue, "source-inventory", qualification.inventory); store.input(catalogue, "project-inventory", qualification.semanticInventory); store.input(catalogue, "analysis-versions", qualification.versions); store.input(catalogue, `probe-realpath:${snapshot.repository.root}`, digest(snapshot.sourceRoot!)); }
   store.seal(catalogue, { status: "partial", version: OWNED_PASS_VERSION, ownershipShard: "source-candidate-catalogue" });
   const runs = [catalogue]; const fileClaims = new Map<string, string>(); const nodeClaims = new Map<string, string>(); const edgeClaims = new Map<string, string>();
   const groups = new Map<string, AdapterResult>([["", { nodes: [], edges: [], diagnostics: [], metadata: {} }]]);

@@ -37,7 +37,7 @@ export async function recordedInputStatus(filename: string, snapshot: Repository
       }
       if (input.resource.startsWith("unavailable-input:")) return { state: "unchecked", checked, additionalChanges, reason: "A failed provider dependency could not be fingerprinted; explicit coverage gap remains" };
       const file = input.resource.startsWith("source:") ? path.join(snapshot.repository.root, input.resource.slice(7)) : input.resource.startsWith("physical:") || input.resource.startsWith("artifact:") ? input.resource.slice(9) : undefined;
-      if (["environment:host", "environment:cwd"].includes(input.resource) || input.resource.startsWith("tree:") || input.resource.startsWith("probe-")) {
+      if (["environment:host", "environment:cwd", "environment:node"].includes(input.resource) || input.resource.startsWith("tree:") || input.resource.startsWith("probe-")) {
         checked++;
         if (!await inputMatches(input, snapshot.repository.root)) {
           changed = true; const observed = recordedPath(input.resource);
