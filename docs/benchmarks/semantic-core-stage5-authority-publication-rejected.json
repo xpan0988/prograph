@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "scope": "Rejected original-1M publication benchmark setup, no publication timing sample accepted.",
+  "commit": "de4b5910da40a4b2b273c36ac6b5c5f5d1ed0dd9",
+  "exitCode": 1,
+  "error": "\n/Users/xiyuanpan/prograph/node_modules/better-sqlite3/lib/methods/wrappers.js:9\n\tthis[cppdb].exec(sql);\n\t            ^\nSqliteError: FOREIGN KEY constraint failed\n    at Database.exec (/Users/xiyuanpan/prograph/node_modules/better-sqlite3/lib/methods/wrappers.js:9:14)\n    at file:///Users/xiyuanpan/prograph/scripts/publication-delta-benchmark.mjs:24:52\n    at sqliteTransaction (/Users/xiyuanpan/prograph/node_modules/better-sqlite3/lib/methods/transaction.js:65:24)\n    at reset (file:///Users/xiyuanpan/prograph/scripts/publication-delta-benchmark.mjs:24:279)\n    at file:///Users/xiyuanpan/prograph/scripts/publication-delta-benchmark.mjs:30:3 {\n  code: 'SQLITE_CONSTRAINT_FOREIGNKEY'\n}\n\nNode.js v25.9.0\n",
+  "driverSha256": "ae0bb0efad7b67ea9c4c4b9245b11d47f13d2f5ac62e8b975200da3c6ec33e97",
+  "point": "The first disposable-copy reset, before originalOwnershipFirst or reshaped first publication.",
+  "cause": "New automatic pre-upgrade migration pins correctly prevent deleting protected snapshots. The old benchmark reset did not explicitly release copied pins.",
+  "correction": "Only the fresh disposable benchmark copy explicitly clears snapshot pins immediately before its already-required initial snapshot/projection reset. Original source and the fsynced pre-upgrade archive remain untouched. Normal publisher pin/support/history/FULL/WAL behavior is unchanged. Migration/publication regression tests and the complete benchmark/oracles must execute again.",
+  "logSha256": "2d6387b6b196fd9fe03b2eca8cb08b23590a99802329b43e02a82cda6bf9da87"
+}

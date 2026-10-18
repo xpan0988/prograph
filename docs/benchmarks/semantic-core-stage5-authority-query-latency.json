@@ -1,0 +1,1852 @@
+{
+  "format": 1,
+  "capturedAt": "2026-10-18T16:17:37.804Z",
+  "commit": "de4b5910da40a4b2b273c36ac6b5c5f5d1ed0dd9",
+  "scope": "Current default owned compatibility reads over previously validated real ProGraph/Pastey semantic snapshots. Source is not reindexed; existing stale notices remain honest. Each request uses the production isolated child executor and its existing admission/deadline/row/byte bounds.",
+  "methodology": "Twenty serial samples per method/repository; time includes fresh worker creation, SQLite opening, authority resolution, read/serialization and IPC. Source database SHA256 checked unchanged. OS cache not evicted; no concurrent local provider/test/benchmark jobs. Empirical nearest-rank p95 of 20 observations is not a portable SLO or tail distribution. Normalize only durationMs for result-hash stability. Native worker/compiler RSS unavailable; controller RSS is not substituted. No persistent pool or runtime code changes.",
+  "driverSha256": "9b759bbecc36d9e9a0c5e48cb0fd814a84808a913f7a36b198faa25d92386614",
+  "implementationDigests": {
+    "query/isolation": "95e39ec41548189f4ab2c2da22f9bf205f9afdeda14d15204c081311b3adf742",
+    "query/query-worker": "b98b5eb622a9fb2a2f8d92053ca21ef2771fb419ecea18c76990d81a44fe0b64",
+    "query/compatibility-global-read": "3e020e5e7d94639fe1b81419d474a992bfbd635a5023d8a3e068a338cbd6b2a7",
+    "semantic/compatibility-global": "2cbca01d742a08213953716bcd3a8131f9c434dbf7b4eeefae6848f527037a9e",
+    "query/navigation": "94633fd10f2aad3113c4ec2c55bbf34c8af4fe12143ca0860262c5054ad8bda1"
+  },
+  "node": "v25.9.0",
+  "results": [
+    {
+      "repository": "/Users/xiyuanpan/prograph",
+      "index": "/private/tmp/prograph-authority-self-stable-20261018",
+      "before": "3ebbf2c316257348b4dfeb578f5e651816f7f01ca3a90988cb0ba2e5fc2eea81",
+      "after": "3ebbf2c316257348b4dfeb578f5e651816f7f01ca3a90988cb0ba2e5fc2eea81",
+      "methods": [
+        {
+          "method": "overview",
+          "args": [],
+          "samples": [
+            {
+              "milliseconds": 70.503,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 65.176,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 64.578,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 64.478,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 64.808,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 65.212,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 64.203,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 64.985,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 64.543,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 65.568,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 66.28,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 66.017,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 65.769,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 64.131,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 65.338,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 64.944,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 64.881,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 65.081,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 65.416,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            },
+            {
+              "milliseconds": 64.741,
+              "bytes": 7047,
+              "resultHash": "c0cb5d864c2d76ecd438e764de4f3aa12ca9ad330482297bbc7d1fd1fdc8b929"
+            }
+          ],
+          "medianMs": 65.033,
+          "p95Ms": 66.28,
+          "maxMs": 70.503,
+          "errors": 0,
+          "distinctHashes": 1
+        },
+        {
+          "method": "architecture",
+          "args": [
+            30
+          ],
+          "samples": [
+            {
+              "milliseconds": 68.165,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 68.31,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 67.531,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 69.71,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 68.039,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 69.394,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 68.762,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 69.827,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 71.203,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 68.879,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 69.065,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 69.041,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 68.673,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 67.313,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 68.293,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 69.124,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 68.795,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 67.43,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 67.892,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            },
+            {
+              "milliseconds": 67.538,
+              "bytes": 551803,
+              "resultHash": "4a39e663f3fe7378689d2ddcc9d26c9a4eae7046683090a7fd7bba39301fc53a"
+            }
+          ],
+          "medianMs": 68.7175,
+          "p95Ms": 69.827,
+          "maxMs": 71.203,
+          "errors": 0,
+          "distinctHashes": 1
+        },
+        {
+          "method": "cycles",
+          "args": [],
+          "samples": [
+            {
+              "milliseconds": 65.305,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 66.236,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 65.402,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 66.816,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 64.079,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 66.212,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 69.02,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 67.409,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 65.244,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 65.77,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 64.382,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 66.345,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 67.427,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 68.159,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 77.459,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 67.171,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 65.145,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 65.823,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 66.423,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            },
+            {
+              "milliseconds": 65.099,
+              "bytes": 25368,
+              "resultHash": "d6845cfaea6e2ae4c8c5091f0ed9322dd0c2e29ffd1f01d493477512324a71f5"
+            }
+          ],
+          "medianMs": 66.224,
+          "p95Ms": 69.02,
+          "maxMs": 77.459,
+          "errors": 0,
+          "distinctHashes": 1
+        },
+        {
+          "method": "context",
+          "args": [
+            "semantic publication",
+            {
+              "maxSymbols": 50
+            }
+          ],
+          "samples": [
+            {
+              "milliseconds": 125.084,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 126.769,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 124.479,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 126.407,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 124.065,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 124.885,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 126.997,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 129.842,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 125.245,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 126.494,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 125.211,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 124.633,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 124.996,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 125.642,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 124.091,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 126.09,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 126.171,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 125.534,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 126.311,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            },
+            {
+              "milliseconds": 126.276,
+              "bytes": 59716,
+              "resultHash": "e95f49440043634d1636f1a44042130888e827398155ee851d65f837fae8071b"
+            }
+          ],
+          "medianMs": 125.588,
+          "p95Ms": 126.997,
+          "maxMs": 129.842,
+          "errors": 0,
+          "distinctHashes": 1
+        },
+        {
+          "method": "frameworkBindings",
+          "args": [
+            "tauri"
+          ],
+          "samples": [
+            {
+              "milliseconds": 65.462,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 65.422,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 66.286,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 65.549,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 66.339,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 65.859,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 67.857,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 68.069,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 66.906,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 68.027,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 66.242,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 65.507,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 67.719,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 67.695,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 65.205,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 66.085,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 66.034,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 65.029,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 66.102,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            },
+            {
+              "milliseconds": 65.893,
+              "bytes": 22693,
+              "resultHash": "0298a44a38dab9d7ba793c31c7ce2b12408274dfc0b6b5bde89d5ceaa95d627b"
+            }
+          ],
+          "medianMs": 66.0935,
+          "p95Ms": 68.027,
+          "maxMs": 68.069,
+          "errors": 0,
+          "distinctHashes": 1
+        },
+        {
+          "method": "filePage",
+          "args": [
+            {
+              "limit": 200
+            }
+          ],
+          "samples": [
+            {
+              "milliseconds": 64.601,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 65.037,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 64.814,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 66.073,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 66.067,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 65.458,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 64.102,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 65.164,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 64.285,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 63.982,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 66.443,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 65.965,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 65.575,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 65.958,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 65.393,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 65.406,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 65.805,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 67.135,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 66.816,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            },
+            {
+              "milliseconds": 66.178,
+              "bytes": 23062,
+              "resultHash": "fa6c870360a8090ae9550bb2d4029db19aa1b3247dc1db6e858d63ed829c3158"
+            }
+          ],
+          "medianMs": 65.51650000000001,
+          "p95Ms": 66.816,
+          "maxMs": 67.135,
+          "errors": 0,
+          "distinctHashes": 1
+        },
+        {
+          "method": "diagnosticPage",
+          "args": [
+            {
+              "limit": 200
+            }
+          ],
+          "samples": [
+            {
+              "milliseconds": 64.966,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 64.746,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 64.843,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 65.222,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 67.275,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 65.299,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 64.745,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 65.671,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 65.066,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 65.055,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 65.282,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 66.14,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 65.09,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 66.731,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 64.943,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 66.787,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 66.428,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 65.775,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 67.62,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            },
+            {
+              "milliseconds": 66.476,
+              "bytes": 44751,
+              "resultHash": "e56ffbbe17a36c798dc54688d9d2af6b713da3b60c6523414f217887a7f6fd00"
+            }
+          ],
+          "medianMs": 65.29050000000001,
+          "p95Ms": 67.275,
+          "maxMs": 67.62,
+          "errors": 0,
+          "distinctHashes": 1
+        },
+        {
+          "method": "searchSymbols",
+          "args": [
+            "prepareAuthorityMigration",
+            20
+          ],
+          "samples": [
+            {
+              "milliseconds": 66.415,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 64.67,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 64.559,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 64.331,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 65.666,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 66.383,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 66.446,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 67.352,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 64.672,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 65.492,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 64.242,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 65.045,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 65.737,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 65.026,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 65.236,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 64.174,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 65.553,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 65.361,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 64.436,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            },
+            {
+              "milliseconds": 65.123,
+              "bytes": 405,
+              "resultHash": "7566377ed04a17b3b9638a00dd9e930b8701d5dcc315c682ec7f6d04aad6cca3"
+            }
+          ],
+          "medianMs": 65.1795,
+          "p95Ms": 66.446,
+          "maxMs": 67.352,
+          "errors": 0,
+          "distinctHashes": 1
+        }
+      ]
+    },
+    {
+      "repository": "/Users/xiyuanpan/Pastey",
+      "index": "/private/tmp/prograph-authority-pastey-20261018",
+      "before": "a46e605bb75f223d97259e5729a00e21f3a04f5e4ca1bc6829df32480b5db075",
+      "after": "a46e605bb75f223d97259e5729a00e21f3a04f5e4ca1bc6829df32480b5db075",
+      "methods": [
+        {
+          "method": "overview",
+          "args": [],
+          "samples": [
+            {
+              "milliseconds": 82.39,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 69.056,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 65.744,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 66.148,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 66.211,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 67.244,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 65.791,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 65.263,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 65.937,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 64.21,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 64.409,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 67.167,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 64.961,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 64.896,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 64.782,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 64.426,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 68.463,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 66.462,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 64.7,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            },
+            {
+              "milliseconds": 66.334,
+              "bytes": 6393,
+              "resultHash": "6e9d9411aaa62e00e0f92b1aa7f574a74d44d52fb1611de17c263dd04bf61e3a"
+            }
+          ],
+          "medianMs": 65.864,
+          "p95Ms": 69.056,
+          "maxMs": 82.39,
+          "errors": 0,
+          "distinctHashes": 1
+        },
+        {
+          "method": "architecture",
+          "args": [
+            30
+          ],
+          "samples": [
+            {
+              "milliseconds": 69.899,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 70.61,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 68.63,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 68.888,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 69.267,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 69.762,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 69.542,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 69.798,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 67.817,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 69.387,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 73.389,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 70.472,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 69.777,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 68.939,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 69.951,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 69.415,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 71.235,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 69.748,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 68.553,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            },
+            {
+              "milliseconds": 68.864,
+              "bytes": 463566,
+              "resultHash": "e01019159bd874ec724f89b9982ab0ddbf176f047145dbcd54e98e193872dfe9"
+            }
+          ],
+          "medianMs": 69.64500000000001,
+          "p95Ms": 71.235,
+          "maxMs": 73.389,
+          "errors": 0,
+          "distinctHashes": 1
+        },
+        {
+          "method": "cycles",
+          "args": [],
+          "samples": [
+            {
+              "milliseconds": 65.518,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 66.583,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 66.666,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 65.2,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 66.247,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 66.148,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 68.122,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 66.816,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 66.127,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 64.697,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 67.006,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 65.352,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 66.47,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 65.233,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 65.645,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 66.578,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 65.264,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 65.921,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 65.425,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            },
+            {
+              "milliseconds": 66.316,
+              "bytes": 9430,
+              "resultHash": "18dce4148c3a98b08aad3c53ac45f6ef31049fb7351878b9e3d30358cfbebaa3"
+            }
+          ],
+          "medianMs": 66.13749999999999,
+          "p95Ms": 67.006,
+          "maxMs": 68.122,
+          "errors": 0,
+          "distinctHashes": 1
+        },
+        {
+          "method": "context",
+          "args": [
+            "semantic publication",
+            {
+              "maxSymbols": 50
+            }
+          ],
+          "samples": [
+            {
+              "milliseconds": 115.444,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 112.198,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 111.882,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 111.469,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 111.696,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 112.889,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 113.659,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 111.051,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 112.201,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 114.196,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 113.675,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 115.054,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 112.691,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 111.126,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 112.524,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 111.925,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 111.564,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 113.208,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 111.72,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            },
+            {
+              "milliseconds": 111.32,
+              "bytes": 50131,
+              "resultHash": "b252ddc6b843f588fb0cefeaa9d55ba675fe84962973e491050bc0637ca61e58"
+            }
+          ],
+          "medianMs": 112.1995,
+          "p95Ms": 115.054,
+          "maxMs": 115.444,
+          "errors": 0,
+          "distinctHashes": 1
+        },
+        {
+          "method": "frameworkBindings",
+          "args": [
+            "tauri"
+          ],
+          "samples": [
+            {
+              "milliseconds": 75.764,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 75.258,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 75.706,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 75.415,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 76.009,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 77.261,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 79.663,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 76.851,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 82.759,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 76.262,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 75.895,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 76.74,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 78.373,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 78.465,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 75.818,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 78.587,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 75.835,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 75.205,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 75.928,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            },
+            {
+              "milliseconds": 76.918,
+              "bytes": 355802,
+              "resultHash": "5215e488a2211803283daa6b6afaa7b0e32fb19c5de2c5f295120576939eb1be"
+            }
+          ],
+          "medianMs": 76.13550000000001,
+          "p95Ms": 79.663,
+          "maxMs": 82.759,
+          "errors": 0,
+          "distinctHashes": 1
+        },
+        {
+          "method": "filePage",
+          "args": [
+            {
+              "limit": 200
+            }
+          ],
+          "samples": [
+            {
+              "milliseconds": 66.423,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 65.439,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 68.207,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 68.614,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 65.587,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 65.14,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 67.767,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 67.474,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 67.203,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 65.407,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 66.204,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 67.813,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 65.493,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 64.891,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 67.053,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 65.998,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 66.513,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 65.223,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 66.801,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            },
+            {
+              "milliseconds": 65.958,
+              "bytes": 26749,
+              "resultHash": "82efc8fc4eee8ab0e45eb77b65469db34f75cfff86c1ebb2a05db6f3b3ff7bf6"
+            }
+          ],
+          "medianMs": 66.3135,
+          "p95Ms": 68.207,
+          "maxMs": 68.614,
+          "errors": 0,
+          "distinctHashes": 1
+        },
+        {
+          "method": "diagnosticPage",
+          "args": [
+            {
+              "limit": 200
+            }
+          ],
+          "samples": [
+            {
+              "milliseconds": 66.118,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 65.51,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 67.114,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 65.413,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 67.35,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 66.656,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 65.224,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 66.278,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 66.692,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 65.121,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 65.987,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 66.227,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 67.942,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 65.368,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 67.647,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 66.445,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 66.034,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 67.378,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 66.595,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            },
+            {
+              "milliseconds": 65.989,
+              "bytes": 48479,
+              "resultHash": "295c9f9ddca051e4b6eee44246a58aa13df09f157bbc4bef2b016b2ac14c54c3"
+            }
+          ],
+          "medianMs": 66.2525,
+          "p95Ms": 67.647,
+          "maxMs": 67.942,
+          "errors": 0,
+          "distinctHashes": 1
+        },
+        {
+          "method": "searchSymbols",
+          "args": [
+            "prepareAuthorityMigration",
+            20
+          ],
+          "samples": [
+            {
+              "milliseconds": 67.097,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 67.158,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 66.274,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 66.465,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 64.953,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 66.876,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 65.405,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 66.219,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 65.169,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 65.364,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 65.885,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 66.179,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 64.498,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 65.858,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 64.993,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 65.814,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 64.852,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 65.214,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 65.242,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "milliseconds": 65.284,
+              "bytes": 2,
+              "resultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            }
+          ],
+          "medianMs": 65.6095,
+          "p95Ms": 67.097,
+          "maxMs": 67.158,
+          "errors": 0,
+          "distinctHashes": 1
+        }
+      ]
+    }
+  ],
+  "rawSha256": "cfd2016e392906062f3119e1444480523564e2777af440c30b5d0e5cf2754bb5",
+  "driverSource": "import {createHash} from 'node:crypto';import{createReadStream}from'node:fs';import{readFile,writeFile}from'node:fs/promises';import{performance}from'node:perf_hooks';import{isolatedQueryForRepository}from'/Users/xiyuanpan/prograph/dist/core/query/isolation.js';\nconst hash=async p=>{const h=createHash('sha256');for await(const x of createReadStream(p))h.update(x);return h.digest('hex');};\nconst normalize=x=>Array.isArray(x)?x.map(normalize):x&&typeof x==='object'?Object.fromEntries(Object.entries(x).filter(([k])=>k!=='durationMs').map(([k,v])=>[k,normalize(v)])):x;\nconst cases=[['overview',[]],['architecture',[30]],['cycles',[]],['context',['semantic publication',{maxSymbols:50}]],['frameworkBindings',['tauri']],['filePage',[{limit:200}]],['diagnosticPage',[{limit:200}]],['searchSymbols',['prepareAuthorityMigration',20]]];\nconst corpora=[{repository:'/Users/xiyuanpan/prograph',index:'/private/tmp/prograph-authority-self-stable-20261018'},{repository:'/Users/xiyuanpan/Pastey',index:'/private/tmp/prograph-authority-pastey-20261018'}];const results=[];\nfor(const corpus of corpora){const file=corpus.index+'/semantic.sqlite',before=await hash(file),client=await isolatedQueryForRepository(corpus.repository,corpus.index);const methods=[];\n for(const[method,args]of cases){const samples=[];for(let i=0;i<20;i++){const started=performance.now();try{const value=await client[method](...args);const milliseconds=+(performance.now()-started).toFixed(3);const bytes=Buffer.byteLength(JSON.stringify(value)),resultHash=createHash('sha256').update(JSON.stringify(normalize(value))).digest('hex');samples.push({milliseconds,bytes,resultHash});}catch(e){samples.push({milliseconds:+(performance.now()-started).toFixed(3),error:String(e)});}}\n const times=samples.map(s=>s.milliseconds).sort((a,b)=>a-b);methods.push({method,args,samples,medianMs:(times[9]+times[10])/2,p95Ms:times[18],maxMs:times[19],errors:samples.filter(s=>s.error).length,distinctHashes:new Set(samples.filter(s=>s.resultHash).map(s=>s.resultHash)).size});process.stderr.write(corpus.repository+' '+method+': '+times[18]+'ms p95\\n');}\n const after=await hash(file);if(before!==after)throw Error('Read-only corpus changed');results.push({...corpus,before,after,methods});}\nconst record={format:1,capturedAt:new Date().toISOString(),commit:'de4b5910da40a4b2b273c36ac6b5c5f5d1ed0dd9',scope:'Current default owned compatibility reads over previously validated real ProGraph/Pastey semantic snapshots. Source is not reindexed; existing stale notices remain honest. Each request uses the production isolated child executor and its existing admission/deadline/row/byte bounds.',methodology:'Twenty serial samples per method/repository; time includes fresh worker creation, SQLite opening, authority resolution, read/serialization and IPC. Source database SHA256 checked unchanged. OS cache not evicted; no concurrent local provider/test/benchmark jobs. Empirical nearest-rank p95 of 20 observations is not a portable SLO or tail distribution. Normalize only durationMs for result-hash stability. Native worker/compiler RSS unavailable; controller RSS is not substituted. No persistent pool or runtime code changes.',driverSha256:await hash('/private/tmp/prograph-authority-query-qualification.mjs'),implementationDigests:Object.fromEntries(await Promise.all(['query/isolation','query/query-worker','query/compatibility-global-read','semantic/compatibility-global','query/navigation'].map(async x=>[x,await hash('/Users/xiyuanpan/prograph/dist/core/'+x+'.js')]))),node:process.version,results};await writeFile('/private/tmp/prograph-authority-query-qualification.json',JSON.stringify(record,null,2)+'\\n');if(results.some(r=>r.methods.some(m=>m.errors||m.distinctHashes!==1)))process.exitCode=1;\n"
+}

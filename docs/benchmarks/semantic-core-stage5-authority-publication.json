@@ -1,0 +1,386 @@
+{
+  "format": 1,
+  "stage": "5N final authority publication qualification",
+  "commit": "de4b5910da40a4b2b273c36ac6b5c5f5d1ed0dd9",
+  "scope": "Original 1M occurrence / 2,000,012 claim production publication contract with current default-authority runtime. Storage workload only; no LOC/provider/monorepo or portable latency qualification.",
+  "powerBefore": {
+    "capturedAt": "2026-10-18T16:05:39.243142+00:00",
+    "commit": "de4b5910da40a4b2b273c36ac6b5c5f5d1ed0dd9",
+    "power": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=23789667)\t80%; AC attached; not charging present: true\n",
+    "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         1\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         0\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         0\n womp                 1\n networkoversleep     0\n sleep                1\n tcpkeepalive         1\n disksleep            10\n",
+    "driverSha256": "dee298dc202db1ee54f67be9d7a2690a92db33dc6dfad74e144eb84f33bbb0aa",
+    "setupCorrection": "Explicit copied-pin release only in disposable snapshot/projection initialization; normal runtime unchanged.",
+    "concurrency": "All local SDK/test jobs finished before this serial benchmark. No OS cache eviction or whole-machine isolation claim."
+  },
+  "powerAfter": {
+    "capturedAt": "2026-10-18T16:15:45.272788+00:00",
+    "power": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=23789667)\t80%; AC attached; not charging present: true\n",
+    "settings": "AC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         0\n womp                 1\n networkoversleep     0\n sleep                1\n tcpkeepalive         1\n disksleep            10\n"
+  },
+  "rawSha256": "3f5ea77111ab5192c88e517307328f51d0f622e9eab4b51c98fb2a8b655a4de3",
+  "driverSha256": "dee298dc202db1ee54f67be9d7a2690a92db33dc6dfad74e144eb84f33bbb0aa",
+  "benchmark": {
+    "startedAt": "2026-10-18T16:05:43.627Z",
+    "source": {
+      "filename": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-scip-bench-bpTuoQ/.prograph/semantic.sqlite",
+      "sha256": "8be76d5ebda5f685ddc8d3f78999942492f640f39ed5e653de18d228ec949c6a"
+    },
+    "environment": {
+      "node": "v25.9.0",
+      "platform": "darwin",
+      "arch": "arm64",
+      "cpu": "Apple M5",
+      "memoryBytes": 17179869184
+    },
+    "methodology": "Online backup of validated SCIP facts. Setup deterministically reshards existing immutable claims into <=2000-claim owners with identical context/fingerprint and copied physical inputs/selectors; no fact/support/provenance is altered. This is a storage workload, not a claim that the original provider can reindex those shards. Original ownership and reshaped ownership both receive a complete first publication from empty projections with the current physical schema. Complete first publication and 3 serial replacements each of 1/10/100 full shards use the production publisher, WAL/FULL, all indexes, support checks and commit. Replacements validate every fact through addFact under a changed synthetic input fingerprint; staging/seal time is reported separately. No pointer-only timing, cache eviction or compiler/LOC claim. Full ownership EXCEPT oracles and pinned history are checked outside timing. High-fanout supports use synthetic derived dependency facts and alternate proofs. Source bytes remain unchanged. Initial snapshot/projection setup explicitly releases pins only in the disposable copy; production retention and the preserved pre-upgrade archive are unchanged. Required storage migration/rollback preparation is separately recorded before timing, as schema initialization previously was; no required publication work is excluded.",
+    "storageMigrationMs": 191278.717,
+    "pragmas": {
+      "journal_mode": "wal",
+      "synchronous": 2,
+      "foreign_keys": 1,
+      "wal_autocheckpoint": 1000,
+      "cache_size": -16000
+    },
+    "originalOwnershipFirst": {
+      "snapshot": 1,
+      "totalMs": 20929.761,
+      "stages": {
+        "content-key": 2.099,
+        "membership": 1525.235,
+        "support-eligibility": 0.194,
+        "navigation": 17762.048,
+        "symbols": 0.013,
+        "call-summary": 0.606,
+        "pointer-and-commit": 1637.208
+      },
+      "pending": 2000012,
+      "eligible": 2000012
+    },
+    "originalOwnershipPartitions": 11,
+    "setupMs": 10541.341,
+    "partitions": 1011,
+    "occurrences": 1000000,
+    "first": {
+      "snapshot": 1,
+      "totalMs": 21930.721,
+      "stages": {
+        "content-key": 1.787,
+        "membership": 1415.176,
+        "support-eligibility": 0.235,
+        "navigation": 19031.12,
+        "symbols": 0.01,
+        "call-summary": 0.372,
+        "pointer-and-commit": 1481.974
+      },
+      "pending": 2000012,
+      "eligible": 2000012
+    },
+    "baselineClaims": 2000012,
+    "noOp": {
+      "snapshot": 2,
+      "totalMs": 20.581,
+      "stages": {
+        "content-key": 2.2,
+        "membership": 17.612,
+        "support-eligibility": 0.044,
+        "navigation": 0.407,
+        "symbols": 0.001,
+        "call-summary": 0.04,
+        "pointer-and-commit": 0.255
+      },
+      "pending": 0,
+      "eligible": 0
+    },
+    "replacements": [
+      {
+        "partitions": 1,
+        "trial": 0,
+        "replacedClaims": 2000,
+        "expectedVisibleClaims": 2000013,
+        "stagingAndSealMs": 643.374,
+        "snapshot": 3,
+        "totalMs": 11.808,
+        "stages": {
+          "content-key": 1.346,
+          "membership": 3.305,
+          "support-eligibility": 0.049,
+          "navigation": 5.947,
+          "symbols": 0.001,
+          "call-summary": 0.35,
+          "pointer-and-commit": 0.795
+        },
+        "pending": 4000,
+        "eligible": 2001,
+        "fullOwnershipOracle": true,
+        "historicalSnapshotRetained": true
+      },
+      {
+        "partitions": 1,
+        "trial": 1,
+        "replacedClaims": 2000,
+        "expectedVisibleClaims": 2000013,
+        "stagingAndSealMs": 313.313,
+        "snapshot": 4,
+        "totalMs": 13.926,
+        "stages": {
+          "content-key": 3.238,
+          "membership": 3.426,
+          "support-eligibility": 0.051,
+          "navigation": 6.084,
+          "symbols": 0.001,
+          "call-summary": 0.508,
+          "pointer-and-commit": 0.597
+        },
+        "pending": 4000,
+        "eligible": 2000,
+        "fullOwnershipOracle": true,
+        "historicalSnapshotRetained": true
+      },
+      {
+        "partitions": 1,
+        "trial": 2,
+        "replacedClaims": 2000,
+        "expectedVisibleClaims": 2000013,
+        "stagingAndSealMs": 269.382,
+        "snapshot": 5,
+        "totalMs": 30.719,
+        "stages": {
+          "content-key": 1.27,
+          "membership": 2.934,
+          "support-eligibility": 0.047,
+          "navigation": 6.076,
+          "symbols": 0.002,
+          "call-summary": 0.368,
+          "pointer-and-commit": 20.004
+        },
+        "pending": 4000,
+        "eligible": 2000,
+        "fullOwnershipOracle": true,
+        "historicalSnapshotRetained": true
+      },
+      {
+        "partitions": 10,
+        "trial": 0,
+        "replacedClaims": 20000,
+        "expectedVisibleClaims": 2000013,
+        "stagingAndSealMs": 4130.845,
+        "snapshot": 6,
+        "totalMs": 134.89,
+        "stages": {
+          "content-key": 4.222,
+          "membership": 22.788,
+          "support-eligibility": 4.492,
+          "navigation": 87.814,
+          "symbols": 0.005,
+          "call-summary": 12.155,
+          "pointer-and-commit": 3.395
+        },
+        "pending": 40000,
+        "eligible": 20000,
+        "fullOwnershipOracle": true,
+        "historicalSnapshotRetained": true
+      },
+      {
+        "partitions": 10,
+        "trial": 1,
+        "replacedClaims": 20000,
+        "expectedVisibleClaims": 2000013,
+        "stagingAndSealMs": 3872.883,
+        "snapshot": 7,
+        "totalMs": 200.468,
+        "stages": {
+          "content-key": 5.039,
+          "membership": 22.067,
+          "support-eligibility": 5.251,
+          "navigation": 85.494,
+          "symbols": 0.004,
+          "call-summary": 17.679,
+          "pointer-and-commit": 64.91
+        },
+        "pending": 40000,
+        "eligible": 20000,
+        "fullOwnershipOracle": true,
+        "historicalSnapshotRetained": true
+      },
+      {
+        "partitions": 10,
+        "trial": 2,
+        "replacedClaims": 20000,
+        "expectedVisibleClaims": 2000013,
+        "stagingAndSealMs": 3783.249,
+        "snapshot": 8,
+        "totalMs": 196.13,
+        "stages": {
+          "content-key": 4.028,
+          "membership": 22.171,
+          "support-eligibility": 5.768,
+          "navigation": 93.464,
+          "symbols": 0.005,
+          "call-summary": 21.836,
+          "pointer-and-commit": 48.836
+        },
+        "pending": 40000,
+        "eligible": 20000,
+        "fullOwnershipOracle": true,
+        "historicalSnapshotRetained": true
+      },
+      {
+        "partitions": 100,
+        "trial": 0,
+        "replacedClaims": 200000,
+        "expectedVisibleClaims": 2000013,
+        "stagingAndSealMs": 33056.111,
+        "snapshot": 9,
+        "totalMs": 1704.043,
+        "stages": {
+          "content-key": 3.918,
+          "membership": 239.955,
+          "support-eligibility": 90.041,
+          "navigation": 986.019,
+          "symbols": 0.005,
+          "call-summary": 118.816,
+          "pointer-and-commit": 265.266
+        },
+        "pending": 400000,
+        "eligible": 200000,
+        "fullOwnershipOracle": true,
+        "historicalSnapshotRetained": true
+      },
+      {
+        "partitions": 100,
+        "trial": 1,
+        "replacedClaims": 200000,
+        "expectedVisibleClaims": 2000013,
+        "stagingAndSealMs": 29430.921,
+        "snapshot": 10,
+        "totalMs": 1760.295,
+        "stages": {
+          "content-key": 3.498,
+          "membership": 226.837,
+          "support-eligibility": 91.232,
+          "navigation": 1002.485,
+          "symbols": 0.005,
+          "call-summary": 153.35,
+          "pointer-and-commit": 282.868
+        },
+        "pending": 400000,
+        "eligible": 200000,
+        "fullOwnershipOracle": true,
+        "historicalSnapshotRetained": true
+      },
+      {
+        "partitions": 100,
+        "trial": 2,
+        "replacedClaims": 200000,
+        "expectedVisibleClaims": 2000013,
+        "stagingAndSealMs": 28300.488,
+        "snapshot": 11,
+        "totalMs": 1649.929,
+        "stages": {
+          "content-key": 3.004,
+          "membership": 226.159,
+          "support-eligibility": 78.628,
+          "navigation": 1002.987,
+          "symbols": 0.005,
+          "call-summary": 139.165,
+          "pointer-and-commit": 199.966
+        },
+        "pending": 400000,
+        "eligible": 200000,
+        "fullOwnershipOracle": true,
+        "historicalSnapshotRetained": true
+      }
+    ],
+    "fanout": {
+      "derived": 100000,
+      "initial": {
+        "snapshot": 12,
+        "totalMs": 357.849,
+        "stages": {
+          "content-key": 3.356,
+          "membership": 46.991,
+          "support-eligibility": 42.219,
+          "navigation": 234.171,
+          "symbols": 0.004,
+          "call-summary": 13.963,
+          "pointer-and-commit": 17.129
+        },
+        "pending": 100000,
+        "eligible": 100000
+      },
+      "oneSupportRemoved": {
+        "snapshot": 13,
+        "totalMs": 250.299,
+        "stages": {
+          "content-key": 1.327,
+          "membership": 97.592,
+          "support-eligibility": 73.705,
+          "navigation": 56.814,
+          "symbols": 0.003,
+          "call-summary": 17.603,
+          "pointer-and-commit": 3.243
+        },
+        "pending": 102000,
+        "eligible": 50000
+      },
+      "alternativeSurvivors": 50000,
+      "lastSupportRemoved": {
+        "snapshot": 14,
+        "totalMs": 172.946,
+        "stages": {
+          "content-key": 4.161,
+          "membership": 49.951,
+          "support-eligibility": 48.536,
+          "navigation": 34.523,
+          "symbols": 0.004,
+          "call-summary": 26.663,
+          "pointer-and-commit": 9.089
+        },
+        "pending": 52000,
+        "eligible": 0
+      },
+      "lastSupportSurvivors": 0
+    },
+    "integrity": "ok",
+    "foreignKeyViolations": [],
+    "storageDefinition": [
+      {
+        "name": "sc_call_epochs",
+        "sql": "CREATE TABLE sc_call_epochs(caller INTEGER NOT NULL REFERENCES sc_entities(id),callee INTEGER NOT NULL REFERENCES sc_entities(id),first INTEGER NOT NULL,last INTEGER,site_count INTEGER NOT NULL,confidence TEXT NOT NULL,sample_claim INTEGER NOT NULL REFERENCES sc_claims(id),PRIMARY KEY(caller,callee,first),CHECK(last IS NULL OR last>first))"
+      },
+      {
+        "name": "sc_claim_navigation",
+        "sql": "CREATE TABLE sc_claim_navigation(claim INTEGER PRIMARY KEY REFERENCES sc_claims(id),relation TEXT NOT NULL,subject INTEGER NOT NULL REFERENCES sc_entities(id),object INTEGER REFERENCES sc_entities(id),occurrence INTEGER REFERENCES sc_occurrences(entity),confidence TEXT NOT NULL,context TEXT)"
+      },
+      {
+        "name": "sc_visibility",
+        "sql": "CREATE TABLE sc_visibility(claim INTEGER NOT NULL REFERENCES sc_claims(id),first INTEGER NOT NULL,last INTEGER,PRIMARY KEY(claim,first),CHECK(last IS NULL OR last>first))"
+      }
+    ],
+    "databaseBytes": 3314106368,
+    "maxRssKiB": 393152,
+    "implementationDigests": {
+      "publication": "213a3e579eaed59700b25c6e2e2743283000ae8601fe2a39035ba998f5590558",
+      "store": "31457e1c571c3258f2d1fcab04fa4e4d1808b232b8917bbafc4a1e68972a4d60",
+      "schema": "da4d01ec96771d81244220972718714f29d999dfa811468bdd59e2f4a1d18195",
+      "read": "aa5c2d54fd7407096f9b2dbfc33af7288296095b0243dd70800654e0e1293b98",
+      "query": "acc96771406bf33186bda4e3c11aa517a1f491414895280d7f0cf8e533579bf5",
+      "model": "da8c534fc9400bb975b2fbdcfaca996048f87b4cea66db1087ba01a96131b31b"
+    }
+  },
+  "acceptance": {
+    "correctness": "All complete ownership EXCEPT, historical, alternative/last support, source-byte, integrity and FK checks pass. FULL/WAL and foreign keys remain enabled.",
+    "originalUniversalOneSecond": "Unmet: 21.930721 seconds for complete reshaped first publication, including 19.031120 seconds navigation.",
+    "revisedPinnedAcWorkloads": "Observed passing first <=30s / no-op <=100ms / <=10 full 2000-claim partitions <=1s / 100 such partitions <=3s / 100k dependency support closure <=1s. Three trials per replacement, not p95.",
+    "setup": "Automatic pre-upgrade rollback protection took 191.278717 seconds before timing; it is explicit migration cost, not a steady-state or publication latency. Only disposable copied pins are explicitly released in the already-required empty-projection initialization; production/source/archive protection is unchanged.",
+    "limits": "Native/graph first builds and large rewrites remain above one second. Migration, staging, compilers, full legacy exports, OS cache and other machine activity are not hidden in a pointer-only claim. Earlier rejected/battery attempts remain retained. No runtime algorithm changed for these timings."
+  },
+  "regressionChecks": {
+    "tests": 16,
+    "files": 2,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "migration retention/protection plus complete publication tests after benchmark setup correction",
+    "reportSha256": "1f9c0d242bbe7bd6db85e69d26fd1610e8e9e112bf3a2c1d8a3294d9ec0d60ce"
+  }
+}

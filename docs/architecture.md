@@ -1,6 +1,6 @@
 # ProGraph Architecture
 
-This document describes the current implementation. [Semantic Core 2.0](semantic-core-2.md) owns the target architecture. Its foundation and TypeScript vertical slice are implemented additively. [Step 1](semantic-core-step1.md) and [Step 2](semantic-core-step2.md) own shipped semantic behavior, provider/query runtime contracts, measurements and remaining acceptance gates. The complete redesign is not implemented.
+This document describes the current implementation. [Semantic Core 2.0](semantic-core-2.md) owns the target architecture. [Step 1](semantic-core-step1.md) and [Step 2](semantic-core-step2.md) own shipped semantic behavior, provider/query runtime contracts, measurements and acceptance gates. Owned semantic facts now supply the default compatibility view after successful activation. Advanced program analysis and large-source-scale qualification remain outside implemented or verified coverage.
 
 ## Goals And Boundaries
 
@@ -17,17 +17,15 @@ repository path
   -> read-only repository scan
   -> applicable-file language registry
   -> syntax providers and optional semantic providers
-  -> framework adapters
-  -> deterministic artifact adapters
-  -> semantic overlay linker
-  -> identity validation and diagnostics
-  -> SQLite canonical store
-  -> additive semantic.sqlite: TS facts/claims, owned runs, supported calls, published snapshots
-  -> JSON, manifest, diagnostics, and index-state exports
+  -> native/common semantic facts and syntax observations under owned runs
+  -> versioned framework/artifact/Knowledge/boundary/dependency pass DAG
+  -> sealed claims, supports, selectors and identity diagnostics
+  -> semantic.sqlite: atomic snapshot/report/owned compatibility/query projections
+  -> nonauthoritative graph.sqlite / JSON / manifest / diagnostics / state exports
   -> CLI, localhost API/UI, and MCP stdio queries
 ```
 
-During this compatibility period, `graph.sqlite` keeps schema `1.2.0` and remains authoritative for legacy CLI/MCP/API/UI behavior. `semantic.sqlite` declares Format 2 / schema `2.0.0-step2.11` and serves additive `semantic` CLI commands, `query_semantic` MCP and `/api/semantic/:operation` routes. Those operations use indexed bounded navigation and communicate partial coverage and snapshot-only freshness. Analysis metadata now has an immutable snapshot-bound receipt in the semantic publication transaction; it explicitly does not certify compatibility readiness. Status marks interrupted compatibility metadata stale. The two stores do not form one atomic all-domain publication; default activation and full precise polyglot qualification remain deferred.
+During this compatibility period, `graph.sqlite` keeps schema `1.2.0`. Existing indexes retain legacy authority until successful activation. Format 2 / storage schema `2.0.0-step2.14` publishes its report, owned compatibility/query projections, source catalogue, authority marker and semantic pointer in one FULL/WAL transaction. Default directory CLI/MCP/API/UI reads and freshness select that coherent semantic generation; explicit legacy-file reads stay available. Native fact queries use indexed bounded navigation and retain honest partial coverage. An unreported publication fails compatibility reads closed until source sync restores a complete report. Post-commit legacy database/JSON exports remain non-atomic compatibility caches, not a second authority. Before existing-index upgrades, exclusive maintenance preserves checked/fsynced rollback copies and pins archived native snapshots; POSIX migration/export and prior-reader recovery are qualified in Step 2, while Windows migration/export refuse operation.
 
 ### Repository Scanner
 
@@ -196,7 +194,7 @@ The shared output formatter supports `compact`, `standard`, and `full` represent
 
 The Commander-based CLI resolves repository paths independently of the ProGraph install directory. JSON mode writes requested machine-readable results to stdout. Errors use stderr and a nonzero exit code.
 
-Queries and local servers accept `--index <directory-or-graph.sqlite>` for first-class custom output discovery. Without `--index`, ProGraph remains backward compatible with `<repository>/.prograph/graph.sqlite`.
+Queries and local servers accept `--index <directory-or-graph.sqlite>` for first-class custom output discovery. Without `--index`, ProGraph uses `<repository>/.prograph` and resolves its activated authority. Explicit `graph.sqlite` compatibility reads remain legacy reads. Semantic navigation/export/maintenance preserve custom semantic SQLite basenames and the established `graph.sqlite` alias for the sibling semantic store; indexing outputs take a directory.
 
 `status` reports index freshness. `sync` reuses unchanged indexes, incrementally reparses isolated framework-neutral files when graph ownership makes that safe, and otherwise performs a full rebuild with an explicit fallback reason. `watch` debounces local filesystem events and invokes the same sync engine.
 
@@ -275,8 +273,8 @@ The scanner does not walk excluded trees a second time for counts. The legacy ex
 
 Analysis is still memory-resident. There is no million-line benchmark claim, persistent semantic daemon, external tool installation, or arbitrary build-command execution. Tests cover all eight languages in one fixture, provider success/unavailability/failure, recovery diagnostics, deterministic identities, scoped schema identities, existing Rust/Tauri/React behavior and stale-index handling. See README for exact language maturity and unsupported categories.
 
-## Additive Semantic Core implementation
+## Semantic Core implementation
 
 The [Step 1 closure](semantic-core-step1.md) and [Step 2 implementation record](semantic-core-step2.md) own implemented semantic behavior and measured acceptance status. Legacy graph schema `1.2.0` and workflows remain available. `semantic.sqlite` format 2 now provides project-aware TypeScript facts, explicit verified SCIP import, opt-in bounded Clang extraction, explicit pinned Rust navigation, qualified opt-in Python/Go/Java/C# compiler contexts, owned framework/Knowledge/boundary/call passes and SQL occurrence navigation. Native facts and build inputs remain separate from legacy node/edge projections. Recorded compiler dependencies supplement status/sync freshness. Discovery never launches external tools; analysis/sync can replay an explicitly registered, locally authenticated provider after rechecking its declared toolset. Unregistered repositories retain syntax fallback.
 
-Owned delta projections and explicit database/artifact reachability GC are implemented, with maintenance excluded from live indexing jobs by crash-released SQLite locks. Marked workspaces survive retained snapshots and positive/selector proof receipts; unmarked legacy/user directories are preserved. An actual seven-language incremental/clean-rebuild oracle and prior-writer upgrade test are implemented, with expanded matrix qualification recorded in Step 2. Public indexing/status now use admitted child workers and native SDK parent-death guards; portable native RSS/disk limits and a durable scheduler are unavailable. Full default activation/export/rollback and the publication performance gate remain unfinished. Native Clang/SCIP mapping and the restricted Rust runner are versioned and incomplete. The one-second publication target is unmet. This additive milestone is not acceptance of the complete Semantic Core 2.0 architecture.
+Owned delta projections and explicit database/artifact reachability GC are implemented, with maintenance excluded from live indexing jobs by crash-released SQLite locks. Marked workspaces survive retained snapshots and positive/selector proof receipts; unmarked legacy/user directories are preserved. The actual seven-language incremental/clean-rebuild oracle includes eighteen edit checkpoints and four prior-writer paths; exact qualification is recorded in Step 2. Public indexing/status use admitted child workers and native SDK parent-death guards; portable native RSS/disk limits and a durable scheduler are unavailable. Default activation, durable POSIX compatibility export and automatic pre-upgrade rollback preservation are implemented. Native Clang/SCIP mapping and the restricted Rust runner retain explicit partial coverage. The original universal one-second publication target is unmet; the architecture records the measured workload-specific revision and its limits. First builds, full compatibility exports, unqualified compiler contexts and large closures remain conservative or expensive. These implementation claims do not certify million-line indexing or advanced CFG/dataflow/PDG analysis.

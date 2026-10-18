@@ -1,0 +1,482 @@
+{
+  "format": 1,
+  "commit": "de4b5910da40a4b2b273c36ac6b5c5f5d1ed0dd9",
+  "scope": "Final authority runtime repeat of the distinct owned 100k-graph-edge shape; additional cost, not a replacement for 1M SCIP evidence.",
+  "powerBefore": {
+    "capturedAt": "2026-10-18T16:15:45.272788+00:00",
+    "power": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=23789667)\t80%; AC attached; not charging present: true\n",
+    "settings": "AC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         0\n womp                 1\n networkoversleep     0\n sleep                1\n tcpkeepalive         1\n disksleep            10\n"
+  },
+  "powerAfter": {
+    "capturedAt": "2026-10-18T16:17:08.743564+00:00",
+    "power": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=23789667)\t80%; AC attached; not charging present: true\n",
+    "settings": "AC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         0\n womp                 1\n networkoversleep     0\n sleep                1\n tcpkeepalive         1\n disksleep            10\n"
+  },
+  "rawSha256": "c7a99405ab3ad292a9d18e490577f1cba8cc0124d4bf7053322f8c995014f7e7",
+  "benchmark": {
+    "format": 1,
+    "implementationDigests": {
+      "semantic/store": "31457e1c571c3258f2d1fcab04fa4e4d1808b232b8917bbafc4a1e68972a4d60",
+      "semantic/publication": "213a3e579eaed59700b25c6e2e2743283000ae8601fe2a39035ba998f5590558",
+      "semantic/compatibility-cache": "ae6f0f9b00fb043a4cd5477b0a9cc8c893028325f2859b726c542c755ce7a08f",
+      "semantic/compatibility-global": "2cbca01d742a08213953716bcd3a8131f9c434dbf7b4eeefae6848f527037a9e",
+      "semantic/schema": "da4d01ec96771d81244220972718714f29d999dfa811468bdd59e2f4a1d18195",
+      "query/compatibility-global-read": "3e020e5e7d94639fe1b81419d474a992bfbd635a5023d8a3e068a338cbd6b2a7",
+      "query/navigation": "94633fd10f2aad3113c4ec2c55bbf34c8af4fe12143ca0860262c5054ad8bda1"
+    },
+    "driverDigest": "f0fb8f4747312216511cbfa8535a3d8ecc7c4c59f5a9d1ff5e59df3d44a22e42",
+    "scope": "Synthetic owned compatibility graph publication, 100 edge shards and one high-fanout OR-of-AND support guard. This does not replace the original 1M SCIP occurrence/claim benchmark and is not LOC or producer qualification.",
+    "node": "v25.9.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "root": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-owned-publication-FySsBr",
+    "shape": {
+      "nodes": 5,
+      "relationships": 100000,
+      "changedShardRows": 1000,
+      "edgeShards": 100
+    },
+    "stagingMs": 9421.143624999999,
+    "samples": [
+      {
+        "label": "full-first",
+        "snapshot": 1,
+        "durationMs": 3571.6431250000005,
+        "stages": [
+          {
+            "name": "content-key",
+            "ms": 0.5984580000003916
+          },
+          {
+            "name": "membership",
+            "ms": 34.65599999999904
+          },
+          {
+            "name": "support-eligibility",
+            "ms": 58.44395900000018
+          },
+          {
+            "name": "navigation",
+            "ms": 269.87033300000076
+          },
+          {
+            "name": "symbols",
+            "ms": 0.010833000000275206
+          },
+          {
+            "name": "call-summary",
+            "ms": 0.15137499999946158
+          },
+          {
+            "name": "snapshot-report",
+            "ms": 0.28954200000043784
+          },
+          {
+            "name": "compatibility-projection",
+            "ms": 3071.2919169999986
+          },
+          {
+            "name": "pointer-and-commit",
+            "ms": 136.12145800000144
+          }
+        ],
+        "cache": {
+          "classifiedRows": 100005,
+          "classifiedBytes": 20100861,
+          "resolvedKeys": 100005,
+          "resolvedBytes": 20100861,
+          "changedPayloads": 100005
+        },
+        "queries": {
+          "bootstrap": true,
+          "payloadChanges": 100005,
+          "nodeContributions": 5,
+          "edgeContributions": 100000,
+          "edgeReclassifications": 100000,
+          "architectureRelationships": 100000,
+          "fileContributions": 2,
+          "architecturePairs": 1
+        },
+        "edges": 100000
+      },
+      {
+        "label": "no-op",
+        "snapshot": 2,
+        "durationMs": 3.884250000000975,
+        "stages": [
+          {
+            "name": "content-key",
+            "ms": 0.23279199999888078
+          },
+          {
+            "name": "membership",
+            "ms": 0.7760000000016589
+          },
+          {
+            "name": "support-eligibility",
+            "ms": 0.03766599999835307
+          },
+          {
+            "name": "navigation",
+            "ms": 0.07750000000123691
+          },
+          {
+            "name": "symbols",
+            "ms": 0.00033400000029359944
+          },
+          {
+            "name": "call-summary",
+            "ms": 0.11741599999913888
+          },
+          {
+            "name": "snapshot-report",
+            "ms": 0.12395900000046822
+          },
+          {
+            "name": "compatibility-projection",
+            "ms": 2.24529099999927
+          },
+          {
+            "name": "pointer-and-commit",
+            "ms": 0.18625000000065484
+          }
+        ],
+        "cache": {
+          "classifiedRows": 0,
+          "classifiedBytes": 0,
+          "resolvedKeys": 1,
+          "resolvedBytes": 207,
+          "changedPayloads": 0
+        },
+        "queries": {
+          "bootstrap": false,
+          "payloadChanges": 0,
+          "nodeContributions": 0,
+          "edgeContributions": 0,
+          "edgeReclassifications": 0,
+          "architectureRelationships": 0,
+          "fileContributions": 0,
+          "architecturePairs": 0
+        },
+        "edges": 100000
+      },
+      {
+        "label": "1 changed partitions",
+        "snapshot": 3,
+        "durationMs": 24.942333000000872,
+        "stages": [
+          {
+            "name": "content-key",
+            "ms": 0.1637090000003809
+          },
+          {
+            "name": "membership",
+            "ms": 0.9951249999994616
+          },
+          {
+            "name": "support-eligibility",
+            "ms": 1.013082999999824
+          },
+          {
+            "name": "navigation",
+            "ms": 2.134416999999303
+          },
+          {
+            "name": "symbols",
+            "ms": 0.00016599999980826396
+          },
+          {
+            "name": "call-summary",
+            "ms": 0.26054199999998673
+          },
+          {
+            "name": "snapshot-report",
+            "ms": 0.05512500000077125
+          },
+          {
+            "name": "compatibility-projection",
+            "ms": 19.37066699999923
+          },
+          {
+            "name": "pointer-and-commit",
+            "ms": 0.9029580000005808
+          }
+        ],
+        "cache": {
+          "classifiedRows": 1000,
+          "classifiedBytes": 201000,
+          "resolvedKeys": 1001,
+          "resolvedBytes": 201207,
+          "changedPayloads": 1000
+        },
+        "queries": {
+          "bootstrap": false,
+          "payloadChanges": 1000,
+          "nodeContributions": 0,
+          "edgeContributions": 1000,
+          "edgeReclassifications": 0,
+          "architectureRelationships": 0,
+          "fileContributions": 0,
+          "architecturePairs": 0
+        },
+        "edges": 100000,
+        "stagingMs": 119.35845799999879
+      },
+      {
+        "label": "10 changed partitions",
+        "snapshot": 4,
+        "durationMs": 300.5376670000005,
+        "stages": [
+          {
+            "name": "content-key",
+            "ms": 0.17104200000176206
+          },
+          {
+            "name": "membership",
+            "ms": 7.636457999999038
+          },
+          {
+            "name": "support-eligibility",
+            "ms": 11.273875000000771
+          },
+          {
+            "name": "navigation",
+            "ms": 25.803791999998793
+          },
+          {
+            "name": "symbols",
+            "ms": 0.0022920000010344665
+          },
+          {
+            "name": "call-summary",
+            "ms": 4.988250000000335
+          },
+          {
+            "name": "snapshot-report",
+            "ms": 0.12429099999826576
+          },
+          {
+            "name": "compatibility-projection",
+            "ms": 241.68179200000122
+          },
+          {
+            "name": "pointer-and-commit",
+            "ms": 8.794582999998966
+          }
+        ],
+        "cache": {
+          "classifiedRows": 10000,
+          "classifiedBytes": 2020000,
+          "resolvedKeys": 10001,
+          "resolvedBytes": 2020207,
+          "changedPayloads": 10000
+        },
+        "queries": {
+          "bootstrap": false,
+          "payloadChanges": 10000,
+          "nodeContributions": 0,
+          "edgeContributions": 10000,
+          "edgeReclassifications": 0,
+          "architectureRelationships": 0,
+          "fileContributions": 0,
+          "architecturePairs": 0
+        },
+        "edges": 100000,
+        "stagingMs": 1531.3963330000006
+      },
+      {
+        "label": "100 changed partitions",
+        "snapshot": 5,
+        "durationMs": 3026.154624999999,
+        "stages": [
+          {
+            "name": "content-key",
+            "ms": 1.0553749999999127
+          },
+          {
+            "name": "membership",
+            "ms": 88.89283299999806
+          },
+          {
+            "name": "support-eligibility",
+            "ms": 158.92475000000195
+          },
+          {
+            "name": "navigation",
+            "ms": 278.86358299999847
+          },
+          {
+            "name": "symbols",
+            "ms": 0.0025840000016614795
+          },
+          {
+            "name": "call-summary",
+            "ms": 36.22058299999844
+          },
+          {
+            "name": "snapshot-report",
+            "ms": 0.10050000000046566
+          },
+          {
+            "name": "compatibility-projection",
+            "ms": 2412.673458000001
+          },
+          {
+            "name": "pointer-and-commit",
+            "ms": 49.36149999999907
+          }
+        ],
+        "cache": {
+          "classifiedRows": 100000,
+          "classifiedBytes": 20300000,
+          "resolvedKeys": 100001,
+          "resolvedBytes": 20300207,
+          "changedPayloads": 100000
+        },
+        "queries": {
+          "bootstrap": false,
+          "payloadChanges": 100000,
+          "nodeContributions": 0,
+          "edgeContributions": 100000,
+          "edgeReclassifications": 0,
+          "architectureRelationships": 0,
+          "fileContributions": 0,
+          "architecturePairs": 0
+        },
+        "edges": 100000,
+        "stagingMs": 13211.575458000001
+      },
+      {
+        "label": "remove first support, alternative preserves all edges",
+        "snapshot": 6,
+        "durationMs": 382.2404580000002,
+        "stages": [
+          {
+            "name": "content-key",
+            "ms": 0.18045799999890733
+          },
+          {
+            "name": "membership",
+            "ms": 157.85070799999812
+          },
+          {
+            "name": "support-eligibility",
+            "ms": 95.40833400000338
+          },
+          {
+            "name": "navigation",
+            "ms": 35.43120799999815
+          },
+          {
+            "name": "symbols",
+            "ms": 0.0008330000018759165
+          },
+          {
+            "name": "call-summary",
+            "ms": 27.32787499999904
+          },
+          {
+            "name": "snapshot-report",
+            "ms": 0.15058399999907124
+          },
+          {
+            "name": "compatibility-projection",
+            "ms": 65.4039159999993
+          },
+          {
+            "name": "pointer-and-commit",
+            "ms": 0.4225000000005821
+          }
+        ],
+        "cache": {
+          "classifiedRows": 0,
+          "classifiedBytes": 0,
+          "resolvedKeys": 1,
+          "resolvedBytes": 207,
+          "changedPayloads": 0
+        },
+        "queries": {
+          "bootstrap": false,
+          "payloadChanges": 0,
+          "nodeContributions": 0,
+          "edgeContributions": 0,
+          "edgeReclassifications": 0,
+          "architectureRelationships": 0,
+          "fileContributions": 0,
+          "architecturePairs": 0
+        },
+        "edges": 100000
+      },
+      {
+        "label": "remove last support, invalidate all edges",
+        "snapshot": 7,
+        "durationMs": 2274.0214579999993,
+        "stages": [
+          {
+            "name": "content-key",
+            "ms": 0.18787499999962165
+          },
+          {
+            "name": "membership",
+            "ms": 135.62825000000157
+          },
+          {
+            "name": "support-eligibility",
+            "ms": 201.85337499999878
+          },
+          {
+            "name": "navigation",
+            "ms": 37.79937499999869
+          },
+          {
+            "name": "symbols",
+            "ms": 0.0006250000005820766
+          },
+          {
+            "name": "call-summary",
+            "ms": 16.936000000001513
+          },
+          {
+            "name": "snapshot-report",
+            "ms": 0.10445899999831454
+          },
+          {
+            "name": "compatibility-projection",
+            "ms": 1815.7490830000024
+          },
+          {
+            "name": "pointer-and-commit",
+            "ms": 65.70004199999676
+          }
+        ],
+        "cache": {
+          "classifiedRows": 0,
+          "classifiedBytes": 0,
+          "resolvedKeys": 100001,
+          "resolvedBytes": 207,
+          "changedPayloads": 100000
+        },
+        "queries": {
+          "bootstrap": false,
+          "payloadChanges": 100000,
+          "nodeContributions": 0,
+          "edgeContributions": 100000,
+          "edgeReclassifications": 100000,
+          "architectureRelationships": 100000,
+          "fileContributions": 2,
+          "architecturePairs": 1
+        },
+        "edges": 0
+      }
+    ],
+    "durability": {
+      "journal": "wal",
+      "synchronous": 2
+    },
+    "historicalEdges": 100000,
+    "integrity": "ok",
+    "foreignKeys": [],
+    "methodology": "Serial full first/no-op/1/10/100 changed partition publications through the normal publisher. Complete support validation, required navigation/membership, compatibility/query construction, pointer and FULL commit are included. Staging reported separately; no required work is timed as pointer-only. Single trial, OS cache not evicted; not p95 or cold/power-loss evidence."
+  },
+  "acceptance": "All production publication/support/history/GC/integrity/FK checks pass. First build and 100-shard/final-support deletions remain above one second. Single serial trial, no portable/p95 claim; no runtime code changes."
+}
