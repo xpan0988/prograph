@@ -1,0 +1,320 @@
+{
+  "format": 1,
+  "stage": "5L host-qualified source compiler reuse",
+  "commit": "b96118fc7513191b33af5d82caef387ad2c8e01e",
+  "run": 39041840983,
+  "url": "https://github.com/xpan0988/prograph/actions/runs/39041840983",
+  "attempt": 1,
+  "jobs": [
+    {
+      "id": 117422742973,
+      "name": "regression (22)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-17T14:41:48Z",
+      "completedAt": "2026-10-17T15:20:19Z",
+      "steps": [
+        {
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Compile accepted prior writer for actual upgrade oracle",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        }
+      ],
+      "decodedLogEvidence": [
+        "2026-10-17T14:45:34.2841411Z    ✓ actual report writer upgrade hides unqualified owners and preserves reports, history and observations through GC  3730ms",
+        "2026-10-17T14:51:17.1667920Z  ✓ tests/source-reuse.test.ts (6 tests) 20469ms",
+        "2026-10-17T14:51:17.1677523Z    ✓ actual 2.12 writer policy upgrade invalidates unchanged schema inputs and preserves pinned history  2958ms",
+        "2026-10-17T15:19:57.9437982Z    ✓ actual accepted writer upgrade invalidates prior mappings, replays registered producers and preserves pinned history through GC  163406ms",
+        "2026-10-17T15:19:57.9471709Z  Test Files  25 passed (25)",
+        "2026-10-17T15:19:57.9472490Z       Tests  242 passed (242)",
+        "2026-10-17T15:19:57.9474214Z    Duration  2142.02s (transform 3.43s, setup 0ms, import 16.24s, tests 3090.87s, environment 3ms)",
+        "2026-10-17T15:20:13.9977545Z       \"point\": \"before-seal\",",
+        "2026-10-17T15:20:13.9980033Z       \"baselineRetained\": true",
+        "2026-10-17T15:20:13.9981240Z       \"point\": \"before-publish\",",
+        "2026-10-17T15:20:13.9983514Z       \"baselineRetained\": true",
+        "2026-10-17T15:20:13.9984831Z       \"point\": \"during-publish\",",
+        "2026-10-17T15:20:13.9986601Z       \"baselineRetained\": true",
+        "2026-10-17T15:20:13.9987217Z       \"point\": \"after-publish\",",
+        "2026-10-17T15:20:13.9989332Z       \"baselineRetained\": true",
+        "2026-10-17T15:20:13.9990578Z     \"refused\": true,",
+        "2026-10-17T15:20:13.9990879Z     \"unchanged\": true",
+        "2026-10-17T15:20:14.0489952Z Verified 242 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, complete build, four recovery probes and corruption refusal"
+      ],
+      "independentRebuildChecks": 18,
+      "sourceReuseCases": 6,
+      "actualOlderWriterCommits": [
+        "6eefca04b5032f3416fcc95bda23dec4bb8f65db",
+        "892d91833cfd22639da3f34948969a24a1ea96bb",
+        "d38b47b1f3fc0f917f9c1052c868fe29b92b173b"
+      ]
+    },
+    {
+      "id": 117422743210,
+      "name": "regression (20)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-17T14:41:48Z",
+      "completedAt": "2026-10-17T15:51:05Z",
+      "steps": [
+        {
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Compile accepted prior writer for actual upgrade oracle",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        }
+      ],
+      "decodedLogEvidence": [
+        "2026-10-17T14:47:47.5135506Z    ✓ actual report writer upgrade hides unqualified owners and preserves reports, history and observations through GC  3957ms",
+        "2026-10-17T14:56:37.6053202Z  ✓ tests/source-reuse.test.ts (6 tests) 25253ms",
+        "2026-10-17T14:56:37.6076401Z    ✓ actual 2.12 writer policy upgrade invalidates unchanged schema inputs and preserves pinned history  3421ms",
+        "2026-10-17T15:50:42.6089003Z    ✓ actual accepted writer upgrade invalidates prior mappings, replays registered producers and preserves pinned history through GC  255572ms",
+        "2026-10-17T15:50:42.6138167Z  Test Files  25 passed (25)",
+        "2026-10-17T15:50:42.6139262Z       Tests  242 passed (242)",
+        "2026-10-17T15:50:42.6141225Z    Duration  3874.74s (transform 4.12s, setup 0ms, import 23.79s, tests 5354.76s, environment 4ms)",
+        "2026-10-17T15:51:02.3926799Z       \"point\": \"before-seal\",",
+        "2026-10-17T15:51:02.3929053Z       \"baselineRetained\": true",
+        "2026-10-17T15:51:02.3929997Z       \"point\": \"before-publish\",",
+        "2026-10-17T15:51:02.3931926Z       \"baselineRetained\": true",
+        "2026-10-17T15:51:02.3932694Z       \"point\": \"during-publish\",",
+        "2026-10-17T15:51:02.3934862Z       \"baselineRetained\": true",
+        "2026-10-17T15:51:02.3935834Z       \"point\": \"after-publish\",",
+        "2026-10-17T15:51:02.3938545Z       \"baselineRetained\": true",
+        "2026-10-17T15:51:02.3939550Z     \"refused\": true,",
+        "2026-10-17T15:51:02.3939822Z     \"unchanged\": true",
+        "2026-10-17T15:51:02.4505451Z Verified 242 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, complete build, four recovery probes and corruption refusal"
+      ],
+      "independentRebuildChecks": 18,
+      "sourceReuseCases": 6,
+      "actualOlderWriterCommits": [
+        "6eefca04b5032f3416fcc95bda23dec4bb8f65db",
+        "892d91833cfd22639da3f34948969a24a1ea96bb",
+        "d38b47b1f3fc0f917f9c1052c868fe29b92b173b"
+      ]
+    },
+    {
+      "id": 117422743234,
+      "name": "regression (24)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-17T14:41:48Z",
+      "completedAt": "2026-10-17T15:36:33Z",
+      "steps": [
+        {
+          "name": "Install explicit Rust qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Compile accepted prior writer for actual upgrade oracle",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete Node and UI build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        }
+      ],
+      "decodedLogEvidence": [
+        "2026-10-17T14:47:12.6536728Z    ✓ actual report writer upgrade hides unqualified owners and preserves reports, history and observations through GC  3801ms",
+        "2026-10-17T14:54:32.5772748Z  ✓ tests/source-reuse.test.ts (6 tests) 23424ms",
+        "2026-10-17T14:54:32.5783234Z    ✓ actual 2.12 writer policy upgrade invalidates unchanged schema inputs and preserves pinned history  3494ms",
+        "2026-10-17T15:36:13.9650440Z    ✓ actual accepted writer upgrade invalidates prior mappings, replays registered producers and preserves pinned history through GC  177432ms",
+        "2026-10-17T15:36:13.9682202Z  Test Files  25 passed (25)",
+        "2026-10-17T15:36:13.9683344Z       Tests  242 passed (242)",
+        "2026-10-17T15:36:13.9685435Z    Duration  3026.31s (transform 3.29s, setup 0ms, import 17.31s, tests 4249.30s, environment 3ms)",
+        "2026-10-17T15:36:29.0966861Z       \"point\": \"before-seal\",",
+        "2026-10-17T15:36:29.0970019Z       \"baselineRetained\": true",
+        "2026-10-17T15:36:29.0971085Z       \"point\": \"before-publish\",",
+        "2026-10-17T15:36:29.0974187Z       \"baselineRetained\": true",
+        "2026-10-17T15:36:29.0975647Z       \"point\": \"during-publish\",",
+        "2026-10-17T15:36:29.0979030Z       \"baselineRetained\": true",
+        "2026-10-17T15:36:29.0980092Z       \"point\": \"after-publish\",",
+        "2026-10-17T15:36:29.0982728Z       \"baselineRetained\": true",
+        "2026-10-17T15:36:29.0984310Z     \"refused\": true,",
+        "2026-10-17T15:36:29.0984959Z     \"unchanged\": true",
+        "2026-10-17T15:36:29.1478737Z Verified 242 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, complete build, four recovery probes and corruption refusal"
+      ],
+      "independentRebuildChecks": 18,
+      "sourceReuseCases": 6,
+      "actualOlderWriterCommits": [
+        "6eefca04b5032f3416fcc95bda23dec4bb8f65db",
+        "892d91833cfd22639da3f34948969a24a1ea96bb",
+        "d38b47b1f3fc0f917f9c1052c868fe29b92b173b"
+      ]
+    }
+  ],
+  "scope": "Exact-code Linux Node 20/22/24 matrix passed 242 tests with zero skips per job. Six source-reuse cases, all eighteen independent seven-language clean rebuild checks, three actual older-writer paths, actual producers/replay/CLI, lint, complete Node/UI build, four recovery probes, corruption refusal and the strict verifier executed. This accepts the host-qualified source-reuse milestone only. The separate uncommitted owned compatibility/query/export prototype is not qualified by this matrix; default authority remains unchanged."
+}
