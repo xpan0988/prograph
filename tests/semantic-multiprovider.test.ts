@@ -1,3 +1,5 @@
+import {releaseMigrationRetention} from "./oracles/migration-retention.js";
+import {prepareAuthorityMigration} from "../src/core/semantic/authority-migration.js";
 import { afterEach, expect, test } from "vitest";
 import { mkdtemp, mkdir, writeFile, readFile, rm, rename } from "node:fs/promises";
 import path from "node:path";
@@ -157,6 +159,7 @@ test.skipIf(!profilesFile || !baselineRuntime)("actual accepted writer upgrade i
     await oldManaged.indexManagedProject(root, `${language}-context.json`);
   }
   await oldAnalyze.analyzeRepository(root);
+  await prepareAuthorityMigration(index,{storageOnly:true});
   const filename = path.join(index, "semantic.sqlite"), before = new SemanticStore(filename);
   let pinned: number, originalClaims: string, oldRuns: number[];
   try {
@@ -183,7 +186,7 @@ test.skipIf(!profilesFile || !baselineRuntime)("actual accepted writer upgrade i
   const retained = new SemanticStore(filename);
   try {
     expect(digest(canonical(retained.sql("SELECT c.key FROM sc_active a JOIN sc_claims c ON c.id=a.claim WHERE snapshot=? ORDER BY c.key").all(pinned)))).toBe(originalClaims);
-    retained.unpinSnapshot(pinned, "upgrade-oracle");
+    retained.unpinSnapshot(pinned, "upgrade-oracle");expect(releaseMigrationRetention(retained)).toBeGreaterThan(0);
   } finally { retained.close(); }
   expect(await collectIndexGarbage(filename, { keep: 1 })).toHaveProperty("artifacts.state", "complete");
   expect((await repositoryStatus(root)).state).toBe("fresh");

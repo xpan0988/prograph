@@ -1,0 +1,214 @@
+{
+  "format": 1,
+  "scope": "Explicit offline cycle preparation on the final-runtime freshly analyzed ProGraph index, compared with complete raw-graph bulk results across all five scopes and three confidence tiers. Native facts, report and owned compatibility payloads remain unchanged.",
+  "repository": "/Users/xiyuanpan/prograph",
+  "index": "/private/tmp/prograph-authority-self-stable-20261018",
+  "prepared": {
+    "filename": "/private/tmp/prograph-authority-self-stable-20261018/semantic.sqlite",
+    "projectionVersion": "owned-query-1",
+    "generation": "sc2:report-v2:8e5be1d42e6a73ddaf72e5d3f5513039758f02ef4f89017788d3ea8648521a48:owned-query-1",
+    "relationships": 21620,
+    "bytes": 3739786,
+    "cycles": 425,
+    "ordering": "stable relationship identity; DFS back-edge semantics",
+    "durationMs": 217
+  },
+  "before": {
+    "cache": "2d8368378f0cd919899af5e3260c16346a020d0845d87f0e5a00fbd32907d3d9",
+    "active": "1",
+    "report": "sc2:report-v2:8e5be1d42e6a73ddaf72e5d3f5513039758f02ef4f89017788d3ea8648521a48"
+  },
+  "after": {
+    "cache": "2d8368378f0cd919899af5e3260c16346a020d0845d87f0e5a00fbd32907d3d9",
+    "active": "1",
+    "report": "sc2:report-v2:8e5be1d42e6a73ddaf72e5d3f5513039758f02ef4f89017788d3ea8648521a48"
+  },
+  "results": [
+    {
+      "scope": "code",
+      "level": 0,
+      "edges": 6631,
+      "cycles": 28,
+      "error": null,
+      "completeStableBulkEqual": true,
+      "hash": "9ee522f0670881a5792447229389c2c7f6ab4ff57060d2123de384bc1d88b915",
+      "legacyCycles": 28,
+      "legacyHash": "fc944b038e786a43b82e53a65b8338ed0f829b73c93da8db8da872087257b177",
+      "legacyExact": false
+    },
+    {
+      "scope": "code",
+      "level": 1,
+      "edges": 6635,
+      "cycles": 28,
+      "error": null,
+      "completeStableBulkEqual": true,
+      "hash": "9ee522f0670881a5792447229389c2c7f6ab4ff57060d2123de384bc1d88b915",
+      "legacyCycles": 28,
+      "legacyHash": "fc944b038e786a43b82e53a65b8338ed0f829b73c93da8db8da872087257b177",
+      "legacyExact": false
+    },
+    {
+      "scope": "code",
+      "level": 2,
+      "edges": 21259,
+      "cycles": 29,
+      "error": null,
+      "completeStableBulkEqual": true,
+      "hash": "ffcce2d8f1024606e94f9f4a87395845762238578d70c6152cb187789273a502",
+      "legacyCycles": 28,
+      "legacyHash": "fc944b038e786a43b82e53a65b8338ed0f829b73c93da8db8da872087257b177",
+      "legacyExact": false
+    },
+    {
+      "scope": "code+docs",
+      "level": 0,
+      "edges": 6835,
+      "cycles": 28,
+      "error": null,
+      "completeStableBulkEqual": true,
+      "hash": "9ee522f0670881a5792447229389c2c7f6ab4ff57060d2123de384bc1d88b915",
+      "legacyCycles": 28,
+      "legacyHash": "fc944b038e786a43b82e53a65b8338ed0f829b73c93da8db8da872087257b177",
+      "legacyExact": false
+    },
+    {
+      "scope": "code+docs",
+      "level": 1,
+      "edges": 6839,
+      "cycles": 28,
+      "error": null,
+      "completeStableBulkEqual": true,
+      "hash": "9ee522f0670881a5792447229389c2c7f6ab4ff57060d2123de384bc1d88b915",
+      "legacyCycles": 28,
+      "legacyHash": "fc944b038e786a43b82e53a65b8338ed0f829b73c93da8db8da872087257b177",
+      "legacyExact": false
+    },
+    {
+      "scope": "code+docs",
+      "level": 2,
+      "edges": 21463,
+      "cycles": 29,
+      "error": null,
+      "completeStableBulkEqual": true,
+      "hash": "ffcce2d8f1024606e94f9f4a87395845762238578d70c6152cb187789273a502",
+      "legacyCycles": 28,
+      "legacyHash": "fc944b038e786a43b82e53a65b8338ed0f829b73c93da8db8da872087257b177",
+      "legacyExact": false
+    },
+    {
+      "scope": "code+config",
+      "level": 0,
+      "edges": 6714,
+      "cycles": 28,
+      "error": null,
+      "completeStableBulkEqual": true,
+      "hash": "9ee522f0670881a5792447229389c2c7f6ab4ff57060d2123de384bc1d88b915",
+      "legacyCycles": 28,
+      "legacyHash": "fc944b038e786a43b82e53a65b8338ed0f829b73c93da8db8da872087257b177",
+      "legacyExact": false
+    },
+    {
+      "scope": "code+config",
+      "level": 1,
+      "edges": 6718,
+      "cycles": 28,
+      "error": null,
+      "completeStableBulkEqual": true,
+      "hash": "9ee522f0670881a5792447229389c2c7f6ab4ff57060d2123de384bc1d88b915",
+      "legacyCycles": 28,
+      "legacyHash": "fc944b038e786a43b82e53a65b8338ed0f829b73c93da8db8da872087257b177",
+      "legacyExact": false
+    },
+    {
+      "scope": "code+config",
+      "level": 2,
+      "edges": 21342,
+      "cycles": 29,
+      "error": null,
+      "completeStableBulkEqual": true,
+      "hash": "ffcce2d8f1024606e94f9f4a87395845762238578d70c6152cb187789273a502",
+      "legacyCycles": 28,
+      "legacyHash": "fc944b038e786a43b82e53a65b8338ed0f829b73c93da8db8da872087257b177",
+      "legacyExact": false
+    },
+    {
+      "scope": "code+tests",
+      "level": 0,
+      "edges": 6633,
+      "cycles": 28,
+      "error": null,
+      "completeStableBulkEqual": true,
+      "hash": "9ee522f0670881a5792447229389c2c7f6ab4ff57060d2123de384bc1d88b915",
+      "legacyCycles": 28,
+      "legacyHash": "fc944b038e786a43b82e53a65b8338ed0f829b73c93da8db8da872087257b177",
+      "legacyExact": false
+    },
+    {
+      "scope": "code+tests",
+      "level": 1,
+      "edges": 6693,
+      "cycles": 28,
+      "error": null,
+      "completeStableBulkEqual": true,
+      "hash": "9ee522f0670881a5792447229389c2c7f6ab4ff57060d2123de384bc1d88b915",
+      "legacyCycles": 28,
+      "legacyHash": "fc944b038e786a43b82e53a65b8338ed0f829b73c93da8db8da872087257b177",
+      "legacyExact": false
+    },
+    {
+      "scope": "code+tests",
+      "level": 2,
+      "edges": 21317,
+      "cycles": 29,
+      "error": null,
+      "completeStableBulkEqual": true,
+      "hash": "ffcce2d8f1024606e94f9f4a87395845762238578d70c6152cb187789273a502",
+      "legacyCycles": 28,
+      "legacyHash": "fc944b038e786a43b82e53a65b8338ed0f829b73c93da8db8da872087257b177",
+      "legacyExact": false
+    },
+    {
+      "scope": "full",
+      "level": 0,
+      "edges": 6936,
+      "cycles": 28,
+      "error": null,
+      "completeStableBulkEqual": true,
+      "hash": "9ee522f0670881a5792447229389c2c7f6ab4ff57060d2123de384bc1d88b915",
+      "legacyCycles": 28,
+      "legacyHash": "fc944b038e786a43b82e53a65b8338ed0f829b73c93da8db8da872087257b177",
+      "legacyExact": false
+    },
+    {
+      "scope": "full",
+      "level": 1,
+      "edges": 6996,
+      "cycles": 28,
+      "error": null,
+      "completeStableBulkEqual": true,
+      "hash": "9ee522f0670881a5792447229389c2c7f6ab4ff57060d2123de384bc1d88b915",
+      "legacyCycles": 28,
+      "legacyHash": "fc944b038e786a43b82e53a65b8338ed0f829b73c93da8db8da872087257b177",
+      "legacyExact": false
+    },
+    {
+      "scope": "full",
+      "level": 2,
+      "edges": 21620,
+      "cycles": 29,
+      "error": null,
+      "completeStableBulkEqual": true,
+      "hash": "ffcce2d8f1024606e94f9f4a87395845762238578d70c6152cb187789273a502",
+      "legacyCycles": 28,
+      "legacyHash": "fc944b038e786a43b82e53a65b8338ed0f829b73c93da8db8da872087257b177",
+      "legacyExact": false
+    }
+  ],
+  "interactive": {
+    "success": true,
+    "count": 28,
+    "hash": "f983af8710786ef1aa86ed3e1792fe7f90f08e606198d6fd54a4c3a879cd478d"
+  },
+  "methodology": "The original iterative DFS back-edge algorithm runs on stable edge-ID order. These are representative cycle paths, not an exhaustive cycle or SCC enumeration. Original insertion-order samples may differ; the complete new path list must exactly equal the independent stable-order bulk reference. Concurrent test execution disqualifies timing/RSS claims."
+}

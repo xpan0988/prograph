@@ -1,0 +1,1352 @@
+{
+  "format": 1,
+  "scope": "Actual bounded isolated semantic API reads from the final-runtime fresh ProGraph self-analysis. No synthetic symbol identities or source/provider completeness claims.",
+  "repository": "/Users/xiyuanpan/prograph",
+  "index": "/private/tmp/prograph-authority-self-stable-20261018",
+  "snapshot": 1,
+  "key": "sc2:symbol:e21abceb033aff189cf6c86425d9c6b658407c8abdeeb12e3d51c0bc5e943f21",
+  "options": {
+    "limit": 10,
+    "maxBytes": 32768,
+    "snapshot": 1
+  },
+  "results": {
+    "find": {
+      "snapshot": 1,
+      "activeSnapshot": 1,
+      "format": 2,
+      "schema": "2.0.0-step2.14",
+      "variant": null,
+      "scope": "code",
+      "coverage": [
+        {
+          "partition": "analysis/catalogue",
+          "status": "partial",
+          "language": null,
+          "provider": null,
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": []
+        },
+        {
+          "partition": "analysis/source",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:.github/workflows/semantic-core.yml",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/architecture.md",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage0-ci.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-ci.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-local.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-pxfm.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        }
+      ],
+      "gaps": [
+        "Syntax evidence preserves existing language maturity; native facts remain separate",
+        "Coverage summary truncated"
+      ],
+      "latestAttempt": {
+        "status": "partial",
+        "snapshot": 1,
+        "reason": null,
+        "matchesSnapshot": true
+      },
+      "semanticFreshness": "snapshot-only; source freshness unchecked",
+      "coverageTruncated": true,
+      "evidencePolicy": "sample claim per occurrence or relation; independent claims retained",
+      "columnEncoding": "utf-16",
+      "byteEncoding": "utf-8",
+      "truncated": false,
+      "limits": {
+        "maxItems": 10,
+        "maxBytes": 32768,
+        "maxCandidateRows": 10000,
+        "maxSupportRows": 201,
+        "maxMetadataRows": 9
+      },
+      "work": {
+        "candidateRows": 6,
+        "supportRows": 0,
+        "metadataRows": 9,
+        "returnedRows": 2,
+        "globalGraphMaterialized": false
+      },
+      "items": [
+        {
+          "key": "sc2:symbol:e21abceb033aff189cf6c86425d9c6b658407c8abdeeb12e3d51c0bc5e943f21",
+          "name": "prepareAuthorityMigration",
+          "qualified_name": "src/core/semantic/authority-migration.ts::prepareAuthorityMigration",
+          "kind": "FunctionDeclaration",
+          "file": "src/core/semantic/authority-migration.ts",
+          "variant": "sc2:context:33bf68064834604efd320742a63cf22ab3692fe46b1b834400784b8b1ce21aad",
+          "evidenceClaim": "sc2:claim:c7e0cc6c03f169c2e174d248ad2e6cfaf7becf3449fa9e90c8bd34397d360a4e",
+          "confidence": "exact"
+        },
+        {
+          "key": "sc2:symbol:465173988f644d10528d8945e3f7bc22afe531718dba2e6f15cef42ac05832b9",
+          "name": "prepareAuthorityMigration",
+          "qualified_name": "src/core/semantic/authority-migration.ts::prepareAuthorityMigration",
+          "kind": "FunctionDeclaration",
+          "file": "src/core/semantic/authority-migration.ts",
+          "variant": "sc2:context:45d89ff20775ae4527cd1aa890243f4a1ca13205cc5211fd08777f550a114f6b",
+          "evidenceClaim": "sc2:claim:d478ebf80f81ff83ca69812ecd34400f3febf9d1debed63811bba09388c6b269",
+          "confidence": "exact"
+        }
+      ],
+      "truncationReasons": [],
+      "noResult": false,
+      "analysisComplete": false
+    },
+    "definition": {
+      "snapshot": 1,
+      "activeSnapshot": 1,
+      "format": 2,
+      "schema": "2.0.0-step2.14",
+      "variant": null,
+      "scope": "code",
+      "coverage": [
+        {
+          "partition": "analysis/catalogue",
+          "status": "partial",
+          "language": null,
+          "provider": null,
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": []
+        },
+        {
+          "partition": "analysis/source",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:.github/workflows/semantic-core.yml",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/architecture.md",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage0-ci.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-ci.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-local.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-pxfm.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        }
+      ],
+      "gaps": [
+        "Syntax evidence preserves existing language maturity; native facts remain separate",
+        "Coverage summary truncated"
+      ],
+      "latestAttempt": {
+        "status": "partial",
+        "snapshot": 1,
+        "reason": null,
+        "matchesSnapshot": true
+      },
+      "semanticFreshness": "snapshot-only; source freshness unchecked",
+      "coverageTruncated": true,
+      "evidencePolicy": "sample claim per occurrence or relation; independent claims retained",
+      "columnEncoding": "utf-16",
+      "byteEncoding": "utf-8",
+      "truncated": false,
+      "limits": {
+        "maxItems": 10,
+        "maxBytes": 32768,
+        "maxCandidateRows": 10000,
+        "maxSupportRows": 201,
+        "maxMetadataRows": 9
+      },
+      "work": {
+        "candidateRows": 2,
+        "supportRows": 0,
+        "metadataRows": 9,
+        "returnedRows": 1,
+        "globalGraphMaterialized": false
+      },
+      "items": [
+        {
+          "occurrence": "sc2:occurrence:ab80f5887786b9037329d7504fe7caccec6a207a4892fc27e068b223af6a4d4a",
+          "symbol": "sc2:symbol:e21abceb033aff189cf6c86425d9c6b658407c8abdeeb12e3d51c0bc5e943f21",
+          "file": "src/core/semantic/authority-migration.ts",
+          "sourceDigest": "70b9ed40cea860ee90231d7d569fd85032d41b881f20ea152370d68d40f82c0f",
+          "range": {
+            "startByte": 5135,
+            "endByte": 5160,
+            "line": 99,
+            "column": 23,
+            "endLine": 99,
+            "endColumn": 48
+          },
+          "role": "definition",
+          "confidence": "exact",
+          "evidenceClaim": "sc2:claim:6662f2d39636e8d40113473d7b537c6cac5b48517ef1063356067f780068154c",
+          "provenance": {
+            "basis": "compiler",
+            "context": "sc2:context:33bf68064834604efd320742a63cf22ab3692fe46b1b834400784b8b1ce21aad",
+            "inputFingerprint": "f19724324da914f596f242da7b6443bf300c0c309c5ecde8ee580e3c393e4ba5",
+            "method": "compiler-binding",
+            "provider": "typescript/compiler-api",
+            "version": "5.9.2/6"
+          }
+        }
+      ],
+      "truncationReasons": [],
+      "noResult": false,
+      "analysisComplete": false
+    },
+    "references": {
+      "snapshot": 1,
+      "activeSnapshot": 1,
+      "format": 2,
+      "schema": "2.0.0-step2.14",
+      "variant": null,
+      "scope": "code",
+      "coverage": [
+        {
+          "partition": "analysis/catalogue",
+          "status": "partial",
+          "language": null,
+          "provider": null,
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": []
+        },
+        {
+          "partition": "analysis/source",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:.github/workflows/semantic-core.yml",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/architecture.md",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage0-ci.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-ci.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-local.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-pxfm.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        }
+      ],
+      "gaps": [
+        "Syntax evidence preserves existing language maturity; native facts remain separate",
+        "Coverage summary truncated"
+      ],
+      "latestAttempt": {
+        "status": "partial",
+        "snapshot": 1,
+        "reason": null,
+        "matchesSnapshot": true
+      },
+      "semanticFreshness": "snapshot-only; source freshness unchecked",
+      "coverageTruncated": true,
+      "evidencePolicy": "sample claim per occurrence or relation; independent claims retained",
+      "columnEncoding": "utf-16",
+      "byteEncoding": "utf-8",
+      "truncated": true,
+      "limits": {
+        "maxItems": 10,
+        "maxBytes": 32768,
+        "maxCandidateRows": 10000,
+        "maxSupportRows": 201,
+        "maxMetadataRows": 9
+      },
+      "work": {
+        "candidateRows": 22,
+        "supportRows": 0,
+        "metadataRows": 9,
+        "returnedRows": 10,
+        "globalGraphMaterialized": false
+      },
+      "items": [
+        {
+          "occurrence": "sc2:occurrence:cad875097390a1949ae640e78dc0233acab1d22987dbd6ea216d18332340f393",
+          "symbol": "sc2:symbol:e21abceb033aff189cf6c86425d9c6b658407c8abdeeb12e3d51c0bc5e943f21",
+          "file": "src/cli/index.ts",
+          "sourceDigest": "9500ed4db0ce9d80ba3a3d96f207c1d6517472b59c387ff6e4233c58d699ed33",
+          "range": {
+            "startByte": 15445,
+            "endByte": 15470,
+            "line": 267,
+            "column": 11,
+            "endLine": 267,
+            "endColumn": 36
+          },
+          "role": "reference",
+          "confidence": "resolved",
+          "evidenceClaim": "sc2:claim:8a4573ba70d588a8be48f2cf2f87852129cace8d2bdd73f27602a74c5edba527",
+          "provenance": {
+            "basis": "compiler",
+            "context": "sc2:context:33bf68064834604efd320742a63cf22ab3692fe46b1b834400784b8b1ce21aad",
+            "inputFingerprint": "1c06cbca519cff6d8cdc789d42c5fdc88a9cf6646ba17fc987a0bd30b67d39ef",
+            "method": "compiler-binding",
+            "provider": "typescript/compiler-api",
+            "version": "5.9.2/6"
+          }
+        },
+        {
+          "occurrence": "sc2:occurrence:1545da4b92faf6a13c7cc3d989e38920536e59354d44f08af0536b8e0f4702ed",
+          "symbol": "sc2:symbol:e21abceb033aff189cf6c86425d9c6b658407c8abdeeb12e3d51c0bc5e943f21",
+          "file": "src/core/analysis/analyze.ts",
+          "sourceDigest": "481f4d9b39e2963a3ee291fcb8c6abe0da979ba175c8b98357cccdb75fb81a85",
+          "range": {
+            "startByte": 3289,
+            "endByte": 3314,
+            "line": 74,
+            "column": 9,
+            "endLine": 74,
+            "endColumn": 34
+          },
+          "role": "reference",
+          "confidence": "resolved",
+          "evidenceClaim": "sc2:claim:45eb3bbb3a7497d2fd65def72370345168610eae76c487254787fe4cac8602c1",
+          "provenance": {
+            "basis": "compiler",
+            "context": "sc2:context:33bf68064834604efd320742a63cf22ab3692fe46b1b834400784b8b1ce21aad",
+            "inputFingerprint": "e55b8c574e6dd743f0ae387ed15132195559f5316d49c9de21aa0787bccc4d2f",
+            "method": "compiler-binding",
+            "provider": "typescript/compiler-api",
+            "version": "5.9.2/6"
+          }
+        },
+        {
+          "occurrence": "sc2:occurrence:987666bcb5fe54f736f6adec2811ed7c7234cbe1266334b7eafa5da294627de9",
+          "symbol": "sc2:symbol:e21abceb033aff189cf6c86425d9c6b658407c8abdeeb12e3d51c0bc5e943f21",
+          "file": "src/core/analysis/sync.ts",
+          "sourceDigest": "96b9c6d988c7ec8aa677885a749b5fc6a0c9de72f587efe971b58b0cbca14ff3",
+          "range": {
+            "startByte": 14644,
+            "endByte": 14669,
+            "line": 218,
+            "column": 9,
+            "endLine": 218,
+            "endColumn": 34
+          },
+          "role": "reference",
+          "confidence": "resolved",
+          "evidenceClaim": "sc2:claim:a992d8213d6af579e7a1682ca0a18e9df1b94ccc1bffde250452dfbe603b160a",
+          "provenance": {
+            "basis": "compiler",
+            "context": "sc2:context:33bf68064834604efd320742a63cf22ab3692fe46b1b834400784b8b1ce21aad",
+            "inputFingerprint": "ac40cd33ec241a4132af9ff8d6e01eca5e838f98b7610ae55adc673955e0fb06",
+            "method": "compiler-binding",
+            "provider": "typescript/compiler-api",
+            "version": "5.9.2/6"
+          }
+        },
+        {
+          "occurrence": "sc2:occurrence:9e7c63208ab25bcb5ceb618138ca2db89ce518d774c6eef37a2f406af04ba198",
+          "symbol": "sc2:symbol:e21abceb033aff189cf6c86425d9c6b658407c8abdeeb12e3d51c0bc5e943f21",
+          "file": "src/core/semantic/maintenance-lock.ts",
+          "sourceDigest": "a197e38aff651ca71db4c75765d3e2edb71ded354ed047217444d69d45dfd938",
+          "range": {
+            "startByte": 2003,
+            "endByte": 2028,
+            "line": 35,
+            "column": 52,
+            "endLine": 35,
+            "endColumn": 77
+          },
+          "role": "reference",
+          "confidence": "resolved",
+          "evidenceClaim": "sc2:claim:800af8a33c5e2bcf4bd7a2405e54a7649d246818d03f6a03af8c1238d91a9187",
+          "provenance": {
+            "basis": "compiler",
+            "context": "sc2:context:33bf68064834604efd320742a63cf22ab3692fe46b1b834400784b8b1ce21aad",
+            "inputFingerprint": "4b3e2a7f0fab629f630f63d1e6ca3706a5287b359c59d89b6c8444cc30703cf5",
+            "method": "compiler-binding",
+            "provider": "typescript/compiler-api",
+            "version": "5.9.2/6"
+          }
+        },
+        {
+          "occurrence": "sc2:occurrence:465fe985bf7e819a1156fb1dec4c1e4d1c00535c254c250992e05ac9a1056cab",
+          "symbol": "sc2:symbol:e21abceb033aff189cf6c86425d9c6b658407c8abdeeb12e3d51c0bc5e943f21",
+          "file": "src/core/semantic/provider-artifacts.ts",
+          "sourceDigest": "904ed186842df4cafe4ad24775a3ce1af83a774d77eecd57aa223e64e61643d6",
+          "range": {
+            "startByte": 4729,
+            "endByte": 4754,
+            "line": 68,
+            "column": 9,
+            "endLine": 68,
+            "endColumn": 34
+          },
+          "role": "reference",
+          "confidence": "resolved",
+          "evidenceClaim": "sc2:claim:d65cbe1c65d7cf5b6f6d36407bfc9fdd654cb78367d923aadd25ce6c4edd85a7",
+          "provenance": {
+            "basis": "compiler",
+            "context": "sc2:context:33bf68064834604efd320742a63cf22ab3692fe46b1b834400784b8b1ce21aad",
+            "inputFingerprint": "2b6f56df840174f70931226e12b0e1c04f9a462c7e2fc3278d5d975163a5fff7",
+            "method": "compiler-binding",
+            "provider": "typescript/compiler-api",
+            "version": "5.9.2/6"
+          }
+        },
+        {
+          "occurrence": "sc2:occurrence:b0bb867d8a53b2a9b54b70441196d912f645792677a6a92c113dc25396e22759",
+          "symbol": "sc2:symbol:e21abceb033aff189cf6c86425d9c6b658407c8abdeeb12e3d51c0bc5e943f21",
+          "file": "tests/authority-migration.test.ts",
+          "sourceDigest": "e26a048ac812de97339bdebf24f16be2b215b3827151dfc3148be8f24fb4985d",
+          "range": {
+            "startByte": 6131,
+            "endByte": 6156,
+            "line": 120,
+            "column": 18,
+            "endLine": 120,
+            "endColumn": 43
+          },
+          "role": "reference",
+          "confidence": "resolved",
+          "evidenceClaim": "sc2:claim:b1391dd429c0cea861be502803bd835768ca0d1416e8a636f645c19a84d51b4a",
+          "provenance": {
+            "basis": "compiler",
+            "context": "sc2:context:33bf68064834604efd320742a63cf22ab3692fe46b1b834400784b8b1ce21aad",
+            "inputFingerprint": "312082f997ca1366f8c4180d594f8d34371bac2ec03ea61fb41ffb0c7bdcf12f",
+            "method": "compiler-binding",
+            "provider": "typescript/compiler-api",
+            "version": "5.9.2/6"
+          }
+        },
+        {
+          "occurrence": "sc2:occurrence:e0e8b830e5cc746c15af61becd69c4f7b106631da464128620189fae9e941464",
+          "symbol": "sc2:symbol:e21abceb033aff189cf6c86425d9c6b658407c8abdeeb12e3d51c0bc5e943f21",
+          "file": "tests/authority-migration.test.ts",
+          "sourceDigest": "e26a048ac812de97339bdebf24f16be2b215b3827151dfc3148be8f24fb4985d",
+          "range": {
+            "startByte": 6432,
+            "endByte": 6457,
+            "line": 127,
+            "column": 9,
+            "endLine": 127,
+            "endColumn": 34
+          },
+          "role": "reference",
+          "confidence": "resolved",
+          "evidenceClaim": "sc2:claim:d50b6decc20aa15cae33ec8e758286301e8c97b574dc0ece69ff2ea4e4688e16",
+          "provenance": {
+            "basis": "compiler",
+            "context": "sc2:context:33bf68064834604efd320742a63cf22ab3692fe46b1b834400784b8b1ce21aad",
+            "inputFingerprint": "312082f997ca1366f8c4180d594f8d34371bac2ec03ea61fb41ffb0c7bdcf12f",
+            "method": "compiler-binding",
+            "provider": "typescript/compiler-api",
+            "version": "5.9.2/6"
+          }
+        },
+        {
+          "occurrence": "sc2:occurrence:c4adffe54563256793b08448e10e55ee93d8042289416b06f621c483549785de",
+          "symbol": "sc2:symbol:e21abceb033aff189cf6c86425d9c6b658407c8abdeeb12e3d51c0bc5e943f21",
+          "file": "tests/authority-migration.test.ts",
+          "sourceDigest": "e26a048ac812de97339bdebf24f16be2b215b3827151dfc3148be8f24fb4985d",
+          "range": {
+            "startByte": 6803,
+            "endByte": 6828,
+            "line": 134,
+            "column": 16,
+            "endLine": 134,
+            "endColumn": 41
+          },
+          "role": "reference",
+          "confidence": "resolved",
+          "evidenceClaim": "sc2:claim:1f5711d71c03789c3b7a6507879e1997b5d63390c57ee6dd210d2ed972f75663",
+          "provenance": {
+            "basis": "compiler",
+            "context": "sc2:context:33bf68064834604efd320742a63cf22ab3692fe46b1b834400784b8b1ce21aad",
+            "inputFingerprint": "312082f997ca1366f8c4180d594f8d34371bac2ec03ea61fb41ffb0c7bdcf12f",
+            "method": "compiler-binding",
+            "provider": "typescript/compiler-api",
+            "version": "5.9.2/6"
+          }
+        },
+        {
+          "occurrence": "sc2:occurrence:df6847881f17965cc07311192770f8be301d02a04ae4672caaae46b47f29b09a",
+          "symbol": "sc2:symbol:e21abceb033aff189cf6c86425d9c6b658407c8abdeeb12e3d51c0bc5e943f21",
+          "file": "tests/authority-migration.test.ts",
+          "sourceDigest": "e26a048ac812de97339bdebf24f16be2b215b3827151dfc3148be8f24fb4985d",
+          "range": {
+            "startByte": 7151,
+            "endByte": 7176,
+            "line": 139,
+            "column": 16,
+            "endLine": 139,
+            "endColumn": 41
+          },
+          "role": "reference",
+          "confidence": "resolved",
+          "evidenceClaim": "sc2:claim:e9991a05016664050c13b6e60f6b81516aeadcb371bf2948bd34fcb1fcb34850",
+          "provenance": {
+            "basis": "compiler",
+            "context": "sc2:context:33bf68064834604efd320742a63cf22ab3692fe46b1b834400784b8b1ce21aad",
+            "inputFingerprint": "312082f997ca1366f8c4180d594f8d34371bac2ec03ea61fb41ffb0c7bdcf12f",
+            "method": "compiler-binding",
+            "provider": "typescript/compiler-api",
+            "version": "5.9.2/6"
+          }
+        },
+        {
+          "occurrence": "sc2:occurrence:0d9398628de24cdfa058a5f10d40d86d87b84fbba58a7a327213d9862e618c2a",
+          "symbol": "sc2:symbol:e21abceb033aff189cf6c86425d9c6b658407c8abdeeb12e3d51c0bc5e943f21",
+          "file": "tests/authority-migration.test.ts",
+          "sourceDigest": "e26a048ac812de97339bdebf24f16be2b215b3827151dfc3148be8f24fb4985d",
+          "range": {
+            "startByte": 9702,
+            "endByte": 9727,
+            "line": 184,
+            "column": 16,
+            "endLine": 184,
+            "endColumn": 41
+          },
+          "role": "reference",
+          "confidence": "resolved",
+          "evidenceClaim": "sc2:claim:d8682200e73d381264113ee90634d48fe30b378599f00d5eee4a995f9b7f0898",
+          "provenance": {
+            "basis": "compiler",
+            "context": "sc2:context:33bf68064834604efd320742a63cf22ab3692fe46b1b834400784b8b1ce21aad",
+            "inputFingerprint": "312082f997ca1366f8c4180d594f8d34371bac2ec03ea61fb41ffb0c7bdcf12f",
+            "method": "compiler-binding",
+            "provider": "typescript/compiler-api",
+            "version": "5.9.2/6"
+          }
+        }
+      ],
+      "truncationReasons": [
+        "item-or-candidate-budget"
+      ],
+      "nextCursor": "eyJzbmFwc2hvdCI6MSwicXVlcnkiOiI0NmNmMTEzYzk3NjVjMDA0NzU1ZGJiNjQ5MGU1OTlmMTEwNWExYjg2YzhjYWJlNWFiMzkyMzQ1YjhiODQzNjQzIiwiYWZ0ZXIiOjExNTU1NH0",
+      "noResult": false,
+      "analysisComplete": false
+    },
+    "callers": {
+      "snapshot": 1,
+      "activeSnapshot": 1,
+      "format": 2,
+      "schema": "2.0.0-step2.14",
+      "variant": null,
+      "scope": "code",
+      "coverage": [
+        {
+          "partition": "analysis/catalogue",
+          "status": "partial",
+          "language": null,
+          "provider": null,
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": []
+        },
+        {
+          "partition": "analysis/source",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:.github/workflows/semantic-core.yml",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/architecture.md",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage0-ci.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-ci.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-local.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-pxfm.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        }
+      ],
+      "gaps": [
+        "Syntax evidence preserves existing language maturity; native facts remain separate",
+        "Coverage summary truncated"
+      ],
+      "latestAttempt": {
+        "status": "partial",
+        "snapshot": 1,
+        "reason": null,
+        "matchesSnapshot": true
+      },
+      "semanticFreshness": "snapshot-only; source freshness unchecked",
+      "coverageTruncated": true,
+      "evidencePolicy": "sample claim per occurrence or relation; independent claims retained",
+      "columnEncoding": "utf-16",
+      "byteEncoding": "utf-8",
+      "truncated": true,
+      "limits": {
+        "maxItems": 10,
+        "maxBytes": 32768,
+        "maxCandidateRows": 10000,
+        "maxSupportRows": 201,
+        "maxMetadataRows": 9
+      },
+      "work": {
+        "candidateRows": 11,
+        "supportRows": 0,
+        "metadataRows": 9,
+        "returnedRows": 10,
+        "globalGraphMaterialized": false
+      },
+      "items": [
+        {
+          "site_count": 1,
+          "confidence": "resolved",
+          "key": "sc2:symbol:83b6b1b7167bd546c34f12336758f057fcf0f620c7ec4402a4817a9d2c9d97e1",
+          "name": "<lambda@15039>",
+          "qualified_name": "src/cli/index.ts::<lambda@15039>",
+          "file": "src/cli/index.ts",
+          "evidenceClaim": "sc2:claim:3ebe59f683b0697ff24531bf28c5598c028a6bf526f890ed060b53e480e963c0"
+        },
+        {
+          "site_count": 1,
+          "confidence": "resolved",
+          "key": "sc2:symbol:cc0cd36adb69a404c4dd641e9f2cc20b061a0b6210852a936422a9f1930791d6",
+          "name": "collectIndexGarbage",
+          "qualified_name": "src/core/semantic/provider-artifacts.ts::collectIndexGarbage",
+          "file": "src/core/semantic/provider-artifacts.ts",
+          "evidenceClaim": "sc2:claim:bbe9ab8cbd1f6ab64357c5922a29013310f17f52577d2ae6911eb664ef1521d6"
+        },
+        {
+          "site_count": 1,
+          "confidence": "resolved",
+          "key": "sc2:symbol:a405d9a020ed5f70b49a4a15af7ecfa1dd042a70370864a117fe0d45d8c551df",
+          "name": "analyzeRepository",
+          "qualified_name": "src/core/analysis/analyze.ts::analyzeRepository",
+          "file": "src/core/analysis/analyze.ts",
+          "evidenceClaim": "sc2:claim:937f0293bf0b2f478125bee4631b1f7010d2af3120fa6748ac537d44cc1dc7c5"
+        },
+        {
+          "site_count": 1,
+          "confidence": "resolved",
+          "key": "sc2:symbol:d0fa4d57df0d513774c9768ec00e18b540831714446c7d51034a6afcfd3dd4c1",
+          "name": "withIndexWork",
+          "qualified_name": "src/core/semantic/maintenance-lock.ts::withIndexWork",
+          "file": "src/core/semantic/maintenance-lock.ts",
+          "evidenceClaim": "sc2:claim:57e11c490fbb9d7b4269b2e599467f583092fa285bcfd857ba1783e0d820e1c0"
+        },
+        {
+          "site_count": 1,
+          "confidence": "resolved",
+          "key": "sc2:symbol:0f9c4fb9c456e0da93d7638e909ed513c1494fadbbe332c7ebdbfcb6ecda6a45",
+          "name": "syncRepository",
+          "qualified_name": "src/core/analysis/sync.ts::syncRepository",
+          "file": "src/core/analysis/sync.ts",
+          "evidenceClaim": "sc2:claim:8acb1b7fde95a0917fa29bdaf4736f742fbdb3f763cf36f953d286436fcdb4ef"
+        },
+        {
+          "site_count": 2,
+          "confidence": "resolved",
+          "key": "sc2:symbol:96a71c19e5d68791a335b0a1d340dfb8e01e11c14ca9e068e3b3fa734d6d3753",
+          "name": "<lambda@5990>",
+          "qualified_name": "tests/authority-migration.test.ts::<lambda@5990>",
+          "file": "tests/authority-migration.test.ts",
+          "evidenceClaim": "sc2:claim:e02d41ec8564ac7d21bcd3f40c87d20572f5e9c48443659955d33c61c2c919ce"
+        },
+        {
+          "site_count": 2,
+          "confidence": "resolved",
+          "key": "sc2:symbol:e3346510024e77bb41de2ec5b90a821bdc3a151cead8e443c17e6ded7bc30953",
+          "name": "<lambda@6692>",
+          "qualified_name": "tests/authority-migration.test.ts::<lambda@6692>",
+          "file": "tests/authority-migration.test.ts",
+          "evidenceClaim": "sc2:claim:c67d675046f8eed4147a49704b09d6a3f7edff919ab8d29513ae624b411adeac"
+        },
+        {
+          "site_count": 1,
+          "confidence": "resolved",
+          "key": "sc2:symbol:a69f5d29633fff52de34fa23c928ee523a4fa30c6543a21d5e0b8eb4c68cbc1e",
+          "name": "<lambda@9480>",
+          "qualified_name": "tests/authority-migration.test.ts::<lambda@9480>",
+          "file": "tests/authority-migration.test.ts",
+          "evidenceClaim": "sc2:claim:a6e0af2f8bceab7283e317049f29b8b53908e537bfede22335dc0e218286bd9b"
+        },
+        {
+          "site_count": 2,
+          "confidence": "resolved",
+          "key": "sc2:symbol:f62a0f28111791f8306ef29bf5898dd625e2f186f7b47ae55140163116760cea",
+          "name": "<lambda@29149>",
+          "qualified_name": "tests/semantic-ingestion.test.ts::<lambda@29149>",
+          "file": "tests/semantic-ingestion.test.ts",
+          "evidenceClaim": "sc2:claim:5ff965e45f7521344ca7a2ec9a5d8a891963bbd3f343fa9e9e25935f48f5b611"
+        },
+        {
+          "site_count": 1,
+          "confidence": "resolved",
+          "key": "sc2:symbol:d28dbdd9ebc74f34b80c4c843b663885ab814247685179415f7264533515bd28",
+          "name": "<lambda@14151>",
+          "qualified_name": "tests/semantic-multiprovider.test.ts::<lambda@14151>",
+          "file": "tests/semantic-multiprovider.test.ts",
+          "evidenceClaim": "sc2:claim:3f5616cb07fa43fef8378ec1c702468355146facffd485c615a49a17bed2fc77"
+        }
+      ],
+      "truncationReasons": [
+        "item-or-candidate-budget"
+      ],
+      "nextCursor": "eyJzbmFwc2hvdCI6MSwicXVlcnkiOiI0NDFmZTFjMDg0OTdiZmFiN2I3MDJkYWI0Njc5OGMzMzIzOTJjZDI0ODg3NTFiNGMwYzEzMTIyOTc1Mzk1MDY4IiwiYWZ0ZXIiOjE0NjM5MH0",
+      "noResult": false,
+      "analysisComplete": false
+    },
+    "callees": {
+      "snapshot": 1,
+      "activeSnapshot": 1,
+      "format": 2,
+      "schema": "2.0.0-step2.14",
+      "variant": null,
+      "scope": "code",
+      "coverage": [
+        {
+          "partition": "analysis/catalogue",
+          "status": "partial",
+          "language": null,
+          "provider": null,
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": []
+        },
+        {
+          "partition": "analysis/source",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:.github/workflows/semantic-core.yml",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/architecture.md",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage0-ci.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-ci.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-local.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-pxfm.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        }
+      ],
+      "gaps": [
+        "Syntax evidence preserves existing language maturity; native facts remain separate",
+        "Coverage summary truncated"
+      ],
+      "latestAttempt": {
+        "status": "partial",
+        "snapshot": 1,
+        "reason": null,
+        "matchesSnapshot": true
+      },
+      "semanticFreshness": "snapshot-only; source freshness unchecked",
+      "coverageTruncated": true,
+      "evidencePolicy": "sample claim per occurrence or relation; independent claims retained",
+      "columnEncoding": "utf-16",
+      "byteEncoding": "utf-8",
+      "truncated": true,
+      "limits": {
+        "maxItems": 10,
+        "maxBytes": 32768,
+        "maxCandidateRows": 10000,
+        "maxSupportRows": 201,
+        "maxMetadataRows": 9
+      },
+      "work": {
+        "candidateRows": 11,
+        "supportRows": 0,
+        "metadataRows": 9,
+        "returnedRows": 10,
+        "globalGraphMaterialized": false
+      },
+      "items": [
+        {
+          "site_count": 1,
+          "confidence": "resolved",
+          "key": "sc2:symbol:382924a08bd76b7af349628fb19ff5ae3e011ad45699f52d7ab8e348c7626382",
+          "name": "map",
+          "qualified_name": "../../../node_modules/typescript/lib/lib.es5.d.ts::Array::map",
+          "file": "../../../node_modules/typescript/lib/lib.es5.d.ts",
+          "evidenceClaim": "sc2:claim:33ce0983aa447c7ae39fdf7d1ee1e86bc9116bd5532f7d5c093e1684d182fc97"
+        },
+        {
+          "site_count": 3,
+          "confidence": "resolved",
+          "key": "sc2:symbol:15f2f623b0decadd528a44a35a025d0b331d48e4629e9ac0f8b821b950420a96",
+          "name": "basename",
+          "qualified_name": "node_modules/@types/node/path.d.ts::\"path\"::path::PlatformPath::basename",
+          "file": "node_modules/@types/node/path.d.ts",
+          "evidenceClaim": "sc2:claim:eef1c547e1f0f3b57162a3ce4975c4a869dda812f7486506ef2cc12fef69bad1"
+        },
+        {
+          "site_count": 1,
+          "confidence": "resolved",
+          "key": "sc2:symbol:f6ba39aa0c0626550034ffcd86661ca7602f436bce88a4559cdd0463a4c05d5a",
+          "name": "includes",
+          "qualified_name": "../../../node_modules/typescript/lib/lib.es2016.array.include.d.ts::Array::includes",
+          "file": "../../../node_modules/typescript/lib/lib.es2016.array.include.d.ts",
+          "evidenceClaim": "sc2:claim:2c2730c40b2e881fb1e0fa1a423f44cebb6dca5e25bd1504bff026ad165030e9"
+        },
+        {
+          "site_count": 2,
+          "confidence": "resolved",
+          "key": "sc2:symbol:1d59a2d8127764ef3423a55a6895a3c169f15218fae6935fa8f81d952e7c72ea",
+          "name": "endsWith",
+          "qualified_name": "../../../node_modules/typescript/lib/lib.es2015.core.d.ts::String::endsWith",
+          "file": "../../../node_modules/typescript/lib/lib.es2015.core.d.ts",
+          "evidenceClaim": "sc2:claim:e59926827277b315d4ab65bd91c223e3e57bbbb43de293487cde9ef3aa35dc7b"
+        },
+        {
+          "site_count": 1,
+          "confidence": "resolved",
+          "key": "sc2:symbol:a5bfc8bfee6cb498022ad2d6a57c8454d539531ee64adee7665f659f4008cafa",
+          "name": "push",
+          "qualified_name": "../../../node_modules/typescript/lib/lib.es5.d.ts::Array::push",
+          "file": "../../../node_modules/typescript/lib/lib.es5.d.ts",
+          "evidenceClaim": "sc2:claim:4675a8a5fe501fbc7523f55845aa1d821847ec862d69d3dcbca2f983d2e717b0"
+        },
+        {
+          "site_count": 12,
+          "confidence": "resolved",
+          "key": "sc2:symbol:31e894344fa390f167a1db695f2339893b76d55a1b29afc93076f0b63c812f36",
+          "name": "join",
+          "qualified_name": "node_modules/@types/node/path.d.ts::\"path\"::path::PlatformPath::join",
+          "file": "node_modules/@types/node/path.d.ts",
+          "evidenceClaim": "sc2:claim:956bbce5ab50986d283d9c3f667d43aec31a0c849659759ca4e93aa9e49e19ac"
+        },
+        {
+          "site_count": 1,
+          "confidence": "resolved",
+          "key": "sc2:symbol:bd23e94403a5f1113e667e22a2f5e3bea6346fa8c76314ac0759e9bc0774f808",
+          "name": "dirname",
+          "qualified_name": "node_modules/@types/node/path.d.ts::\"path\"::path::PlatformPath::dirname",
+          "file": "node_modules/@types/node/path.d.ts",
+          "evidenceClaim": "sc2:claim:a93feabb03d0832d7c8398389dc64e2c718a8d4c5490749fa6854049c63e0cf0"
+        },
+        {
+          "site_count": 10,
+          "confidence": "resolved",
+          "key": "sc2:symbol:f6918264fea77a65b2df758d1e4edd04d568716f6a1cd5ab857113bc6024e49b",
+          "name": "Error",
+          "qualified_name": "../../../node_modules/typescript/lib/lib.es5.d.ts::Error",
+          "file": "../../../node_modules/typescript/lib/lib.es5.d.ts",
+          "evidenceClaim": "sc2:claim:04828d73edae0ae266709ef43d21f40a5fca02d391d796bd2f1f2d4b8d7092e3"
+        },
+        {
+          "site_count": 1,
+          "confidence": "resolved",
+          "key": "sc2:symbol:882f7357b7564796b33f5ff18eb0774d8e545a68a5fec06895a8074b970c4e5e",
+          "name": "digest",
+          "qualified_name": "src/core/semantic/model.ts::digest",
+          "file": "src/core/semantic/model.ts",
+          "evidenceClaim": "sc2:claim:4acd55b15bdf9d9e528cb7ed581130c07a50f9a5373a377ac1b47ce0a7601332"
+        },
+        {
+          "site_count": 1,
+          "confidence": "resolved",
+          "key": "sc2:symbol:1770e4776c3cd2a111ac7903a26bd774c85db892aab3491735e608bb7c6dd55a",
+          "name": "readFile",
+          "qualified_name": "node_modules/@types/node/fs/promises.d.ts::\"fs/promises\"::readFile",
+          "file": "node_modules/@types/node/fs/promises.d.ts",
+          "evidenceClaim": "sc2:claim:2d32cbac34db9e1b42d6c6ba300bb929c805774e0955111558d762e1d7a15ed8"
+        }
+      ],
+      "truncationReasons": [
+        "item-or-candidate-budget"
+      ],
+      "nextCursor": "eyJzbmFwc2hvdCI6MSwicXVlcnkiOiI2NmVkODQxNjA4ZGFiMDViMjljYWI0M2ZiMmU3ZDc4MzIzY2Q0YTJmYmMxODFhZjYyYjI2YTRiM2ZlZTljMDljIiwiYWZ0ZXIiOjQ4Njg2fQ",
+      "noResult": false,
+      "analysisComplete": false
+    },
+    "native": {
+      "snapshot": 1,
+      "activeSnapshot": 1,
+      "format": 2,
+      "schema": "2.0.0-step2.14",
+      "variant": null,
+      "scope": "code",
+      "coverage": [
+        {
+          "partition": "analysis/catalogue",
+          "status": "partial",
+          "language": null,
+          "provider": null,
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": []
+        },
+        {
+          "partition": "analysis/source",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:.github/workflows/semantic-core.yml",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/architecture.md",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage0-ci.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-ci.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-local.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        },
+        {
+          "partition": "analysis/source/file:docs/benchmarks/semantic-core-stage1-pxfm.json",
+          "status": "partial",
+          "language": null,
+          "provider": "source-and-language-observations",
+          "definitions": null,
+          "references": null,
+          "calls": null,
+          "gaps": [
+            "Syntax evidence preserves existing language maturity; native facts remain separate"
+          ]
+        }
+      ],
+      "gaps": [
+        "Syntax evidence preserves existing language maturity; native facts remain separate",
+        "Coverage summary truncated"
+      ],
+      "latestAttempt": {
+        "status": "partial",
+        "snapshot": 1,
+        "reason": null,
+        "matchesSnapshot": true
+      },
+      "semanticFreshness": "snapshot-only; source freshness unchecked",
+      "coverageTruncated": true,
+      "evidencePolicy": "sample claim per occurrence or relation; independent claims retained",
+      "columnEncoding": "utf-16",
+      "byteEncoding": "utf-8",
+      "truncated": false,
+      "limits": {
+        "maxItems": 10,
+        "maxBytes": 32768,
+        "maxCandidateRows": 10000,
+        "maxSupportRows": 201,
+        "maxMetadataRows": 9
+      },
+      "work": {
+        "candidateRows": 2,
+        "supportRows": 0,
+        "metadataRows": 9,
+        "returnedRows": 1,
+        "globalGraphMaterialized": false
+      },
+      "items": [
+        {
+          "evidenceClaim": "sc2:claim:c111065b82deb7e52320f859198d58fb39cd7615d337ecbb4fd3a66da1ab750c",
+          "confidence": "exact",
+          "predicate": "typescript.Signature",
+          "target": null,
+          "value": {
+            "compilerVersion": "5.9.2",
+            "signature": "export async function prepareAuthorityMigration(requested: string,hooks: {\n  storageOnly?: boolean;\n  semanticFile?: string;\n  fault?: (point: 'backup-durable'|'schema-ready') => void;\n}={}): Promise<void> {\n  await mkdir(requested,{ recursive: true });\n  const directory=await realpath(requested),semanticFile=hooks.semanticFile??'semantic.sqlite';\n  if(path.basename(semanticFile)!==semanticFile||!semanticFile.endsWith('.sqlite')||semanticFile==='graph.sqlite')\n    throw Error('Invalid semantic storage filename');\n  const semantic=path.join(directory,semanticFile),graph=path.join(directory,'graph.sqlite');\n  const hasSemantic=await exists(semantic),hasGraph=await exists(graph);\n  if(!hasSemantic&&!hasGraph||hooks.storageOnly&&!hasSemantic)\n    return;\n  if(hasSemantic) {\n    const meta=metadata(semantic);\n    if(hooks.storageOnly&&meta.schema===SEMANTIC_SCHEMA_VERSION)\n      return;\n    if(meta['compatibility-authority']==='owned-v1')\n      return;\n    if(meta.schema===SEMANTIC_SCHEMA_VERSION&&meta['authority-",
+            "syntaxKind": "FunctionDeclaration"
+          },
+          "provenance": {
+            "basis": "compiler",
+            "context": "sc2:context:33bf68064834604efd320742a63cf22ab3692fe46b1b834400784b8b1ce21aad",
+            "inputFingerprint": "f19724324da914f596f242da7b6443bf300c0c309c5ecde8ee580e3c393e4ba5",
+            "method": "compiler-binding",
+            "provider": "typescript/compiler-api",
+            "version": "5.9.2/6"
+          }
+        }
+      ],
+      "truncationReasons": [],
+      "noResult": false,
+      "analysisComplete": false
+    }
+  }
+}

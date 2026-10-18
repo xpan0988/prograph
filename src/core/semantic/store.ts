@@ -7,7 +7,7 @@ import { collectSemanticGarbage, type GarbageCollectionOptions } from "./gc.js";
 import { publishProjections } from "./publication.js";
 import type { ProviderRegistration } from "./provider-plan.js";
 import path from "node:path";
-import { realpathSync } from "node:fs";
+import { realpathSync, existsSync } from "node:fs";
 import { IndexLease } from "./maintenance-lock.js";
 import { canonical, semanticKey, PREDICATES, SEMANTIC_FORMAT_VERSION, SEMANTIC_SCHEMA_VERSION, READABLE_SEMANTIC_SCHEMAS, validateFact,
   type EntityKind, type FactInput, type OccurrenceInput, type SemanticSymbol, type SupportAlternative } from "./model.js";
@@ -24,7 +24,8 @@ export class SemanticStore {
   private readonly ownsLease: boolean;
   private sourceRoot: string | undefined;
   private sourceRootAlias: string | undefined;
-  constructor(readonly filename: string, readonly hooks: PublicationHooks = {}, borrowedLease?: IndexLease) {
+  constructor(readonly filename: string, readonly hooks: PublicationHooks = {}, borrowedLease?: IndexLease, initialize?: (store: SemanticStore) => void) {
+    if(initialize && borrowedLease?.mode!=="maintenance")throw Error("Schema migration initialization requires an exclusive borrowed maintenance lease");
     this.lease = borrowedLease ?? (filename === ":memory:" ? undefined : new IndexLease(path.dirname(filename), "work")); this.ownsLease = !borrowedLease;
     if (this.lease && (!this.lease.active || this.lease.directory !== realpathSync(path.dirname(filename)))) throw Error("Invalid borrowed index lease");
     let opened: Database.Database | undefined;
@@ -35,6 +36,9 @@ export class SemanticStore {
         const format = this.db.prepare("SELECT value FROM sc_meta WHERE key='format'").get() as { value: string } | undefined;
         const schema = this.db.prepare("SELECT value FROM sc_meta WHERE key='schema'").get() as { value: string } | undefined;
         if (format?.value !== String(SEMANTIC_FORMAT_VERSION) || !READABLE_SEMANTIC_SCHEMAS.includes(schema?.value as typeof READABLE_SEMANTIC_SCHEMAS[number])) throw new Error("Unsupported Semantic Core storage/schema version; preserve this database and rebuild separately");
+        const authority=this.db.prepare("SELECT value FROM sc_meta WHERE key='compatibility-authority'").get() as {value:string}|undefined;
+        if(authority && authority.value!=="owned-v1")throw Error("Unsupported semantic compatibility authority; preserve this index");
+        if(schema?.value!==SEMANTIC_SCHEMA_VERSION && !(initialize && borrowedLease?.mode==="maintenance"))throw Error("Storage upgrade requires prepareAuthorityMigration before opening a writer; run analyze/sync");
       }
       this.db.pragma("journal_mode=WAL"); this.db.pragma("synchronous=FULL"); this.db.pragma("foreign_keys=ON");
       this.db.transaction(() => {
@@ -44,6 +48,7 @@ export class SemanticStore {
         this.db.exec(SEMANTIC_SQL);
         this.sql("INSERT OR IGNORE INTO sc_meta VALUES('format',?)").run(String(SEMANTIC_FORMAT_VERSION));
         this.sql("INSERT INTO sc_meta VALUES('schema',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(SEMANTIC_SCHEMA_VERSION);
+        initialize?.(this);
       })();
     } catch (error) { opened?.close(); if (this.ownsLease) this.lease?.close(); throw error; }
   }
@@ -247,6 +252,9 @@ export class SemanticStore {
     const measure = (stage: string) => { const now = performance.now(); this.hooks.measure?.(stage, now - measuredAt); measuredAt = now; };
     const snapshot = this.db.transaction(() => {
       if (this.activeSnapshot() !== parent) throw new Error("Snapshot publication parent changed");
+      if((this.sql("SELECT value FROM sc_meta WHERE key='schema'").get() as {value:string}|undefined)?.value!==SEMANTIC_SCHEMA_VERSION || (this.sql("SELECT value FROM sc_meta WHERE key='format'").get() as {value:string}|undefined)?.value!==String(SEMANTIC_FORMAT_VERSION))throw Error("Storage version changed while writer was open; reopen this index");
+      const authority=this.sql("SELECT value FROM sc_meta WHERE key='compatibility-authority'").get() as {value:string}|undefined;
+      if(authority && authority.value!=="owned-v1")throw Error("Compatibility authority version changed while writer was open; reopen this index");
       const selected = runs.map(id => {
         const row = this.sql("SELECT * FROM sc_runs WHERE id=?").get(id) as { id: number; state: string; partition_key: string; context: string; input_fingerprint: string } | undefined;
         if (row?.state !== "sealed") throw new Error("Cannot publish unsealed partition");
@@ -275,7 +283,11 @@ export class SemanticStore {
         this.sql("INSERT INTO sc_provider_recipes VALUES(?,?,?,?,?,?,?) ON CONFLICT(key) DO UPDATE SET kind=excluded.kind,recipe_json=excluded.recipe_json,trust=excluded.trust,version=excluded.version,authorization=excluded.authorization,updated_at=excluded.updated_at")
           .run(registration.key, registration.kind, canonical(registration.recipe), registration.trust, registration.version, registration.authorization, new Date().toISOString());
       }
-      if (report) { writeSnapshotReport(this, id, key, report); measure("snapshot-report"); publishCompatibilityCache(this,id,parent); measure("compatibility-projection"); }
+      if(report && !this.sql("SELECT 1 FROM sc_meta WHERE key='compatibility-authority'").get() && (parent!==undefined || existsSync(path.join(path.dirname(this.filename),"graph.sqlite"))) && !this.sql("SELECT 1 FROM sc_meta WHERE key='authority-migration-backup'").get())throw Error("Pre-existing index requires a pre-activation rollback copy; run analyze/sync");
+      if (report && writeSnapshotReport(this, id, key, report)) { measure("snapshot-report"); publishCompatibilityCache(this,id,parent); measure("compatibility-projection");
+        this.sql("INSERT INTO sc_meta VALUES('compatibility-authority','owned-v1') ON CONFLICT(key) DO UPDATE SET value=excluded.value").run();
+        if (!report.inherited) this.sql("INSERT INTO sc_meta VALUES('analysis-attempt',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(canonical({status:report.manifest.semanticCore!.status,snapshot:id,reason:null}));
+      }
       this.sql("INSERT INTO sc_meta VALUES('active',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(String(id));
       return id;
     })();

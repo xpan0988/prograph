@@ -1,0 +1,132 @@
+{
+  "format": 1,
+  "scope": "Rejected default-authority validation attempts, retained without treating partial or failing runs as acceptance. The qualified full invocation runs independently after these corrections.",
+  "firstCompleteAttempt": {
+    "success": false,
+    "numTotalTests": 263,
+    "numPassedTests": 259,
+    "numFailedTests": 4,
+    "numPendingTests": 0,
+    "failures": [
+      {
+        "file": "core.test.ts",
+        "title": "agent queries and freshness removes a deleted isolated file and falls back on configuration or adapter changes",
+        "status": "failed",
+        "failureMessages": [
+          "AssertionError: expected false to be true // Object.is equality\n    at /private/tmp/prograph-authority-prototype-4ywv13z5/tests/core.test.ts:468:52\n    at file:///Users/xiyuanpan/prograph/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+        ]
+      },
+      {
+        "file": "polyglot.test.ts",
+        "title": "custom in-repository indexes stay fresh and provider changes are detected",
+        "status": "failed",
+        "failureMessages": [
+          "AssertionError: expected false to be true // Object.is equality\n    at /private/tmp/prograph-authority-prototype-4ywv13z5/tests/polyglot.test.ts:98:73\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at file:///Users/xiyuanpan/prograph/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+        ]
+      },
+      {
+        "file": "query-runtime.test.ts",
+        "title": "isolated HTTP and CLI navigation preserve shared full-output contracts",
+        "status": "failed",
+        "failureMessages": [
+          "AssertionError: expected { symbol: { \u2026(12) }, \u2026(2) } to deeply equal { symbol: { \u2026(12) }, \u2026(2) }\n    at /private/tmp/prograph-authority-prototype-4ywv13z5/tests/query-runtime.test.ts:106:147\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at file:///Users/xiyuanpan/prograph/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+        ]
+      },
+      {
+        "file": "semantic-artifacts.test.ts",
+        "title": "CLI maintenance preserves pin/unpin and custom sqlite index contracts with additive artifact results",
+        "status": "failed",
+        "failureMessages": [
+          "Error: Command failed: /opt/homebrew/Cellar/node/25.9.0_2/bin/node dist/cli/index.js semantic pin /private/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-artifact-gc-ICbsC2 --index /private/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-artifact-gc-ICbsC2/.prograph/graph.sqlite --format json --snapshot 1\nprograph: ENOENT: no such file or directory, access '/private/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-artifact-gc-ICbsC2/.prograph/graph.sqlite'\n\n    at genericNodeError (node:internal/errors:998:15)\n    at wrappedFn (node:internal/errors:543:14)\n    at ChildProcess.exithandler (node:child_process:417:12)\n    at ChildProcess.emit (node:events:509:20)\n    at maybeClose (node:internal/child_process:1108:16)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:305:5)"
+        ]
+      }
+    ],
+    "corrections": [
+      "Adapter-version tests now verify that filesystem state is nonauthoritative, then change the actual declared policy and require stale status/full fallback.",
+      "Transport expected results select the current default backend, retaining exact full response-array comparisons; independent legacy/stable-order oracles are separate.",
+      "Semantic maintenance preserves the established graph.sqlite alias for its sibling semantic.sqlite."
+    ]
+  },
+  "secondInterruptedAttempt": {
+    "exitCode": 130,
+    "hasFinalFullJson": false,
+    "reason": "Stopped after the already-failing old-schema migration test was reproduced independently, before the 18-edit oracle completed. Not an accepted full test result.",
+    "reproducedFailure": [
+      {
+        "file": "semantic-ingestion.test.ts",
+        "title": "old semantic schema remains readable and upgrades additively on writer open",
+        "status": "failed",
+        "failureMessages": [
+          "Error: Storage upgrade requires prepareAuthorityMigration before opening a writer; run analyze/sync\n    at new SemanticStore (/private/tmp/prograph-authority-final-jl7hcibu/src/core/semantic/store.ts:41:114)\n    at /private/tmp/prograph-authority-final-jl7hcibu/tests/semantic-ingestion.test.ts:284:15\n    at file:///Users/xiyuanpan/prograph/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+        ]
+      }
+    ],
+    "correction": "Old Step 1/2.1 reads remain byte-preserving; raw writer opening refuses migration before durable rollback preparation. Explicit storage preflight then upgrades additively without advancing the active snapshot. No runtime protection was weakened.",
+    "correctedCompleteIngestionSuite": {
+      "success": true,
+      "numTotalTests": 35,
+      "numPassedTests": 35,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    }
+  },
+  "rawFiles": [
+    {
+      "path": "/private/tmp/prograph-authority-full-tests.json",
+      "bytes": 93706,
+      "sha256": "3dd244b3f38e108ffafa1e57016bdb2f79a6eaa5cf3b7d919b31af4f38f999d6"
+    },
+    {
+      "path": "/private/tmp/prograph-authority-final-full-tests.log",
+      "bytes": 19488,
+      "sha256": "f249b22ca30cb4bd041625c76d34869c37603402c9dbf758b28ab8b187ba0f22"
+    },
+    {
+      "path": "/private/tmp/prograph-authority-final-full-tests.exit",
+      "bytes": 4,
+      "sha256": "f5bde7eb9f6c71611dc5726e8aca3eb4eba3e386da49e0a4ed5c295a90a73a0d"
+    },
+    {
+      "path": "/private/tmp/prograph-authority-ingestion-rejected-focus.json",
+      "bytes": 10478,
+      "sha256": "87a749539d5e908927f44fd596cbad2364d6cd9f649c30b6604f3fe33d16e091"
+    },
+    {
+      "path": "/private/tmp/prograph-authority-qualified-ingestion-tests.json",
+      "bytes": 11113,
+      "sha256": "b322e9573a47fe6481bea48914a93beb141527568c3592588bea0468f9343d93"
+    },
+    {
+      "path": "/private/tmp/prograph-authority-qualified-full-tests.log",
+      "bytes": 1682,
+      "sha256": "737b4977149641dbabbc4febb85d90d3050f43a863c0e93730c7c359d633c26a"
+    },
+    {
+      "path": "/private/tmp/prograph-authority-qualified-full-tests.exit",
+      "bytes": 4,
+      "sha256": "f5bde7eb9f6c71611dc5726e8aca3eb4eba3e386da49e0a4ed5c295a90a73a0d"
+    },
+    {
+      "path": "/private/tmp/prograph-authority-dotnet-sample.txt",
+      "bytes": 952859,
+      "sha256": "1902d100ff1a9a5307eb617992e1e83e65da163caa89f7fb9cf9f74c672b330e"
+    },
+    {
+      "path": "/private/tmp/prograph-authority-qualified-csharp-host-probe.json",
+      "bytes": 2295,
+      "sha256": "6c5185b7bae2fe768c4a2d25549aa3571f7fcfdb75290d4543303c4b678af6be"
+    }
+  ],
+  "restrictedExecutionAttempt": {
+    "exitCode": 130,
+    "hasFinalFullJson": false,
+    "reason": "Actual pinned C# producer CLI reached its unchanged 300000ms timeout under the restricted local executor; interrupted after that failed suite. Other SDK groups were still in C# indexing. No full/oracle acceptance claimed.",
+    "investigation": "One-second read-only native stack sample and process tree captured; exact restricted-executor failure root cause is not asserted from unsymbolized managed frames. The identical isolated C# CLI test passed in the approved normal host executor in 8325ms. No SDK/input/source/timeout/assertion changes.",
+    "hostProbe": {
+      "numPassedTests": 1,
+      "numPendingTests": 5,
+      "scope": "One targeted case only; the other five cases were not requested. This is not a full-suite pass."
+    },
+    "resolution": "Start the complete independent 270-test invocation in the approved normal host environment, with all real SDKs, all older writers and all 18 oracle checkpoints. No claim of a portable kernel sandbox."
+  }
+}

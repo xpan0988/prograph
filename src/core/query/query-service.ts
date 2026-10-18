@@ -1,3 +1,4 @@
+import {resolveCompatibilityDatabase} from "../semantic/authority.js";
 import path from "node:path";
 import { access } from "node:fs/promises";
 import Database from "better-sqlite3";
@@ -313,7 +314,7 @@ export class QueryService {
 export async function queryServiceForRepository(input = ".", index?: string): Promise<QueryService> {
   const root = await resolveRepositoryRoot(input);
   const requestedIndex = index ? path.resolve(index) : path.join(root, ".prograph");
-  const databasePath = requestedIndex.endsWith(".sqlite") ? requestedIndex : path.join(requestedIndex, "graph.sqlite");
+  const databasePath = resolveCompatibilityDatabase(requestedIndex);
   try {
     await access(databasePath);
   } catch {

@@ -15,10 +15,11 @@ export interface Inventory { root: string; inventory: string; sourceInventory: s
 export interface RecordedInputStatus { state: "checked-recorded" | "changed" | "unavailable" | "unchecked"; checked: number; additionalChanges: number; reason?: string }
 
 /** Recorded positive and negative dependencies supplement scanner freshness; not complete build coverage. */
-export async function recordedInputStatus(filename: string, snapshot: RepositorySnapshot, scannerChanges: Set<string>): Promise<RecordedInputStatus> {
+export async function recordedInputStatus(filename: string, snapshot: RepositorySnapshot, scannerChanges: Set<string>, readDatabase?: Database.Database): Promise<RecordedInputStatus> {
   let db: Database.Database | undefined;
   try {
-    db = new Database(filename, { readonly: true, fileMustExist: true });
+    db = readDatabase ?? new Database(filename, { readonly: true, fileMustExist: true });
+    if(!readDatabase) db.exec("BEGIN");
     const schema = db.prepare("SELECT value FROM sc_meta WHERE key='schema'").get() as { value: string } | undefined;
     const format = db.prepare("SELECT value FROM sc_meta WHERE key='format'").get() as { value: string } | undefined;
     if (format?.value !== String(SEMANTIC_FORMAT_VERSION) || !(READABLE_SEMANTIC_SCHEMAS as readonly string[]).includes(schema?.value ?? "")) throw Error("Unsupported semantic format/schema");
@@ -54,7 +55,7 @@ export async function recordedInputStatus(filename: string, snapshot: Repository
     }
     return { state: changed ? "changed" : "checked-recorded", checked, additionalChanges };
   } catch (error) { return { state: "unavailable", checked: 0, additionalChanges: 0, reason: String(error).slice(0, 160) }; }
-  finally { db?.close(); }
+  finally { if(!readDatabase)db?.close(); }
 }
 
 export async function inventoryFromDisk(root: string, index: string, maxFiles: number, signal?: AbortSignal): Promise<Inventory> {

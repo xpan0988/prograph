@@ -1,3 +1,4 @@
+import {prepareAuthorityMigration} from "./authority-migration.js";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { createReadStream, createWriteStream } from "node:fs";
@@ -64,6 +65,7 @@ async function removeWorkspace(work: string, fault?: ArtifactFault): Promise<voi
  */
 export async function collectIndexGarbage(filename: string, options: GarbageCollectionOptions & { fault?: ArtifactFault } = {}): Promise<Record<string, unknown>> {
   await access(filename); // Maintenance must never create a replacement semantic database.
+  await prepareAuthorityMigration(path.dirname(filename),{storageOnly:true,semanticFile:path.basename(filename)});
   const directory = await realpath(path.dirname(filename)); const lease = new IndexLease(directory, "maintenance");
   let store: SemanticStore | undefined;
   try {

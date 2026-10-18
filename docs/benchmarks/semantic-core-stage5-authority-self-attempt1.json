@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "scope": "Rejected concurrent-edit self-analysis attempt; source input barrier correctly prevented semantic publication. Not an accepted fresh self-analysis or performance sample.",
+  "repository": "/Users/xiyuanpan/prograph",
+  "sourceCommit": "f951f79ada5a3c7ccfbb6882e7af517185efadf6",
+  "selectedFiles": 287,
+  "nodeCount": 9544,
+  "edgeCount": 24237,
+  "semanticCore": {
+    "format": 2,
+    "status": "failed",
+    "durationMs": 128492,
+    "reason": "Error: Semantic input changed before publication: source:docs/semantic-core-step2.md"
+  },
+  "cause": "The implementation record was edited after this concurrent self-analysis began. Its final observed-input barrier rejected those changed source bytes. Hold the source tree stable and rerun into a separate disposable index.",
+  "raw": {
+    "path": "/private/tmp/prograph-authority-self-20261018-analysis.json",
+    "bytes": 20419,
+    "sha256": "2e8e5cd219e7d6f8dbe0f99d1fa6f9b072a20c11e4dc22aaf515cbd503431898"
+  },
+  "cliExitCode": 0,
+  "exitSemantics": "Established analyze contract returns the manifest with explicit semanticCore.status=failed; exit zero is not semantic qualification."
+}

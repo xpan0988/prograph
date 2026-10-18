@@ -1,3 +1,4 @@
+import {resolveCompatibilityDatabase} from "../semantic/authority.js";
 import path from "node:path";
 import { IndexLease } from "../semantic/maintenance-lock.js";
 import { prepareCompatibilityCycles } from "../query/compatibility-cycles.js";
@@ -8,6 +9,7 @@ import { graphNodeFromRow, graphEdgeFromRow, diagnosticFromRow, type NodeRow, ty
 
 /** Explicit offline maintenance: no compiler, provider, build or source write is performed. */
 export function prepareQueryIndex(filename: string): Record<string, unknown> {
+  filename=resolveCompatibilityDatabase(filename);
   const started = performance.now(); const lease=new IndexLease(path.dirname(filename),"work");let db:Database.Database|undefined;
   try{db=new Database(filename,{fileMustExist:true})}catch(error){lease.close();throw error}
   try {

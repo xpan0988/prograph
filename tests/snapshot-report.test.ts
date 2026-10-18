@@ -29,11 +29,11 @@ async function base(store: SemanticStore, repository: string, index: string, rev
   const { files: _files, ...stateHeader } = createIndexState(snapshot, manifest); return { runs, report: { manifest, stateHeader } satisfies SnapshotReportInput };
 }
 
-test("publication atomically binds immutable report metadata and retained history without certifying compatibility readiness", async () => {
+test("publication atomically binds immutable report metadata and retained history with its verified compatibility projection in the same transaction", async () => {
   const { repository, index } = await fixture(), store = new SemanticStore(path.join(index, "semantic.sqlite"));
   try {
     const a = await base(store, repository, index, "one"), first = store.publish(a.runs, undefined, [], a.report);
-    const original = readSnapshotReport(store.db, first)!; expect(original.snapshot).toBe(first); expect(original.manifest.semanticCore?.snapshot).toBe(first); expect(original.compatibilityReady).toBe(false); expect(original.stateHeader).not.toHaveProperty("files");
+    const original = readSnapshotReport(store.db, first)!; expect(original.snapshot).toBe(first); expect(original.manifest.semanticCore?.snapshot).toBe(first); expect(original.compatibilityReady).toBe(true); expect(original.stateHeader).not.toHaveProperty("files");
     expect(() => writeSnapshotReport(store, first, original.snapshotKey, a.report)).toThrow("publication transaction");
     const next = await base(store, repository, index, "two");
     expect(() => store.publish(next.runs, first, [], { ...next.report, stateHeader: { ...next.report.stateHeader, repositoryIdentity: "wrong-repository" } })).toThrow(/Invalid snapshot-bound|selected sealed source catalogue/);
@@ -88,7 +88,7 @@ test("a custom index never reports a different identical-byte repository as fres
   const { root, repository, index } = await fixture(), other = path.join(root, "other"); await mkdir(other);
   await writeFile(path.join(other, "a.ts"), "export const value=1");
   await analyzeRepository(repository, { output: index });
-  expect(await repositoryStatus(repository, index)).toMatchObject({ state: "fresh", repositoryChanged: false, semanticPublication: { state: "matches-legacy-report" } });
+  expect(await repositoryStatus(repository, index)).toMatchObject({ state: "fresh", repositoryChanged: false, semanticPublication: { state: "matches-semantic-snapshot" } });
   expect(await repositoryStatus(other, index)).toMatchObject({ state: "stale", repositoryChanged: true, addedFiles: [], modifiedFiles: [], deletedFiles: [] });
   const synced = await syncRepository(other, index);
   expect(synced).toMatchObject({ incremental: false, fallbackReason: "repository identity or root changed", statusAfter: { state: "fresh", repositoryChanged: false } });

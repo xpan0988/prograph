@@ -1,3 +1,5 @@
+import {prepareAuthorityMigration} from "../semantic/authority-migration.js";
+import { recordAnalysisFailure } from "../semantic/authority.js";
 import { polyglotAdapters } from "../../adapters/language/polyglot/index.js";
 import path from "node:path";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -69,6 +71,7 @@ function baseGraph(snapshot: RepositorySnapshot): AdapterResult {
 
 export async function analyzeRepository(input = ".", options: AnalyzeOptions = {}): Promise<AnalysisResult> {
   const root = await resolveRepositoryRoot(input);
+  await prepareAuthorityMigration(path.resolve(options.output ?? path.join(root,".prograph")));
   return withIndexWork(path.resolve(options.output ?? path.join(root, ".prograph")), () => analyzeRepositoryWithLease(root, options));
 }
 
@@ -123,6 +126,7 @@ async function analyzeRepositoryWithLease(root: string, options: AnalyzeOptions)
     manifest.semanticCore = { format: 2, status: semantic.coverage.status === "unavailable" ? "unavailable" : "partial", snapshot: semantic.snapshot, context: semantic.context, durationMs: semantic.durationMs };
   } catch (error) {
     manifest.semanticCore = { format: 2, status: "failed", durationMs: Math.round(performance.now() - semanticStarted), reason: String(error) };
+    recordAnalysisFailure(path.join(outputDirectory,"semantic.sqlite"),String(error));
     graph.diagnostics.push({ code: "semantic-foundation-failure", severity: "warning", message: String(error), adapter: "semantic-core", metadata: { previousSnapshotIsHistorical: true } });
     manifest.diagnosticCount = graph.diagnostics.length;
   }

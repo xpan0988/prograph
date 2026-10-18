@@ -26,8 +26,9 @@ export class CompatibilityGlobalRead {
     const metadata = this.rows<{
       key: string;
       value: string;
-    }>("SELECT key,value FROM sc_meta WHERE key IN ('format','schema')");
+    }>("SELECT key,value FROM sc_meta WHERE key IN ('format','schema','compatibility-authority')");
     const semantic = Object.fromEntries(metadata.map(row => [row.key, row.value]));
+    if (semantic['compatibility-authority'] && semantic['compatibility-authority'] !== 'owned-v1') throw Error('Unsupported semantic compatibility authority');
     if (semantic.format !== '2' || !READABLE_SEMANTIC_SCHEMAS.includes(semantic.schema as typeof READABLE_SEMANTIC_SCHEMAS[number]))
       throw Error('Unsupported Semantic Core compatibility format');
     const cache = Object.fromEntries(this.rows<{
@@ -36,6 +37,7 @@ export class CompatibilityGlobalRead {
     }>("SELECT key,value FROM cg_meta WHERE key IN ('snapshot','schema','reportKey')").map(row => [row.key, row.value]));
     const report = readSnapshotReport(db,Number(values.snapshot));
     budget.charge(report?{report:JSON.stringify(report)}:{});
+    if (semantic['compatibility-authority'] && (report?.format!==2 || !report.compatibilityReady)) throw Error('Current semantic compatibility report is unqualified; run analyze/sync');
     if (cache.schema !== 'owned-compatibility-1' || cache.snapshot !== values.snapshot || cache.reportKey !== values.generation || report?.reportKey !== values.generation)
       throw Error('Compatibility/report projection does not match the semantic snapshot');
     this.generation = `${values.generation}:${COMPATIBILITY_QUERY_VERSION}`;

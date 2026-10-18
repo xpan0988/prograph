@@ -1,0 +1,275 @@
+{
+  "format": 1,
+  "implementationDigests": {
+    "semantic/authority": "3e9ce30a04c1217d8a758a6e285e8f2f34f7f8eb05a1713943e955aa9cf4578c",
+    "semantic/authority-migration": "9f0dc169a9362d47e6f040a2ff25ad481ebbd5946203f30c7dc6224183f21bac",
+    "semantic/snapshot-report": "175dfab76def4b5e4bba5b7a2b6df09065d6fe6e1bd218b7f540e7c84f772341",
+    "query/query-service": "1d01aceced6121ca984099862ccb9d72dbc08516e212481eca249bd17c78ad4f",
+    "query/compatibility-global-read": "3e020e5e7d94639fe1b81419d474a992bfbd635a5023d8a3e068a338cbd6b2a7",
+    "query/isolation": "95e39ec41548189f4ab2c2da22f9bf205f9afdeda14d15204c081311b3adf742"
+  },
+  "scope": "Final schema 2.14 default-authority reader validates the separately indexed real Pastey source. The fresh source analysis used the earlier authority prototype; this is final-reader/recovery qualification over its retained complete facts, not a second fresh compiler run. Read-only validation; no original source/index writes or project build scripts. Source TypeScript compiler semantics and conservative multi-language syntax; this does not qualify closed-workspace native Rust or other external semantic providers for Pastey.",
+  "repository": "/Users/xiyuanpan/Pastey",
+  "index": "/private/tmp/prograph-authority-pastey-20261018",
+  "snapshot": 1,
+  "counts": {
+    "sourceFiles": 316,
+    "sourceLines": 205764,
+    "codeLines": 171988,
+    "sourceBytes": 8019019,
+    "nodes": 40436,
+    "edges": 77609,
+    "diagnostics": 46782,
+    "occurrences": 38458,
+    "visibleClaims": 229291,
+    "callSummaries": 3532
+  },
+  "status": {
+    "repositoryRoot": "/Users/xiyuanpan/Pastey",
+    "indexDirectory": "/private/tmp/prograph-authority-pastey-20261018",
+    "indexedCommit": "137af0541e2261e5f5f2d4f2a51585f2255b9ade",
+    "currentCommit": "137af0541e2261e5f5f2d4f2a51585f2255b9ade",
+    "indexGeneratedAt": "2026-10-18T10:37:04.027Z",
+    "schemaVersion": "1.2.0",
+    "toolVersion": "0.3.0",
+    "enabledAdapters": [
+      "typescript",
+      "rust",
+      "python",
+      "react",
+      "tauri",
+      "architecture",
+      "markdown",
+      "packageJson",
+      "cargoToml",
+      "tauriConfig",
+      "tauriCapability",
+      "tests",
+      "semanticLinker"
+    ],
+    "indexedFileCount": 316,
+    "currentSupportedFileCount": 316,
+    "addedFiles": [],
+    "modifiedFiles": [],
+    "deletedFiles": [],
+    "configChanged": false,
+    "adapterVersionsChanged": false,
+    "schemaChanged": false,
+    "repositoryChanged": false,
+    "authority": "semantic",
+    "semanticPublication": {
+      "state": "matches-semantic-snapshot",
+      "snapshot": 1
+    },
+    "semanticInputsChanged": false,
+    "semanticInputs": {
+      "state": "checked-recorded",
+      "checked": 4362,
+      "additionalChanges": 0
+    },
+    "stale": false,
+    "state": "fresh"
+  },
+  "sourceFilesChangedSinceAnalysis": [],
+  "comparisons": [
+    {
+      "method": "overview",
+      "args": [],
+      "equal": true,
+      "actual": "bf8cbe777aa8732c1f8e35851005792abc1de9f0221e9d49128785e5f39eb709",
+      "expected": "bf8cbe777aa8732c1f8e35851005792abc1de9f0221e9d49128785e5f39eb709",
+      "actualBytes": 6393,
+      "expectedBytes": 6393
+    },
+    {
+      "method": "overview",
+      "args": [
+        {
+          "scope": "full"
+        }
+      ],
+      "equal": true,
+      "actual": "8815e660300a83b1939a840158134985b92d934d296504e648d0609b3b05bf21",
+      "expected": "8815e660300a83b1939a840158134985b92d934d296504e648d0609b3b05bf21",
+      "actualBytes": 6779,
+      "expectedBytes": 6779
+    },
+    {
+      "method": "files",
+      "args": [],
+      "equal": true,
+      "actual": "b257ca1e52cc5eab82b31e3e3f4c899e199f3cb4c75b49a94763b6b71f842679",
+      "expected": "b257ca1e52cc5eab82b31e3e3f4c899e199f3cb4c75b49a94763b6b71f842679",
+      "actualBytes": 32847,
+      "expectedBytes": 32847
+    },
+    {
+      "method": "architecture",
+      "args": [
+        30
+      ],
+      "equal": false,
+      "actual": "a3133290bdf581aab023f211c7fa5d5d5c87285e030a95102b5ac8d1bdf04fe2",
+      "expected": "420014aa133763f3fb2c033c40bf9208557fcd48433b15749e5d73cb06e1c0f9",
+      "actualBytes": 463566,
+      "expectedBytes": 463553
+    },
+    {
+      "method": "architecture",
+      "args": [
+        30,
+        {
+          "scope": "full"
+        }
+      ],
+      "equal": true,
+      "actual": "542bd888b2322c06a47f75cae3316c1c0d47991b7615a6c9e62984023a245a03",
+      "expected": "542bd888b2322c06a47f75cae3316c1c0d47991b7615a6c9e62984023a245a03",
+      "actualBytes": 17307,
+      "expectedBytes": 17307
+    },
+    {
+      "method": "context",
+      "args": [
+        "agent sync",
+        {
+          "maxSymbols": 50
+        }
+      ],
+      "equal": true,
+      "actual": "bb59b810266af148d0144378e76826acac11bdadf9dcc3f296154eff83d95c51",
+      "expected": "bb59b810266af148d0144378e76826acac11bdadf9dcc3f296154eff83d95c51",
+      "actualBytes": 55706,
+      "expectedBytes": 55706
+    },
+    {
+      "method": "frameworkBindings",
+      "args": [
+        "tauri"
+      ],
+      "equal": true,
+      "actual": "1a3d892b1963e1c37eac565be6bfc3fa214e49c16dcaffac3917d3e31a9b52ae",
+      "expected": "1a3d892b1963e1c37eac565be6bfc3fa214e49c16dcaffac3917d3e31a9b52ae",
+      "actualBytes": 355802,
+      "expectedBytes": 355802
+    },
+    {
+      "method": "frameworkBindings",
+      "args": [
+        null,
+        {
+          "scope": "full",
+          "includeUnresolved": true
+        }
+      ],
+      "equal": true,
+      "actual": "a494959c5528ba04a196befe0d4b016fe87b024257bebfa909c454549370ac15",
+      "expected": "a494959c5528ba04a196befe0d4b016fe87b024257bebfa909c454549370ac15",
+      "actualBytes": 370877,
+      "expectedBytes": 370877
+    }
+  ],
+  "architecture": {
+    "equal": true,
+    "actual": "a3133290bdf581aab023f211c7fa5d5d5c87285e030a95102b5ac8d1bdf04fe2",
+    "reference": "a3133290bdf581aab023f211c7fa5d5d5c87285e030a95102b5ac8d1bdf04fe2"
+  },
+  "worker": [
+    {
+      "method": "overview",
+      "args": [],
+      "hash": "bf8cbe777aa8732c1f8e35851005792abc1de9f0221e9d49128785e5f39eb709",
+      "bytes": 6393,
+      "success": true
+    },
+    {
+      "method": "overview",
+      "args": [
+        {
+          "scope": "full"
+        }
+      ],
+      "hash": "8815e660300a83b1939a840158134985b92d934d296504e648d0609b3b05bf21",
+      "bytes": 6779,
+      "success": true
+    },
+    {
+      "method": "files",
+      "args": [],
+      "hash": "b257ca1e52cc5eab82b31e3e3f4c899e199f3cb4c75b49a94763b6b71f842679",
+      "bytes": 32847,
+      "success": true
+    },
+    {
+      "method": "architecture",
+      "args": [
+        30
+      ],
+      "hash": "a3133290bdf581aab023f211c7fa5d5d5c87285e030a95102b5ac8d1bdf04fe2",
+      "bytes": 463566,
+      "success": true
+    },
+    {
+      "method": "architecture",
+      "args": [
+        30,
+        {
+          "scope": "full"
+        }
+      ],
+      "hash": "542bd888b2322c06a47f75cae3316c1c0d47991b7615a6c9e62984023a245a03",
+      "bytes": 17307,
+      "success": true
+    },
+    {
+      "method": "context",
+      "args": [
+        "agent sync",
+        {
+          "maxSymbols": 50
+        }
+      ],
+      "hash": "bb59b810266af148d0144378e76826acac11bdadf9dcc3f296154eff83d95c51",
+      "bytes": 55706,
+      "success": true
+    },
+    {
+      "method": "frameworkBindings",
+      "args": [
+        "tauri"
+      ],
+      "hash": "1a3d892b1963e1c37eac565be6bfc3fa214e49c16dcaffac3917d3e31a9b52ae",
+      "bytes": 355802,
+      "success": true
+    },
+    {
+      "method": "frameworkBindings",
+      "args": [
+        null,
+        {
+          "scope": "full",
+          "includeUnresolved": true
+        }
+      ],
+      "hash": "a494959c5528ba04a196befe0d4b016fe87b024257bebfa909c454549370ac15",
+      "bytes": 370877,
+      "success": true
+    }
+  ],
+  "sourceDatabases": [
+    {
+      "file": "/private/tmp/prograph-authority-pastey-20261018/semantic.sqlite",
+      "before": "34542272ab4e213e15b34dffff2e4ca73338cd1909f33d18df7b59440a08a1cb",
+      "after": "34542272ab4e213e15b34dffff2e4ca73338cd1909f33d18df7b59440a08a1cb"
+    },
+    {
+      "file": "/private/tmp/prograph-authority-pastey-20261018/graph.sqlite",
+      "before": "87ce0040b8b2250c57ec9ae1142d5c6f17afe83f334d011a9ff84436ac21c18c",
+      "after": "87ce0040b8b2250c57ec9ae1142d5c6f17afe83f334d011a9ff84436ac21c18c"
+    }
+  ],
+  "databaseBytes": 881012736,
+  "integrity": "ok",
+  "foreignKeys": [],
+  "limitations": "Analysis and these checks ran alongside compiler tests. Timings and RSS are not performance qualification. Complete normalized payloads are compared; stable-ID tie/sample order can deliberately differ from the old query projection. An independent full bulk reference validates the complete new code-architecture payload. Source LOC excludes dependencies and counts the selected code files only."
+}

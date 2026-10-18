@@ -1,3 +1,7 @@
+import {prepareAuthorityMigration} from "../semantic/authority-migration.js";
+import {openAuthorityObservation} from "../semantic/authority.js";
+import {readCompatibilitySnapshot} from "../semantic/compatibility-snapshot.js";
+import { recordAnalysisFailure } from "../semantic/authority.js";
 import path from "node:path";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import type { AdapterRun, AnalysisManifest, GraphData } from "../graph/schema.js";
@@ -179,6 +183,7 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
     manifest.semanticCore = { format: 2, status: semantic.coverage.status === "unavailable" ? "unavailable" : "partial", snapshot: semantic.snapshot, context: semantic.context, durationMs: semantic.durationMs };
   } catch (error) {
     manifest.semanticCore = { format: 2, status: "failed", durationMs: Math.round(performance.now() - semanticStarted), reason: String(error) };
+    recordAnalysisFailure(path.join(status.indexDirectory,"semantic.sqlite"),String(error));
     graph.diagnostics.push({ code: "semantic-foundation-failure", severity: "warning", message: String(error), adapter: "semantic-core", metadata: { previousSnapshotIsHistorical: true } });
   }
   manifest.diagnosticCount = graph.diagnostics.length;
@@ -210,6 +215,7 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
 
 export async function syncRepository(input = ".", index?: string): Promise<SyncResult> {
   const root = await resolveRepositoryRoot(input); const selected = path.resolve(index ?? path.join(root, ".prograph"));
+  await prepareAuthorityMigration(selected.endsWith(".sqlite")?path.dirname(selected):selected);
   return withIndexWork(selected.endsWith(".sqlite") ? path.dirname(selected) : selected, () => syncRepositoryWithLease(root, index));
 }
 
@@ -232,15 +238,22 @@ async function syncRepositoryWithLease(input: string, index?: string): Promise<S
       incremental: true,
     };
   }
-  const [previous, previousManifest] = await Promise.all([
-    readJson<GraphData>(path.join(statusBefore.indexDirectory, "exports", "graph.json")),
-    readJson<AnalysisManifest>(path.join(statusBefore.indexDirectory, "manifest.json")),
+  let previous: GraphData | undefined, previousManifest: AnalysisManifest | undefined;
+  if(statusBefore.authority === "semantic") {
+    const selected=openAuthorityObservation(statusBefore.indexDirectory);
+    try { if(selected?.report && selected.snapshot) {const prior=readCompatibilitySnapshot(selected.db,selected.snapshot);previous=prior.graph;previousManifest=prior.manifest;} }
+    finally {selected?.close();}
+  } else [previous,previousManifest]=await Promise.all([
+    readJson<GraphData>(path.join(statusBefore.indexDirectory,"exports","graph.json")),
+    readJson<AnalysisManifest>(path.join(statusBefore.indexDirectory,"manifest.json"))
   ]);
   if (previous && previousManifest && !statusBefore.repositoryChanged && statusBefore.semanticPublication?.state !== "out-of-sync" && !statusBefore.schemaChanged && !statusBefore.adapterVersionsChanged && !statusBefore.configChanged && !statusBefore.semanticInputsChanged) {
     const incremental = await tryIsolatedIncremental(statusBefore, previous, previousManifest, started);
     if (incremental) return incremental;
   }
-  const fallbackReason = statusBefore.repositoryChanged
+  const fallbackReason = statusBefore.authority === "semantic" && !previous
+    ? "current semantic compatibility snapshot is unavailable"
+    : statusBefore.repositoryChanged
     ? "repository identity or root changed"
     : statusBefore.schemaChanged
     ? "graph schema changed"

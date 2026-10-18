@@ -3,7 +3,7 @@ import os from "node:os";
 import { mkdtemp, rm } from "node:fs/promises";
 import Database from "better-sqlite3";
 import { afterEach, expect, test, vi } from "vitest";
-import { QueryService, scopedEdges, scopedNodes, type ConfidenceQuery } from "../src/core/query/query-service.js";
+import { queryServiceForRepository, QueryService, scopedEdges, scopedNodes, type ConfidenceQuery } from "../src/core/query/query-service.js";
 import { graphNodeFromRow, graphEdgeFromRow, type NodeRow, type EdgeRow } from "../src/core/storage/sqlite.js";
 import type { GraphNode, GraphEdge, GraphScope } from "../src/core/graph/schema.js";
 import { executeRead } from "../src/core/query/isolation.js";
@@ -99,7 +99,7 @@ test("read admission is bounded and cancellation drains queued requests",async()
 test("isolated HTTP and CLI navigation preserve shared full-output contracts",async()=>{
   const root=await mkdtemp(path.join(os.tmpdir(),"prograph-query-transports-"));roots.push(root);
   const repository=path.resolve("tests/fixtures/mixed");await analyzeRepository(repository,{output:root});
-  const q=new QueryService(path.join(root,"graph.sqlite"));const id=q.searchSymbols("formatGreeting",1)[0]!.id;
+  const q=await queryServiceForRepository(repository,root);const id=q.searchSymbols("formatGreeting",1)[0]!.id;
   const {server}=await startServer(repository,{index:root,port:0});const address=server.address() as {port:number};const base=`http://127.0.0.1:${address.port}`;
   try {
     for(const [suffix,value] of [["callers",q.callers(id)],["callees",q.callees(id)],["neighborhood",q.neighborhood(id)]] as const) {

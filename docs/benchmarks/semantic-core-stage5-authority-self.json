@@ -1,0 +1,280 @@
+{
+  "format": 1,
+  "implementationDigests": {
+    "semantic/authority": "3e9ce30a04c1217d8a758a6e285e8f2f34f7f8eb05a1713943e955aa9cf4578c",
+    "semantic/authority-migration": "9f0dc169a9362d47e6f040a2ff25ad481ebbd5946203f30c7dc6224183f21bac",
+    "semantic/snapshot-report": "175dfab76def4b5e4bba5b7a2b6df09065d6fe6e1bd218b7f540e7c84f772341",
+    "query/query-service": "1d01aceced6121ca984099862ccb9d72dbc08516e212481eca249bd17c78ad4f",
+    "query/compatibility-global-read": "3e020e5e7d94639fe1b81419d474a992bfbd635a5023d8a3e068a338cbd6b2a7",
+    "query/isolation": "95e39ec41548189f4ab2c2da22f9bf205f9afdeda14d15204c081311b3adf742"
+  },
+  "scope": "Final schema 2.14 implementation freshly analyzes the current real ProGraph source and validates default semantic authority in a separate disposable index. This is actual final-runtime source/compiler self-analysis, followed by read-only legacy/stable-bulk/worker comparisons. Read-only validation; no original source/index writes or project build scripts. Source TypeScript compiler semantics and conservative multi-language syntax; this does not qualify external semantic providers for this repository.",
+  "repository": "/Users/xiyuanpan/prograph",
+  "index": "/private/tmp/prograph-authority-self-stable-20261018",
+  "snapshot": 1,
+  "counts": {
+    "sourceFiles": 288,
+    "sourceLines": 66722,
+    "codeLines": 21455,
+    "sourceBytes": 3599252,
+    "nodes": 9544,
+    "edges": 24237,
+    "diagnostics": 5001,
+    "occurrences": 165431,
+    "visibleClaims": 292452,
+    "callSummaries": 17472
+  },
+  "status": {
+    "repositoryRoot": "/Users/xiyuanpan/prograph",
+    "indexDirectory": "/private/tmp/prograph-authority-self-stable-20261018",
+    "indexedCommit": "f951f79ada5a3c7ccfbb6882e7af517185efadf6",
+    "currentCommit": "f951f79ada5a3c7ccfbb6882e7af517185efadf6",
+    "indexGeneratedAt": "2026-10-18T11:57:37.521Z",
+    "schemaVersion": "1.2.0",
+    "toolVersion": "0.3.0",
+    "enabledAdapters": [
+      "typescript",
+      "rust",
+      "python",
+      "java",
+      "c",
+      "cpp",
+      "go",
+      "csharp",
+      "react",
+      "tauri",
+      "architecture",
+      "markdown",
+      "packageJson",
+      "cargoToml",
+      "tauriConfig",
+      "tauriCapability",
+      "tests",
+      "semanticLinker"
+    ],
+    "indexedFileCount": 288,
+    "currentSupportedFileCount": 288,
+    "addedFiles": [],
+    "modifiedFiles": [],
+    "deletedFiles": [],
+    "configChanged": false,
+    "adapterVersionsChanged": false,
+    "schemaChanged": false,
+    "repositoryChanged": false,
+    "authority": "semantic",
+    "semanticPublication": {
+      "state": "matches-semantic-snapshot",
+      "snapshot": 1
+    },
+    "semanticInputsChanged": false,
+    "semanticInputs": {
+      "state": "checked-recorded",
+      "checked": 20614,
+      "additionalChanges": 0
+    },
+    "stale": false,
+    "state": "fresh"
+  },
+  "sourceFilesChangedSinceAnalysis": [],
+  "comparisons": [
+    {
+      "method": "overview",
+      "args": [],
+      "equal": true,
+      "actual": "1eca74a3805242bcbc3849dd3e576953204d1dcfa6b1752a251bb7c588bb2c9e",
+      "expected": "1eca74a3805242bcbc3849dd3e576953204d1dcfa6b1752a251bb7c588bb2c9e",
+      "actualBytes": 7047,
+      "expectedBytes": 7047
+    },
+    {
+      "method": "overview",
+      "args": [
+        {
+          "scope": "full"
+        }
+      ],
+      "equal": true,
+      "actual": "8c8b37b215c4723dc3a818ff4d0d6f91dacf2793a06ce9724d24047e3370cdea",
+      "expected": "8c8b37b215c4723dc3a818ff4d0d6f91dacf2793a06ce9724d24047e3370cdea",
+      "actualBytes": 7463,
+      "expectedBytes": 7463
+    },
+    {
+      "method": "files",
+      "args": [],
+      "equal": true,
+      "actual": "d9c7b47a37f124e6d709c8583da619d5f81021db746a7c3c8a7ba47aa3a0ee3a",
+      "expected": "d9c7b47a37f124e6d709c8583da619d5f81021db746a7c3c8a7ba47aa3a0ee3a",
+      "actualBytes": 22866,
+      "expectedBytes": 22866
+    },
+    {
+      "method": "architecture",
+      "args": [
+        30
+      ],
+      "equal": false,
+      "actual": "677d405f4746874cb978c36d03c0d5f72bb7febe93148b173163817c1db7136d",
+      "expected": "be655c7c34b427c5f644a2558c9f7ab0c462fa7905a28c64c1f24fe352571a77",
+      "actualBytes": 551803,
+      "expectedBytes": 551805
+    },
+    {
+      "method": "architecture",
+      "args": [
+        30,
+        {
+          "scope": "full"
+        }
+      ],
+      "equal": true,
+      "actual": "9711e142ab31589b17400e58e3c9f5ff1c82dd684a8816bae9bad17f5cc1eb4f",
+      "expected": "9711e142ab31589b17400e58e3c9f5ff1c82dd684a8816bae9bad17f5cc1eb4f",
+      "actualBytes": 17169,
+      "expectedBytes": 17169
+    },
+    {
+      "method": "context",
+      "args": [
+        "semantic publication",
+        {
+          "maxSymbols": 50
+        }
+      ],
+      "equal": true,
+      "actual": "4a14d6c6b975b003c48d43636f5adf68fcb8fcc69cb08978f6b4cc7f33580d3c",
+      "expected": "4a14d6c6b975b003c48d43636f5adf68fcb8fcc69cb08978f6b4cc7f33580d3c",
+      "actualBytes": 59716,
+      "expectedBytes": 59716
+    },
+    {
+      "method": "frameworkBindings",
+      "args": [
+        "tauri"
+      ],
+      "equal": true,
+      "actual": "234e7039df2afcd368a5ba7afac4599e54b7ee59ed3186e2f67738b89bd19af2",
+      "expected": "234e7039df2afcd368a5ba7afac4599e54b7ee59ed3186e2f67738b89bd19af2",
+      "actualBytes": 22693,
+      "expectedBytes": 22693
+    },
+    {
+      "method": "frameworkBindings",
+      "args": [
+        null,
+        {
+          "scope": "full",
+          "includeUnresolved": true
+        }
+      ],
+      "equal": true,
+      "actual": "68fcba0ae75bca77acb1a0f810e939d3c04c3238bc50f1ef8a256cecdb68fa5d",
+      "expected": "68fcba0ae75bca77acb1a0f810e939d3c04c3238bc50f1ef8a256cecdb68fa5d",
+      "actualBytes": 35208,
+      "expectedBytes": 35208
+    }
+  ],
+  "architecture": {
+    "equal": true,
+    "actual": "677d405f4746874cb978c36d03c0d5f72bb7febe93148b173163817c1db7136d",
+    "reference": "677d405f4746874cb978c36d03c0d5f72bb7febe93148b173163817c1db7136d"
+  },
+  "worker": [
+    {
+      "method": "overview",
+      "args": [],
+      "hash": "1eca74a3805242bcbc3849dd3e576953204d1dcfa6b1752a251bb7c588bb2c9e",
+      "bytes": 7047,
+      "success": true
+    },
+    {
+      "method": "overview",
+      "args": [
+        {
+          "scope": "full"
+        }
+      ],
+      "hash": "8c8b37b215c4723dc3a818ff4d0d6f91dacf2793a06ce9724d24047e3370cdea",
+      "bytes": 7463,
+      "success": true
+    },
+    {
+      "method": "files",
+      "args": [],
+      "hash": "d9c7b47a37f124e6d709c8583da619d5f81021db746a7c3c8a7ba47aa3a0ee3a",
+      "bytes": 22866,
+      "success": true
+    },
+    {
+      "method": "architecture",
+      "args": [
+        30
+      ],
+      "hash": "677d405f4746874cb978c36d03c0d5f72bb7febe93148b173163817c1db7136d",
+      "bytes": 551803,
+      "success": true
+    },
+    {
+      "method": "architecture",
+      "args": [
+        30,
+        {
+          "scope": "full"
+        }
+      ],
+      "hash": "9711e142ab31589b17400e58e3c9f5ff1c82dd684a8816bae9bad17f5cc1eb4f",
+      "bytes": 17169,
+      "success": true
+    },
+    {
+      "method": "context",
+      "args": [
+        "semantic publication",
+        {
+          "maxSymbols": 50
+        }
+      ],
+      "hash": "4a14d6c6b975b003c48d43636f5adf68fcb8fcc69cb08978f6b4cc7f33580d3c",
+      "bytes": 59716,
+      "success": true
+    },
+    {
+      "method": "frameworkBindings",
+      "args": [
+        "tauri"
+      ],
+      "hash": "234e7039df2afcd368a5ba7afac4599e54b7ee59ed3186e2f67738b89bd19af2",
+      "bytes": 22693,
+      "success": true
+    },
+    {
+      "method": "frameworkBindings",
+      "args": [
+        null,
+        {
+          "scope": "full",
+          "includeUnresolved": true
+        }
+      ],
+      "hash": "68fcba0ae75bca77acb1a0f810e939d3c04c3238bc50f1ef8a256cecdb68fa5d",
+      "bytes": 35208,
+      "success": true
+    }
+  ],
+  "sourceDatabases": [
+    {
+      "file": "/private/tmp/prograph-authority-self-stable-20261018/semantic.sqlite",
+      "before": "100234bed1256fee3058f5d6f5c4d119d84231a9796dbb247062d976127edb8f",
+      "after": "100234bed1256fee3058f5d6f5c4d119d84231a9796dbb247062d976127edb8f"
+    },
+    {
+      "file": "/private/tmp/prograph-authority-self-stable-20261018/graph.sqlite",
+      "before": "c3e7f5c1014b681c5671285ec9e2b10e8a3be4a36083a6cf1e912b052fccbd66",
+      "after": "c3e7f5c1014b681c5671285ec9e2b10e8a3be4a36083a6cf1e912b052fccbd66"
+    }
+  ],
+  "databaseBytes": 670838784,
+  "integrity": "ok",
+  "foreignKeys": [],
+  "limitations": "Analysis and these checks ran alongside compiler tests. Timings and RSS are not performance qualification. Complete normalized payloads are compared; stable-ID tie/sample order can deliberately differ from the old query projection. An independent full bulk reference validates the complete new code-architecture payload. Source LOC excludes dependencies and counts the selected code files only."
+}

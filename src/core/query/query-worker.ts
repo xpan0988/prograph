@@ -1,3 +1,4 @@
+import {resolveCompatibilityDatabase} from "../semantic/authority.js";
 import { QueryService } from "./query-service.js";
 import { SemanticQuery } from "../semantic/query.js";
 import { LEGACY_READ_OPERATIONS } from "./isolation.js";
@@ -6,7 +7,7 @@ import { LEGACY_READ_OPERATIONS } from "./isolation.js";
 const request = JSON.parse(process.argv[2] ?? "null") as { domain: string; filename: string; manifest?: string; operation: string; args: unknown[] };
 try {
   if (!request || !Array.isArray(request.args) || request.args.length > 4 || typeof request.filename !== "string") throw Error("Invalid read request");
-  const query = request.domain === "semantic" ? new SemanticQuery(request.filename, request.manifest) : request.domain === "legacy" ? new QueryService(request.filename) : undefined;
+  const query = request.domain === "semantic" ? new SemanticQuery(request.filename, request.manifest) : request.domain === "legacy" || request.domain === "compatibility" ? new QueryService(request.domain === "compatibility" ? resolveCompatibilityDatabase(request.filename) : request.filename) : undefined;
   if (!query) throw Error("Invalid read domain");
   try {
     const db = query instanceof SemanticQuery ? query.db : query.database;

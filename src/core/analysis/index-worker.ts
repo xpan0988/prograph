@@ -31,7 +31,7 @@ try {
     value = { manifest: result.manifest, adapterRuns: result.adapterRuns, outputDirectory: result.outputDirectory };
   } else if (request.operation === "sync") value = await syncRepository(request.repository, request.index);
   else if (request.operation === "status") value = await repositoryStatus(request.repository, request.index);
-  else if(request.operation==="prepare-queries"){const selected=path.resolve(request.index??path.join(request.repository,".prograph"));value=prepareQueryIndex(selected.endsWith(".sqlite")?selected:path.join(selected,"graph.sqlite"));}
+  else if(request.operation==="prepare-queries"){const selected=path.resolve(request.index??path.join(request.repository,".prograph"));value=prepareQueryIndex(selected);}
   else {
     if (!request.input) throw Error("Provider input required");
     if (request.operation === "export-compat") {

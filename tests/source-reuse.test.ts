@@ -1,3 +1,5 @@
+import {releaseMigrationRetention} from "./oracles/migration-retention.js";
+import {prepareAuthorityMigration} from "../src/core/semantic/authority-migration.js";
 import{test,expect,vi,afterEach}from'vitest';
 import{mkdtemp,mkdir,writeFile,rm,readFile}from'node:fs/promises';
 import path from'node:path';import os from'node:os';
@@ -37,5 +39,5 @@ test.skipIf(!retentionRuntime)('actual 2.12 writer policy upgrade invalidates un
  try{snapshot=db.activeSnapshot()!;db.pinSnapshot(snapshot,'policy-upgrade');claims=digest(canonical(db.sql('SELECT c.key FROM sc_active a JOIN sc_claims c ON c.id=a.claim WHERE a.snapshot=? ORDER BY c.key').all(snapshot)));expect(db.sql("SELECT value FROM sc_meta WHERE key='schema'").get()).toEqual({value:'2.0.0-step2.12'})}finally{db.close()}
  expect(await repositoryStatus(f.repo,f.index)).toMatchObject({state:'stale',schemaChanged:false,adapterVersionsChanged:true,modifiedFiles:[]});expect((await syncRepository(f.repo,f.index)).statusAfter.state).toBe('fresh');
  const clean=path.join(f.root,'clean');await analyzeRepository(f.repo,{output:clean});expect(await semanticSnapshot(f.index)).toEqual(await semanticSnapshot(clean));
- const after=new SemanticStore(path.join(f.index,'semantic.sqlite'));try{after.collectGarbage({keep:1});expect(digest(canonical(after.sql('SELECT c.key FROM sc_active a JOIN sc_claims c ON c.id=a.claim WHERE a.snapshot=? ORDER BY c.key').all(snapshot)))).toBe(claims);after.unpinSnapshot(snapshot,'policy-upgrade');after.collectGarbage({keep:1});expect(after.db.pragma('foreign_key_check')).toEqual([])}finally{after.close()}
+ const after=new SemanticStore(path.join(f.index,'semantic.sqlite'));try{after.collectGarbage({keep:1});expect(digest(canonical(after.sql('SELECT c.key FROM sc_active a JOIN sc_claims c ON c.id=a.claim WHERE a.snapshot=? ORDER BY c.key').all(snapshot)))).toBe(claims);after.unpinSnapshot(snapshot,'policy-upgrade');expect(releaseMigrationRetention(after)).toBeGreaterThan(0);after.collectGarbage({keep:1});expect(after.db.pragma('foreign_key_check')).toEqual([])}finally{after.close()}
 },60000);

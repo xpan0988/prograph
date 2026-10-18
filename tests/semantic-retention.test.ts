@@ -1,3 +1,5 @@
+import {releaseMigrationRetention} from "./oracles/migration-retention.js";
+import {prepareAuthorityMigration} from "../src/core/semantic/authority-migration.js";
 import { afterEach, expect, test, vi } from "vitest";
 import { mkdtemp, mkdir, writeFile, readFile, rm, cp } from "node:fs/promises";
 import path from "node:path";
@@ -98,6 +100,7 @@ test.skipIf(!reportRuntime)("actual report writer upgrade hides unqualified owne
   const old = await import(/* @vite-ignore */ pathToFileURL(path.join(reportRuntime!, "dist/core/analysis/analyze.js")).href) as typeof import("../src/core/analysis/analyze.js");
   const f = await fixture(false), first = await old.analyzeRepository(f.repository, { output: f.index });
   expect(first.manifest.semanticCore?.status, first.manifest.semanticCore?.reason).toBe("partial");
+  await prepareAuthorityMigration(f.index,{storageOnly:true});
   const filename = path.join(f.index, "semantic.sqlite"), store = new SemanticStore(filename);
   let previous: number, report: string, claims: string;
   try {
@@ -121,7 +124,7 @@ test.skipIf(!reportRuntime)("actual report writer upgrade hides unqualified owne
     expect(digest(canonical(upgraded.sql("SELECT c.key FROM sc_active a JOIN sc_claims c ON c.id=a.claim WHERE snapshot=? ORDER BY c.key").all(previous)))).toBe(claims);
     expect(upgraded.sql("SELECT COUNT(*) n FROM sc_observed_inputs").get()).toMatchObject({ n: expect.any(Number) });
     expect((upgraded.sql("SELECT COUNT(*) n FROM sc_observed_inputs").get() as {n:number}).n).toBeGreaterThan(0);
-    upgraded.unpinSnapshot(previous, "report-upgrade"); unpinnedGc = collectSemanticGarbage(upgraded, { keep: 1 });
+    upgraded.unpinSnapshot(previous, "report-upgrade");expect(releaseMigrationRetention(upgraded)).toBeGreaterThan(0); unpinnedGc = collectSemanticGarbage(upgraded, { keep: 1 });
     expect(readSnapshotReport(upgraded.db, previous)).toBeUndefined();
     expect(upgraded.db.pragma("integrity_check", { simple: true })).toBe("ok"); expect(upgraded.db.pragma("foreign_key_check")).toEqual([]);
   } finally { upgraded.close(); }

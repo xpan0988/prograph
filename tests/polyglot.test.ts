@@ -3,7 +3,7 @@ import { mkdtemp, cp, writeFile, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { afterAll, beforeAll, expect, test } from "vitest";
 import { analyzeRepository } from "../src/core/analysis/analyze.js";
-import { repositoryStatus } from "../src/core/analysis/state.js";
+import { repositoryStatus, ADAPTER_VERSIONS } from "../src/core/analysis/state.js";
 import { syncRepository } from "../src/core/analysis/sync.js";
 import { scanRepository } from "../src/core/repository/repository.js";
 import { QueryService } from "../src/core/query/query-service.js";
@@ -95,7 +95,10 @@ test("custom in-repository indexes stay fresh and provider changes are detected"
   const state = JSON.parse(await readFile(stateFile, "utf8"));
   state.adapterVersions.providers = "outdated";
   await writeFile(stateFile, JSON.stringify(state));
-  expect((await repositoryStatus(root, output)).adapterVersionsChanged).toBe(true);
+  expect((await repositoryStatus(root,output)).adapterVersionsChanged).toBe(false);
+  const versions=ADAPTER_VERSIONS as unknown as {providers:string},previous=versions.providers;
+  try {versions.providers="next-test-policy";expect((await repositoryStatus(root,output)).adapterVersionsChanged).toBe(true);}
+  finally {versions.providers=previous;}
 });
 
 test("large syntax-only repositories remain deterministic and boundary output is bounded", async () => {

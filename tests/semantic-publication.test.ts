@@ -1,3 +1,4 @@
+import {prepareAuthorityMigration} from "../src/core/semantic/authority-migration.js";
 import { afterEach, expect, test, vi } from "vitest";
 import { mkdtemp, rm } from "node:fs/promises";
 import path from "node:path";
@@ -173,6 +174,7 @@ test("legacy materialized snapshots upgrade without copying or changing their ro
   for (const table of tables) store.db.exec(`ALTER TABLE sc_legacy_${table} RENAME TO sc_${table}`);
   store.db.prepare("UPDATE sc_meta SET value='2.0.0-step2.3' WHERE key='schema'").run(); store.close();
   const old = new SemanticQuery(file); try { expect(old.execute("find", "target").items).toHaveLength(1); } finally { old.close(); }
+  await prepareAuthorityMigration(path.dirname(file),{storageOnly:true});
   const upgraded = new SemanticStore(file);
   try { const next = upgraded.publish([base.id]); expect(visible(upgraded, next)).toEqual(visible(upgraded, first)); expect(upgraded.db.prepare("SELECT COUNT(*) AS n FROM sc_legacy_active").get()).toEqual({ n: 1 }); }
   finally { upgraded.close(); }

@@ -41,6 +41,8 @@ jobs:
           echo "PROGRAPH_TEST_REPORT_BASELINE_RUNTIME=$report_runtime" >> "$GITHUB_ENV"
           retention_runtime=$(node scripts/prepare-semantic-baseline.mjs "$RUNNER_TEMP/semantic-baselines" retention)
           echo "PROGRAPH_TEST_RETENTION_BASELINE_RUNTIME=$retention_runtime" >> "$GITHUB_ENV"
+          authority_runtime=$(node scripts/prepare-semantic-baseline.mjs "$RUNNER_TEMP/semantic-baselines" authority)
+          echo "PROGRAPH_TEST_AUTHORITY_BASELINE_RUNTIME=$authority_runtime" >> "$GITHUB_ENV"
       - uses: actions/setup-python@v5
         with:
           python-version: '3.14'
@@ -61,6 +63,7 @@ jobs:
           node scripts/install-semantic-producers.mjs "$RUNNER_TEMP/semantic-producers"
       - name: Complete tests, including actual Rust producer
         env:
+          PROGRAPH_TEST_AUTHORITY_UPGRADE_EVIDENCE: semantic-authority-upgrade-results.json
           PROGRAPH_TEST_ORACLE_SEED: ${{ matrix.node }}
           PROGRAPH_TEST_ORACLE_EVIDENCE: semantic-oracle-results.json
           PROGRAPH_TEST_UPGRADE_EVIDENCE: semantic-upgrade-results.json
@@ -77,6 +80,7 @@ jobs:
         with:
           name: semantic-evidence-node-${{ matrix.node }}
           path: |
+            semantic-authority-upgrade-results.json
             semantic-test-results.json
             semantic-recovery-results.json
             semantic-oracle-results.json

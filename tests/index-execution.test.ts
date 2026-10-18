@@ -100,7 +100,7 @@ test("native SQLite work is cancellable and cannot block host heartbeats or subs
   const good = await fixture(false); expect((await executeIndex({ operation: "status", repository: good.repository, index: good.index })).state).toBe("missing");
 }, 30000);
 
-test("a blocked legacy writer leaves status/navigation admitted and cancelled work retains semantic history without promising rollback", async () => {
+test("a blocked legacy export leaves coherent semantic status/navigation admitted and cancelled work retains semantic history without promising rollback", async () => {
   const { repository, index } = await fixture();
   const db = new Database(path.join(index, "graph.sqlite"));
   const semantic = new Database(path.join(index, "semantic.sqlite"), { readonly: true });
@@ -127,7 +127,7 @@ test("a blocked legacy writer leaves status/navigation admitted and cancelled wo
       executeRead(path.join(index, "graph.sqlite"), "legacy", "symbol", ["__missing__"]),
     ]);
     expect(queued).toHaveProperty("error.code", "INDEX_DEADLINE");
-    expect(status).toMatchObject({ state: "stale", semanticPublication: { state: "out-of-sync" } });
+    expect(status).toMatchObject({ state: "fresh", authority:"semantic", semanticPublication: { state: "matches-semantic-snapshot" } });
     expect(navigation).toBeUndefined();
     controller.abort(); const outcome = await running; expect(outcome, "error" in outcome ? String(outcome.error) : "unexpected completion").toHaveProperty("error.code", "INDEX_CANCELLED");
     expect(outcome).toHaveProperty("error.message", expect.stringContaining("may already have committed"));

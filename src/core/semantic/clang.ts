@@ -1,3 +1,4 @@
+import { retainedAnalysisReport } from "./snapshot-report.js";
 import { qualifyRetainedAnalysis, verifyPublicationInputs } from "./retention-qualification.js";
 import path from "node:path";
 import { mkdir, realpath } from "node:fs/promises";
@@ -211,7 +212,8 @@ async function indexClangWithLease(repository: string, unitKey: string, index: s
     const currentInventory = await inventoryFromDisk(root, directory, 200000);
     const others = await qualifyRetainedAnalysis(store, currentInventory, parent);
     await verifyPublicationInputs(store,[...others,...native,run,...passes],currentInventory,200000);
-    const published = store.publish([...others, ...native, run, ...passes], parent, [registration]);
+    const selectedRuns=[...others, ...native, run, ...passes];
+    const published = store.publish(selectedRuns, parent, [registration], retainedAnalysisReport(store,selectedRuns,parent));
     return { snapshot: published, context, coverage, durationMs: Math.round(performance.now() - started), compiler: { executable: COMPILER, version }, bounds };
   } finally { store.close(); }
 }

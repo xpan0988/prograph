@@ -31,6 +31,8 @@ export class IndexLease {
 }
 
 export async function withIndexWork<T>(directory: string, operation: () => Promise<T>): Promise<T> {
-  mkdirSync(directory, { recursive: true }); const lease = new IndexLease(directory, "work");
+  mkdirSync(directory, { recursive: true });
+  await (await import("./authority-migration.js")).prepareAuthorityMigration(directory,{storageOnly:true});
+  const lease = new IndexLease(directory, "work");
   try { return await operation(); } finally { lease.close(); }
 }

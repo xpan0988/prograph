@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import {prepareAuthorityMigration} from "../core/semantic/authority-migration.js";
+import {semanticDatabasePath} from "../core/semantic/authority.js";
 import path from "node:path";
 import { access, writeFile } from "node:fs/promises";
 import { Command, Option } from "commander";
@@ -260,8 +262,9 @@ for (const operation of ["gc", "pin", "unpin"] as const) addFormat(addIndex(sema
   .option("--label <text>", "pin owner label", "user")
   .action(async (input = ".", options: FormatOptions & { index?: string; keep: number; snapshot?: number; label: string }) => {
     const root = await resolveRepositoryRoot(input); const selected = path.resolve(options.index ?? path.join(root, ".prograph"));
-    const filename = path.join(selected.endsWith(".sqlite") ? path.dirname(selected) : selected, "semantic.sqlite");
+    const filename = semanticDatabasePath(selected);
     await access(filename); // Maintenance cannot silently create an empty replacement index.
+    await prepareAuthorityMigration(path.dirname(filename),{storageOnly:true,semanticFile:path.basename(filename)});
     if (operation === "gc") { writeResult(await collectIndexGarbage(filename, { keep: options.keep }), options.format); return; }
     const store = new SemanticStore(filename);
     try {

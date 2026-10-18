@@ -1,3 +1,4 @@
+import { retainedAnalysisReport } from "./snapshot-report.js";
 import { qualifyRetainedAnalysis, verifyPublicationInputs } from "./retention-qualification.js";
 import path from "node:path";
 import { mkdir, realpath, lstat } from "node:fs/promises";
@@ -292,7 +293,8 @@ export async function importScip(repository: string, artifact: string, manifest:
     await verifyPublicationInputs(store,[...others,...native,summary,...externals,...accepted,...derived],inventory,limits.maxDocuments*2,signal);
     await execution?.verify(signal);
     signal?.throwIfAborted(); const publicationStarted = performance.now();
-    const published = store.publish([...others, ...native, summary, ...externals, ...accepted, ...derived], parent, execution?.registration ? [execution.registration] : []);
+    const selectedRuns=[...others, ...native, summary, ...externals, ...accepted, ...derived];
+    const published = store.publish(selectedRuns, parent, execution?.registration ? [execution.registration] : [], retainedAnalysisReport(store,selectedRuns,parent));
     const publicationMs = +(performance.now() - publicationStarted).toFixed(3);
     return { snapshot: published, context, status: "partial", documents: documentCount, accepted: accepted.length, reusedDocuments, rejected, occurrences, excludedExternalLocals, calls: "unsupported", durationMs: Math.round(performance.now() - started), publicationMs, publicationStagesMs: stages, sqlitePragmas: Object.fromEntries(["journal_mode", "synchronous"].map(name => [name, store.db.pragma(name, { simple: true })])), limits, protocolDigest: SCIP_PROTOCOL_DIGEST };
   } finally { try { await stream?.close(); } finally { store.close(); } }

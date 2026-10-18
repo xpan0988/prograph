@@ -9,7 +9,7 @@ import type { GraphEdge, GraphNode } from "../src/core/graph/schema.js";
 import { QueryService, queryServiceForRepository, scopedEdges, scopedNodes } from "../src/core/query/query-service.js";
 import { formatQueryOutput } from "../src/core/query/output-mode.js";
 import { resolveRepositoryRoot, scanRepository } from "../src/core/repository/repository.js";
-import { repositoryStatus } from "../src/core/analysis/state.js";
+import { repositoryStatus, ADAPTER_VERSIONS } from "../src/core/analysis/state.js";
 import { syncRepository } from "../src/core/analysis/sync.js";
 import { createDebouncedRunner } from "../src/core/analysis/watch.js";
 import { createProGraphMcpServer } from "../src/mcp/index.js";
@@ -464,9 +464,10 @@ describe("agent queries and freshness", () => {
       const state = JSON.parse(await readFile(statePath, "utf8")) as { adapterVersions: Record<string, string> };
       state.adapterVersions.rust = "outdated-test-version";
       await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
-      const adapterStatus = await repositoryStatus(repository, index);
-      expect(adapterStatus.adapterVersionsChanged).toBe(true);
-      expect((await syncRepository(repository, index)).fallbackReason).toBe("adapter version changed");
+      expect((await repositoryStatus(repository,index)).adapterVersionsChanged).toBe(false); // Filesystem state is a cache after activation.
+      const versions=ADAPTER_VERSIONS as unknown as {rust:string},previousVersion=versions.rust;
+      try {versions.rust="next-test-policy";const adapterStatus=await repositoryStatus(repository,index);expect(adapterStatus.adapterVersionsChanged).toBe(true);expect((await syncRepository(repository,index)).fallbackReason).toBe("adapter version changed");}
+      finally {versions.rust=previousVersion;}
     } finally {
       await Promise.all([rm(repository, { recursive: true, force: true }), rm(index, { recursive: true, force: true })]);
     }

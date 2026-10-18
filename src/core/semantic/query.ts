@@ -1,3 +1,4 @@
+import {semanticDatabasePath} from "./authority.js";
 import path from "node:path";
 import { readFileSync, statSync } from "node:fs";
 import Database from "better-sqlite3";
@@ -59,7 +60,13 @@ export class SemanticQuery {
       const gaps = [...new Set(coverage.flatMap(c => Array.isArray(c.gaps) ? c.gaps.map(String) : []))];
       if (coverageTruncated) gaps.push("Coverage summary truncated");
       let latestAttempt: unknown = null;
-      if (this.manifestPath) { try {
+      const authority=this.db.prepare("SELECT value FROM sc_meta WHERE key='compatibility-authority'").get() as {value:string}|undefined;
+      if(authority) {
+        if(authority.value!=="owned-v1")throw Error("Unsupported semantic compatibility authority");
+        const row=this.db.prepare("SELECT value FROM sc_meta WHERE key='analysis-attempt'").get() as {value:string}|undefined;
+        if(row) {if(Buffer.byteLength(row.value)>4096)throw Error("Oversized analysis attempt metadata");const attempt=JSON.parse(row.value);latestAttempt={status:attempt.status,snapshot:attempt.snapshot??null,reason:attempt.reason?String(attempt.reason).slice(0,320):null,matchesSnapshot:attempt.snapshot===snapshot};}
+        else latestAttempt={status:"not-recorded"};
+      } else if (this.manifestPath) { try {
         if (statSync(this.manifestPath).size <= 1048576) {
           const attempt = (JSON.parse(readFileSync(this.manifestPath, "utf8")) as { semanticCore?: Record<string, unknown> }).semanticCore;
           latestAttempt = attempt ? { status: attempt.status, snapshot: attempt.snapshot ?? null, reason: attempt.reason ? String(attempt.reason).slice(0, 320) : null, matchesSnapshot: attempt.snapshot === snapshot } : { status: "not-recorded" };
@@ -185,5 +192,5 @@ export async function semanticQueryForRepository(input = ".", index?: string): P
   const root = await resolveRepositoryRoot(input);
   const requested = path.resolve(index ?? path.join(root, ".prograph"));
   const directory = requested.endsWith(".sqlite") ? path.dirname(requested) : requested;
-  return new SemanticQuery(path.join(directory, "semantic.sqlite"), path.join(directory, "manifest.json"));
+  return new SemanticQuery(semanticDatabasePath(requested), path.join(directory, "manifest.json"));
 }

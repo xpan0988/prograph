@@ -11,6 +11,7 @@ import { indexSemanticFoundation } from "../src/core/semantic/typescript.js";
 import { discoverProjects } from "../src/core/semantic/projects.js";
 import { orderPasses, callPass, executePasses, qualifiedCallProjection, CALL_PASS_SQL } from "../src/core/semantic/passes.js";
 import { SemanticStore } from "../src/core/semantic/store.js";
+import { prepareAuthorityMigration } from "../src/core/semantic/authority-migration.js";
 import { SemanticQuery, semanticQueryForRepository } from "../src/core/semantic/query.js";
 import { importScip, type ScipManifest } from "../src/core/semantic/scip-import.js";
 import { collectIndexGarbage } from "../src/core/semantic/provider-artifacts.js";
@@ -278,16 +279,21 @@ test("call pass uses indexed targets, respects ownership and cannot strengthen c
     expect(store.db.prepare("SELECT c.confidence,e.key FROM sc_owned o JOIN sc_claims c ON c.id=o.claim JOIN sc_facts f ON f.id=c.fact JOIN sc_entities e ON e.id=f.object WHERE o.run=?").all(pass)).toEqual([{ confidence: "probable", key: "target" }]);
   } finally { store.close(); }
 });
-test("old semantic schema remains readable and upgrades additively on writer open", async () => {
+test("old semantic schemas remain read-only compatible and require durable rollback preparation before writer upgrade", async () => {
   const root = await temporary(); const input = await artifact(root, [doc()]); await importScip(root, input.filename, input.manifest);
-  const file = path.join(root, ".prograph/semantic.sqlite"); const store = new SemanticStore(file); store.db.prepare("UPDATE sc_meta SET value='2.0.0-step1' WHERE key='schema'").run(); const snapshot = store.activeSnapshot(); store.close();
-  const old = new SemanticStore(file); old.db.exec("DROP VIEW sc_context_lookup"); old.db.prepare("UPDATE sc_meta SET value='2.0.0-step1' WHERE key='schema'").run(); old.close();
+  const file = path.join(root, ".prograph/semantic.sqlite"); const store = new SemanticStore(file); store.db.exec("DROP VIEW sc_context_lookup"); store.db.prepare("UPDATE sc_meta SET value='2.0.0-step1' WHERE key='schema'").run(); const snapshot = store.activeSnapshot(); store.close();
+  const original = await readFile(file);
   const query = new SemanticQuery(file); try { expect(query.execute("status")).toMatchObject({ snapshot, schema: "2.0.0-step1" }); expect(query.execute("context").items).toEqual([]); expect(String(query.execute("context").gaps)).toContain("unavailable"); } finally { query.close(); }
+  expect(() => new SemanticStore(file)).toThrow(/requires prepareAuthorityMigration/);
+  expect(await readFile(file)).toEqual(original);
+  await prepareAuthorityMigration(path.dirname(file), { storageOnly: true });
   const upgraded = new SemanticStore(file); try { expect(upgraded.activeSnapshot()).toBe(snapshot); expect(upgraded.db.prepare("SELECT value FROM sc_meta WHERE key='schema'").get()).toEqual({ value: SEMANTIC_SCHEMA_VERSION }); } finally { upgraded.close(); }
   const prior = new SemanticStore(file); prior.db.prepare("UPDATE sc_meta SET value='2.0.0-step2.1' WHERE key='schema'").run(); prior.close();
   const before = await readFile(file); const reader = new SemanticQuery(file);
   try { expect(reader.execute("status")).toMatchObject({ snapshot, schema: "2.0.0-step2.1" }); } finally { reader.close(); }
+  expect(() => new SemanticStore(file)).toThrow(/requires prepareAuthorityMigration/);
   expect(await readFile(file)).toEqual(before);
+  await prepareAuthorityMigration(path.dirname(file), { storageOnly: true });
   const writer = new SemanticStore(file); try { expect(writer.activeSnapshot()).toBe(snapshot); expect(writer.db.prepare("SELECT value FROM sc_meta WHERE key='schema'").get()).toEqual({ value: SEMANTIC_SCHEMA_VERSION }); } finally { writer.close(); }
 });
 test("nested wire object quotas are checked before protobuf expands messages", () => {

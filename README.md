@@ -17,7 +17,7 @@ Source repository
 
 ProGraph does not modify analyzed source files. Its default repository-local output is `.prograph/`, and it never adds that directory to `.gitignore`.
 
-Semantic Core adds a separate `semantic.sqlite` with compiler-backed TypeScript symbol/occurrence navigation, independent claims, provenance and snapshots. The current Step 2 milestone adds multiple compiler-project contexts, explicit source-verified SCIP import, opt-in Clang C/C++ extraction, an explicit pinned Rust navigation runner, supported call passes and bounded inspector evidence. Use `prograph semantic find <exact-name> --repo . --format json`, then `semantic definition`, `references`, `callers`, `callees`, `context` or `native` with the returned key. Existing graph workflows keep schema `1.2.0`; unregistered precise tooling is not run implicitly; explicitly registered qualified providers can replay on analysis/sync. Coverage is partial and full Core 2.0 default activation remains unfinished. See the [Step 1 closure](docs/semantic-core-step1.md) and [Step 2 implementation record](docs/semantic-core-step2.md) for measured costs, provider capabilities and unmet acceptance gates.
+Semantic Core stores compiler-backed navigation, independent claims, provenance and snapshots in `semantic.sqlite`. Explicit qualified providers cover Clang, Rust, Python, Go, Java and C# alongside the bundled TypeScript compiler and syntax fallback. Use `prograph semantic find <exact-name> --repo . --format json`, then `semantic definition`, `references`, `callers`, `callees`, `context` or `native` with the returned key. Analyze/sync now publishes the default legacy-shaped query view and its metadata atomically with semantic facts; pre-existing indexes receive a durable rollback copy before upgrade. Existing graph exports keep schema `1.2.0`. Unregistered tooling is not run implicitly; registered qualified providers can replay on analysis/sync. Coverage remains partial. Default-authority qualification and final Core 2.0 acceptance are tracked in the [Step 2 implementation record](docs/semantic-core-step2.md); [Step 1](docs/semantic-core-step1.md) is closed.
 
 ## Supported Analysis
 
@@ -213,7 +213,7 @@ prograph adapters [path]
 prograph framework tauri [path]
 ```
 
-Query and server commands accept `--index <directory-or-graph.sqlite>` while preserving default `.prograph/graph.sqlite` discovery.
+Query and server commands accept `--index <directory-or-graph.sqlite>`. Directory queries select the atomically published Semantic Core compatibility view when activated, otherwise the legacy graph. Explicit `graph.sqlite` queries remain legacy reads. Semantic navigation, export and maintenance accept a custom semantic SQLite filename; their established `graph.sqlite` alias selects its sibling `semantic.sqlite`. Analysis and producer outputs still take an index directory.
 
 Most query commands support text and JSON output:
 
@@ -417,15 +417,15 @@ Exact call-site names remain available in edge evidence.
 | Frontend | Implemented level | Relationship limits |
 | --- | --- | --- |
 | TypeScript / TSX / JavaScript / JSX | Bundled ts-morph / TypeScript compiler API | Unique compiler symbols are resolved; existing React extraction retained |
-| Rust | Tree-sitter local resolver; explicit pinned rust-analyzer runner | Legacy confidence unchanged; partial semantic navigation for checked closed Cargo workspaces, no native calls/macros/sysroot qualification |
-| Python | Syntax declarations, modules, classes/methods, decorators, annotations, inheritance, imports/calls | Same-file bare calls may have probable candidates; unresolved call evidence retained |
-| Java | Syntax packages, classes/interfaces, records/enums, constructors/methods, annotations, inheritance, imports/calls/types | No JVM classpath or overload resolution |
-| C | Syntax translation units, includes, structs/enums/unions, typedefs, declarations/definitions and preprocessor evidence | Compilation database contexts recorded, never executed; no preprocessing/type resolution |
-| C++ | C infrastructure plus namespaces, classes, inheritance, templates and methods | No template instantiation or receiver resolution; `.h` defaults to C, use `.hpp` for C++ headers |
-| Go | Syntax packages, imports, functions/methods, structs/interfaces, embedding and generic declarations | No go/types or gopls resolution |
-| C# | Syntax namespaces, records/classes/structs/interfaces, constructors/methods, attributes and generics | No Roslyn binding or overload resolution |
+| Rust | Tree-sitter local resolver; explicit pinned rust-analyzer runner | Partial definitions/references and declared calls in checked closed/path-dependency workspaces; external normal dependencies, macros/build scripts and sysroot semantics unqualified |
+| Python | Tree-sitter fallback; explicit managed scip-python | Partial compiler navigation and declared calls with captured interpreter/package/stub inputs; dynamic imports/reflection unqualified |
+| Java | Tree-sitter fallback; explicit javac/SCIP | Partial overload navigation and declared calls with explicit classpath/module-path/release; original Maven/Gradle builds and processors are not executed |
+| C | Tree-sitter fallback; explicit allowlisted Clang extraction | Partial local-TU declarations/references/static calls and actual include/config inputs; compilation-database shell commands are never executed |
+| C++ | Tree-sitter fallback; explicit Clang extraction | Partial overload navigation/static calls; templates/base types retained as native metadata, runtime dispatch unqualified; explicit compile context resolves C/C++ `.h` interpretation |
+| Go | Tree-sitter fallback; explicit managed scip-go/compiler check | Partial navigation/declared calls under explicit offline module/tags/GOOS/GOARCH context; cgo unqualified |
+| C# | Tree-sitter fallback; explicit managed Roslyn/scip-dotnet | Partial overload navigation/declared calls under explicit project/framework/reference/define context; original targets/tasks/analyzers/generators are not executed |
 
-The six new frontends do **not** claim compiler-grade symbol references or dynamic dispatch. Import and type-use targets remain unresolved; same-file bare-call candidates are only probable. Capability categories independently report `syntax`, `heuristic`, `semantic`, or `unsupported`. These are distinct from edge confidence (`exact`, `resolved`, `probable`, `unresolved`). The syntax presence of a call never makes its target resolved.
+Syntax fallback does **not** claim compiler-grade symbol references or dynamic dispatch. Its import and type-use targets remain unresolved; same-file bare-call candidates are only probable. Explicit precise providers publish partial capability matrices and retain native metadata without claiming complete common inheritance, dispatch or metaprogramming analysis. Capability categories remain distinct from edge confidence (`exact`, `resolved`, `probable`, `unresolved`). The syntax presence of a call never makes its target resolved.
 
 The policy is latest-stable-first, backward-tolerant. Installed grammar versions are recorded in provider metadata and invalidate stale indexes. Parsing is recovery-tolerant, but this release does not certify every Python 3.14, Java 25, C23, C++23 or modern C# feature. Recovered syntax produces diagnostics. The TypeScript compiler dependency remains compatible with the existing engine; there is no claim of TypeScript 7 native support.
 
@@ -451,7 +451,7 @@ OpenAPI, GraphQL and Protobuf identity nodes use a protocol, schema-file namespa
 
 SQL and HCL files are discovered but not semantically extracted yet. Existing Cargo TOML and package/Tauri JSON extraction remains available. Arbitrary JSON/YAML does not create graph nodes. Kotlin, Swift and other future language frontends are not implemented.
 
-New polyglot and schema changes use conservative full rebuilds; unchanged indexes are reused. Existing isolated TS/Rust incremental behavior remains available. Excluded directories are no longer traversed just to count files (`excludedFileCount` is a compatibility field reported as zero, not a measured count). Custom in-repository output directories are excluded from scanning. Analysis still retains source and graph data in memory; million-line indexing is not certified. Local caller/callee/neighborhood/affected navigation uses bounded indexed reads. Interactive queries run in read-only children with admission/deadline/output limits and explicit errors; global overview/architecture/files/cycles still materialize arrays inside those children. Process startup adds latency; see the Step 2 measurements.
+Provider scheduling remains conservative where qualified input dependencies do not establish narrower reuse. Owned facts/projections reuse unchanged partitions; documentation-only edits can reuse qualified compiler observations. Existing isolated TS/Rust incremental behavior remains available. Excluded directories are not traversed just to count files (`excludedFileCount` is a compatibility zero). Custom in-repository index roots are excluded from scanning. Analysis and compatibility exports still retain source/graph data in memory; million-line indexing is not certified. Interactive overview, architecture, context, files, framework summaries and local navigation use indexed, bounded projections in admitted/cancellable read workers. Owned cycle queries require explicit offline `prepare-queries`; they return representative DFS paths, not exhaustive cycles/SCCs. Legacy-file queries retain their established cycle ordering. Process startup adds latency; see the Step 2 measurements. Pre-existing-index authority migration and directory rollback export are qualified on POSIX; Windows migration/export currently fail closed.
 
 ## Development
 

@@ -1,3 +1,4 @@
+import { openAuthorityObservation, type AuthorityObservation } from "../semantic/authority.js";
 import { createRequire } from "node:module";
 import path from "node:path";
 import { createHash } from "node:crypto";
@@ -70,6 +71,7 @@ export interface RepositoryStatus {
   schemaChanged: boolean;
   repositoryChanged?: boolean;
   semanticPublication?: SnapshotReportStatus;
+  authority?: "semantic" | "legacy";
   semanticInputsChanged?: boolean;
   semanticInputs?: RecordedInputStatus;
   stale: boolean;
@@ -118,25 +120,30 @@ export async function repositoryStatus(input = ".", index?: string): Promise<Rep
   const repositoryRoot = await resolveRepositoryRoot(input);
   const requestedIndex = path.resolve(index ?? path.join(repositoryRoot, ".prograph"));
   const indexDirectory = requestedIndex.endsWith(".sqlite") ? path.dirname(requestedIndex) : requestedIndex;
-  const [stored, manifest, scan] = await Promise.all([
-    readJson<IndexState>(path.join(indexDirectory, "state.json")),
-    readJson<AnalysisManifest>(path.join(indexDirectory, "manifest.json")),
+  let authority: AuthorityObservation | undefined, authorityFailure: string | undefined;
+  try { authority = openAuthorityObservation(requestedIndex); } catch (error) { authorityFailure=String(error).slice(0,320); }
+  const semanticAuthority=!!authority || !!authorityFailure;
+  try {
+  const [legacyStored, legacyManifest, scan] = await Promise.all([
+    semanticAuthority ? Promise.resolve(undefined) : readJson<IndexState>(path.join(indexDirectory, "state.json")),
+    semanticAuthority ? Promise.resolve(undefined) : readJson<AnalysisManifest>(path.join(indexDirectory, "manifest.json")),
     scanRepository(repositoryRoot, indexDirectory),
   ]);
+  const stored=semanticAuthority?authority?.state:legacyStored, manifest=semanticAuthority?authority?.report?.manifest:legacyManifest;
   const currentFiles = fileHashes(scan.snapshot);
   const indexedFiles = stored?.files ?? {};
   const addedFiles = Object.keys(currentFiles).filter((file) => !(file in indexedFiles)).sort();
   const modifiedFiles = Object.keys(currentFiles).filter((file) => indexedFiles[file] !== undefined && indexedFiles[file] !== currentFiles[file]).sort();
   const deletedFiles = Object.keys(indexedFiles).filter((file) => !(file in currentFiles)).sort();
   const configChanged = stored ? stored.configHash !== configHash(scan.snapshot) : false;
-  const adapterVersionsChanged = stored ? JSON.stringify(stored.adapterVersions) !== JSON.stringify(ADAPTER_VERSIONS) : false;
+  const adapterVersionsChanged = stored ? canonical(stored.adapterVersions) !== canonical(ADAPTER_VERSIONS) : false;
   const schemaChanged = stored ? stored.schemaVersion !== GRAPH_SCHEMA_VERSION : false;
   const repositoryChanged = !!stored && (stored.repositoryRoot !== scan.snapshot.repository.root || stored.repositoryIdentity !== scan.snapshot.repository.identity);
   const { files: _files, ...stateHeader } = stored ?? { files: {} };
-  const semanticPublication = snapshotReportStatus(path.join(indexDirectory, "semantic.sqlite"), manifest, stored ? stateHeader as Omit<IndexState, "files"> : undefined);
-  const semanticInputs = await recordedInputStatus(path.join(indexDirectory, "semantic.sqlite"), scan.snapshot, new Set([...addedFiles, ...modifiedFiles, ...deletedFiles]));
-  const semanticInputsChanged = semanticInputs.additionalChanges > 0 || !!manifest?.semanticCore && ["unavailable", "unchecked"].includes(semanticInputs.state);
-  const publicationChanged = semanticPublication.state === "out-of-sync" || !!manifest?.semanticCore && (manifest.semanticCore.status === "failed" || semanticPublication.state === "unavailable");
+  const semanticPublication: SnapshotReportStatus = semanticAuthority ? authority?.report && authority.state ? {state:"matches-semantic-snapshot",snapshot:authority.snapshot!} : {state:authorityFailure?"unavailable":"unreported",...(authority?.snapshot===undefined?{}:{snapshot:authority.snapshot}),...((authorityFailure??authority?.reason)?{reason:authorityFailure??authority?.reason!}:{})} : snapshotReportStatus(path.join(indexDirectory, "semantic.sqlite"), manifest, stored ? stateHeader as Omit<IndexState, "files"> : undefined);
+  const semanticInputs: RecordedInputStatus = authorityFailure ? {state:"unavailable",checked:0,additionalChanges:0,reason:authorityFailure} : await recordedInputStatus(authority?.filename ?? path.join(indexDirectory, "semantic.sqlite"), scan.snapshot, new Set([...addedFiles, ...modifiedFiles, ...deletedFiles]), authority?.db);
+  const semanticInputsChanged = semanticInputs.additionalChanges > 0 || (semanticAuthority || !!manifest?.semanticCore) && ["unavailable", "unchecked"].includes(semanticInputs.state);
+  const publicationChanged = semanticAuthority && (!authority?.report || !!authority.reason || authority.attempt?.status === "failed") || semanticPublication.state === "out-of-sync" || !!manifest?.semanticCore && (manifest.semanticCore.status === "failed" || semanticPublication.state === "unavailable");
   const stale = !stored || addedFiles.length > 0 || modifiedFiles.length > 0 || deletedFiles.length > 0 || configChanged || adapterVersionsChanged || schemaChanged || semanticInputsChanged || repositoryChanged || publicationChanged;
   return {
     repositoryRoot,
@@ -156,10 +163,12 @@ export async function repositoryStatus(input = ".", index?: string): Promise<Rep
     adapterVersionsChanged,
     schemaChanged,
     repositoryChanged,
+    authority:semanticAuthority?"semantic":"legacy",
     semanticPublication,
     semanticInputsChanged,
     semanticInputs,
     stale,
-    state: stored ? stale ? "stale" : "fresh" : "missing",
+    state: stored ? stale ? "stale" : "fresh" : semanticAuthority ? "stale" : "missing",
   };
+  } finally {authority?.close();}
 }
