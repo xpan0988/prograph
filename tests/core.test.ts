@@ -16,7 +16,7 @@ import { createProGraphMcpServer } from "../src/mcp/index.js";
 import { writeResult } from "../src/cli/output.js";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { appShellClassName } from "../src/ui/layout.js";
+import { appShellClassName, limitCanvasGraph } from "../src/ui/layout.js";
 import { errorFingerprint, shouldDisplayError } from "../src/ui/api-client.js";
 import { focusGraph, nodeLanguage } from "../src/ui/graph/GraphCanvas.js";
 import { detectLanguage, initialLanguage, translate } from "../src/ui/i18n/index.js";
@@ -590,6 +590,23 @@ describe("UI layout contract", () => {
     expect(translate("zh-CN", "toolbar.maxDepth")).toBe("深度");
     expect(translate("zh-CN", "missing.key")).toBe("missing.key");
     expect(Object.keys(zhCN).sort()).toEqual(Object.keys(en).sort());
+  });
+
+  test("bounds framework canvas work while retaining the selected boundary and complete source result", () => {
+    const nodes = Array.from({ length: 600 }, (_, i): GraphNode => ({ id: `n${i}`, name: `n${i}`, qualifiedName: `n${i}`, kind: "function", adapter: "test", metadata: {} }));
+    const edges: GraphEdge[] = [599, 598, 597].map(i => ({ id: `e${i}`, source: "n599", target: `n${i - 1}`, kind: "invokes_command", confidence: "exact", evidence: [], metadata: {} }));
+    const graph = { nodes, edges };
+    const canvas = limitCanvasGraph(graph, 3, "n599");
+    expect(canvas.nodes.map(node => node.id)).toEqual(["n597", "n598", "n599"]);
+    expect(canvas.edges.map(edge => edge.id)).toEqual(["e599", "e598"]);
+    expect(canvas.truncated).toBe(true);
+    expect(graph.nodes).toHaveLength(600); expect(graph.edges).toHaveLength(3);
+    expect(limitCanvasGraph(graph, 1, "n599").edges).toEqual([]);
+    expect(limitCanvasGraph(graph, 2, "missing").nodes.map(node => node.id)).toEqual(["n598", "n599"]);
+    expect(limitCanvasGraph(graph, 4).edges).toHaveLength(3);
+    expect(limitCanvasGraph(canvas, 3)).toBe(canvas);
+    expect(() => limitCanvasGraph(graph, 501)).toThrow(RangeError);
+    expect(() => limitCanvasGraph(graph, 0)).toThrow(RangeError);
   });
 
   test("deduplicates transient errors and highlights only a selected neighborhood", () => {

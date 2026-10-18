@@ -1,0 +1,62 @@
+{
+  "format": 1,
+  "scope": "Rejected final canvas full-suite attempt; not counted as complete acceptance.",
+  "tests": {
+    "numTotalTests": 271,
+    "numPassedTests": 266,
+    "numFailedTests": 5,
+    "numPendingTests": 0,
+    "success": false
+  },
+  "rawReportSha256": "44c58288638780bf8b092869155a134d9b4426f14898c0eff7e3aff29e3c1866",
+  "failures": [
+    {
+      "name": "isolated CLI executes qualified python and preserves owned navigation/registration",
+      "messages": [
+        "Error: Command failed: /opt/homebrew/Cellar/node/25.9.0_2/bin/node dist/cli/index.js semantic index-project context.json --repo /var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-index-cli-Qx89v9/source --index /var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-index-cli-Qx89v9/custom --format json\nprograph: Error: Managed tool receipt mismatch: /private/tmp/prograph-scip-python-inspection/package\n\n    at genericNodeError (node:internal/errors:998:15)\n    at wrappedFn (node:internal/errors:543:14)\n    at ChildProcess.exithandler (node:child_process:417:12)\n    at ChildProcess.emit (node:events:509:20)\n    at maybeClose (node:internal/child_process:1108:16)\n    at Socket.<anonymous> (node:internal/child_process:480:11)\n    at Socket.emit (node:events:509:20)\n    at Pipe.<anonymous> (node:net:350:12)"
+      ]
+    },
+    {
+      "name": "real python producer qualifies definitions, references, imports/types and owned declared calls",
+      "messages": [
+        "Error: Managed tool receipt mismatch: /private/tmp/prograph-scip-python-inspection/package\n    at tool (/Users/xiyuanpan/prograph/src/core/semantic/managed-scip.ts:83:117)\n    at indexManagedProjectWithLease (/Users/xiyuanpan/prograph/src/core/semantic/managed-scip.ts:90:64)\n    at withIndexWork (/Users/xiyuanpan/prograph/src/core/semantic/maintenance-lock.ts:37:16)\n    at /Users/xiyuanpan/prograph/tests/semantic-managed.test.ts:89:18\n    at file:///Users/xiyuanpan/prograph/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+      ]
+    },
+    {
+      "name": "seeded multi-provider edits match independent actual compiler rebuilds for facts, claims, coverage, projections and confidence",
+      "messages": [
+        "Error: Managed tool receipt mismatch: /private/tmp/prograph-scip-python-inspection/package\n    at tool (/Users/xiyuanpan/prograph/src/core/semantic/managed-scip.ts:83:117)\n    at indexManagedProjectWithLease (/Users/xiyuanpan/prograph/src/core/semantic/managed-scip.ts:90:64)\n    at withIndexWork (/Users/xiyuanpan/prograph/src/core/semantic/maintenance-lock.ts:37:16)\n    at /Users/xiyuanpan/prograph/tests/semantic-multiprovider.test.ts:74:5\n    at file:///Users/xiyuanpan/prograph/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+      ]
+    },
+    {
+      "name": "actual accepted writer upgrade invalidates prior mappings, replays registered producers and preserves pinned history through GC",
+      "messages": [
+        "Error: Managed tool receipt mismatch: /private/tmp/prograph-scip-python-inspection/package\n    at tool (/private/tmp/prograph-stage5g-baseline/accepted-nxm4mL/src/core/semantic/managed-scip.ts:83:117)\n    at indexManagedProjectWithLease (/private/tmp/prograph-stage5g-baseline/accepted-nxm4mL/src/core/semantic/managed-scip.ts:90:64)\n    at withIndexWork (/private/tmp/prograph-stage5g-baseline/accepted-nxm4mL/src/core/semantic/maintenance-lock.ts:35:16)\n    at /Users/xiyuanpan/prograph/tests/semantic-multiprovider.test.ts:159:5\n    at file:///Users/xiyuanpan/prograph/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+      ]
+    },
+    {
+      "name": "registered python uses the actual qualified producer on changes, reuses documentation-only output, and publishes a single snapshot",
+      "messages": [
+        "Error: Managed tool receipt mismatch: /private/tmp/prograph-scip-python-inspection/package\n    at tool (/Users/xiyuanpan/prograph/src/core/semantic/managed-scip.ts:83:117)\n    at indexManagedProjectWithLease (/Users/xiyuanpan/prograph/src/core/semantic/managed-scip.ts:90:64)\n    at withIndexWork (/Users/xiyuanpan/prograph/src/core/semantic/maintenance-lock.ts:37:16)\n    at /Users/xiyuanpan/prograph/tests/semantic-replay.test.ts:113:17\n    at file:///Users/xiyuanpan/prograph/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+      ]
+    }
+  ],
+  "cause": "The retained test profile points at /private/tmp/prograph-scip-python-inspection/package, which no longer exists. Five Python-dependent qualifications fail closed at their tool receipt check. Other 266 tests, including the final canvas helper, pass; no 271-pass claim.",
+  "correction": "Restore the same fixed official npm archive into an independent temporary directory, compare full receipt, retain this attempt and run the entire suite again. Do not change runtime assertions, producer version, receipt admission, timeout or skip configuration.",
+  "restoration": {
+    "archiveSha256": "be8e0a1ec180423c60e9f2c2672c208f49a35ab690ac0f8f1259e4223dbd6e42",
+    "archiveBytes": 4415001,
+    "previous": {
+      "path": "/private/tmp/prograph-scip-python-inspection/package",
+      "sha256": "ea0a69c0838b60811e5292a370a911c40c104a19c4e76cd57c9938867b7c495d",
+      "entry": "index.js"
+    },
+    "restored": {
+      "path": "/private/tmp/prograph-authority-final-python-wL4MU5/package",
+      "sha256": "ea0a69c0838b60811e5292a370a911c40c104a19c4e76cd57c9938867b7c495d",
+      "entry": "index.js"
+    },
+    "identicalProducerTree": true,
+    "scope": "Explicit restoration of absent temporary Python producer from unchanged official pinned npm archive; no runtime receipt policy or tests changed."
+  }
+}

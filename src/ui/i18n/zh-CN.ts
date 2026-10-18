@@ -174,6 +174,7 @@ export const zhCN: Record<TranslationKey, string> = {
   "status.warnings": "{count} 个警告",
   "status.info": "{count} 条信息",
   "status.scope": "{nodes} 个节点 · {edges} 条边",
+  "status.truncated": "显示范围已限制",
   "status.generated": "分析耗时 {duration} 毫秒",
   "diagnostics.filters": "筛选",
   "diagnostics.all": "全部",

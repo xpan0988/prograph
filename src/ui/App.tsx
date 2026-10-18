@@ -13,7 +13,7 @@ import { AffectedSummary, ArchitectureLanes, ContextSummary, GraphLegend, ViewHe
 import { architectureLane, focusGraph, GraphCanvas, layoutGraph, nodeLanguage, toFlowEdge, toFlowNode, type DomainBlockPosition, type DomainBlockPositions } from "./graph/GraphCanvas";
 import { I18nProvider, useI18n, type Locale } from "./i18n";
 import type { TranslationKey } from "./i18n/en";
-import { appShellClassName } from "./layout";
+import { appShellClassName, limitCanvasGraph } from "./layout";
 import type {
   AffectedResult,
   ConfidenceLevel,
@@ -274,15 +274,17 @@ function AppBody(): React.ReactElement {
     }
   }, [view, confidence, selectedNode, depth, maxNodes, evidenceMode, knowledgeScope, refreshArchitecture, dismissError, reportError]);
 
+  const canvasGraph = useMemo(() => view === "framework" ? limitCanvasGraph(rawGraph, maxNodes, selectedNode?.id) : rawGraph, [view, rawGraph, maxNodes, selectedNode?.id]);
+
   useEffect(() => {
-    const allowed = rawGraph.nodes.filter((node) => {
+    const allowed = canvasGraph.nodes.filter((node) => {
       const language = nodeLanguage(node);
       const lane = architectureLane(node);
       if (view === "architecture") return languages.has(lane);
       return !language || languages.has(language) || languages.has(lane);
     });
     const ids = new Set(allowed.map((node) => node.id));
-    const relevantEdges = rawGraph.edges.filter((edge) => {
+    const relevantEdges = canvasGraph.edges.filter((edge) => {
       if (!ids.has(edge.source) || !ids.has(edge.target)) return false;
       if (edgeKind === "all") return true;
       if (edgeKind === "readable") return graphMode !== "code" || DEFAULT_READABLE_EDGE_KINDS.has(edge.kind);
@@ -295,7 +297,7 @@ function AppBody(): React.ReactElement {
       setEdges(layout.edges);
     });
     return () => { active = false; };
-  }, [rawGraph, languages, view, edgeKind, graphMode, blockPositions, setNodes, setEdges]);
+  }, [canvasGraph, languages, view, edgeKind, graphMode, blockPositions, setNodes, setEdges]);
 
   useEffect(() => {
     const focused = focusGraph(nodes, edges, selectedNode?.id, selectedEdge?.id);
@@ -459,7 +461,7 @@ function AppBody(): React.ReactElement {
           onFit={() => setFitRequest((current) => current + 1)}
           onReset={resetFilters}
         />
-        <ViewHeader view={view} nodes={rawGraph.nodes.length} edges={rawGraph.edges.length} />
+        <ViewHeader view={view} nodes={canvasGraph.nodes.length} edges={canvasGraph.edges.length} />
         <section className="canvas-wrap">
           {view !== "diagnostics" && <GraphLegend languages={languages} onToggle={toggleLanguage} />}
           {status?.stale && <div className="stale-warning"><strong>{t("graph.stale")}</strong><span>{t("graph.stale.detail", { added: status.addedFiles.length, modified: status.modifiedFiles.length, deleted: status.deletedFiles.length })}</span></div>}
@@ -495,7 +497,7 @@ function AppBody(): React.ReactElement {
         </section>
       </main>
       {selectedNode && <Inspector node={selectedNode} nodes={rawGraph.nodes} edges={rawGraph.edges} selectedEdge={selectedEdge} onEdgeSelect={setSelectedEdge} onClose={clearSelection} />}
-      <StatusBar state={repositoryState} overview={overview} diagnostics={diagnostics} diagnosticCounts={diagnosticPage.counts} graph={rawGraph} />
+      <StatusBar state={repositoryState} overview={overview} diagnostics={diagnostics} diagnosticCounts={diagnosticPage.counts} graph={canvasGraph} />
     </div>
   );
 }

@@ -1,0 +1,45 @@
+{
+  "format": 1,
+  "capturedAt": "2026-10-18T16:32:43.946776+00:00",
+  "scope": "Built UI compatibility regression against a fresh real Pastey Semantic Core 2.14 authority snapshot, localhost custom index. Manual native-browser interaction; no browser latency/RSS or automated cross-browser claim.",
+  "sourceDigests": {
+    "src/ui/App.tsx": "da9ca6497849f5a5e9fa80187017500c512cf9e8bff4ee41cf6ad47ffbd8e5f2",
+    "src/ui/components/StatusBar.tsx": "2787897e02c1943b5eb497560850dbf7f4178df2d615a90c92a25a24be677464",
+    "src/ui/i18n/en.ts": "5d1e562bcc96a20540dbe6286e5079da3345efae3bb1a4cf366a1506323e43cd",
+    "src/ui/i18n/zh-CN.ts": "71d7fee3ae894b6e16c99e064fe5be3357084ed2e40be231c5f5ee3386a00022",
+    "src/ui/layout.ts": "48b4acc435155875a43c6f753d52fdac87b698ee7a87fb2ee5bad5220088fc26",
+    "tests/core.test.ts": "abac4255b803a658115379400fb2918d1fe8bb58334ef985a2f46ca435977dc5"
+  },
+  "sourceRuntime": "de4b5910da40a4b2b273c36ac6b5c5f5d1ed0dd9, unchanged semantic runtime; frontend cap fix identified during this regression",
+  "tests": {
+    "passed": 42,
+    "failed": 0,
+    "skipped": 0,
+    "rawReportSha256": "a629a84b61e01972840245431385abc8b4464002c6be4fcbacc9b353fa38f065"
+  },
+  "typecheck": "passed",
+  "completeNodeUiBuild": "passed",
+  "browser": {
+    "engine": "Codex in-app browser on macOS",
+    "initialState": "fresh, 46940 total diagnostics, legacy package 0.3",
+    "semanticEvidence": "Search getDeviceProfile, explicitly choose variant, exact compiler definition src/lib/tauri.ts:1042:23, typescript/compiler-api/compiler; partial coverage, snapshot 1, source-freshness-not-checked and coverage truncation notices visible. Empty reference sample is retained without completeness inference.",
+    "diagnosticPaging": "First/next page each show 200 records; keyboard Return on previous returns the first page. Total repository counts remain visible.",
+    "observedRegression": "Framework view rendered 372 nodes / 365 edges despite the 75-node toolbar selection. Plain prefix truncation then discarded all bindings, so final selection admits complete endpoint pairs and keeps the selected symbol/neighbors before filling the remaining budget.",
+    "verifiedFix": "75-node setting shows 75 nodes / 40 edges; 25 shows 25 / 13. Limited-view notice visible. Search for a symbol outside the default prefix and return to framework keeps getDeviceProfile plus get_device_profile and the evidence inspector. Original 75 selection restored.",
+    "api": {
+      "status": 200,
+      "nodes": 372,
+      "edges": 365,
+      "truncated": false
+    },
+    "capturedWarnOrErrorLogs": [],
+    "cleanup": "Agent-created tab closed and verified own localhost service terminated.",
+    "limits": "Does not qualify all browser engines, narrow-viewport usability, <=1s layout, browser/native RSS or arbitrary framework graph distributions. Full 271-test final suite and exact-code Linux matrix are separate gates, not inferred from these 42 tests."
+  },
+  "screenshots": {
+    "semantic-core-stage5-authority-ui.png": "9415ad0c607b3556df81c90194d9f110c3a2445f4c3bb5ebfccad4ba34b0297d",
+    "semantic-core-stage5-authority-ui-diagnostics.png": "dd968ef1bcc93c4c132d6925d66fc849fc9db4480bb61405386204723b7ac4d8",
+    "semantic-core-stage5-authority-ui-framework-capped.png": "8865e9ad8acbaf1dc73c2d7a6ebcc58169bde6788741d52129644e019ac9e1b2"
+  },
+  "buildLogSha256": "f6b75506c76e8a3a2c10fd366b719353dfc96b123345bd9844f4244499ad1192"
+}

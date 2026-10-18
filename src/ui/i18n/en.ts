@@ -172,6 +172,7 @@ export const en = {
   "status.warnings": "{count} warnings",
   "status.info": "{count} info",
   "status.scope": "{nodes} nodes · {edges} edges",
+  "status.truncated": "Limited view",
   "status.generated": "{duration} ms analysis",
   "diagnostics.filters": "Filters",
   "diagnostics.all": "All",
