@@ -1,0 +1,332 @@
+{
+  "format": 1,
+  "stage": "5N atomic default authority, preserved rollback and snapshot pins",
+  "commit": "de4b5910da40a4b2b273c36ac6b5c5f5d1ed0dd9",
+  "run": 39142820050,
+  "url": "https://github.com/xpan0988/prograph/actions/runs/39142820050",
+  "attempt": 1,
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 117720543943,
+      "name": "regression (20)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T15:57:42Z",
+      "completedAt": "2026-10-18T16:52:55Z",
+      "steps": [
+        {
+          "name": "Install explicit Rust qualification tools",
+          "number": 5,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run lint",
+          "number": 6,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Compile accepted prior writer for actual upgrade oracle",
+          "number": 7,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "number": 11,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "number": 12,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete Node and UI build",
+          "number": 13,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "number": 14,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "number": 15,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "testFiles": 34,
+      "passed": 270,
+      "failed": 0,
+      "skipped": 0,
+      "oracleChecks": 18,
+      "seedWitness": "2026-10-18T16:01:55.9663025Z   PROGRAPH_TEST_ORACLE_SEED: 20",
+      "decodedLogEvidence": [
+        "2026-10-18T16:03:39.6697365Z    ✓ actual report writer upgrade hides unqualified owners and preserves reports, history and observations through GC  4023ms",
+        "2026-10-18T16:10:03.2482620Z  ✓ tests/authority-migration.test.ts (7 tests) 35767ms",
+        "2026-10-18T16:10:49.3880847Z  ✓ tests/semantic-authority.test.ts (5 tests) 12038ms",
+        "2026-10-18T16:12:03.3919700Z  ✓ tests/source-reuse.test.ts (6 tests) 25277ms",
+        "2026-10-18T16:12:03.3977454Z    ✓ actual 2.12 writer policy upgrade invalidates unchanged schema inputs and preserves pinned history  4147ms",
+        "2026-10-18T16:52:29.9467722Z    ✓ actual accepted writer upgrade invalidates prior mappings, replays registered producers and preserves pinned history through GC  219826ms",
+        "2026-10-18T16:52:29.9502846Z  Test Files  34 passed (34)",
+        "2026-10-18T16:52:29.9504186Z       Tests  270 passed (270)",
+        "2026-10-18T16:52:29.9506715Z    Duration  3027.40s (transform 6.03s, setup 0ms, import 32.71s, tests 4456.34s, environment 5ms)",
+        "2026-10-18T16:52:50.0534122Z       \"point\": \"before-seal\",",
+        "2026-10-18T16:52:50.0536991Z       \"baselineRetained\": true",
+        "2026-10-18T16:52:50.0538121Z       \"point\": \"before-publish\",",
+        "2026-10-18T16:52:50.0540776Z       \"baselineRetained\": true",
+        "2026-10-18T16:52:50.0542143Z       \"point\": \"during-publish\",",
+        "2026-10-18T16:52:50.0544903Z       \"baselineRetained\": true",
+        "2026-10-18T16:52:50.0545887Z       \"point\": \"after-publish\",",
+        "2026-10-18T16:52:50.0548712Z       \"baselineRetained\": true",
+        "2026-10-18T16:52:50.0550023Z     \"refused\": true,",
+        "2026-10-18T16:52:50.0550442Z     \"unchanged\": true",
+        "2026-10-18T16:52:50.1087748Z Verified 270 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, atomic default authority, verified migration rollback/pins and old-reader export, complete build, four recovery probes and corruption refusal"
+      ],
+      "oracleEvidence": [
+        "2026-10-18T16:09:49.0094072Z multi-provider oracle 1/18: initial agrees",
+        "2026-10-18T16:13:03.8564209Z multi-provider oracle 2/18: add Python module without editing importer agrees",
+        "2026-10-18T16:16:20.8857136Z multi-provider oracle 3/18: modify exported TS overload agrees",
+        "2026-10-18T16:18:50.5128841Z multi-provider oracle 4/18: rename Java source agrees",
+        "2026-10-18T16:21:11.1822388Z multi-provider oracle 5/18: delete shadow Python module agrees",
+        "2026-10-18T16:23:22.4136557Z multi-provider oracle 6/18: C header dependency agrees",
+        "2026-10-18T16:25:41.6462590Z multi-provider oracle 7/18: Rust feature variant agrees",
+        "2026-10-18T16:27:53.9710267Z multi-provider oracle 8/18: project compiler configuration agrees",
+        "2026-10-18T16:29:30.2223309Z multi-provider oracle 9/18: Java language level agrees",
+        "2026-10-18T16:31:37.4275592Z multi-provider oracle 10/18: Csharp variant defines agrees",
+        "2026-10-18T16:33:56.0574567Z multi-provider oracle 11/18: schema contract replacement agrees",
+        "2026-10-18T16:36:17.1764349Z multi-provider oracle 12/18: documentation only agrees",
+        "2026-10-18T16:38:51.3728635Z multi-provider oracle 13/18: Go target tags agrees",
+        "2026-10-18T16:40:55.6997230Z multi-provider oracle 14/18: producer receipt mismatch agrees",
+        "2026-10-18T16:43:26.8759847Z multi-provider oracle 15/18: restore qualified producer agrees",
+        "2026-10-18T16:45:00.3723110Z multi-provider oracle 16/18: Csharp variant defines agrees",
+        "2026-10-18T16:46:28.8740745Z multi-provider oracle 17/18: Java language level agrees",
+        "2026-10-18T16:48:50.0077694Z multi-provider oracle 18/18: documentation only agrees"
+      ]
+    },
+    {
+      "id": 117720544115,
+      "name": "regression (22)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T15:57:43Z",
+      "completedAt": "2026-10-18T16:58:36Z",
+      "steps": [
+        {
+          "name": "Install explicit Rust qualification tools",
+          "number": 5,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run lint",
+          "number": 6,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Compile accepted prior writer for actual upgrade oracle",
+          "number": 7,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "number": 11,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "number": 12,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete Node and UI build",
+          "number": 13,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "number": 14,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "number": 15,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "testFiles": 34,
+      "passed": 270,
+      "failed": 0,
+      "skipped": 0,
+      "oracleChecks": 18,
+      "seedWitness": "2026-10-18T16:01:29.6722645Z   PROGRAPH_TEST_ORACLE_SEED: 22",
+      "decodedLogEvidence": [
+        "2026-10-18T16:03:08.8090143Z    ✓ actual report writer upgrade hides unqualified owners and preserves reports, history and observations through GC  3493ms",
+        "2026-10-18T16:08:47.0403098Z  ✓ tests/authority-migration.test.ts (7 tests) 27418ms",
+        "2026-10-18T16:09:30.5383324Z  ✓ tests/semantic-authority.test.ts (5 tests) 12087ms",
+        "2026-10-18T16:10:49.7023426Z  ✓ tests/source-reuse.test.ts (6 tests) 22923ms",
+        "2026-10-18T16:10:49.7059443Z    ✓ actual 2.12 writer policy upgrade invalidates unchanged schema inputs and preserves pinned history  3345ms",
+        "2026-10-18T16:58:12.4345748Z    ✓ actual accepted writer upgrade invalidates prior mappings, replays registered producers and preserves pinned history through GC  225334ms",
+        "2026-10-18T16:58:12.4387744Z  Test Files  34 passed (34)",
+        "2026-10-18T16:58:12.4389594Z       Tests  270 passed (270)",
+        "2026-10-18T16:58:12.4392917Z    Duration  3397.05s (transform 5.20s, setup 0ms, import 28.12s, tests 4706.89s, environment 6ms)",
+        "2026-10-18T16:58:31.1833928Z       \"point\": \"before-seal\",",
+        "2026-10-18T16:58:31.1836425Z       \"baselineRetained\": true",
+        "2026-10-18T16:58:31.1837446Z       \"point\": \"before-publish\",",
+        "2026-10-18T16:58:31.1839804Z       \"baselineRetained\": true",
+        "2026-10-18T16:58:31.1840724Z       \"point\": \"during-publish\",",
+        "2026-10-18T16:58:31.1844533Z       \"baselineRetained\": true",
+        "2026-10-18T16:58:31.1846084Z       \"point\": \"after-publish\",",
+        "2026-10-18T16:58:31.1848000Z       \"baselineRetained\": true",
+        "2026-10-18T16:58:31.1848883Z     \"refused\": true,",
+        "2026-10-18T16:58:31.1849159Z     \"unchanged\": true",
+        "2026-10-18T16:58:31.2434128Z Verified 270 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, atomic default authority, verified migration rollback/pins and old-reader export, complete build, four recovery probes and corruption refusal"
+      ],
+      "oracleEvidence": [
+        "2026-10-18T16:08:52.5718051Z multi-provider oracle 1/18: initial agrees",
+        "2026-10-18T16:12:43.9798472Z multi-provider oracle 2/18: add Python module without editing importer agrees",
+        "2026-10-18T16:15:55.9423242Z multi-provider oracle 3/18: modify exported TS overload agrees",
+        "2026-10-18T16:19:13.4182221Z multi-provider oracle 4/18: rename Java source agrees",
+        "2026-10-18T16:22:29.7244279Z multi-provider oracle 5/18: delete shadow Python module agrees",
+        "2026-10-18T16:25:45.8326344Z multi-provider oracle 6/18: Rust feature variant agrees",
+        "2026-10-18T16:28:04.0972247Z multi-provider oracle 7/18: documentation only agrees",
+        "2026-10-18T16:30:26.6470500Z multi-provider oracle 8/18: Java language level agrees",
+        "2026-10-18T16:33:43.8476020Z multi-provider oracle 9/18: project compiler configuration agrees",
+        "2026-10-18T16:37:02.7209245Z multi-provider oracle 10/18: C header dependency agrees",
+        "2026-10-18T16:39:22.1013824Z multi-provider oracle 11/18: schema contract replacement agrees",
+        "2026-10-18T16:41:58.9690459Z multi-provider oracle 12/18: Go target tags agrees",
+        "2026-10-18T16:44:32.1059911Z multi-provider oracle 13/18: Csharp variant defines agrees",
+        "2026-10-18T16:46:29.7349520Z multi-provider oracle 14/18: producer receipt mismatch agrees",
+        "2026-10-18T16:49:02.3472914Z multi-provider oracle 15/18: restore qualified producer agrees",
+        "2026-10-18T16:50:33.6344776Z multi-provider oracle 16/18: Go target tags agrees",
+        "2026-10-18T16:52:54.3306811Z multi-provider oracle 17/18: schema contract replacement agrees",
+        "2026-10-18T16:54:26.9620843Z multi-provider oracle 18/18: Rust feature variant agrees"
+      ]
+    },
+    {
+      "id": 117720544409,
+      "name": "regression (24)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T15:57:43Z",
+      "completedAt": "2026-10-18T17:03:45Z",
+      "steps": [
+        {
+          "name": "Install explicit Rust qualification tools",
+          "number": 5,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run lint",
+          "number": 6,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Compile accepted prior writer for actual upgrade oracle",
+          "number": 7,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned mainstream semantic qualification tools",
+          "number": 11,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete tests, including actual Rust producer",
+          "number": 12,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete Node and UI build",
+          "number": 13,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Transaction and process recovery probes",
+          "number": 14,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Require executed qualification and recovery evidence",
+          "number": 15,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "testFiles": 34,
+      "passed": 270,
+      "failed": 0,
+      "skipped": 0,
+      "oracleChecks": 18,
+      "seedWitness": "2026-10-18T16:00:16.3544123Z   PROGRAPH_TEST_ORACLE_SEED: 24",
+      "decodedLogEvidence": [
+        "2026-10-18T16:01:58.5450789Z    ✓ actual report writer upgrade hides unqualified owners and preserves reports, history and observations through GC  4071ms",
+        "2026-10-18T16:08:57.6400728Z  ✓ tests/authority-migration.test.ts (7 tests) 28561ms",
+        "2026-10-18T16:09:42.7621082Z  ✓ tests/semantic-authority.test.ts (5 tests) 14241ms",
+        "2026-10-18T16:11:25.3815450Z  ✓ tests/source-reuse.test.ts (6 tests) 25580ms",
+        "2026-10-18T16:11:25.3897207Z    ✓ actual 2.12 writer policy upgrade invalidates unchanged schema inputs and preserves pinned history  4067ms",
+        "2026-10-18T17:03:22.3913552Z    ✓ actual accepted writer upgrade invalidates prior mappings, replays registered producers and preserves pinned history through GC  228908ms",
+        "2026-10-18T17:03:22.3951622Z  Test Files  34 passed (34)",
+        "2026-10-18T17:03:22.3953166Z       Tests  270 passed (270)",
+        "2026-10-18T17:03:22.3956808Z    Duration  3781.18s (transform 4.62s, setup 0ms, import 26.74s, tests 5402.16s, environment 5ms)",
+        "2026-10-18T17:03:40.0812943Z       \"point\": \"before-seal\",",
+        "2026-10-18T17:03:40.0816896Z       \"baselineRetained\": true",
+        "2026-10-18T17:03:40.0838660Z       \"point\": \"before-publish\",",
+        "2026-10-18T17:03:40.0842405Z       \"baselineRetained\": true",
+        "2026-10-18T17:03:40.0843850Z       \"point\": \"during-publish\",",
+        "2026-10-18T17:03:40.0847716Z       \"baselineRetained\": true",
+        "2026-10-18T17:03:40.0849584Z       \"point\": \"after-publish\",",
+        "2026-10-18T17:03:40.0851542Z       \"baselineRetained\": true",
+        "2026-10-18T17:03:40.0852430Z     \"refused\": true,",
+        "2026-10-18T17:03:40.0852678Z     \"unchanged\": true",
+        "2026-10-18T17:03:40.1398792Z Verified 270 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, atomic default authority, verified migration rollback/pins and old-reader export, complete build, four recovery probes and corruption refusal"
+      ],
+      "oracleEvidence": [
+        "2026-10-18T16:09:48.9141201Z multi-provider oracle 1/18: initial agrees",
+        "2026-10-18T16:14:59.0435511Z multi-provider oracle 2/18: add Python module without editing importer agrees",
+        "2026-10-18T16:18:22.6729710Z multi-provider oracle 3/18: modify exported TS overload agrees",
+        "2026-10-18T16:21:47.3216418Z multi-provider oracle 4/18: rename Java source agrees",
+        "2026-10-18T16:25:07.3208817Z multi-provider oracle 5/18: delete shadow Python module agrees",
+        "2026-10-18T16:27:33.5897515Z multi-provider oracle 6/18: Java language level agrees",
+        "2026-10-18T16:30:57.5856596Z multi-provider oracle 7/18: project compiler configuration agrees",
+        "2026-10-18T16:34:21.7422868Z multi-provider oracle 8/18: C header dependency agrees",
+        "2026-10-18T16:36:43.6161571Z multi-provider oracle 9/18: schema contract replacement agrees",
+        "2026-10-18T16:40:04.2224114Z multi-provider oracle 10/18: Rust feature variant agrees",
+        "2026-10-18T16:42:38.9322273Z multi-provider oracle 11/18: Csharp variant defines agrees",
+        "2026-10-18T16:45:16.7739579Z multi-provider oracle 12/18: Go target tags agrees",
+        "2026-10-18T16:47:38.7718322Z multi-provider oracle 13/18: documentation only agrees",
+        "2026-10-18T16:49:38.2567280Z multi-provider oracle 14/18: producer receipt mismatch agrees",
+        "2026-10-18T16:52:15.1972417Z multi-provider oracle 15/18: restore qualified producer agrees",
+        "2026-10-18T16:53:47.2527397Z multi-provider oracle 16/18: Java language level agrees",
+        "2026-10-18T16:56:10.1353589Z multi-provider oracle 17/18: documentation only agrees",
+        "2026-10-18T16:59:33.3231976Z multi-provider oracle 18/18: C header dependency agrees"
+      ]
+    }
+  ],
+  "qualification": "All three exact-code Linux jobs completed all required steps; complete tests with actual providers/replay/CLI, eighteen distinct-seed independent seven-language rebuilds, four genuine prior-writer paths, migration/old-reader/pin/GC/recovery, complete Node/UI build, four process recovery points, corruption refusal and strict verifier. Zero skipped tests. This accepts schema 2.14 runtime; the subsequent frontend canvas fix has a separate 271-test matrix.",
+  "limitations": "Ubuntu Linux 20/22/24 and explicitly pinned partial providers. No Windows, physical power-loss, real million-LOC or portable performance qualification is inferred."
+}

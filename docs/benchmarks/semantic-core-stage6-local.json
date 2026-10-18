@@ -1,0 +1,2728 @@
+{
+  "format": 1,
+  "commit": "92373c2faf7492036c0894acc8e998a5be8c82fb",
+  "scope": "Final complete local runtime/test/UI candidate, same bytes committed to main; actual pinned tools and all baselines enabled. Final source/runtime unchanged after launch.",
+  "node": "v25.9.0",
+  "platform": "macOS arm64",
+  "tests": {
+    "total": 271,
+    "passed": 271,
+    "failed": 0,
+    "skipped": 0,
+    "files": 34,
+    "logReportedSpanSeconds": 2057.81,
+    "rawReportSha256": "a43178594681b98b8807005894d56d4669ab76adaeb6e6f8896a3f4a408dd791",
+    "suites": [
+      {
+        "file": "tests/authority-migration.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "automatic activation preserves actual older native/legacy stores and pinned readers until explicit rollback retention release",
+            "status": "passed",
+            "durationMs": 2191.036292
+          },
+          {
+            "name": "an older live writer prevents upgrade before storage, backup markers or legacy bytes change",
+            "status": "passed",
+            "durationMs": 837.7276670000001
+          },
+          {
+            "name": "insufficient rollback space and unrelated marker content leave the actual old index unchanged",
+            "status": "passed",
+            "durationMs": 3603.2940419999995
+          },
+          {
+            "name": "hard termination after durable backup or schema initialization preserves rollback readability and resumes without half activation",
+            "status": "passed",
+            "durationMs": 2981.7960829999993
+          },
+          {
+            "name": "unqualified Windows migration refuses a pre-existing index before replacing any store",
+            "status": "passed",
+            "durationMs": 2221.849166
+          },
+          {
+            "name": "failure attempt metadata is byte-bounded and cannot modify a newer storage format",
+            "status": "passed",
+            "durationMs": 5990.089125
+          },
+          {
+            "name": "a writer opened before a storage-version change cannot publish or advance the pointer",
+            "status": "passed",
+            "durationMs": 687.9105830000008
+          }
+        ]
+      },
+      {
+        "file": "tests/authority-support.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "inherited authority validates effective projection visibility after alternative-support closure and native negative-selector changes",
+            "status": "passed",
+            "durationMs": 158.42700000000002
+          }
+        ]
+      },
+      {
+        "file": "tests/compatibility-cache.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "cache payloads have selected eligible owners and agree with complete legacy results",
+            "status": "passed",
+            "durationMs": 5285.234458000001
+          },
+          {
+            "name": "one documentation replacement preserves unrelated current rows and resolves only the affected owner/support keys",
+            "status": "passed",
+            "durationMs": 5279.794167
+          }
+        ]
+      },
+      {
+        "file": "tests/compatibility-export.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "durable compatibility export is installed atomically and needs no source graph or repository reads",
+            "status": "passed",
+            "durationMs": 4450.173916000001
+          },
+          {
+            "name": "existing targets and source ancestors are refused without replacing user content",
+            "status": "passed",
+            "durationMs": 3906.101458
+          },
+          {
+            "name": "competing exports never overwrite a published complete generation",
+            "status": "passed",
+            "durationMs": 4222.333332999999
+          },
+          {
+            "name": "isolated CLI exports a pinned historical snapshot through a custom sqlite path without an available source repository",
+            "status": "passed",
+            "durationMs": 5450.529499999999
+          }
+        ]
+      },
+      {
+        "file": "tests/compatibility-global.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "incremental scalar summaries and file rows agree with the frozen compatibility query surface across scopes",
+            "status": "passed",
+            "durationMs": 5234.175958
+          }
+        ]
+      },
+      {
+        "file": "tests/compatibility-query-oracle.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "owned global projections agree with frozen legacy and independent clean builds across source, documentation, rename, delete, module and config edits",
+            "status": "passed",
+            "durationMs": 11662.964167
+          },
+          {
+            "name": "pinned SQL readers retain the previous coherent cache while publication and historical GC advance",
+            "status": "passed",
+            "durationMs": 1018.9576250000009
+          },
+          {
+            "name": "cycle queries require explicit offline preparation and relevant relationship changes invalidate it",
+            "status": "passed",
+            "durationMs": 1764.885624999999
+          },
+          {
+            "name": "owned query consumers refuse a corrupted bound report instead of trusting a matching cache marker",
+            "status": "passed",
+            "durationMs": 758.3736249999984
+          }
+        ]
+      },
+      {
+        "file": "tests/compatibility-snapshot.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "reconstructs complete legacy payload sets from selected supported facts and durable metadata",
+            "status": "passed",
+            "durationMs": 4715.414208
+          },
+          {
+            "name": "historical reconstruction survives source deletion and uses no compatibility export or source graph as authority",
+            "status": "passed",
+            "durationMs": 5385.514832999999
+          },
+          {
+            "name": "unchanged-byte report and fact database remain untouched by offline reconstruction",
+            "status": "passed",
+            "durationMs": 4306.302125
+          }
+        ]
+      },
+      {
+        "file": "tests/compatibility-support.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "owned compatibility winners follow alternative support, negative selectors, restored visibility and same-payload owner replacement through GC",
+            "status": "passed",
+            "durationMs": 169.47875
+          }
+        ]
+      },
+      {
+        "file": "tests/core.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "repository and configuration resolves a repository root from a nested working directory",
+            "status": "passed",
+            "durationMs": 2.02245800000037
+          },
+          {
+            "name": "repository and configuration loads defaults without requiring configuration",
+            "status": "passed",
+            "durationMs": 0.848667000000205
+          },
+          {
+            "name": "repository and configuration applies exclusions and reads source without installed packages",
+            "status": "passed",
+            "durationMs": 37.97312500000044
+          },
+          {
+            "name": "deterministic graph identities generates stable node and edge IDs",
+            "status": "passed",
+            "durationMs": 0.28054100000008475
+          },
+          {
+            "name": "deterministic graph identities reports duplicate identities",
+            "status": "passed",
+            "durationMs": 2.0587500000001455
+          },
+          {
+            "name": "mixed repository analysis detects all supported adapters",
+            "status": "passed",
+            "durationMs": 0.8387910000001284
+          },
+          {
+            "name": "mixed repository analysis extracts TypeScript, React, and Rust symbols",
+            "status": "passed",
+            "durationMs": 1.0383750000000873
+          },
+          {
+            "name": "mixed repository analysis extracts imports, calls, renders, callbacks, and Tauri bindings",
+            "status": "passed",
+            "durationMs": 0.5398749999994834
+          },
+          {
+            "name": "mixed repository analysis persists SQLite, manifest, diagnostics, and JSON export",
+            "status": "passed",
+            "durationMs": 2.300333000000137
+          },
+          {
+            "name": "mixed repository analysis serves symbol search, callers, callees, and bounded neighborhoods from SQLite",
+            "status": "passed",
+            "durationMs": 4.823666999999659
+          },
+          {
+            "name": "mixed repository analysis extracts deterministic knowledge overlay artifacts",
+            "status": "passed",
+            "durationMs": 0.9594160000006013
+          },
+          {
+            "name": "mixed repository analysis links knowledge overlay facts without weakening confidence semantics",
+            "status": "passed",
+            "durationMs": 0.4922500000002401
+          },
+          {
+            "name": "mixed repository analysis filters code and knowledge scopes through the shared query service",
+            "status": "passed",
+            "durationMs": 16.344959000000017
+          },
+          {
+            "name": "mixed repository analysis scope filtering tolerates graph entities without metadata",
+            "status": "passed",
+            "durationMs": 1.0894170000001395
+          },
+          {
+            "name": "mixed repository analysis keeps knowledge overlay identities stable across repeated analysis",
+            "status": "passed",
+            "durationMs": 3886.926834
+          },
+          {
+            "name": "mixed repository analysis writes compact machine-readable CLI output",
+            "status": "passed",
+            "durationMs": 1.3684169999996811
+          },
+          {
+            "name": "Rust and Tauri quality regressions resolves all 17 source-verified Rust direct-call misses with evidence",
+            "status": "passed",
+            "durationMs": 0.907666999999492
+          },
+          {
+            "name": "Rust and Tauri quality regressions binds Rust attributes only to the syntactically decorated item",
+            "status": "passed",
+            "durationMs": 0.11974999999983993
+          },
+          {
+            "name": "Rust and Tauri quality regressions resolves repository-local Rust module paths and imported functions",
+            "status": "passed",
+            "durationMs": 0.36804099999972095
+          },
+          {
+            "name": "Rust and Tauri quality regressions resolves typed and constructor-inferred inherent methods conservatively",
+            "status": "passed",
+            "durationMs": 0.18266700000094716
+          },
+          {
+            "name": "Rust and Tauri quality regressions resolves Tauri event constants and preserves unknown expressions without false diagnostics",
+            "status": "passed",
+            "durationMs": 0.20666700000037963
+          },
+          {
+            "name": "Rust and Tauri quality regressions points each Tauri registration edge at the individual handler token",
+            "status": "passed",
+            "durationMs": 0.5999579999988782
+          },
+          {
+            "name": "Rust and Tauri quality regressions defaults queries to trusted relationships and supports a custom index",
+            "status": "passed",
+            "durationMs": 11.553291000000172
+          },
+          {
+            "name": "Rust and Tauri quality regressions deduplicates scoped unresolved targets and remains deterministic",
+            "status": "passed",
+            "durationMs": 206.76574999999866
+          },
+          {
+            "name": "agent queries and freshness formats compact output and limits evidence",
+            "status": "passed",
+            "durationMs": 2.7004589999996824
+          },
+          {
+            "name": "agent queries and freshness hides unresolved symbols by default and returns deterministic context and affected tests",
+            "status": "passed",
+            "durationMs": 4.370915999999852
+          },
+          {
+            "name": "agent queries and freshness detects hash freshness and preserves IDs through conservative sync",
+            "status": "passed",
+            "durationMs": 6091.545457999999
+          },
+          {
+            "name": "agent queries and freshness incrementally reparses an isolated changed file",
+            "status": "passed",
+            "durationMs": 6290.516166999998
+          },
+          {
+            "name": "agent queries and freshness removes a deleted isolated file and falls back on configuration or adapter changes",
+            "status": "passed",
+            "durationMs": 3282.0905829999974
+          },
+          {
+            "name": "agent queries and freshness debounces watch events into one synchronization",
+            "status": "passed",
+            "durationMs": 102.596292000002
+          },
+          {
+            "name": "agent queries and freshness exposes bounded compact MCP tools through the shared query layer",
+            "status": "passed",
+            "durationMs": 171.13595799999894
+          },
+          {
+            "name": "UI layout contract renders the no-selection workspace with grouped controls and no inspector",
+            "status": "passed",
+            "durationMs": 99.06291699999929
+          },
+          {
+            "name": "UI layout contract uses the full workspace without a selection and opens a bounded inspector class on selection",
+            "status": "passed",
+            "durationMs": 0.12395800000012969
+          },
+          {
+            "name": "UI layout contract classifies graph nodes without metadata defensively",
+            "status": "passed",
+            "durationMs": 0.25395900000148686
+          },
+          {
+            "name": "UI layout contract anchors panes explicitly and preserves a measurable graph viewport",
+            "status": "passed",
+            "durationMs": 1.6885000000002037
+          },
+          {
+            "name": "UI layout contract renders the inspector conditionally and observes graph-container resizing",
+            "status": "passed",
+            "durationMs": 0.6577910000014526
+          },
+          {
+            "name": "UI layout contract localizes English and Simplified Chinese without translating source identities",
+            "status": "passed",
+            "durationMs": 108.66620799999873
+          },
+          {
+            "name": "UI layout contract detects browser language, persists preference, and falls back for missing translations",
+            "status": "passed",
+            "durationMs": 0.7767089999979362
+          },
+          {
+            "name": "UI layout contract bounds framework canvas work while retaining the selected boundary and complete source result",
+            "status": "passed",
+            "durationMs": 2.2691669999985606
+          },
+          {
+            "name": "UI layout contract deduplicates transient errors and highlights only a selected neighborhood",
+            "status": "passed",
+            "durationMs": 0.8563330000033602
+          },
+          {
+            "name": "UI layout contract keeps all seven views and current controls represented in the refactored frontend",
+            "status": "passed",
+            "durationMs": 0.643832999998267
+          },
+          {
+            "name": "recovers from malformed Rust source",
+            "status": "passed",
+            "durationMs": 91.36258299999827
+          }
+        ]
+      },
+      {
+        "file": "tests/global-queries.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "durable global results agree with the frozen scan oracle across scopes and confidence",
+            "status": "passed",
+            "durationMs": 456.7110840000005
+          },
+          {
+            "name": "global queries do not hydrate whole source tables or run degree subqueries",
+            "status": "passed",
+            "durationMs": 18.285915999999816
+          },
+          {
+            "name": "pages bind scope and generation, mutation invalidates cache, offline repair is atomic",
+            "status": "passed",
+            "durationMs": 24.475541000000703
+          },
+          {
+            "name": "global work budgets include metadata, rejected pair probes and candidate ranking",
+            "status": "passed",
+            "durationMs": 5.278207999999722
+          },
+          {
+            "name": "offline cycle computation handles deep graphs without a recursive call stack",
+            "status": "passed",
+            "durationMs": 21.868915999999444
+          },
+          {
+            "name": "failed offline cache construction retains the prior coherent generation",
+            "status": "passed",
+            "durationMs": 15.899790999999823
+          },
+          {
+            "name": "HTTP and MCP expose bounded pages and reject cursors from another operation",
+            "status": "passed",
+            "durationMs": 765.0263750000004
+          }
+        ]
+      },
+      {
+        "file": "tests/index-execution.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "index workers preserve custom-root summaries and CLI, HTTP and MCP status/sync contracts",
+            "status": "passed",
+            "durationMs": 6895.899625
+          },
+          {
+            "name": "fixed index RPC rejects malformed and oversized control before indexing and recovers",
+            "status": "passed",
+            "durationMs": 3311.1601659999997
+          },
+          {
+            "name": "index admission bounds both queues, cancellation drains them and status has its own slot",
+            "status": "passed",
+            "durationMs": 598.4489169999997
+          },
+          {
+            "name": "native SQLite work is cancellable and cannot block host heartbeats or subsequent requests",
+            "status": "passed",
+            "durationMs": 5201.736459
+          },
+          {
+            "name": "a blocked legacy export leaves coherent semantic status/navigation admitted and cancelled work retains semantic history without promising rollback",
+            "status": "passed",
+            "durationMs": 3684.8573749999996
+          }
+        ]
+      },
+      {
+        "file": "tests/index-provider-cli.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "isolated CLI executes qualified python and preserves owned navigation/registration",
+            "status": "passed",
+            "durationMs": 61171.324125
+          },
+          {
+            "name": "isolated CLI executes qualified go and preserves owned navigation/registration",
+            "status": "passed",
+            "durationMs": 33733.33029099999
+          },
+          {
+            "name": "isolated CLI executes qualified java and preserves owned navigation/registration",
+            "status": "passed",
+            "durationMs": 4963.221667000005
+          },
+          {
+            "name": "isolated CLI executes qualified csharp and preserves owned navigation/registration",
+            "status": "passed",
+            "durationMs": 18754.84279200001
+          },
+          {
+            "name": "isolated Rust CLI preserves explicit feature flags and pinned compiler environment",
+            "status": "passed",
+            "durationMs": 2861.493875
+          },
+          {
+            "name": "isolated Clang CLI preserves compilation-unit input and owned calls",
+            "status": "passed",
+            "durationMs": 3495.860750000007
+          }
+        ]
+      },
+      {
+        "file": "tests/polyglot.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "all eight frontends share a graph and expose actual file counts and provider metadata",
+            "status": "passed",
+            "durationMs": 1.8075410000001284
+          },
+          {
+            "name": "extracts declarations, inheritance, decorators, types, macros and conservative calls",
+            "status": "passed",
+            "durationMs": 0.9457499999998618
+          },
+          {
+            "name": "schema boundaries are namespaced, queryable, and arbitrary JSON stays quiet",
+            "status": "passed",
+            "durationMs": 2.2150000000001455
+          },
+          {
+            "name": "explicit boundary participants match only the same protocol and namespace",
+            "status": "passed",
+            "durationMs": 0.3012909999997646
+          },
+          {
+            "name": "deterministic IDs survive a complete reanalysis",
+            "status": "passed",
+            "durationMs": 2282.1632499999996
+          },
+          {
+            "name": "optional semantic provider availability and failures preserve syntax evidence",
+            "status": "passed",
+            "durationMs": 32.25029200000063
+          },
+          {
+            "name": "malformed source is isolated; compile database and provider versions invalidate indexes",
+            "status": "passed",
+            "durationMs": 3808.9953330000008
+          },
+          {
+            "name": "custom in-repository indexes stay fresh and provider changes are detected",
+            "status": "passed",
+            "durationMs": 4053.813750000001
+          },
+          {
+            "name": "large syntax-only repositories remain deterministic and boundary output is bounded",
+            "status": "passed",
+            "durationMs": 2467.3902909999997
+          },
+          {
+            "name": "duplicate declarations never produce a trusted or arbitrarily selected call target",
+            "status": "passed",
+            "durationMs": 34.67250000000058
+          },
+          {
+            "name": "compilation databases supply per-translation-unit context without executing commands",
+            "status": "passed",
+            "durationMs": 29.33179200000086
+          },
+          {
+            "name": "a failed syntax provider reports unavailable rather than invented capabilities",
+            "status": "passed",
+            "durationMs": 26.130334000001312
+          },
+          {
+            "name": "all mixed graph relationship endpoints exist",
+            "status": "passed",
+            "durationMs": 0.3008750000008149
+          }
+        ]
+      },
+      {
+        "file": "tests/provider-guard.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "native guardian preserves complete multibyte output and logical nonzero exit",
+            "status": "passed",
+            "durationMs": 374.10429200000004
+          },
+          {
+            "name": "hard death of the SDK owner also terminates detached native work and its descendants",
+            "status": "passed",
+            "durationMs": 1379.2575000000002
+          },
+          {
+            "name": "killed indexing owners release SDK staging leases and preserve atomic WAL publication at all four recovery points",
+            "status": "passed",
+            "durationMs": 1410.075541
+          }
+        ]
+      },
+      {
+        "file": "tests/query-runtime.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "indexed navigation matches former scan semantics across scopes, confidence and traversal limits",
+            "status": "passed",
+            "durationMs": 255.81100000000015
+          },
+          {
+            "name": "rejected raw candidates, payload, cancellation and time consume actual navigation budgets",
+            "status": "passed",
+            "durationMs": 20.09937500000001
+          },
+          {
+            "name": "confidence-rejected adjacency rows still consume candidate work",
+            "status": "passed",
+            "durationMs": 7.136833999999908
+          },
+          {
+            "name": "read workers enforce deadlines during native SQL and recover for subsequent reads",
+            "status": "passed",
+            "durationMs": 1117.493459
+          },
+          {
+            "name": "read admission is bounded and cancellation drains queued requests",
+            "status": "passed",
+            "durationMs": 144.17741699999988
+          },
+          {
+            "name": "isolated HTTP and CLI navigation preserve shared full-output contracts",
+            "status": "passed",
+            "durationMs": 6114.491832999999
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-artifacts.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "maintenance excludes active staging and whole indexing jobs while independent writers can share work leases",
+            "status": "passed",
+            "durationMs": 38.05054200000001
+          },
+          {
+            "name": "cross-process indexing locks release after a killed worker without PID or heartbeat expiry",
+            "status": "passed",
+            "durationMs": 172.82833300000004
+          },
+          {
+            "name": "exclusive maintenance rejects writers while an already pinned WAL reader retains its old snapshot",
+            "status": "passed",
+            "durationMs": 23.547957999999994
+          },
+          {
+            "name": "artifact GC retains current and pinned evidence, sweeps only marked unreachable workspaces, and is idempotent",
+            "status": "passed",
+            "durationMs": 169.89237499999996
+          },
+          {
+            "name": "orphan positive and selector support receipts retain original provider artifacts until the final derived claim expires",
+            "status": "passed",
+            "durationMs": 115.85870799999998
+          },
+          {
+            "name": "SDK aliases into retained workspaces survive; symlinks, malformed markers and legacy directories never authorize deletion",
+            "status": "passed",
+            "durationMs": 97.988292
+          },
+          {
+            "name": "interruption between database retention and artifact sweep is retryable and cannot remove retained evidence",
+            "status": "passed",
+            "durationMs": 235.72279200000003
+          },
+          {
+            "name": "partial workspace removal preserves ownership for retry and artifact aliases retain their evidence",
+            "status": "passed",
+            "durationMs": 87.71945899999992
+          },
+          {
+            "name": "custom index ancestors preserve source discovery; workspace roots and aliases fail safely and missing maintenance never creates an index",
+            "status": "passed",
+            "durationMs": 120.71129199999996
+          },
+          {
+            "name": "CLI maintenance preserves pin/unpin and custom sqlite index contracts with additive artifact results",
+            "status": "passed",
+            "durationMs": 2874.4116669999994
+          },
+          {
+            "name": "compiler probes and rooted source aliases retain their workspaces through archived positive support receipts",
+            "status": "passed",
+            "durationMs": 90.66108399999939
+          },
+          {
+            "name": "directory membership and recursive SDK evidence protect all affected owned descendants",
+            "status": "passed",
+            "durationMs": 76.16887499999939
+          },
+          {
+            "name": "old source inputs without a root witness defer filesystem sweeping instead of guessing a repository",
+            "status": "passed",
+            "durationMs": 38.026208000000224
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-authority.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "default navigation and freshness use one semantic snapshot without any legacy database or filesystem exports",
+            "status": "passed",
+            "durationMs": 2053.375
+          },
+          {
+            "name": "actual accepted source-policy writer migrates to semantic default authority and its old reader consumes a retained-snapshot rollback export",
+            "status": "passed",
+            "durationMs": 2435.636833
+          },
+          {
+            "name": "qualified native publication inherits current compatibility metadata while changed source fails closed until sync",
+            "status": "passed",
+            "durationMs": 1718.1836670000002
+          },
+          {
+            "name": "an unreported publication cannot silently reactivate a stale legacy compatibility database",
+            "status": "passed",
+            "durationMs": 1452.0118750000001
+          },
+          {
+            "name": "failed analysis records a durable attempt without replacing the previous coherent published view",
+            "status": "passed",
+            "durationMs": 2377.2352919999994
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-clang-inputs.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "an excluded earlier header appearing invalidates the unedited importer and agrees exactly with a clean Clang rebuild",
+            "status": "passed",
+            "durationMs": 14072.953500000001
+          },
+          {
+            "name": "literal has_include absence is recorded even when the tested file is never included",
+            "status": "passed",
+            "durationMs": 8720.205167000002
+          },
+          {
+            "name": "include directory alias retargeting invalidates context even when every positive input has identical bytes",
+            "status": "passed",
+            "durationMs": 7665.616292000002
+          },
+          {
+            "name": "nonliteral preprocessor queries expose unchecked coverage and cannot reuse stale precise output",
+            "status": "passed",
+            "durationMs": 15937.427416999999
+          },
+          {
+            "name": "a header added between preprocessor observation and AST publication cannot publish a mixed dependency snapshot",
+            "status": "passed",
+            "durationMs": 4337.872917000001
+          },
+          {
+            "name": "dependency selection changing between the makefile dependency scan and AST is rejected",
+            "status": "passed",
+            "durationMs": 4404.872500000005
+          },
+          {
+            "name": "macro return types preserve direct definition anchors while expanded identifier names remain unsupported",
+            "status": "passed",
+            "durationMs": 2291.8457909999997
+          },
+          {
+            "name": "host context changes invalidate a registered native context and require tool requalification",
+            "status": "passed",
+            "durationMs": 10640.559459000004
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-core.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "semantic immutable foundation canonical identities, Unicode/CRLF conversion and invalid boundaries",
+            "status": "passed",
+            "durationMs": 2.1446670000000267
+          },
+          {
+            "name": "semantic immutable foundation provider claims coexist, repeated batches deduplicate and entities detect collisions",
+            "status": "passed",
+            "durationMs": 13.309708
+          },
+          {
+            "name": "semantic immutable foundation AND support, OR alternatives, interning, selector invalidation and identity-shell lifetime",
+            "status": "passed",
+            "durationMs": 18.93508399999996
+          },
+          {
+            "name": "semantic immutable foundation invalid/unsealed batches, competing publishers and publication fault rollback",
+            "status": "passed",
+            "durationMs": 82.93649999999991
+          },
+          {
+            "name": "semantic immutable foundation unknown schemas are refused without modifying the database; query plans use adjacency indexes",
+            "status": "passed",
+            "durationMs": 1187.09525
+          },
+          {
+            "name": "semantic immutable foundation status pagination visits every partition without expanding coverage metadata",
+            "status": "passed",
+            "durationMs": 30.422375000000102
+          },
+          {
+            "name": "semantic immutable foundation sealing caches deterministic content including coverage; digest writes roll back atomically",
+            "status": "passed",
+            "durationMs": 13.8992089999997
+          },
+          {
+            "name": "semantic immutable foundation conflicting trusted call targets remain claims but are excluded from trusted summaries",
+            "status": "passed",
+            "durationMs": 13.848084000000199
+          },
+          {
+            "name": "TypeScript semantic vertical slice definitions/references/call sites/overloads/nested scopes and legacy compatibility",
+            "status": "passed",
+            "durationMs": 1389.932209
+          },
+          {
+            "name": "TypeScript semantic vertical slice deletion leaves unresolved identity shells, pinned history, fresh snapshots and custom paths",
+            "status": "passed",
+            "durationMs": 1564.0016670000005
+          },
+          {
+            "name": "TypeScript semantic vertical slice HTTP semantic navigation works beside legacy API",
+            "status": "passed",
+            "durationMs": 1446.332292
+          },
+          {
+            "name": "TypeScript semantic vertical slice no TypeScript and malformed project keep legacy behavior with honest coverage",
+            "status": "passed",
+            "durationMs": 98.4126669999996
+          },
+          {
+            "name": "TypeScript semantic vertical slice compiler recovery calls stay unresolved, React facets use AST, failed attempts expose historical snapshots",
+            "status": "passed",
+            "durationMs": 742.76325
+          },
+          {
+            "name": "TypeScript semantic vertical slice MCP semantic evidence and legacy overview remain usable together",
+            "status": "passed",
+            "durationMs": 1216.455332999999
+          },
+          {
+            "name": "TypeScript semantic vertical slice same-spelling block declarations and static/instance methods do not unify",
+            "status": "passed",
+            "durationMs": 673.1111250000013
+          },
+          {
+            "name": "TypeScript semantic vertical slice a graph-only index remains readable and additive reanalysis preserves legacy IDs",
+            "status": "passed",
+            "durationMs": 2232.8510420000002
+          },
+          {
+            "name": "TypeScript semantic vertical slice conservative semantic replacement agrees with clean rebuild through edits, delete, rename and config",
+            "status": "passed",
+            "durationMs": 8383.311916
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-diagnostics.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "diagnostic-only shards preserve complete payloads, duplicates, support invalidation, reuse, pinned history and GC",
+            "status": "passed",
+            "durationMs": 143.15870800000005
+          },
+          {
+            "name": "pass reports preserve their established order using sealed payloads across diagnostic-only cached shards",
+            "status": "passed",
+            "durationMs": 5428.688584
+          },
+          {
+            "name": "actual Tauri reports are owned semantic facts and disappear from current output when their source support is removed",
+            "status": "passed",
+            "durationMs": 4693.209417000001
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-gc.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "GC retains all alternative supports, historical snapshots, pins and immutable origin evidence",
+            "status": "passed",
+            "durationMs": 40.706208000000004
+          },
+          {
+            "name": "GC keeps large projection payloads and rolls back failed collection atomically",
+            "status": "passed",
+            "durationMs": 15.365083999999968
+          },
+          {
+            "name": "GC preserves selector admission and source-catalogue witnesses after their snapshots expire",
+            "status": "passed",
+            "durationMs": 21.81483300000002
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-incremental.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "compiler document ownership reuses unrelated outputs and invalidates unchanged callers after exported signature changes",
+            "status": "passed",
+            "durationMs": 2196.654709
+          },
+          {
+            "name": "seeded source/config/negative selector edits agree with a clean compiler and pass rebuild",
+            "status": "passed",
+            "durationMs": 16132.542084
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-ingestion.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "SCIP grammar handles package spaces, escaped names and scoped locals",
+            "status": "passed",
+            "durationMs": 3.6077080000000024
+          },
+          {
+            "name": "UTF-8/16/32 column conversion is consistent and rejects partial Unicode boundaries",
+            "status": "passed",
+            "durationMs": 1.0592910000000302
+          },
+          {
+            "name": "SCIP physical lines do not interpret Unicode string/comment separators as newlines",
+            "status": "passed",
+            "durationMs": 135.69299999999998
+          },
+          {
+            "name": "streamed interchange imports navigation/native facts without turning highlighting into calls",
+            "status": "passed",
+            "durationMs": 110.84304199999997
+          },
+          {
+            "name": "inference-backed SCIP targets cannot become compiler-resolved bindings",
+            "status": "passed",
+            "durationMs": 108.3566249999999
+          },
+          {
+            "name": "external document-local metadata is rejected by default or diagnosed and excluded explicitly",
+            "status": "passed",
+            "durationMs": 276.93000000000006
+          },
+          {
+            "name": "document-local symbols do not unify across files; repeat import is idempotent",
+            "status": "passed",
+            "durationMs": 103.12520799999993
+          },
+          {
+            "name": "SCIP document and external ownership reuse survives artifact order changes and invalidates changed bindings",
+            "status": "passed",
+            "durationMs": 291.602167
+          },
+          {
+            "name": "retained TypeScript call projection keeps compiler target provenance rather than syntax site provenance",
+            "status": "passed",
+            "durationMs": 16.220458000000008
+          },
+          {
+            "name": "mismatched and unsafe documents are excluded while verified siblings survive",
+            "status": "passed",
+            "durationMs": 64.80966699999999
+          },
+          {
+            "name": "mid-document range failure cannot publish earlier successful batches",
+            "status": "passed",
+            "durationMs": 54.39662499999986
+          },
+          {
+            "name": "explicit advisory policy diagnoses enclosing errors without relaxing primary ranges",
+            "status": "passed",
+            "durationMs": 161.00724999999989
+          },
+          {
+            "name": "explicit document prefix maps nested producer roots without joining unrelated files",
+            "status": "passed",
+            "durationMs": 79.356
+          },
+          {
+            "name": "malformed framing leaves the active snapshot intact, including a truncated document",
+            "status": "passed",
+            "durationMs": 160.39487499999996
+          },
+          {
+            "name": "resource and legacy encoding policies are explicit",
+            "status": "passed",
+            "durationMs": 189.00358400000005
+          },
+          {
+            "name": "project discovery preserves ordered compile variants and real extends inputs",
+            "status": "passed",
+            "durationMs": 37.57074999999986
+          },
+          {
+            "name": "multiple compiler projects retain separate identities and documentation edits reuse closed units",
+            "status": "passed",
+            "durationMs": 2836.7576249999997
+          },
+          {
+            "name": "status and sync invalidate compiler configuration inputs outside the scanner catalogue",
+            "status": "passed",
+            "durationMs": 1340.3087079999996
+          },
+          {
+            "name": "JavaScript inferred constructor properties keep their terminal symbol identity",
+            "status": "passed",
+            "durationMs": 2375.9811660000005
+          },
+          {
+            "name": "oversized legacy evidence remains intact without exceeding bounded fact payloads",
+            "status": "passed",
+            "durationMs": 43.250332999999955
+          },
+          {
+            "name": "pass dependency cycles and absent dependencies are rejected",
+            "status": "passed",
+            "durationMs": 0.22933399999965332
+          },
+          {
+            "name": "dependent passes receive sealed owned outputs in topological order",
+            "status": "passed",
+            "durationMs": 5.824416999999812
+          },
+          {
+            "name": "call pass uses indexed targets, respects ownership and cannot strengthen confidence",
+            "status": "passed",
+            "durationMs": 6.838958000000275
+          },
+          {
+            "name": "old semantic schemas remain read-only compatible and require durable rollback preparation before writer upgrade",
+            "status": "passed",
+            "durationMs": 1921.2342919999992
+          },
+          {
+            "name": "nested wire object quotas are checked before protobuf expands messages",
+            "status": "passed",
+            "durationMs": 2.731792000000496
+          },
+          {
+            "name": "known wire fields require correct types and strict UTF-8 before decoding",
+            "status": "passed",
+            "durationMs": 0.2660410000007687
+          },
+          {
+            "name": "negative roles cannot manufacture a definition",
+            "status": "passed",
+            "durationMs": 78.49195899999904
+          },
+          {
+            "name": "filename-only inventory matches scanner input identity without hydrating source texts",
+            "status": "passed",
+            "durationMs": 56.2984579999993
+          },
+          {
+            "name": "cooperative cancellation during document batches leaves the active snapshot intact",
+            "status": "passed",
+            "durationMs": 94.04275000000052
+          },
+          {
+            "name": "verified native artifacts survive documentation-only analyze and invalidate as a group on source changes",
+            "status": "passed",
+            "durationMs": 197.73341700000128
+          },
+          {
+            "name": "real Clang resolves C/C++ declarations, overloads and references under distinct build contexts",
+            "status": "passed",
+            "durationMs": 4856.694750000001
+          },
+          {
+            "name": "Clang command effects and unrecognized flags are refused, and compiler failures do not publish",
+            "status": "passed",
+            "durationMs": 52.63074999999844
+          },
+          {
+            "name": "changed excluded generated headers invalidate native facts through status/sync",
+            "status": "passed",
+            "durationMs": 6732.8134580000005
+          },
+          {
+            "name": "constructor arguments and nested function-pointer factories are not fabricated callees",
+            "status": "passed",
+            "durationMs": 2740.846207999999
+          },
+          {
+            "name": "out-of-line C++ methods and static data retain their declaration scope and identity",
+            "status": "passed",
+            "durationMs": 2729.021958000001
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-inputs.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "observed compiler search, directory membership and realpath changes fail the prepublication barrier",
+            "status": "passed",
+            "durationMs": 9.76254199999994
+          },
+          {
+            "name": "an excluded new module invalidates an unedited importer and agrees with a clean compiler rebuild",
+            "status": "passed",
+            "durationMs": 2483.6167499999997
+          },
+          {
+            "name": "missing extended configuration is a negative dependency even outside scanner input",
+            "status": "passed",
+            "durationMs": 1854.2704159999998
+          },
+          {
+            "name": "configured SDK aliases retain membership and retarget dependencies through status and native retention",
+            "status": "passed",
+            "durationMs": 55.39470799999981
+          },
+          {
+            "name": "a dependency changing after an earlier compiler unit seals cannot publish a mixed snapshot",
+            "status": "passed",
+            "durationMs": 4950.637707999999
+          },
+          {
+            "name": "retargeting an entire source root invalidates identical-byte owners and agrees with a clean rebuild",
+            "status": "passed",
+            "durationMs": 2087.2167500000014
+          },
+          {
+            "name": "a source root swap after discovery aborts before fact or compatibility publication",
+            "status": "passed",
+            "durationMs": 817.0699169999989
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-managed.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "qualified producer dialects preserve opaque local IDs and map javac tabs without clamping",
+            "status": "passed",
+            "durationMs": 3.6554579999999532
+          },
+          {
+            "name": "tool receipts capture directory membership, content and internal links; escapes are rejected",
+            "status": "passed",
+            "durationMs": 12.322333999999955
+          },
+          {
+            "name": "recorded SDK membership invalidates retained provider groups on added stubs without a source edit",
+            "status": "passed",
+            "durationMs": 53.82854199999997
+          },
+          {
+            "name": "managed contexts reject unpinned tools before executing repository code",
+            "status": "passed",
+            "durationMs": 54.369666999999936
+          },
+          {
+            "name": "real python producer qualifies definitions, references, imports/types and owned declared calls",
+            "status": "passed",
+            "durationMs": 112126.454084
+          },
+          {
+            "name": "real go producer qualifies definitions, references, imports/types and owned declared calls",
+            "status": "passed",
+            "durationMs": 41169.90241699999
+          },
+          {
+            "name": "real java producer qualifies definitions, references, imports/types and owned declared calls",
+            "status": "passed",
+            "durationMs": 8451.984750000003
+          },
+          {
+            "name": "real csharp producer qualifies definitions, references, imports/types and owned declared calls",
+            "status": "passed",
+            "durationMs": 30500.091749999992
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-multiprovider.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "seeded multi-provider edits match independent actual compiler rebuilds for facts, claims, coverage, projections and confidence",
+            "status": "passed",
+            "durationMs": 1953259.182084
+          },
+          {
+            "name": "actual accepted writer upgrade invalidates prior mappings, replays registered producers and preserves pinned history through GC",
+            "status": "passed",
+            "durationMs": 103788.57675000001
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-passes.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "owned semantic derivations DAG rejects missing dependencies and cycles before execution",
+            "status": "passed",
+            "durationMs": 1.2766249999999673
+          },
+          {
+            "name": "owned semantic derivations sealed compatibility order follows its run rather than historical claim allocation",
+            "status": "passed",
+            "durationMs": 49.40883400000007
+          },
+          {
+            "name": "owned semantic derivations shard fingerprints follow persisted JSON optional-field semantics",
+            "status": "passed",
+            "durationMs": 53.80183299999999
+          },
+          {
+            "name": "owned semantic derivations mixed framework and Knowledge output is sealed, declared, supported and not duplicated in legacy/full",
+            "status": "passed",
+            "durationMs": 3956.7750419999998
+          },
+          {
+            "name": "owned semantic derivations HTTP, GraphQL and Protobuf explicit namespaces qualify syntax calls and unique handlers without cross-service joins",
+            "status": "passed",
+            "durationMs": 5134.569834000001
+          },
+          {
+            "name": "owned semantic derivations owned pass output reuse preserves unrelated Knowledge and boundary partitions and rejects stale admissions",
+            "status": "passed",
+            "durationMs": 10714.200916000002
+          },
+          {
+            "name": "owned semantic derivations alternative proof paths survive support removal and disappear after their last support is removed",
+            "status": "passed",
+            "durationMs": 29.210792000001675
+          },
+          {
+            "name": "owned semantic derivations Tauri calls require actual imported bindings and reject comments, strings and shadowed names",
+            "status": "passed",
+            "durationMs": 5079.286667
+          },
+          {
+            "name": "owned semantic derivations Tauri applications with equal operation names retain distinct namespaces",
+            "status": "passed",
+            "durationMs": 3241.6714999999967
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-publication.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "qualified selector admission rejects a stale index and reuses unchanged output across fresh environments",
+            "status": "passed",
+            "durationMs": 48.65745899999999
+          },
+          {
+            "name": "publication reuses unchanged navigation and memberships; readers retain a pinned snapshot",
+            "status": "passed",
+            "durationMs": 12.152332999999999
+          },
+          {
+            "name": "random owned/support/selector selections match a full oracle, including reactivation and fanout",
+            "status": "passed",
+            "durationMs": 502.30324999999993
+          },
+          {
+            "name": "replacing one of two owners preserves their shared old claim and adds independent new evidence",
+            "status": "passed",
+            "durationMs": 11.586125000000038
+          },
+          {
+            "name": "new competing static targets invalidate retained call aggregates and removal restores them",
+            "status": "passed",
+            "durationMs": 13.444291000000021
+          },
+          {
+            "name": "immutable navigation and historical call probes use ordered indexes without temporary sorting",
+            "status": "passed",
+            "durationMs": 7.180208000000107
+          },
+          {
+            "name": "publication eligibility probes claim owners before selected partitions",
+            "status": "passed",
+            "durationMs": 10.700083000000063
+          },
+          {
+            "name": "legacy materialized snapshots upgrade without copying or changing their rows",
+            "status": "passed",
+            "durationMs": 64.8693330000001
+          },
+          {
+            "name": "expired navigation candidates consume read work rather than an unbounded post-filter scan",
+            "status": "passed",
+            "durationMs": 527.233292
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-replay.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "provider grants bind recipe, repository and index; a copied or modified registration is not execution authority",
+            "status": "passed",
+            "durationMs": 8.711291999999958
+          },
+          {
+            "name": "an index cannot forge permission to launch a different Rust binary; failure publishes owned coverage without stale native output",
+            "status": "passed",
+            "durationMs": 257.22679099999993
+          },
+          {
+            "name": "registered Clang prepares without publication, then source/config changes publish once and failed replay removes precise output",
+            "status": "passed",
+            "durationMs": 17420.453709
+          },
+          {
+            "name": "registered Rust replays manifest features atomically and ambient Cargo additions become owned fail-closed gaps",
+            "status": "passed",
+            "durationMs": 7512.966
+          },
+          {
+            "name": "registered python uses the actual qualified producer on changes, reuses documentation-only output, and publishes a single snapshot",
+            "status": "passed",
+            "durationMs": 168161.87062499998
+          },
+          {
+            "name": "registered go uses the actual qualified producer on changes, reuses documentation-only output, and publishes a single snapshot",
+            "status": "passed",
+            "durationMs": 51499.962833
+          },
+          {
+            "name": "registered java uses the actual qualified producer on changes, reuses documentation-only output, and publishes a single snapshot",
+            "status": "passed",
+            "durationMs": 10015.902417000005
+          },
+          {
+            "name": "registered csharp uses the actual qualified producer on changes, reuses documentation-only output, and publishes a single snapshot",
+            "status": "passed",
+            "durationMs": 38601.108791000006
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-retention.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "unchanged native-only publication retains qualified source, passes and TypeScript groups",
+            "status": "passed",
+            "durationMs": 986.147167
+          },
+          {
+            "name": "changed source removes stale TypeScript and owned pass facts while old snapshots remain readable",
+            "status": "passed",
+            "durationMs": 1165.6588749999999
+          },
+          {
+            "name": "documentation-only explicit imports hide stale knowledge but keep compiler groups and subsequent compiler reuse",
+            "status": "passed",
+            "durationMs": 1025.1138329999999
+          },
+          {
+            "name": "a newly added semantic module invalidates prior negative candidate catalogues without importer edits",
+            "status": "passed",
+            "durationMs": 550.6918750000004
+          },
+          {
+            "name": "configuration-only changes invalidate unexecuted groups even when source selection is identical",
+            "status": "passed",
+            "durationMs": 660.8657499999999
+          },
+          {
+            "name": "mixed source/schema edits and recovery agree with independent clean source and interchange rebuilds",
+            "status": "passed",
+            "durationMs": 4699.5990839999995
+          },
+          {
+            "name": "source, native document and negative inventory changes after qualification abort the whole native publication",
+            "status": "passed",
+            "durationMs": 2314.8371669999997
+          },
+          {
+            "name": "identical-byte relocation cannot retain another logical repository project or semantic identities",
+            "status": "passed",
+            "durationMs": 639.7784159999992
+          },
+          {
+            "name": "excluded compiler configuration invalidates syntax/pass observations as well as common TS facts and remains visibly stale",
+            "status": "passed",
+            "durationMs": 1746.1961250000004
+          },
+          {
+            "name": "literal scanner paths with brackets retain source observations and qualified semantic navigation",
+            "status": "passed",
+            "durationMs": 1139.0241669999996
+          },
+          {
+            "name": "qualified isolated module sync preserves observed inputs and agrees with clean facts before native retention",
+            "status": "passed",
+            "durationMs": 2300.282709000001
+          },
+          {
+            "name": "global script and new ambient augmentation edits take a full source rebuild and match clean observations",
+            "status": "passed",
+            "durationMs": 4644.576584000002
+          },
+          {
+            "name": "excluded configuration receipts bind original bytes even when UTF-8 decoding has identical replacements",
+            "status": "passed",
+            "durationMs": 1209.3726659999993
+          },
+          {
+            "name": "actual report writer upgrade hides unqualified owners and preserves reports, history and observations through GC",
+            "status": "passed",
+            "durationMs": 2516.6098329999986
+          }
+        ]
+      },
+      {
+        "file": "tests/semantic-rust.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "release qualification accepts platform displays and binds missing revision to exact artifact",
+            "status": "passed",
+            "durationMs": 3.4826249999999845
+          },
+          {
+            "name": "release qualification rejects wrong version, revision, date, artifact and platform",
+            "status": "passed",
+            "durationMs": 11.316958999999997
+          },
+          {
+            "name": "provider process bounds output, deadlines and cancellation",
+            "status": "passed",
+            "durationMs": 267.83179099999995
+          },
+          {
+            "name": "deadline terminates POSIX descendants, not just the direct process",
+            "status": "passed",
+            "durationMs": 811.822625
+          },
+          {
+            "name": "successful producer exit also cleans up descendants",
+            "status": "passed",
+            "durationMs": 758.5016249999999
+          },
+          {
+            "name": "Rust binary pin failure preserves legacy behavior and does not invoke a producer",
+            "status": "passed",
+            "durationMs": 270.81570899999997
+          },
+          {
+            "name": "a source addition during actual producer ingestion cannot publish stale negative lookups",
+            "status": "passed",
+            "durationMs": 3798.9367909999996
+          },
+          {
+            "name": "real Rust producer qualifies traits, path dependencies, feature variants and stable navigation",
+            "status": "passed",
+            "durationMs": 7919.681790999999
+          },
+          {
+            "name": "Rust build scripts are refused without effects or snapshot replacement",
+            "status": "passed",
+            "durationMs": 1085.5948749999989
+          },
+          {
+            "name": "custom output ancestors cannot supply undeclared Cargo configuration",
+            "status": "passed",
+            "durationMs": 130.59420799999862
+          }
+        ]
+      },
+      {
+        "file": "tests/snapshot-report.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "publication atomically binds immutable report metadata and retained history with its verified compatibility projection in the same transaction",
+            "status": "passed",
+            "durationMs": 129.989375
+          },
+          {
+            "name": "real analysis records its own report even while legacy filesystem metadata is missing or stale",
+            "status": "passed",
+            "durationMs": 1899.7222499999998
+          },
+          {
+            "name": "killed writers retain either both old facts/report or both new facts/report at all recovery points",
+            "status": "passed",
+            "durationMs": 1317.6173750000003
+          },
+          {
+            "name": "a custom index never reports a different identical-byte repository as fresh",
+            "status": "passed",
+            "durationMs": 4125.476667
+          },
+          {
+            "name": "excluded configuration, boundary settings and invalid raw edits participate in freshness and publication input checks",
+            "status": "passed",
+            "durationMs": 6482.051917000001
+          }
+        ]
+      },
+      {
+        "file": "tests/source-reuse.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "documentation-only analysis reuses actual compiler observations and equals an independent rebuild",
+            "status": "passed",
+            "durationMs": 1779.9705829999998
+          },
+          {
+            "name": "new module, source and excluded configuration edits rerun the compiler rather than reusing stale observations",
+            "status": "passed",
+            "durationMs": 7671.29975
+          },
+          {
+            "name": "missing and unsupported observation receipts force a fresh compiler observation",
+            "status": "passed",
+            "durationMs": 1023.3909999999996
+          },
+          {
+            "name": "an earlier excluded import target appearing invalidates reused observations without an importer edit",
+            "status": "passed",
+            "durationMs": 2280.3055000000004
+          },
+          {
+            "name": "compiler filesystem case policy participates in the semantic context identity",
+            "status": "passed",
+            "durationMs": 556.1495829999985
+          },
+          {
+            "name": "actual 2.12 writer policy upgrade invalidates unchanged schema inputs and preserves pinned history",
+            "status": "passed",
+            "durationMs": 2626.5878749999993
+          }
+        ]
+      },
+      {
+        "file": "tests/watch-isolation.test.ts",
+        "status": "passed",
+        "cases": [
+          {
+            "name": "watch stop aborts in-flight isolated sync and prevents subsequent callbacks",
+            "status": "passed",
+            "durationMs": 9.512833
+          },
+          {
+            "name": "watch reports a bounded worker failure, ignores generated output and retries the next source event",
+            "status": "passed",
+            "durationMs": 3.315000000000026
+          }
+        ]
+      }
+    ]
+  },
+  "evidence": {
+    "oracle": {
+      "measuredAt": "2026-10-18T17:06:57.289Z",
+      "node": "v25.9.0",
+      "platform": "darwin",
+      "arch": "arm64",
+      "initialSeed": 2749979,
+      "sourceRoot": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-multiprovider-0Bj20O",
+      "complete": true,
+      "expectedChecks": 18,
+      "scope": "Actual TS/Clang/Rust/Python/Go/Java/Csharp tools, fresh independent index and reauthorized execution control per edit; no copied facts or producer outputs",
+      "evidence": [
+        {
+          "edit": "initial",
+          "seed": 3146667341,
+          "hashes": {
+            "analysisReports": "102ec37bfde2bbdadd5d41c732a331d59089afe994c3064317d4eee854ea69a5",
+            "facts": "a4ca218e7c5690c8225ab312c35f62a15a5590302e72bade7e273efecaa4c49d",
+            "claims": "29192bea7dccaccbefaf429e6831e73635f2e07777ae5bf0bddfb41342d0ed8b",
+            "coverage": "52cfd5b686160ecc003b845bcb151b202283d865bc9d895067f0e2714fd04701",
+            "navigation": "7e641af6b3e725734e8a6fbb2ba2323888fb2b18ee2995a3a3f009768befc8c1",
+            "calls": "d2cd02f672418f4dfbbec3bb111f4f97a7e139d44263f06a6a29dad5f78f2209",
+            "projections": "797edc3598d7b7f3ea3d74c79807493926c28ae88074b5b2cc9f0cbf4998b7f3"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 309,
+            "claims": 309,
+            "coverage": 87,
+            "navigation": 309,
+            "calls": 7,
+            "projections": 121
+          }
+        },
+        {
+          "edit": "add Python module without editing importer",
+          "seed": 3442144840,
+          "hashes": {
+            "analysisReports": "11131fd100a1983eece788f9eacc5ba7ff7f2485f061d59350331c1883b7ec60",
+            "facts": "4cca891e0a1cf635ea7c2ebd907f852d011da692bd68e0f8500ed3473858d99c",
+            "claims": "e48a9708bfb41ad10772d4566ff90ff3614193a068aade8aec715616722df7c7",
+            "coverage": "88203dd11e722fa41ba9405daf3dc21ff4066b27a0d4c1f96539111df9c59dcd",
+            "navigation": "07f83c57d17f02478cc6a5362ca089481bc562de7da5392e5fd956d3c16eaa9e",
+            "calls": "d2cd02f672418f4dfbbec3bb111f4f97a7e139d44263f06a6a29dad5f78f2209",
+            "projections": "01cab3106b4ba06f0d2c262b74e3755eefec0377f55da9e98dbf262c92a19bda"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 328,
+            "claims": 330,
+            "coverage": 91,
+            "navigation": 330,
+            "calls": 7,
+            "projections": 130
+          }
+        },
+        {
+          "edit": "modify exported TS overload",
+          "seed": 3442144840,
+          "hashes": {
+            "analysisReports": "0be5af0759f2b58b57c78e4e0786051983c77c299d121838c9d4455d6a36f455",
+            "facts": "f8b90302e9858282b408095c78fae574106951a1a34293a3c39df36b49d30ee1",
+            "claims": "0223abb01690f798f586c55f0f6a62e1c7c6d1dabf08061f3a6e282e9f8eed85",
+            "coverage": "19236cc8dd7bbeeaaa1128e035f7b0e2bdcdb4f356430cce7762af38acf3563f",
+            "navigation": "a247150ebe396bcb772866d9061d20555bdf7973b63ad6492094d2f77d9564cd",
+            "calls": "d2cd02f672418f4dfbbec3bb111f4f97a7e139d44263f06a6a29dad5f78f2209",
+            "projections": "f7a315f49904021932a7d5caa3df4511a1455f638177175d656d1dab18bd4af4"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 342,
+            "claims": 344,
+            "coverage": 91,
+            "navigation": 344,
+            "calls": 7,
+            "projections": 134
+          }
+        },
+        {
+          "edit": "rename Java source",
+          "seed": 3442144840,
+          "hashes": {
+            "analysisReports": "ac465dde720f92d1743678471e01ee4d1129bd228b5981f9b4972ed2e5456f84",
+            "facts": "fe1af4a4fa132c8d324f1accec45515169b6c5ef8cc18cca806ecd74d7619c2f",
+            "claims": "e856941f864209971cc611ae127a4803a54ff5ca63168720e6d7b003981cb0e7",
+            "coverage": "3e4f1a1470a9eb33851b484ca8b760a7cff3c7cf1bdcf825d46041d3285e9449",
+            "navigation": "3b0f5b1790eccdbddf148da9a2ce37bf997ecb9026a3a13cc50eb025d65f9625",
+            "calls": "d2cd02f672418f4dfbbec3bb111f4f97a7e139d44263f06a6a29dad5f78f2209",
+            "projections": "b6cfaa7753889488ed939bc1051708806fa24b045d634adf020b876acca06dfa"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 342,
+            "claims": 344,
+            "coverage": 91,
+            "navigation": 344,
+            "calls": 7,
+            "projections": 134
+          }
+        },
+        {
+          "edit": "delete shadow Python module",
+          "seed": 3442144840,
+          "hashes": {
+            "analysisReports": "edf47359cf8cb49aaa704238a1dfa0251d36dc762fa01a6a991d34e1a37138d9",
+            "facts": "d31315f257828ca2fbb1ff441c8e972cf8376c6bd79b21d241edeb7d161920c5",
+            "claims": "2c6c8689852a160b7ab2bbf899f13005728a3c9f227e559a8cc1442ca0dc9570",
+            "coverage": "b2ba96fe48903d1e80105a025ccf4254eb99f544bc6a16e6b201ba00d7906a15",
+            "navigation": "7c6d943b6ea3d3e72e7237af60dc962a12f3304eba86caa47055df554da933a8",
+            "calls": "d2cd02f672418f4dfbbec3bb111f4f97a7e139d44263f06a6a29dad5f78f2209",
+            "projections": "2d2dac45290871ab2bce0661327614a1d553e491bff81f1c69aff59faa981c56"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 323,
+            "claims": 323,
+            "coverage": 87,
+            "navigation": 323,
+            "calls": 7,
+            "projections": 125
+          }
+        },
+        {
+          "edit": "project compiler configuration",
+          "seed": 3442144840,
+          "hashes": {
+            "analysisReports": "d3d7d8c862ba13904655426b26f716fc6a02ff20cd7004021e3243a8c849f755",
+            "facts": "2485bcb98171d200ca2df054546a99f7d2dbc055a8891531a145c924398476a4",
+            "claims": "7e935bb85d418678b3371a826cd20f34f48141c774d1705776b75941367ab43a",
+            "coverage": "b2ba96fe48903d1e80105a025ccf4254eb99f544bc6a16e6b201ba00d7906a15",
+            "navigation": "ac77673567e94b1be3dea1d0a5a08fa4a7f2b1a887febfe7148aefd528f4092a",
+            "calls": "c6c102a96720777efdeae2864b9a1e05587030fc59739bddf680c4614bc8a6a8",
+            "projections": "2d2dac45290871ab2bce0661327614a1d553e491bff81f1c69aff59faa981c56"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 323,
+            "claims": 323,
+            "coverage": 87,
+            "navigation": 323,
+            "calls": 7,
+            "projections": 125
+          }
+        },
+        {
+          "edit": "documentation only",
+          "seed": 3536200967,
+          "hashes": {
+            "analysisReports": "79fef512e0e401d00d53be0c1befd41b831a86915769bd427e39e4ad477fa9fd",
+            "facts": "e1cb2cca86e48ac00718731b325b10977e880892b7892b342971e74d0afc43e4",
+            "claims": "f7648722b2369ab0c07e4c110de35da5dc230398685939830fd727e3375de8f2",
+            "coverage": "b2ba96fe48903d1e80105a025ccf4254eb99f544bc6a16e6b201ba00d7906a15",
+            "navigation": "d89e3155ece3970cbbcb1330d0a78121f23a895e820f23295767f29a8001ded9",
+            "calls": "c6c102a96720777efdeae2864b9a1e05587030fc59739bddf680c4614bc8a6a8",
+            "projections": "853c3d5d8467df66d9897d6390b5820e14e8ade4b76ff1b7d41e09a0742b7169"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 323,
+            "claims": 323,
+            "coverage": 87,
+            "navigation": 323,
+            "calls": 7,
+            "projections": 125
+          }
+        },
+        {
+          "edit": "Csharp variant defines",
+          "seed": 3536200967,
+          "hashes": {
+            "analysisReports": "39dcc0e86848dd4e52910a55615e1f862b74722c9b853cc1f143bab30e9d2476",
+            "facts": "f6b04cb4a19f24e4a2472fbec956f9b6d5c316ded567722c86f448d25d39c49d",
+            "claims": "20b00d01a6da83349cb698471da0d58c4103977536b43b9d32a18245e585b801",
+            "coverage": "b2ba96fe48903d1e80105a025ccf4254eb99f544bc6a16e6b201ba00d7906a15",
+            "navigation": "80e38baaa64fbbaabff2b25f820b98bb53f00a12262dda0050d3855ccbdd9803",
+            "calls": "c896f114086a64e4451f3d465a18a07b41ceb085b64cafea14cf4a467ecd4158",
+            "projections": "853c3d5d8467df66d9897d6390b5820e14e8ade4b76ff1b7d41e09a0742b7169"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 323,
+            "claims": 323,
+            "coverage": 87,
+            "navigation": 323,
+            "calls": 7,
+            "projections": 125
+          }
+        },
+        {
+          "edit": "Rust feature variant",
+          "seed": 3536200967,
+          "hashes": {
+            "analysisReports": "8348703e0cafcb4c1d537bc998d51250a8cc86ceaa07d34f59ec9a3459d315f9",
+            "facts": "4c8af4e3983da41c6bed0c083b6e6ecac75c4ee5fb761cb243033572dbe5e63d",
+            "claims": "07010b18fead02acf993af97966ec2ea7eb16c115646a9fbfed9b52aaeed9706",
+            "coverage": "b2ba96fe48903d1e80105a025ccf4254eb99f544bc6a16e6b201ba00d7906a15",
+            "navigation": "0e802dcff8d2de4bcd4e4170fecf22014e211bcf9a67125c823cabda72dad952",
+            "calls": "9a68f403130bdf75a1281505b831e4d11d0f07f537baf5a794910918b46b7fdd",
+            "projections": "8106deac0eec486be8b9b156332dc13a13d5d79b6b923b512c89b534e7026c6c"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 323,
+            "claims": 323,
+            "coverage": 87,
+            "navigation": 323,
+            "calls": 7,
+            "projections": 125
+          }
+        },
+        {
+          "edit": "Java language level",
+          "seed": 3536200967,
+          "hashes": {
+            "analysisReports": "8358c963adb675c9ed47f600ad86207f1286a65ce46cc36c70248398df1405f4",
+            "facts": "a7ffe78ab214641867fd4f04d649834b7ea14f54fd95f8b88840b4367469d3a6",
+            "claims": "b087cf4e8679e8afeb71f8a71203d33da1fc9147a9675247d7be84d85928e392",
+            "coverage": "b2ba96fe48903d1e80105a025ccf4254eb99f544bc6a16e6b201ba00d7906a15",
+            "navigation": "66a68bf7fc49328a07974b8037994df50b3c8ff93ed9e1faf2ddb8f77c0185cb",
+            "calls": "f5c911b20cac3174be1e4fd3530a0e6ca8e743f6524a2dcb7b489f34d803853b",
+            "projections": "8106deac0eec486be8b9b156332dc13a13d5d79b6b923b512c89b534e7026c6c"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 323,
+            "claims": 323,
+            "coverage": 87,
+            "navigation": 323,
+            "calls": 7,
+            "projections": 125
+          }
+        },
+        {
+          "edit": "C header dependency",
+          "seed": 2163121850,
+          "hashes": {
+            "analysisReports": "09597a487d2b0c52c60fdfdf7d811f9c6d1dd5a7d36558006aab717f566d726b",
+            "facts": "67deddace05e795c0254e8cf218ef2a8b63ff442b5eab8755a1a3791a725ad24",
+            "claims": "ff33c05262d243f43bef4a468ad347e85d66ff1ecef72ef8475fed2cd377a47e",
+            "coverage": "b2ba96fe48903d1e80105a025ccf4254eb99f544bc6a16e6b201ba00d7906a15",
+            "navigation": "1a696811ceefa085cf066ee7c3db66949cbf4fe818b2abdbd8284c7c6d05f8ae",
+            "calls": "f5c911b20cac3174be1e4fd3530a0e6ca8e743f6524a2dcb7b489f34d803853b",
+            "projections": "c997cb230a7b54289bc377ff1cd6a917c573fd5eda950ac77f1d07b7eb27005b"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 325,
+            "claims": 325,
+            "coverage": 87,
+            "navigation": 325,
+            "calls": 7,
+            "projections": 127
+          }
+        },
+        {
+          "edit": "Go target tags",
+          "seed": 2163121850,
+          "hashes": {
+            "analysisReports": "9fd0768f0d920d326d84d9d6a74b0cf86bf3da702d73691357edc4a47c3ae2d1",
+            "facts": "7b9d346032ab71e91774eb7124749f8f0e67d8c6c145d08f745c4ecba70dc610",
+            "claims": "25f47047c0290bf39eda8d1f25b8dff4582f82b8b378bb3941dcceaa54c4f144",
+            "coverage": "b2ba96fe48903d1e80105a025ccf4254eb99f544bc6a16e6b201ba00d7906a15",
+            "navigation": "e43e5d781cb68e4af6d94802940932efc236de07d2b1df47a063040d484894d0",
+            "calls": "d68e0735bb70e5093e7854043fa811b1a58f88fa6befa65d9dd2b650c49b49ba",
+            "projections": "c997cb230a7b54289bc377ff1cd6a917c573fd5eda950ac77f1d07b7eb27005b"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 325,
+            "claims": 325,
+            "coverage": 87,
+            "navigation": 325,
+            "calls": 7,
+            "projections": 127
+          }
+        },
+        {
+          "edit": "schema contract replacement",
+          "seed": 1542790865,
+          "hashes": {
+            "analysisReports": "b5936c247db6f913988a1c657f8950588dc478d589601d0f19aeb64b6e968784",
+            "facts": "2b2cba69f67d634717856a24705757eb0e62484352a03d4602746c2461746d88",
+            "claims": "7e3a953dc27dad69fddb98e203e88586633044aa8ea4d20ceef138199030d6d7",
+            "coverage": "b2ba96fe48903d1e80105a025ccf4254eb99f544bc6a16e6b201ba00d7906a15",
+            "navigation": "040361e81628d39a98f97c3772309631be963a094604efffd4b72a3a396e1994",
+            "calls": "d68e0735bb70e5093e7854043fa811b1a58f88fa6befa65d9dd2b650c49b49ba",
+            "projections": "48a76987184e4ba60d880810d804e2627e5a5fe7049da2802729e19777dc7f9d"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 325,
+            "claims": 325,
+            "coverage": 87,
+            "navigation": 325,
+            "calls": 7,
+            "projections": 127
+          }
+        },
+        {
+          "edit": "producer receipt mismatch",
+          "seed": 1542790865,
+          "hashes": {
+            "analysisReports": "06db347e89c921a0168a478f50717a06b9806d3e978d245f53ca5e00b5a8e532",
+            "facts": "eb382032cd26e4776561ca8a06a1e164a709f4566147a0ffbd440c010827765c",
+            "claims": "685f0c26f210f056fdaec9468c82b55572f4b843346c59ede3349bcc439026a5",
+            "coverage": "6997412142434fdbddffe2dac05ac2ff27f933dfbe36d84f9a7d240a19c78ec3",
+            "navigation": "d76965b63c0120333f2acc343c5bea3b2e27f7815ab6b93ba9b8941100cb53e3",
+            "calls": "82a4f14afc82aaa68b49a5c9154c1e25f79915d86c87e4282ca028a5fda14f78",
+            "projections": "48a76987184e4ba60d880810d804e2627e5a5fe7049da2802729e19777dc7f9d"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 287,
+            "claims": 287,
+            "coverage": 77,
+            "navigation": 287,
+            "calls": 6,
+            "projections": 127
+          }
+        },
+        {
+          "edit": "restore qualified producer",
+          "seed": 1542790865,
+          "hashes": {
+            "analysisReports": "b5936c247db6f913988a1c657f8950588dc478d589601d0f19aeb64b6e968784",
+            "facts": "2b2cba69f67d634717856a24705757eb0e62484352a03d4602746c2461746d88",
+            "claims": "7e3a953dc27dad69fddb98e203e88586633044aa8ea4d20ceef138199030d6d7",
+            "coverage": "b2ba96fe48903d1e80105a025ccf4254eb99f544bc6a16e6b201ba00d7906a15",
+            "navigation": "040361e81628d39a98f97c3772309631be963a094604efffd4b72a3a396e1994",
+            "calls": "d68e0735bb70e5093e7854043fa811b1a58f88fa6befa65d9dd2b650c49b49ba",
+            "projections": "48a76987184e4ba60d880810d804e2627e5a5fe7049da2802729e19777dc7f9d"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 325,
+            "claims": 325,
+            "coverage": 87,
+            "navigation": 325,
+            "calls": 7,
+            "projections": 127
+          }
+        },
+        {
+          "edit": "Rust feature variant",
+          "seed": 1542790865,
+          "hashes": {
+            "analysisReports": "b5936c247db6f913988a1c657f8950588dc478d589601d0f19aeb64b6e968784",
+            "facts": "2b2cba69f67d634717856a24705757eb0e62484352a03d4602746c2461746d88",
+            "claims": "7e3a953dc27dad69fddb98e203e88586633044aa8ea4d20ceef138199030d6d7",
+            "coverage": "b2ba96fe48903d1e80105a025ccf4254eb99f544bc6a16e6b201ba00d7906a15",
+            "navigation": "040361e81628d39a98f97c3772309631be963a094604efffd4b72a3a396e1994",
+            "calls": "d68e0735bb70e5093e7854043fa811b1a58f88fa6befa65d9dd2b650c49b49ba",
+            "projections": "48a76987184e4ba60d880810d804e2627e5a5fe7049da2802729e19777dc7f9d"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 325,
+            "claims": 325,
+            "coverage": 87,
+            "navigation": 325,
+            "calls": 7,
+            "projections": 127
+          }
+        },
+        {
+          "edit": "Go target tags",
+          "seed": 1542790865,
+          "hashes": {
+            "analysisReports": "b5936c247db6f913988a1c657f8950588dc478d589601d0f19aeb64b6e968784",
+            "facts": "2b2cba69f67d634717856a24705757eb0e62484352a03d4602746c2461746d88",
+            "claims": "7e3a953dc27dad69fddb98e203e88586633044aa8ea4d20ceef138199030d6d7",
+            "coverage": "b2ba96fe48903d1e80105a025ccf4254eb99f544bc6a16e6b201ba00d7906a15",
+            "navigation": "040361e81628d39a98f97c3772309631be963a094604efffd4b72a3a396e1994",
+            "calls": "d68e0735bb70e5093e7854043fa811b1a58f88fa6befa65d9dd2b650c49b49ba",
+            "projections": "48a76987184e4ba60d880810d804e2627e5a5fe7049da2802729e19777dc7f9d"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 325,
+            "claims": 325,
+            "coverage": 87,
+            "navigation": 325,
+            "calls": 7,
+            "projections": 127
+          }
+        },
+        {
+          "edit": "C header dependency",
+          "seed": 2492582396,
+          "hashes": {
+            "analysisReports": "fbb8324db905d08578f0c0b05ac613b25599d0f03c061e7fae595add7791190e",
+            "facts": "c51b4c65c3caf55eb3fb4a5f23387e1b3f6a58e6bae63d49f44915271b15b447",
+            "claims": "5a010eb11beacbce0445eaa1d0639f48bab80a59099f44735c2bce3f328f1ad5",
+            "coverage": "b2ba96fe48903d1e80105a025ccf4254eb99f544bc6a16e6b201ba00d7906a15",
+            "navigation": "cead14182029a10c5d7ad12070404d04fcd340d2d79645c6240c18dd4411b2cc",
+            "calls": "d68e0735bb70e5093e7854043fa811b1a58f88fa6befa65d9dd2b650c49b49ba",
+            "projections": "b89960145fb11d9f96b74f232f4bba142d0a81ed7cfb8d2d297aacc98b1e90ab"
+          },
+          "counts": {
+            "analysisReports": 1,
+            "facts": 325,
+            "claims": 325,
+            "coverage": 87,
+            "navigation": 325,
+            "calls": 7,
+            "projections": 127
+          }
+        }
+      ]
+    },
+    "oldWriterUpgrade": {
+      "baseline": {
+        "commit": "6eefca04b5032f3416fcc95bda23dec4bb8f65db",
+        "runtime": "/private/tmp/prograph-stage5g-baseline/accepted-nxm4mL",
+        "node": "v25.9.0",
+        "compiler": "5.9.3",
+        "scope": "Accepted source compiled using current locked dependencies; not historical binary performance evidence",
+        "digests": {
+          "core/semantic/model.js": "504527f0eab68a55364af39cfc62bb645a19701c4f2e5208186d3c95f62696b5",
+          "core/semantic/managed-scip.js": "333ad4e67ddc1570bf8b1a15834866489f468a3bee5b2f991c359098a6a1203c",
+          "core/semantic/provider-replay.js": "5a955825b925b261d28fe14fd8eaa51bb47a0f88e08dfea9fe11a5d31673a9a9"
+        }
+      },
+      "sourceRoot": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-multiprovider-jmiZPz",
+      "pinned": 3,
+      "historicalClaimHash": "95503e74fdd9b23c113ed32b4572407fb3e802dbd4b015fabbd8b807bd179818",
+      "cleanRebuildHash": "d77de250ff3be380153ebe4ea73f0741a377f017d276b99675ad8165b0e8b38c",
+      "counts": {
+        "analysisReports": 1,
+        "facts": 105,
+        "claims": 105,
+        "coverage": 37,
+        "navigation": 105,
+        "calls": 3,
+        "projections": 39
+      },
+      "pinnedGc": {
+        "collected": {
+          "snapshots": 0,
+          "snapshot_reports": 0,
+          "observed_inputs": 0,
+          "runs": 0,
+          "claims": 0,
+          "facts": 0,
+          "sources": 0,
+          "provenance": 0,
+          "groups": 0,
+          "entities": 0,
+          "origin_runs": 0
+        },
+        "active": 4,
+        "artifacts": {
+          "state": "deferred",
+          "reason": "Retained source has no unique root witness; no workspace deleted"
+        }
+      },
+      "unpinnedGc": "complete",
+      "freshness": "fresh"
+    },
+    "reportWriterUpgrade": {
+      "baseline": {
+        "commit": "892d91833cfd22639da3f34948969a24a1ea96bb",
+        "runtime": "/private/tmp/prograph-retention-baselines/accepted-2OFQwD",
+        "node": "v25.9.0",
+        "compiler": "5.9.3",
+        "scope": "Accepted source compiled using current locked dependencies; not historical binary performance evidence",
+        "digests": {
+          "core/semantic/model.js": "cc36ed9de1f4c2fc2762dfa53f7d7448ea3d9475f9cc19c3ee8f60ab07a4e163",
+          "core/semantic/managed-scip.js": "333ad4e67ddc1570bf8b1a15834866489f468a3bee5b2f991c359098a6a1203c",
+          "core/semantic/provider-replay.js": "813d67834901f2c1860026e8480d91482491d515980261b4565550a125551cb0"
+        }
+      },
+      "historicalClaimHash": "1ba8f8f6907ca32926bcd9b9b3b29d3e3561e59e06973fc1b1acbeaf43ae1a65",
+      "historicalReportHash": "9c0d4394bf7999d6135df62bdca34aa219864ac23e855b4cf9b0cd6427ed7b97",
+      "cleanRebuildHash": "4cc97dc2cb16dc1e4f35de7ad40a6c48d89f00cded5aa74bc54f7e79ad479679",
+      "pinnedGc": {
+        "snapshots": 1,
+        "snapshot_reports": 0,
+        "observed_inputs": 0,
+        "runs": 1,
+        "claims": 1,
+        "facts": 1,
+        "sources": 0,
+        "provenance": 1,
+        "groups": 0,
+        "entities": 2,
+        "origin_runs": 0
+      },
+      "unpinnedGc": {
+        "snapshots": 1,
+        "snapshot_reports": 1,
+        "observed_inputs": 0,
+        "runs": 18,
+        "claims": 20,
+        "facts": 14,
+        "sources": 0,
+        "provenance": 5,
+        "groups": 1,
+        "entities": 8,
+        "origin_runs": 0
+      },
+      "freshness": "fresh"
+    },
+    "authorityWriterUpgrade": {
+      "baseline": {
+        "commit": "b96118fc7513191b33af5d82caef387ad2c8e01e",
+        "runtime": "/private/tmp/prograph-authority-baselines/accepted-XunYxV",
+        "node": "v25.9.0",
+        "compiler": "5.9.3",
+        "scope": "Accepted source compiled using current locked dependencies; not historical binary performance evidence",
+        "digests": {
+          "core/semantic/model.js": "ddf493a22601a830a3701e4db18d45805bdd671a4783530af2c53481703c5688",
+          "core/semantic/managed-scip.js": "333ad4e67ddc1570bf8b1a15834866489f468a3bee5b2f991c359098a6a1203c",
+          "core/semantic/provider-replay.js": "813d67834901f2c1860026e8480d91482491d515980261b4565550a125551cb0"
+        }
+      },
+      "historicalReportHash": "41c4b72980cc9bd76ef3ae564dee001f1597476ce282e6c70a5866dd91e78526",
+      "pinnedGc": {
+        "snapshots": 0,
+        "snapshot_reports": 0,
+        "observed_inputs": 0,
+        "runs": 0,
+        "claims": 0,
+        "facts": 0,
+        "sources": 0,
+        "provenance": 0,
+        "groups": 0,
+        "entities": 0,
+        "origin_runs": 0
+      },
+      "unpinnedGc": {
+        "snapshots": 1,
+        "snapshot_reports": 1,
+        "observed_inputs": 92,
+        "runs": 15,
+        "claims": 0,
+        "facts": 0,
+        "sources": 0,
+        "provenance": 0,
+        "groups": 0,
+        "entities": 0,
+        "origin_runs": -1
+      },
+      "authority": "semantic",
+      "freshness": "fresh",
+      "legacySchema": "1.2.0",
+      "rollbackOldReader": "passed"
+    },
+    "recovery": {
+      "node": "v25.9.0",
+      "probes": [
+        {
+          "point": "before-seal",
+          "exitCode": 57,
+          "activeSnapshot": 1,
+          "visible": [
+            "callee"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        },
+        {
+          "point": "before-publish",
+          "exitCode": 57,
+          "activeSnapshot": 1,
+          "visible": [
+            "callee"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        },
+        {
+          "point": "during-publish",
+          "exitCode": 57,
+          "activeSnapshot": 1,
+          "visible": [
+            "callee"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        },
+        {
+          "point": "after-publish",
+          "exitCode": 57,
+          "activeSnapshot": 2,
+          "visible": [
+            "other"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        }
+      ],
+      "corruption": {
+        "refused": true,
+        "unchanged": true
+      }
+    },
+    "pythonToolRestoration": {
+      "archiveSha256": "be8e0a1ec180423c60e9f2c2672c208f49a35ab690ac0f8f1259e4223dbd6e42",
+      "archiveBytes": 4415001,
+      "previous": {
+        "path": "/private/tmp/prograph-scip-python-inspection/package",
+        "sha256": "ea0a69c0838b60811e5292a370a911c40c104a19c4e76cd57c9938867b7c495d",
+        "entry": "index.js"
+      },
+      "restored": {
+        "path": "/private/tmp/prograph-authority-final-python-wL4MU5/package",
+        "sha256": "ea0a69c0838b60811e5292a370a911c40c104a19c4e76cd57c9938867b7c495d",
+        "entry": "index.js"
+      },
+      "identicalProducerTree": true,
+      "scope": "Explicit restoration of absent temporary Python producer from unchanged official pinned npm archive; no runtime receipt policy or tests changed."
+    }
+  },
+  "rawHashes": {
+    "oracle": "2626f9e0b57d6a58c55a76060aeb368dfa83fbc6493948948ff022d103fad350",
+    "oldWriterUpgrade": "1f4a5da6ca7132c586e1cb714ce8aee2e36ded799dd0b746a05fb675aa767062",
+    "reportWriterUpgrade": "d5f1313985d704757e7dc8ea8299d54136d19d22585077cabb797f9c0ec9114e",
+    "authorityWriterUpgrade": "cd2e1b22f86072a796c54b3dc09ae4e135db1e79879f413cd962e6395f10edd8",
+    "recovery": "abdbd8216328c10191ebcca64958a04fb66950ca34c04fef898b274ad8661ba9",
+    "pythonToolRestoration": "359842e69f093767b7f9e04e5b511dedb0c77358413bbd8414eab4b2b1bb1b46"
+  },
+  "typecheck": "passed",
+  "completeNodeUiBuild": "passed",
+  "buildLogSha256": "abd21eba0eb9e74ba2c3393d3e904fced9be97e263616412df893c4d023bc6a5",
+  "strictVerifier": "Verified 271 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, atomic default authority, verified migration rollback/pins and old-reader export, complete build, four recovery probes and corruption refusal",
+  "sourceDigests": {
+    ".github/workflows/semantic-core.yml": "e2bf93cb18e9b61ef2fc95f3e70ce91a7f90c4e13c5413bb2c8b19888e828a29",
+    "scripts/clean.mjs": "d016fd4a037534371da8588db1c543fdc86a30d60eb21d59a2cf123671a9be57",
+    "scripts/finalize-build.mjs": "083bdc24197f847f4f47c71ff9a060c28a31c95f40850b90db11c1743468699d",
+    "scripts/global-query-benchmark.mjs": "bd349354c07ac5c1891476fbf8856cbd83b82d84b59cc529823016bb34e7d293",
+    "scripts/install-semantic-producers.mjs": "c347b5881c5ad6aaedba4ff83440cd726f15ca16e5e1d68729f156e564c71382",
+    "scripts/legacy-navigation-benchmark.mjs": "c52cd12f3c607182f9e43ae3cf8409cf1039d7655711b180105beabd8e533cc7",
+    "scripts/owned-compatibility-publication-benchmark.mjs": "f0fb8f4747312216511cbfa8535a3d8ecc7c4c59f5a9d1ff5e59df3d44a22e42",
+    "scripts/prepare-semantic-baseline.mjs": "16bacfa73d84a129861769a9cb71399dd121cbd335fd8eb69ef843de57f2bc88",
+    "scripts/publication-delta-benchmark.mjs": "dee298dc202db1ee54f67be9d7a2690a92db33dc6dfad74e144eb84f33bbb0aa",
+    "scripts/scip-benchmark.mjs": "266a5c6a10096f57309875feeb17a0ff94c69a364e418d8542601e83ba217420",
+    "scripts/semantic-artifact-gc-benchmark.mjs": "2503b9891d36017ba04716ee8e74b15866061753e9fbf2472ea0b0ac2d81c8f3",
+    "scripts/semantic-benchmark.mjs": "9261593ebc92c9b7f009223ef5950b86b6d3a5d10bfae8573e2992206cd754b6",
+    "scripts/semantic-clang-input-benchmark.mjs": "830017c4ff83b5a0ed276ca31dc6ba3a1871c5139f74634cd2b74ebae71050aa",
+    "scripts/semantic-gc-benchmark.mjs": "74055e298e4655b9cb98b81138ebc9d0d353a80e57d7083b20a759bde1ae5743",
+    "scripts/semantic-owned-reuse-benchmark.mjs": "27f1a3d17dda6c5c50a0ff7f2efb1a08d609378a7e765ace300843a5b29314a7",
+    "scripts/semantic-publication-real.mjs": "863908c8684faed28ec70d968a249d9c306e73670c46b353c091bac7f5ca72b7",
+    "scripts/semantic-real-repository.mjs": "dbbce5e7e6271b9357c1fcf309aa503d15f0f7a8607bd844b6b9f13a6ad04bb2",
+    "scripts/semantic-recovery.mjs": "5b8bfee61ac897d5390e4de1a571b42c3418bf9b7838491873f88749439ebd74",
+    "scripts/semantic-rust-benchmark.mjs": "06d07d6ff3820ba97fc7110f3d7c3d5404ea816101d95e81245b89cd45d566a9",
+    "scripts/semantic-selector-benchmark.mjs": "9a404ecbece19d97feaaa25b8c6a015e679827a4a301ad30f6359de2685b2399",
+    "scripts/verify-ci-evidence.mjs": "ccd25aa5285021b7701528f8ee514af6b7052d7e21b87e634f44f9b91e1dddff",
+    "src/adapters/artifact/architecture/index.ts": "9eb08064035cc066a81bba3fec2bbabfae71eb49c6f5c795b3d0e93a9a98ac4f",
+    "src/adapters/artifact/cargo-toml/index.ts": "452a2b05956843491070529b75a90b0f7c5b3d98db3ad69e0c41954e2e14626a",
+    "src/adapters/artifact/markdown/index.ts": "229e87984db9b64a0b01e369bf8372403e8368f2dc6539dde29be39c9bf589f5",
+    "src/adapters/artifact/package-json/index.ts": "4f5817fc2c4a8c6a7ee2e3df5f5c2561126b1407d9112067d7c9698b63a602f0",
+    "src/adapters/artifact/tauri-capability/index.ts": "b624735c30f2b0290edc907a416efa81650e679eec44d732fa6f0128d04bb05e",
+    "src/adapters/artifact/tauri-config/index.ts": "cbac439344e6a79741fc5cdf6c8b3481a956116796e57faabfbde7ed6bf8d719",
+    "src/adapters/artifact/tests/index.ts": "c5be1742b847a0cfb589ef9a11ab5668f28bc2d032c19edc2e66bb3e9bb855e5",
+    "src/adapters/artifact/utils.ts": "42a228e718bae39e9d7bb878e902378e1e5f18bab916910cd94cc13363ac6b3f",
+    "src/adapters/framework/react/index.ts": "2cd961f328f01be328e8d48c3c3b33b03d0b8d661e7f4ce45700c47622cf577d",
+    "src/adapters/framework/tauri/index.ts": "522bf4f114f7fa1cf7e95131d2b7bbd161f19df35a6431c47e4e642e97bb330c",
+    "src/adapters/language/polyglot/index.ts": "7f274c28da7a0178e77a340f99b8e10225a97f3fa0e4193fbdc387df76ac6bf2",
+    "src/adapters/language/rust/index.ts": "3ab851903f7bd41c28d156bc7f05204f177e6cee9f21f2b4c1b24cd0bb39b230",
+    "src/adapters/language/typescript/index.ts": "213b849405a94b51b1b74f16e5233f165b892e8abb524503fd8879c080bc0b0a",
+    "src/adapters/overlay/semantic-linker/index.ts": "c7a8ade2d27c46b0083b8c3bfaf3dd160cf19a95fbd3d87626f5273f0da5e2d7",
+    "src/cli/index.ts": "9500ed4db0ce9d80ba3a3d96f207c1d6517472b59c387ff6e4233c58d699ed33",
+    "src/cli/output.ts": "f426aa72fe92d43bd4a9d78c4d7e312fa5304d178f43dce931a4b0b16483b3f9",
+    "src/core/adapters/contracts.ts": "89116bb1e85b20cfdc01bdccf4ddec48677290fb44eae9c0f35d6e5d4fa8f448",
+    "src/core/adapters/providers.ts": "5d16cfedb507cab1bd4e72ee27aa4a26e441b049120d817951d0900d8ecc7bd5",
+    "src/core/analysis/adapter-run.ts": "06c9bedbacfa3bc54504962dd7a12c7b2f8438d0ea09219f25aa748253e7b2d2",
+    "src/core/analysis/analyze.ts": "481f4d9b39e2963a3ee291fcb8c6abe0da979ba175c8b98357cccdb75fb81a85",
+    "src/core/analysis/index-execution.ts": "62776a5d4a24c58360fdca35086d7f277a6ebb2efa7f629c1d64b54b3d33f7b8",
+    "src/core/analysis/index-worker.ts": "5f37300ab6ebb05cc7f251a9f1385b7d29725b57c525f47c973d334919319d70",
+    "src/core/analysis/prepare-queries.ts": "f0206e08c5ee1b8d6d8776f4ec67a76fd0c85975255bf9ac9bd4f30bb1a51830",
+    "src/core/analysis/state.ts": "9056d2029f2556a985ce0e9f1c7fb2d62f0965df0b9f109914cf1da7a8022737",
+    "src/core/analysis/sync.ts": "96b9c6d988c7ec8aa677885a749b5fc6a0c9de72f587efe971b58b0cbca14ff3",
+    "src/core/analysis/watch.ts": "f0a68b6f58db1a993354aeecc3d5076d3051a24d5759f20d0e0f2eb4dda0ae05",
+    "src/core/config/config.ts": "e87b8d8e382984b9e91292b2c3822c1b6a550139a14a681e8e6c6fab99b3d8d9",
+    "src/core/graph/boundaries.ts": "aee5d6cd21e4d90629d84a8d3456d90b99512046b08a166abc4a8e9d6fc87205",
+    "src/core/graph/builder.ts": "8081c35a637b8263e23ad7d48388900c3137e409cd0f87fcb67593da333d0453",
+    "src/core/graph/identity.ts": "84e5d08e20c6f0af56c1af745a1e9d83463ce811ca2f30c7b8d3ee4a5f70a573",
+    "src/core/graph/metadata.ts": "29811167a292db5d04431f6480fcd042aa16f9a89802039ecfc3cba6ea0c6fba",
+    "src/core/graph/schema.ts": "b984ce1deea51b113defba60f384215adad54d43b67cd9baf8f6ec054a3207df",
+    "src/core/query/compatibility-cycles.ts": "27cda8ad89ac9bbe871b421aa0d082224d0e9bf1fc5e74d6ec1a3a5222c146c0",
+    "src/core/query/compatibility-global-read.ts": "9969b9a11d06b08a341f1f159f43f1941dd9cbd1712b49fc437ae07692a2a80b",
+    "src/core/query/file-architecture.ts": "575a245d3175740fcc54ffbc27491397b9679ed5bbd03cd6e41df5515461b1b1",
+    "src/core/query/global-projections.ts": "de94b91841d5edcc75ca82e8efd25c8a880f782b596af6e799617f3ed339ce1a",
+    "src/core/query/global-read.ts": "a2d8505bbad94c1736e1e1e87d7f6a67a0a2dacd8362d17725e370d8ed56eeb9",
+    "src/core/query/isolation.ts": "9a2f646298c11c05aa0d45ba171942ef29d5ebfc1c81ff6d2701e48a81649f19",
+    "src/core/query/navigation.ts": "75d94c14348f099136bfcf1626a369248c7e71513821fcd3df7f4065271e052e",
+    "src/core/query/output-mode.ts": "8acd2046f53c1a1d129804eeaa83aef34882c0b07555d26089d8e5de58262698",
+    "src/core/query/query-service.ts": "7407c5858dc27d5ca8c9880ec3cdc6ccf7fa806bb7299d664876faf4602e9139",
+    "src/core/query/query-worker.ts": "9dbe79647793eebe3813fe0ff91af9f4fd75e064ba7013f5f0a6745b29b2effc",
+    "src/core/query/scope.ts": "e8a01c9897561a2e47aff70601a9b2bebf321c6cbcbf9dcdc8857d4684418a68",
+    "src/core/repository/repository.ts": "e055bc831f5926fe0e4b28f370d9d8ffeacf78d5f0d3c51342a3dcaa26fda1c0",
+    "src/core/semantic/analysis-passes.ts": "aee3a1aa3a19d12760daed050a5646e36d3e6b67e101f5ca4720deaf903b6c07",
+    "src/core/semantic/analysis-versions.ts": "1089bff0a7b40d4d3384333bf0dc5435d27f1f2399313434a052e52f1e0d3867",
+    "src/core/semantic/authority-migration.ts": "70b9ed40cea860ee90231d7d569fd85032d41b881f20ea152370d68d40f82c0f",
+    "src/core/semantic/authority.ts": "ba9880da23b37547972a2421b18e9689270f99dbecf8d4dc7abaf2247fc44bc9",
+    "src/core/semantic/boundary-pass.ts": "6a7c2b0f2cc7b6e214e30589da7cba522e7490ea51293d464b3f02a6b0f4093b",
+    "src/core/semantic/boundary-shards.ts": "071a078413dcf7e18a0961c848463790044b8ce6ec8cee27568350e21d9e698a",
+    "src/core/semantic/clang-inputs.ts": "ebb27fcfb6b802504a347737a580ab11d2b81fccd0b49e1a43acaf8ec90aae77",
+    "src/core/semantic/clang.ts": "432736f2c239a7d870b8c420fc4b20898312c612d9b3626a37b2e8bc27e4e42b",
+    "src/core/semantic/compatibility-cache.ts": "032396b64bf68ecd8d8cc39c33a11256ea3dbf4ca29710e50f0ab657d4e4a2df",
+    "src/core/semantic/compatibility-export.ts": "8a0e965f3b19f76333c2420629d36c0ffe1991654585eb2e1c70a95d961222c9",
+    "src/core/semantic/compatibility-global.ts": "d0c79e88642d165606dc058a49ebed61384843408d22e1f1e3dcebf2ddd1ec22",
+    "src/core/semantic/compatibility-snapshot.ts": "d1de73def4bb08528103ee12c2e6c5813698a0f41ffa5b0941cbda9e942d81e4",
+    "src/core/semantic/coordinates.ts": "0884a2d5953c6a87e842e2305e7c90ec4b35e241db8ef4c25702fed035204782",
+    "src/core/semantic/gc.ts": "48e25b895e048b057c4e393e8db80bf5b0b76d14d192fbe3b1f58157ecbe2a83",
+    "src/core/semantic/input-check.ts": "b43676410c603cf31abc34f838cc8e3ae0dbba741d96ad3d52b7cb32d1331b2b",
+    "src/core/semantic/inputs.ts": "65e33ff1b39ccab16e68df358426491b0f08703ca472921fde54054f6e53274c",
+    "src/core/semantic/maintenance-lock.ts": "a197e38aff651ca71db4c75765d3e2edb71ded354ed047217444d69d45dfd938",
+    "src/core/semantic/managed-scip.ts": "0d428b0d91b9e3f4d84dceb3a1e77592f7ecd21cd2604b3c3a1ebc95509c061a",
+    "src/core/semantic/model.ts": "900d875316501486d8974f26ca7ef5095a84184dfe5837cc5a5be59b7ba01585",
+    "src/core/semantic/owned-projection.ts": "5d7a40333f5ba611f5fc5509378c811814948308c1e414adf5b809ac43267a70",
+    "src/core/semantic/passes.ts": "03b8757bf092c1141846aa3b2f4b0cca9663ef9ecf8a099709ca8de400913907",
+    "src/core/semantic/process.ts": "b00c1f78d9802e2cfd2294b01dd8d9cd391211dbb09f60c89b8cc157cf8eb2da",
+    "src/core/semantic/projection-shards.ts": "a62ce4f9c2c1ca8a6393c8c6056cc1648a89adec9c51dad80dc44eae87b71886",
+    "src/core/semantic/projects.ts": "8dc60259d82d5d77cecded48f3d51daf933558cefaff48c6b08e43d0cfa339dd",
+    "src/core/semantic/provider-artifacts.ts": "904ed186842df4cafe4ad24775a3ce1af83a774d77eecd57aa223e64e61643d6",
+    "src/core/semantic/provider-grants.ts": "d744361816ccb484d32753346c1b0c1eea855ebeb77c020a435daa2fee36808e",
+    "src/core/semantic/provider-guard.ts": "c7c1e32f55dece767e5a2a09b48633c1b137858260b72a22d5f304b244d65f69",
+    "src/core/semantic/provider-plan.ts": "aa1832e1f4fad7c237c66d4112e9d68ce3c975b1369c9aefd8adb50df32e2b28",
+    "src/core/semantic/provider-replay.ts": "84bda6dfc4321b4f70cdad08552d2b5fa063bf7091955a33cb3f4426254a5a44",
+    "src/core/semantic/provider-runs.ts": "af2764ba4db5bbcc473127eef51dd195ef4c7f606ad39eed842fd71d46220967",
+    "src/core/semantic/publication.ts": "9c2b6a2091063410b52c28a826f2bbb9538cedef814ee6f2d1e00e17646ce16b",
+    "src/core/semantic/query.ts": "61bbd9b1b76b9595c235155b663596bfcbbd70650543485cc700e6cec84a7d4d",
+    "src/core/semantic/read.ts": "9e9846edded5f6551ba52ad314c9c2c8f083580b843cd479ef87b87f73df7957",
+    "src/core/semantic/retention-qualification.ts": "fa53338a9f24d07108e524393bf6e947216fe59df3294f0bbb04a323cb5e058a",
+    "src/core/semantic/rust-qualification.ts": "be7fda47baf5d4132c9498f9fbd91f9ff43e4b8e62ec15a31834aa2ef3146ee9",
+    "src/core/semantic/rust.ts": "96ebd886aed9ce90f797a1e45b7ba5fe5a70a96be889032dedc1dc4ea35defbe",
+    "src/core/semantic/schema.ts": "b3b5608b07eecae59d51275ac4f4fe8240423b93fbcc7d7e5ea4be34bfc9f0b0",
+    "src/core/semantic/scip-dialects.ts": "dd9e68ab04a0f49d571766492d29017b95a79db526dbbafa499c55edf87d1aa2",
+    "src/core/semantic/scip-import.ts": "0f2f070b60c87d5d21b781072e0059c28e2efc41440c349d1471c6cb866ff0d8",
+    "src/core/semantic/scip-native.ts": "18bd6c0440a7f595bebd5e24121103bdc6f8dcc8cc8bc1cafedd23a8729a6762",
+    "src/core/semantic/scip-symbol.ts": "4a8718bba975f5ca9998d906ae089cf537c06c7a8d8dd890b8a3ffcd7684d08e",
+    "src/core/semantic/scip-wire.ts": "52f70b171c59dbb0b43a665311a22e631970b197ec2ade624c1640f7d5ac7884",
+    "src/core/semantic/snapshot-report.ts": "8eb47a39b3ba948565e274df0d42b2d3c1959cdc467d9c14ef40d2063b16040b",
+    "src/core/semantic/source-reuse.ts": "8d44b8e52640c240c8f98fe8b4ace7bfba9cf80d549eb29ac05f3587988da7ba",
+    "src/core/semantic/store.ts": "342d579e2d0e0c392d14b8457a0569cb1c7342752666298ee95498094be4d475",
+    "src/core/semantic/tool-receipt.ts": "ca222c66387d144a2932504d7f36c69e46cdae8a00a441922cabe01630c0a0b2",
+    "src/core/semantic/typescript-inputs.ts": "00a0e945ac2e9a00eebcf8a4df0b987923a47a02d394a9b04bebf16117bbb0e5",
+    "src/core/semantic/typescript.ts": "4034633b0f7a56cc87d4dc3dc24b96108d6c0ad117ce5b6686ce92226c5afe79",
+    "src/core/storage/sqlite.ts": "e5e422a05be9a80092af1e8c2944e217b7e1c9796d1a16e6720aa9b48d990cb7",
+    "src/mcp/index.ts": "01d387e6dcc7cf60a4a30b410ca31bad663d37684864cda61aba0210b5d7d65b",
+    "src/server/index.ts": "4834694491b1e66bbe9df6e0dec7867bf215c8056e73a5b455212a96311dce07",
+    "src/ui/App.tsx": "da9ca6497849f5a5e9fa80187017500c512cf9e8bff4ee41cf6ad47ffbd8e5f2",
+    "src/ui/api-client.ts": "e8fa48c26d7c783d819dd41491a3cc4d19d2d18b44f2ae4efd141ff13bc736cd",
+    "src/ui/components/DiagnosticsView.tsx": "491939726f468c49e93998bd933f10b36c0bce24043996aa579c9648d87d16f0",
+    "src/ui/components/ErrorBoundary.tsx": "1ec6f73e90ae7b9a4462d5fd783c2449260260f119007da0d8854c58aa56ff75",
+    "src/ui/components/GraphStates.tsx": "113de9f84274f3f1e2f42b208ab94c90ae00940fd7ef3cee4b7908df1ee0de0f",
+    "src/ui/components/Inspector.tsx": "c6346560d9113466714bed699a23c35ec7346df78915c89ab34eff1452b36d8a",
+    "src/ui/components/SemanticEvidence.tsx": "4290c66f09a3c5b105e6331f0e36768b495fa82ea18058677d52cd9b11586253",
+    "src/ui/components/Sidebar.tsx": "75318e53199efcc525db2c6cafc73fbda30cdd945e36e8d273c97846f674f226",
+    "src/ui/components/StatusBar.tsx": "2787897e02c1943b5eb497560850dbf7f4178df2d615a90c92a25a24be677464",
+    "src/ui/components/TopToolbar.tsx": "8055f9362efb8f50af390172aebff4b655bc9ad96fd38f827b876bd17468301e",
+    "src/ui/components/ViewChrome.tsx": "d5d1f2756089d4832067113249b35539212ff5dbd23b9a6098ef39bc8ce72f7a",
+    "src/ui/graph/GraphCanvas.tsx": "1bac66ca1b56d7d9005b2cb5dad7c07ac3352a9b0651d56bac80f82e04c584d3",
+    "src/ui/i18n/en.ts": "5d1e562bcc96a20540dbe6286e5079da3345efae3bb1a4cf366a1506323e43cd",
+    "src/ui/i18n/index.tsx": "76003fa4669595702dd870fbd4b71c02409fc492bdd354389e05244d2bae1d8c",
+    "src/ui/i18n/zh-CN.ts": "71d7fee3ae894b6e16c99e064fe5be3357084ed2e40be231c5f5ee3386a00022",
+    "src/ui/index.html": "82ac2a5fadf0d180db7173439a9df027fa69e1c7f5afed5eb3df6caa63099b11",
+    "src/ui/layout.ts": "48b4acc435155875a43c6f753d52fdac87b698ee7a87fb2ee5bad5220088fc26",
+    "src/ui/main.tsx": "60771c90a206d4b9cf27aa01faefe1bbfedea1fdf13b354b29f0808cc43f2f76",
+    "src/ui/styles.css": "de7a15676d9b1e7b0cf7ae1d2a68e7641239c740c97c8474ef11d4efc7ddeb01",
+    "src/ui/types.ts": "2f79a1e4a8c59c5237b8c2e39bc7f60efb594660e707023acae47c3d5194caba",
+    "src/ui/use-indexed-page.ts": "4eeb995e2f4475d163d98ff670173dc602a48f2eedd60861bd6f88604655951d",
+    "tests/authority-migration.test.ts": "e26a048ac812de97339bdebf24f16be2b215b3827151dfc3148be8f24fb4985d",
+    "tests/authority-support.test.ts": "31ec332640ae7d1746ea6e59ac86c603e90420cee2681c9650aef8e24a4ab815",
+    "tests/compatibility-cache.test.ts": "a7ac33e67d3dbe87073ac957fb46d77cebebaa7e92fbe97d027ab33302907e3a",
+    "tests/compatibility-export.test.ts": "4831327732d54f933083a84bef92e38dcc20b0fd40786911badec5c4117614b7",
+    "tests/compatibility-global.test.ts": "0d3e78d3512b55957a2cf19880ebcf2bb5ae904ba41b20c0a98a5b91419b3866",
+    "tests/compatibility-query-oracle.test.ts": "333d4fa54769fc8ed43f19b7fcbbd4aa172c938ab78fb748f3fb73ab0a29503a",
+    "tests/compatibility-snapshot.test.ts": "8526cde62b50a807bef73bfa641da4c21185f789238805a9159d388bf0dcbf1a",
+    "tests/compatibility-support.test.ts": "aa6922b9301b51a9a9e7f3162bd619b8886286299627f8075edf53e807211553",
+    "tests/core.test.ts": "abac4255b803a658115379400fb2918d1fe8bb58334ef985a2f46ca435977dc5",
+    "tests/fixtures/malformed/Cargo.toml": "e9faf8ce890d84ea4b1d3bc44d2985e0932b67e1cd8a8197b7ab7fa77910a33d",
+    "tests/fixtures/malformed/src/broken.rs": "b0e86688b075e647c67f95389b9a2018ef696c2ff8c46566f949556101587c8d",
+    "tests/fixtures/mixed/README.md": "2c6e850ef40c6d238c3f2a1ad5dbd32f3372e67ef3c0e6bc9157987596e9f800",
+    "tests/fixtures/mixed/package.json": "e6c7a758faf67f2cdc8045b9ac0dc50e58f7c7adca8147e2ee7253bcc0c776f9",
+    "tests/fixtures/mixed/src-tauri/Cargo.toml": "6053c2263716023919d4fe23f3ca284e583e0b878eaceffad02564b5dcf14f99",
+    "tests/fixtures/mixed/src-tauri/capabilities/default.json": "3af5dbdb5a0dc35ab36623c77be004325334da1ef22a48763dc5eff3854cdac2",
+    "tests/fixtures/mixed/src-tauri/src/commands.rs": "0b7e228a60da6a57ed2ec2ba706bf876d2dd7100636ddd189041c2f204ae0c60",
+    "tests/fixtures/mixed/src-tauri/src/lib.rs": "841b4b4f7e68a7989c24abb55c883e9de97896653d150ad2cf772de3777080e1",
+    "tests/fixtures/mixed/src-tauri/src/main.rs": "536e506bb90914c243a12b397b9a998f85ae2cbd9ba02dfd03a9e155ca5ca0f4",
+    "tests/fixtures/mixed/src-tauri/tauri.conf.json": "d1d4952d0438e5560dc77e77e62184ef91d93ad98f66cfed9435b4bbd373651f",
+    "tests/fixtures/mixed/src/App.tsx": "c89f66484a75e46931211df84342c11ab09d60aff73687c77417e35fd53ead1b",
+    "tests/fixtures/mixed/src/actions.ts": "bcba51995191d87c0634bb2fe1ec5038c0aba21698001c3d57d1658ccb1aabc0",
+    "tests/fixtures/mixed/src/server.ts": "6239e0c23d7579c7912bc172603ceab8c73efe86c33b797cb5c7246cdcfd96fe",
+    "tests/fixtures/mixed/test/actions.ts": "2f9f130ee87b54f0b47e3146575f3628ac4d22ef111f0e14bc1834ab20c37f84",
+    "tests/fixtures/mixed/tsconfig.json": "c6c93194b69765ba79a159243f31b13e702ad74286146d59d12e17fc5cc0c67a",
+    "tests/fixtures/polyglot/enterprise/Service.cs": "c7ac7c0dadd15f442d8c1d8d0d6bdb72e8b95bd57abe141f1926b1516e737204",
+    "tests/fixtures/polyglot/enterprise/Service.java": "b374fc0118cb47da4074dde9804f828bf5b5241d2b55d54a07cf1dec4b771fd2",
+    "tests/fixtures/polyglot/frontend/client.ts": "5a08a059df196b6018e2b8b35f5adcc9732b4752c315b8b2dca9e9e462c2bba3",
+    "tests/fixtures/polyglot/go/service.go": "8202a20db04818326c3acff744692c62b5e8a792e02c7b04b7ea867f8085edb3",
+    "tests/fixtures/polyglot/infra/noise.json": "814dc666d7032b9cf6362150a182466714210ee0f33e4f4054eaa4385c590082",
+    "tests/fixtures/polyglot/infra/openapi.yaml": "9aa7df6d2469fdd9ea4bc709d1b2859d881835c4f3230019007716539bdd4b37",
+    "tests/fixtures/polyglot/infra/schema.graphql": "1a821fe03b30780e5a3145e1a3a3e81fae817d3d6bd38a79c498ca9c691c30d7",
+    "tests/fixtures/polyglot/native/api.c": "05d9f6ccfc1cb40466b3d092ef747989e350403e68ef36295df2fa48cfa08677",
+    "tests/fixtures/polyglot/native/api.h": "aeab2c0345d38406e97211490a51f7cfb5ce037fe0783df18e2bed4514a5b679",
+    "tests/fixtures/polyglot/native/lib.rs": "42a19a3f9916fcd014ef852a1370cf7b97a0d4a64cfcbfe03952c01762a0fc5d",
+    "tests/fixtures/polyglot/native/service.cpp": "3472edc495ca83f7f3e4b9bb49f427799b7b98838a77fd8460a2adb30dff91e9",
+    "tests/fixtures/polyglot/prograph.config.json": "1f7a56e77d5f8c2e71f27527024990deb5c7088fbc4f97e55b0ea7ac15de7a50",
+    "tests/fixtures/polyglot/proto/service.proto": "35c53c12d31bfd78bec4d5ec523a25ff59bdceeeb2d18ee1e5db6ef053914d55",
+    "tests/fixtures/polyglot/python/service.py": "02b11ace3c8bb3ee613f333210f9c7dad8c6ee2a98670f4d7345d2374ee68dcd",
+    "tests/fixtures/rust-quality/Cargo.toml": "ec8d542fd72c4c571516d53ab035be95bdcc82a3c3222f6abced1862e1aa4cf1",
+    "tests/fixtures/rust-quality/src/commands.rs": "e1dfd2acf3ebceede1d06c767bebe67f605989ddf854419d26220a281f41fa2f",
+    "tests/fixtures/rust-quality/src/duplicate_a.rs": "18bd5d83d44231b193d2dd3209cdab28e5c1dbdf3f4dfbe9955d7556a6de3f22",
+    "tests/fixtures/rust-quality/src/duplicate_b.rs": "18bd5d83d44231b193d2dd3209cdab28e5c1dbdf3f4dfbe9955d7556a6de3f22",
+    "tests/fixtures/rust-quality/src/events.rs": "72af13bcb9fcbc0413213762959a50f0c3ad7c2653c3bd43d7ff5547a07fff58",
+    "tests/fixtures/rust-quality/src/lib.rs": "925f79ce259ebc7b01f8669876687dd26ec5d5fbc99e572df843fc3ab7e7d5d2",
+    "tests/fixtures/rust-quality/src/logging.rs": "a754ff8f652bb1be9869c9c7e83c380513573c0ae8dda711b37f1d3e1c5f6124",
+    "tests/fixtures/rust-quality/src/reexports.rs": "003317cd4280c55465c1b327b2b8c7d146a91d2459b7d8582690fbb7b90b03e5",
+    "tests/fixtures/rust-quality/src/service.rs": "1e460a3880688ab4e39d829077f60bfe48dd702458e1957a8799cc1197ebb3d1",
+    "tests/fixtures/rust-verified-misses/Cargo.toml": "570b6e63105ab1274b3003196a1dc31e43cf57e0dcdb77992c063c6b8e2041a9",
+    "tests/fixtures/rust-verified-misses/src/capability_probe.rs": "bd5b75f55d3f6b378d5cea02105c3110232e17649a03e8e5d3f064f99f10caad",
+    "tests/fixtures/rust-verified-misses/src/config.rs": "8f2c652b3db45a4c6e4aecf9f69e74683ca85cea67839fa46cb08fd84196fa91",
+    "tests/fixtures/rust-verified-misses/src/diagnostics.rs": "87a6cde3ae0e7169df84e9c82c161d0ff21085cda11d2c6e149a40494e4a229d",
+    "tests/fixtures/rust-verified-misses/src/lib.rs": "fc91f6b58f516444e6d07b40ca110b3790bafade79fbdfea0100f611f6065153",
+    "tests/fixtures/rust-verified-misses/src/link_benchmark.rs": "9692e1236141ecba4fc2b5a5cb3f4d2a24306162d6b5ece82e5af20a787b6eb6",
+    "tests/fixtures/rust-verified-misses/src/models.rs": "b08cd8276df51449640a8b90884e737df55112a072444a3ade12e8726a107388",
+    "tests/fixtures/rust-verified-misses/src/room_control.rs": "2d3a05afe5277c1d4fab565dc9ff955271fea41263a07c6d831d9df2cb8847ae",
+    "tests/fixtures/rust-verified-misses/src/storage.rs": "9d15fbe7b4eebe91da33096805bbe0836b2f4cdf5210faacf1340cd13348270b",
+    "tests/global-queries.test.ts": "2491cb71c2efa04ce73906e7e5da74bf1f171c5790ae04bb86cee200a05b889b",
+    "tests/index-execution.test.ts": "28ee61cf47a7933e9ae1c63906ea4663e5530c39033112c13dadfbdbfbb609e4",
+    "tests/index-provider-cli.test.ts": "d02d8fbc4a6b4dee7aeaff4e69624b4055bddd35a4b41075b5ec0012e167113e",
+    "tests/oracles/legacy-global.ts": "709d5c3b9b7aa85a478078a9e3009ed044e02f287a0e158dd16bb8254df06dc8",
+    "tests/oracles/migration-retention.ts": "623fbcd22086213296e8e6402aae0ee4e9ee1f1e31062d899fe184816c589966",
+    "tests/oracles/semantic-snapshot.ts": "b5556e678832a8a18cc0f01fc75c09a9b6e689b41a6ac9bca69940ec97b094c8",
+    "tests/polyglot.test.ts": "8625b173bad29b7b99d5c0a064ebec6f2d8ad96404066aac117fc081eebd2f8b",
+    "tests/provider-guard.test.ts": "08a94cd21c58a796dfa38258bb31acd736f96f09edf2ae4483de20ed06060b80",
+    "tests/query-runtime.test.ts": "c88bd7bd1f7e227805664f0e679a301baf32cd6590f8a164368cd606effc04e1",
+    "tests/semantic-artifacts.test.ts": "23d47f2aafd0c162209dcef4dc1f4d21c5ce8f7fde20215eaf6d0048064f9f2a",
+    "tests/semantic-authority.test.ts": "d6df31cbae204ac08f5f08fae8e3f569799e49c0cb16227bccfc92aec421a76c",
+    "tests/semantic-clang-inputs.test.ts": "bfe2f829b0a692a081c8d1054ff381f9d8d0252a464339e819cc77196fcad1e4",
+    "tests/semantic-core.test.ts": "a9b2a60cd323e42675fa7c9011f5b1d149201909af5f199668c44f4545299d49",
+    "tests/semantic-diagnostics.test.ts": "3b4854c333f7b9bfd7ddc28e45d1ab58a5e6daec9acf079e7cee60993f894a92",
+    "tests/semantic-gc.test.ts": "56358f6fe6989c285437bf93786543337f2e3fd2a892afbfd92ad04319359532",
+    "tests/semantic-incremental.test.ts": "a0bef311d7cbe4ae0898b6d9a10d2d53adc571a2d4274acc4ab83b3a92f2d280",
+    "tests/semantic-ingestion.test.ts": "41794a2c8f08f8dab65cd2a900350ba6cf530a97bb207ebb65b68d56cd62e76f",
+    "tests/semantic-inputs.test.ts": "c118354b94b2140ec72ca5798295ee727b3f02a0142708b363ddfaadd10eef82",
+    "tests/semantic-managed.test.ts": "b5170972b8755c0186e98d52bb3dd30e27a590de28a1c8c4378c2786cc3d1161",
+    "tests/semantic-multiprovider.test.ts": "5abcf8d17254bb295a8a209b807d1c2344657baa30eb43d6e71f822ad5409b3e",
+    "tests/semantic-passes.test.ts": "a69f2ca14fbad1808ab64c7418a17bedc33f0b5b4051f268892287fb0f98f314",
+    "tests/semantic-publication.test.ts": "64d84769e08511bda835a9720a17623577f60ef93c3821a955961ebc90468985",
+    "tests/semantic-replay.test.ts": "df1f0dfcbcc2a706ddfba36207647132592634183ec341b495c6b176f3844e7a",
+    "tests/semantic-retention.test.ts": "fa49b2802c8ae84326a1344896e9fd2a55f7c660cd7db5a7594042b355806a8c",
+    "tests/semantic-rust.test.ts": "461e380f8bc9dbcbcc06929343eda99d3cc716befe392616e8aa4765a0b4609d",
+    "tests/snapshot-report.test.ts": "8a8e27064cf6117925af7d28aef0930b3575134485158674b362ed48d894fb7b",
+    "tests/source-reuse.test.ts": "f051e2202071c3a68f85ddf5b810473dfd858cac842d4dbf6a26c9970e631a13",
+    "tests/watch-isolation.test.ts": "fea6a365c9779b05532cf2226f2802ed8433ba635e59245c17287f5aa56ade7b"
+  },
+  "builtDigests": {
+    "dist/adapters/artifact/architecture/index.d.ts": "5d7cde81c828adfebeb7559081a0dabd541dc59655b4004563599ca1e8dbf6c6",
+    "dist/adapters/artifact/architecture/index.js": "6ead5f845621b7c572c02929f97b1bf686465ffba153b8f92011bfdeeb2a0c1c",
+    "dist/adapters/artifact/architecture/index.js.map": "77a1ba775220b4a1a7e4a5c2d133f7a68a3b82fc7db4de405be5223ca4903556",
+    "dist/adapters/artifact/cargo-toml/index.d.ts": "01f4005c3f8f55bfef97e3da607a133d94a68cab04c5eafb9d658fc6421ad56e",
+    "dist/adapters/artifact/cargo-toml/index.js": "529d6fd3648696be17f413d0823b716f27e1fc5953d476606f9236b6e7ba88b8",
+    "dist/adapters/artifact/cargo-toml/index.js.map": "bba08e435ad831a0c4fa23f249ec31b59554d85834effbc38953414d49c0b475",
+    "dist/adapters/artifact/markdown/index.d.ts": "b92d763cc03d9c2116efd85d10669e4b398232060efaa44bfdd6530a5b424478",
+    "dist/adapters/artifact/markdown/index.js": "26d02e088f5baf3eef4b414b2961dec8bf585aed12c84882223f7c4ab9d19a7d",
+    "dist/adapters/artifact/markdown/index.js.map": "261a1ec2b98f8dcd41579098ff7dbe9b98d6182742b671e31398875a977ad7b6",
+    "dist/adapters/artifact/package-json/index.d.ts": "b6582ab7e101c2146c34f669605382871bfaf2e11f248db725dd5a84cca8816b",
+    "dist/adapters/artifact/package-json/index.js": "7101f56dbd9b3d0bb83843eea6ec66e6dfc3dac33fe66630da7e685e58d16913",
+    "dist/adapters/artifact/package-json/index.js.map": "7a66badd0410df47ddea645ed33c80b0562f79f97125fd69f526508cd341db31",
+    "dist/adapters/artifact/tauri-capability/index.d.ts": "e903abfc3f2357810d9e39def264aefa1b1581da78945b41ebf64e399be4914a",
+    "dist/adapters/artifact/tauri-capability/index.js": "ccc7755799224b402b77dad92abd399a85072cceb4b112dbc2e64c940d866822",
+    "dist/adapters/artifact/tauri-capability/index.js.map": "5219459dbf83ec2a89446c00e8d1a359915f09e9f33559d9bbfacad7aed8f5d3",
+    "dist/adapters/artifact/tauri-config/index.d.ts": "c8a737b6c5a455c869085e874d9b542ef4906d42057b06b63266f04d3bb17200",
+    "dist/adapters/artifact/tauri-config/index.js": "fbbc0ed9337bad9afa9d5123c523ca5bc3202e6b23aab75e9b5685393bb411bf",
+    "dist/adapters/artifact/tauri-config/index.js.map": "94b2221fc9af82c65b822d869d6fbc9139f76798c801d6baf669c608efdafeb0",
+    "dist/adapters/artifact/tests/index.d.ts": "5e7662c5cc3376effe3973b43bfa967313e145d4f75e6286a8b39870a4f63dfe",
+    "dist/adapters/artifact/tests/index.js": "50cc135704acf10e5e0239e3abacdb2fd0a20092aea428829a423896dcc79fdd",
+    "dist/adapters/artifact/tests/index.js.map": "c80d0539535abd7affea388da8689e188894686bf0a6699ab4a1cfc184c5bdc3",
+    "dist/adapters/artifact/utils.d.ts": "3f3f06a83c1e134dbcc128f31baab1c4c731b0fb65b62644be4848fbb9517513",
+    "dist/adapters/artifact/utils.js": "7d4c6e89db5fe4d676db714d1c90967cde9cdc042a206ba2b2160247576ddd11",
+    "dist/adapters/artifact/utils.js.map": "85046704f5cc7350ca7c4f46f5980ada787877f309bd6a47e30bcfe4a8f18b33",
+    "dist/adapters/framework/react/index.d.ts": "f91a93ce47c6633900144aca56e5752ecf4ad26d997b0e83957d0b0a1ca78063",
+    "dist/adapters/framework/react/index.js": "6b8ad38b6ebdaff2170e780d5d87269ec218900dd964526dc6a7fa2508cd5c56",
+    "dist/adapters/framework/react/index.js.map": "5b7bf48a5e3e83adc314d81e0b7cdd5bdbfbff24abf56436d78819c6968af9f1",
+    "dist/adapters/framework/tauri/index.d.ts": "86cafd1e3d06cdebe0472876e28c222168944154c1cbdabb1080fa6a292ed700",
+    "dist/adapters/framework/tauri/index.js": "d49c30382770638d0421c791cd72dd15234ed93016c2b7d182ed3cf3bed218c6",
+    "dist/adapters/framework/tauri/index.js.map": "ad7ac4c0e10cad55809e5942d1031d9fadefa72c371fdc8d3afb9487bebd4902",
+    "dist/adapters/language/polyglot/index.d.ts": "91784c60dde15a148d322e34500b4f5d0d08b908c37218914c1c33065f4135b2",
+    "dist/adapters/language/polyglot/index.js": "fa61d2814971956692684a93580f0e0808671d7f02e69f3ba6f20b6fad3a4fbf",
+    "dist/adapters/language/polyglot/index.js.map": "561f49d1c1889554317e165eb14bded789520d966b43e4d9c559145dad49d401",
+    "dist/adapters/language/rust/index.d.ts": "6a14eae2e4e2d1f7117a1d3c66984c9ef95359f1d7a423d9a0e65377fe3f6ace",
+    "dist/adapters/language/rust/index.js": "c4a5152d6936aa2a254b344449b85191c97a5c700b0836bacae039ab5c0ae5ad",
+    "dist/adapters/language/rust/index.js.map": "27b9d576001a871583a43a609bd09f582bc0b3459c141f8ac1a247dc8936d996",
+    "dist/adapters/language/typescript/index.d.ts": "49ff51159512d2491a237ae3cb3ae09f737e53caf3c83376da5ec3c4f067526a",
+    "dist/adapters/language/typescript/index.js": "c75f73c9ae04ad7c1aba45090756968873cfa8be1d23ae3b8ba23903e7af6909",
+    "dist/adapters/language/typescript/index.js.map": "7ab3f385aec0c264e5d790cc569708028368257e5a0c188c1bb8f177f2125b5c",
+    "dist/adapters/overlay/semantic-linker/index.d.ts": "2db9fadfe89eb7e1dfdee78d1bcd670b326feddd2222dfb52affc4a5d65555d7",
+    "dist/adapters/overlay/semantic-linker/index.js": "bc22f1aa0e2bb79547477594efe075a75587eda1c0d36646b53c05dfb4556e10",
+    "dist/adapters/overlay/semantic-linker/index.js.map": "80196a62170032c001b9b8255f49ac96fb616d486d7e37f27b6078a7b075d0ab",
+    "dist/cli/index.d.ts": "43e818adf60173644896298637f47b01d5819b17eda46eaa32d0c7d64724d012",
+    "dist/cli/index.js": "403280525a2cec886941eb9ecbacaceacd5a760e0448f9d25772d3de598455f3",
+    "dist/cli/index.js.map": "a89ba7a257476679d61ee8171b9c4dfba719245a5e60fc3a293343d0b05a7cb7",
+    "dist/cli/output.d.ts": "71cdeef613ccd842a6d94c1e2b0217ccd68f7bb6afcb0e3f5a81e4a701d75235",
+    "dist/cli/output.js": "f77a5094e61baea3dbd6942ef0ed3f471474e481ccddf1c68bc39473383d0e79",
+    "dist/cli/output.js.map": "ce7dd0e6bd5dbe2621715f6510fe97490faa04b1fe614742b8159b2e4c8d6001",
+    "dist/core/adapters/contracts.d.ts": "9dd2cd138f3b7b4137c0080cc2c4cec1b4f58a7f86e8d9aab859c207e042c692",
+    "dist/core/adapters/contracts.js": "fa4f154480ffd75193c069c65bf783026ed187d508e38d048f81b1fa4798fb29",
+    "dist/core/adapters/contracts.js.map": "ea3d9564e3a455d17e17ea3d3befeb9a434e0fa54ee6e385703ba704da0fa9d8",
+    "dist/core/adapters/providers.d.ts": "81d5f7fef8f5d75ca2e907d50ccaedbbfc354b6c174e39873c921955c88529f1",
+    "dist/core/adapters/providers.js": "1960ab67c95dd452eba546ddc9fb9b049d0116ad145a018631fdf2e8f0afd318",
+    "dist/core/adapters/providers.js.map": "e9e711442b242fee9c87e35aa30d1b3ea27f0f9b37cca7100fb61fe6980c9d1d",
+    "dist/core/analysis/adapter-run.d.ts": "a1678ce1c08d499d33f436a2575a263682d07c71c1da816866800736a8461a80",
+    "dist/core/analysis/adapter-run.js": "707986ccd0fe8038afef6d743dc85239fe3a846ae2d502bdf402e77968c55d58",
+    "dist/core/analysis/adapter-run.js.map": "74d7db73d48202ff3adae265687b6f4e0f02e8f76beabcc4abe2fb5fc58694a3",
+    "dist/core/analysis/analyze.d.ts": "10d12c525d673977e23496daf8bab6b5772b36cd71c5e05a419f0b94f5d2d920",
+    "dist/core/analysis/analyze.js": "71101bb90e052e05a9a53472ae4ba0ff482a71669fc0ade9429757843e3187ec",
+    "dist/core/analysis/analyze.js.map": "ea7e33254096b8d9f1be7698169c8218fc62513dcdf95d8bf1ed02f690ad1d04",
+    "dist/core/analysis/index-execution.d.ts": "ce1a527fe72820755a0e63928f3a0b13f6d1e100eb5cebb75931f169c1c0b709",
+    "dist/core/analysis/index-execution.js": "a37ce6688739a2408fb9e0103c4f6f2879d62a5601e6824fb0b87fd2ed475051",
+    "dist/core/analysis/index-execution.js.map": "8e4c7190a53b917fd8d654b9faf2bd7fecb4c8eded6dd1e702b2469e19f1576a",
+    "dist/core/analysis/index-worker.d.ts": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+    "dist/core/analysis/index-worker.js": "fdb1033e7bc6177a652c30aa70245fe4a38e3cdf1c7986e82704b1cb3b65370a",
+    "dist/core/analysis/index-worker.js.map": "cdc8588ced43169cecbc1a2ce2d0d8c56b9d04ebc0cebb03df43bb7cd0217cfe",
+    "dist/core/analysis/prepare-queries.d.ts": "e506e992cc50b7ab4d7d98839dd99dd4514dd20f8cb263d479a6dbb72a55c4e9",
+    "dist/core/analysis/prepare-queries.js": "ea8da6f18cd7c681b5409b24289488783d49b1a99e3d20f19ad5fd60662e7679",
+    "dist/core/analysis/prepare-queries.js.map": "9299bcc6d3aecac7848107e2641e33689b176b33d2bcad28c79b12ebb070fa2c",
+    "dist/core/analysis/state.d.ts": "51336ebc115ac49da24b04e9953c19ff63f3044881e24d68f24ae16c712b7898",
+    "dist/core/analysis/state.js": "924742b83a0a565145c5d70b75428e53a33d5cb963506c2569c21dfaa77285ac",
+    "dist/core/analysis/state.js.map": "07228f8a159ee61d1d6a2374e9c148a38cb722e115658c217cf375d6c8277ea0",
+    "dist/core/analysis/sync.d.ts": "f072019f6b052eaa8b3cbad9a5e174bd085cdd05a87dd99bdd4d22338171bcfe",
+    "dist/core/analysis/sync.js": "227bcd95e66cb83aac88d6d4783ffb77130d13dfba5cbc9722d20286a3d0fa9e",
+    "dist/core/analysis/sync.js.map": "0b8de2cf2c75abe557f55f8bf45008bdce22f72d3e4d378db6a4741587ed1516",
+    "dist/core/analysis/watch.d.ts": "73a51cc8eb87ffbea5128571b3b1828b754ba6537678516313e8af20bf79eca1",
+    "dist/core/analysis/watch.js": "204fe852d33cf8d371b66d79e4a63ad470fe4937e4b947c1749eaaff23950349",
+    "dist/core/analysis/watch.js.map": "e77ecf55a887c62178317f669a3fe20b652830963800cfd919cec286bb854ae8",
+    "dist/core/config/config.d.ts": "60b21e0dae786de47bb6e4b09ae13f0bafc7e8fe135374033147ecf996af3fce",
+    "dist/core/config/config.js": "b30c773955f1c329803fc3a0956f8eb1acfdf2e703a52a6a0053a7aa8bb06bf9",
+    "dist/core/config/config.js.map": "4094ef770968bc76537802776b365c2262b4f22cd0a0b9f52c8460bc1bf8e411",
+    "dist/core/graph/boundaries.d.ts": "aa27f24ff202e14c24ce7ee9f7d3d21545738395cd4e38a31fa2e511e66de2ba",
+    "dist/core/graph/boundaries.js": "09d2a93ca212d0074036dcc94998add58f0534557bf98aa4578f6a04f6b22a5e",
+    "dist/core/graph/boundaries.js.map": "9aa0ef01a3e522dbce202c10208659acf89e2d72b09f1afabe084907df4be2da",
+    "dist/core/graph/builder.d.ts": "08fed0f55cd3d05086e4d9cd43462bcbe02a49c4c6e9cccb65a06b0e6e0dc8f1",
+    "dist/core/graph/builder.js": "fe4b720d9fcf6e462142cc68c2f46d848884f0b36ee282179e1d41876f1ab0f4",
+    "dist/core/graph/builder.js.map": "c3e5943d5096f55c486078ca50e8843e336f019b7a6e344985bd41fe744f43f7",
+    "dist/core/graph/identity.d.ts": "7f875230457551731086645a24db549b8d124f168bdf0bc7ee70d341267acdc3",
+    "dist/core/graph/identity.js": "cce084cae8ffbe292bf375d0a41f0d207e163010ec6b5b7f5ec73cc6d3311830",
+    "dist/core/graph/identity.js.map": "ab95d75540f916b4b29b02bc15e0a80f9413fd20c3eddbe5ed2ebe6ff2912c8c",
+    "dist/core/graph/metadata.d.ts": "36a59a66f7ce8af10518974131d66e7776f0677fb183ba568418437ec06329db",
+    "dist/core/graph/metadata.js": "0c3d2616ce0c5231b4ca6df86c22adb023bb017c2330493638edff60a4e7ee1d",
+    "dist/core/graph/metadata.js.map": "30a6b45ef2ced42e3a4ea40a5575194f330064422461be5147ad21bc702e5f2d",
+    "dist/core/graph/schema.d.ts": "6cd4ea892f8fd7c6e556b88e64d9211eb4e2f18f21d80db40b6752a2edd822fe",
+    "dist/core/graph/schema.js": "076329ce2f2db0af45494fed66d5f12e0f7f461983bdc3c21a835f66032fc08a",
+    "dist/core/graph/schema.js.map": "5c5dc8b6c4d4dc33a68c478fa339570f26216f144e793e23a1e5f443311d0ace",
+    "dist/core/query/compatibility-cycles.d.ts": "3082e6732b0e6f60b13d58193e7ac96d53d725cb089412f8cdea1701669c4113",
+    "dist/core/query/compatibility-cycles.js": "988efbd1bd890ead0f30767bf4dd007c3f61e0811d69deeb2e858352465c7c4e",
+    "dist/core/query/compatibility-cycles.js.map": "c2e7f97573cf796de934d575f4102d0605cc953292ddbcf0ae9873d5b8ab0de1",
+    "dist/core/query/compatibility-global-read.d.ts": "20e009daf94ab8786adb6d1a62ea890f6472d06b412ada8079a45fc4d0acd76b",
+    "dist/core/query/compatibility-global-read.js": "3e020e5e7d94639fe1b81419d474a992bfbd635a5023d8a3e068a338cbd6b2a7",
+    "dist/core/query/compatibility-global-read.js.map": "d5d42bd2184bff71dad1d94d289ca37fc37d288c28b3bea5eb70b7921e2b5f48",
+    "dist/core/query/file-architecture.d.ts": "bd8bbdb68627d67fc3279c646388f6b88028ed1df2fbc16ce23819e02c0294ff",
+    "dist/core/query/file-architecture.js": "2e0fa19cd8a23720d5399d887bfc322df5c182f58e4a49aca1610cb560c5093d",
+    "dist/core/query/file-architecture.js.map": "624608aa005045a4bf12670386c29d04966dcc1a04090de970cc5968bc5a5938",
+    "dist/core/query/global-projections.d.ts": "d0b1b14a5f966ab9a4f10d4eb4ae1071228de782e7695080ba744b549acc93e4",
+    "dist/core/query/global-projections.js": "04e4457dcb6cbf3dbbfb85176b7bcad4ca3e6bd9cc944763f8eb37d9eb343c54",
+    "dist/core/query/global-projections.js.map": "dfd0f14198c5a2c3d31246105cdf894008d60db8f4a2a148c6f921ee25bb42dc",
+    "dist/core/query/global-read.d.ts": "8e1e5e52fe07d43ba7257f6423e1a1bd1515243bfb0c004c6361de90b874feb2",
+    "dist/core/query/global-read.js": "db81dc274767b508286e6d621681b1ebf8d21d675e3cb161a3e94ba80415b3c7",
+    "dist/core/query/global-read.js.map": "d045b00db9f4930210fb48603be2bf318771b0765211a16f570e4ec90c1889bc",
+    "dist/core/query/isolation.d.ts": "78219bb71ab56292a0b35c394dac36ca63d908f965fb1bf2bc40db393abfb092",
+    "dist/core/query/isolation.js": "95e39ec41548189f4ab2c2da22f9bf205f9afdeda14d15204c081311b3adf742",
+    "dist/core/query/isolation.js.map": "159e08b3145cae0542baab8acc9156c8607c9b0e4c48c8df7d03e3b2a24aed0b",
+    "dist/core/query/navigation.d.ts": "8f5b6618b74b93055c0e7abd5828db335fff72848a72b29b9179b0300fc66eba",
+    "dist/core/query/navigation.js": "94633fd10f2aad3113c4ec2c55bbf34c8af4fe12143ca0860262c5054ad8bda1",
+    "dist/core/query/navigation.js.map": "bc1400436d1c3b4ad4176b9e0cbdf2aa9f16ba9cc88f021074c60a0532d65afc",
+    "dist/core/query/output-mode.d.ts": "a683e106c03a14655d8b3ca9a10c2a86529fff4ebcad78bf7b00377762185687",
+    "dist/core/query/output-mode.js": "aad1fdb601724f60e4c30ee1cdb22b60c1b5ec50335f7c2470db0e86c3ea8b9f",
+    "dist/core/query/output-mode.js.map": "b87c520bbc2141ede4113fecafda671e29e35b7dcd370b0be687d3d0135fdd59",
+    "dist/core/query/query-service.d.ts": "bd71fc263c614a3c4e6e0c1e6671ae7625247cfafa82ebe83081f3c88c335993",
+    "dist/core/query/query-service.js": "1d01aceced6121ca984099862ccb9d72dbc08516e212481eca249bd17c78ad4f",
+    "dist/core/query/query-service.js.map": "cf6010b8aa91cc621adc15e2fe1e85fd5e56fc4f8283e607610c63bb7a11da46",
+    "dist/core/query/query-worker.d.ts": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+    "dist/core/query/query-worker.js": "b98b5eb622a9fb2a2f8d92053ca21ef2771fb419ecea18c76990d81a44fe0b64",
+    "dist/core/query/query-worker.js.map": "f356223172fa3040ac0f5da5588639c790705ff76d7eec5692221c6a0305c6f5",
+    "dist/core/query/scope.d.ts": "c60770f7f8a2b741e1301ec38d9fe5f155c15c76b0aa5621d1778c25b1280c26",
+    "dist/core/query/scope.js": "0e54f3eae7466ab45c1593c3eb3bc040e3785a8bbc9e19af2809ae32fa5f11cf",
+    "dist/core/query/scope.js.map": "62662122f5a091db6c2ecce45dad65dad2a6ce31b401672b79917011c880ca5e",
+    "dist/core/repository/repository.d.ts": "76a971ad6eeeba77773e08649da3fba74afd1f57d28e27f29075c6f37f5610bc",
+    "dist/core/repository/repository.js": "2c2872c76c72b135d5ca9095cf891e1e34e4f3155777f3376409fe11aec6a44d",
+    "dist/core/repository/repository.js.map": "d007a4a2809b2d675c1db2a91ce70c62a03c9302fc0666da02cd36d0e2a8d986",
+    "dist/core/semantic/analysis-passes.d.ts": "0b12a2200ad02ca7125eccc6eb4f05629d018dcf5e370d3153c2e4e92525e0db",
+    "dist/core/semantic/analysis-passes.js": "caff1b024cab73f51046fdee634e47859117e7c178c9376a6514e11961f5bc4c",
+    "dist/core/semantic/analysis-passes.js.map": "3129eeade1765e5d0823cc0619c53fd49f45ad90203f26d3a17f8423369b4d05",
+    "dist/core/semantic/analysis-versions.d.ts": "2f59a8a04a5551db414c6d7cfa3a0de89a24cd4e534e21e9115c86ec3529ab0e",
+    "dist/core/semantic/analysis-versions.js": "7db1c10ae181bce60763ed20c4d16c90bf47e6fcae10a18c00e16279d677b534",
+    "dist/core/semantic/analysis-versions.js.map": "dd08081ee00721a5e8efd6d9d06a157f3051970487c28be256fcc32b6314fe4d",
+    "dist/core/semantic/authority-migration.d.ts": "939bd913abd6490cd850b5d85a8b1a519de9354d07ee8b0ba48fecbd197e4bba",
+    "dist/core/semantic/authority-migration.js": "9f0dc169a9362d47e6f040a2ff25ad481ebbd5946203f30c7dc6224183f21bac",
+    "dist/core/semantic/authority-migration.js.map": "9112685c6453db046c1a8ef7efaa2e91b77e2612e1b803b2cdbdaa3e46ffc17b",
+    "dist/core/semantic/authority.d.ts": "41c7727901ce395b76342bf382058fbddd147f0c9cf659a71b7bc4166e0c78d4",
+    "dist/core/semantic/authority.js": "3e9ce30a04c1217d8a758a6e285e8f2f34f7f8eb05a1713943e955aa9cf4578c",
+    "dist/core/semantic/authority.js.map": "381aaf3b10024143a404aa94e98cc64b1359b0446a676c54b5b697f3dec68382",
+    "dist/core/semantic/boundary-pass.d.ts": "2d0c4511d52c10a80d2ff15fa753c284f9abd42d23ec1042ded6ea3c4a8511e3",
+    "dist/core/semantic/boundary-pass.js": "29089d8d7ca7016fc8a9b388628b80f293cf60a1021cf0285a8b2aab1947bc4d",
+    "dist/core/semantic/boundary-pass.js.map": "7c41352e132ae8011c68668e168b1d5a9486402fbe99ad2ac212108b717ab873",
+    "dist/core/semantic/boundary-shards.d.ts": "20ec6aa04f0fc2dce4f3cad5eefa5d63ce3e803a0c5d3c7713516953ba061002",
+    "dist/core/semantic/boundary-shards.js": "597534b4d5c07032f43a7cee6dfeee6d4819e2a892c3201edcb80fd70530c2ab",
+    "dist/core/semantic/boundary-shards.js.map": "76a623256a12c27ebb802d9400d90efee99fe5d665fb2bf6ed3678044cc833b5",
+    "dist/core/semantic/clang-inputs.d.ts": "cb30e29823802fd3129634bd0bd21f62a5e6322f796f1e7e06d57ca35896088b",
+    "dist/core/semantic/clang-inputs.js": "4a722f9ec8f28aa7270b36bfbb383ac7f98fa34702c205a9758c10cd857f6981",
+    "dist/core/semantic/clang-inputs.js.map": "bc8f1ff09118b29cea69bef62d36c52c966fd410244fdd3813423c891da5fa79",
+    "dist/core/semantic/clang.d.ts": "02ef4fce95129cf1414396db20375668afbf32adb64bae49274da4a539daa3fd",
+    "dist/core/semantic/clang.js": "45c41e8fb150b19b6e9931200055d934dd07aee474ae3cd2fa37cc8aedefd274",
+    "dist/core/semantic/clang.js.map": "d4fefe92ef0e30c6f20c4f1d2cb7723ab8a451b186ea8988b80f8856124f1e16",
+    "dist/core/semantic/compatibility-cache.d.ts": "12020ae1fedbfe686a5a5fefe4cfac85411fdcd2a47fcfd2de83f1bb33a5d8d0",
+    "dist/core/semantic/compatibility-cache.js": "ae6f0f9b00fb043a4cd5477b0a9cc8c893028325f2859b726c542c755ce7a08f",
+    "dist/core/semantic/compatibility-cache.js.map": "606eb0ef1564dba6de8066742cf4241102e8cb274de0d5d5fdc324f4b210ce2a",
+    "dist/core/semantic/compatibility-export.d.ts": "01a2f1274d46b71de35c11027e13873ba26e5fe032ec3bf1475c61f6d7169fbf",
+    "dist/core/semantic/compatibility-export.js": "773dc095962f9811a417d57ed1556b9a00bcbda58627c9fe867633d2c23f6ec5",
+    "dist/core/semantic/compatibility-export.js.map": "48172deb824f95f65d50fe946d534788ce0d517ec1ffabf0945b9da8a25cf789",
+    "dist/core/semantic/compatibility-global.d.ts": "e41e46fce0a127c7ca063a90407e3ae979def3aaa60317b54f5a192a33a58a73",
+    "dist/core/semantic/compatibility-global.js": "2cbca01d742a08213953716bcd3a8131f9c434dbf7b4eeefae6848f527037a9e",
+    "dist/core/semantic/compatibility-global.js.map": "a74e33904e5ef8cb4787d4cf53364a8e1c4e055d603c1bdd91ec1c9de2d49bc5",
+    "dist/core/semantic/compatibility-snapshot.d.ts": "e861a19c6d89d9b95368590371da6afcc765a40540c097e332881d7c21653d43",
+    "dist/core/semantic/compatibility-snapshot.js": "0b6c6da6aaca726b40bd39257e421127f6dd3663620e7e0c967710f1bf0f590e",
+    "dist/core/semantic/compatibility-snapshot.js.map": "0a214966e1e8c17f48ec1c50cd06d59d120538b39cd78053dc0222fadde24e03",
+    "dist/core/semantic/coordinates.d.ts": "a0dcb59c4f2a1f07c115433fb1b06fae9f4a52c8304730125b14aa234f2c4074",
+    "dist/core/semantic/coordinates.js": "6b2f51f083a5622d4d1ad2334692f003386f6afc80d1ffaddb996470034aa388",
+    "dist/core/semantic/coordinates.js.map": "4c867ff7e6f2f90d309888b0d0f2e3a6522010cae3b474f37319c001ba94ddb0",
+    "dist/core/semantic/gc.d.ts": "b94efbe7e049d7c526c0ffb3cf1814907dbd8b41bd75cf77fcee36618592135f",
+    "dist/core/semantic/gc.js": "0cf998cea3f2e59520c71c1c8a04981ac9620de0b31a58614a0ff84c84530f8b",
+    "dist/core/semantic/gc.js.map": "f859850060a5e792e17384d4f7a685873e92ce8e3bf4641f1c71e986848bc904",
+    "dist/core/semantic/input-check.d.ts": "2d6e8a72ee60b4d1918a38d1d1da7720746fdaaa45f5f5db4fe84f0c9dc92d60",
+    "dist/core/semantic/input-check.js": "ea4d454dffbedb923a187aca0806f80d53454bb42e6c08121af98affd480c0e6",
+    "dist/core/semantic/input-check.js.map": "77bfc647fd91ab497f94af2186af843b13147c88d60cca8914679255c5e7963b",
+    "dist/core/semantic/inputs.d.ts": "9eea97943b49dca965177e9a49e44530f10b3ab876d8d849f82f2ec068ff6b9d",
+    "dist/core/semantic/inputs.js": "c91a0471790dc593a906ce5c230fa8149be93f65c679f052b324be985f82cdd5",
+    "dist/core/semantic/inputs.js.map": "4c5d87064d7652b307b462384a677a8c52497b888630bb7fc22ba1e5b78bab79",
+    "dist/core/semantic/maintenance-lock.d.ts": "149d749d4faca1239e0651922b0744c379687b3a14704ae4a1f251aa6446dbc4",
+    "dist/core/semantic/maintenance-lock.js": "26ffafb554857de757e874a4837368bd10119015d88dc8e1a1b55d92d066308a",
+    "dist/core/semantic/maintenance-lock.js.map": "ed95693b7868796328876646a98861f531c9ab9dfb3fde114c69742c69f59b81",
+    "dist/core/semantic/managed-scip.d.ts": "391678c6af2c651f7d1fc947cdeb13dfdc8dc6a9c6ee07ecc499ba0f0a011914",
+    "dist/core/semantic/managed-scip.js": "333ad4e67ddc1570bf8b1a15834866489f468a3bee5b2f991c359098a6a1203c",
+    "dist/core/semantic/managed-scip.js.map": "f568d1dd8639569d588bc58c801e14672ee82146e11aafb74dc03196cab846dc",
+    "dist/core/semantic/model.d.ts": "f328a449eb988b007d0ef95c15649002bf8122d7d01412a1d45980d53b052b1c",
+    "dist/core/semantic/model.js": "da8c534fc9400bb975b2fbdcfaca996048f87b4cea66db1087ba01a96131b31b",
+    "dist/core/semantic/model.js.map": "f843086f60ad50e91d5398b36ff3ae1bbb4a5e59bf7674e82646c421c66b0381",
+    "dist/core/semantic/owned-projection.d.ts": "610cafd83513371b2223422fb73576f3094bbfa43f11cdff72b736391e027b4e",
+    "dist/core/semantic/owned-projection.js": "bf783c6f8839a8c79b567165e19373b43cf792eb9a21f3e87a2f52b7cc4f7362",
+    "dist/core/semantic/owned-projection.js.map": "77807eed79b74572a334c23e870d9bdaddd9b568da05af240766e30fc27d7c65",
+    "dist/core/semantic/passes.d.ts": "dfde1d86ef57630a87125ad64ad1109c5568b90906b1c0469698639b12190cf8",
+    "dist/core/semantic/passes.js": "9f7ab7d58db2294af60d9bc4af60aa5b0bd2aebd50b5242f9efe3289f6019de5",
+    "dist/core/semantic/passes.js.map": "eaf1cb197ea6cb5cfada1952d13a40663a914ebe7c355370c467cb4ebf59b792",
+    "dist/core/semantic/process.d.ts": "01d587263030c9785119223e069eb4601da3b04ecc54e54dbb11ed9ad0713adb",
+    "dist/core/semantic/process.js": "c470691a44228521f28006cc06427c2432e9e45220594e5b378d9507ddfc7fbd",
+    "dist/core/semantic/process.js.map": "85e7c655fcc5110340a144936bdce890c94efa7f6198b6bd8397d1fbabbe7bd9",
+    "dist/core/semantic/projection-shards.d.ts": "23edb757287df6c87fa517a83fd51e47fa2d3956546886b703cf70bcb627dd8f",
+    "dist/core/semantic/projection-shards.js": "e8e9b069745dfd0d205acab309b92f651fe53963aa48930bcc755a965afc38ad",
+    "dist/core/semantic/projection-shards.js.map": "a0166437dc403c2c24a6c310c3442fb6637dd3d46e84260af6b2c667ad591b8c",
+    "dist/core/semantic/projects.d.ts": "956f6d01697b86538dacf2d610ca104fb203e29db3ceab07384df9f3b87c7b29",
+    "dist/core/semantic/projects.js": "ff19d01a38678b79a90d3b8e5c83243514529fd8a4dbac616f408a49347c1d0f",
+    "dist/core/semantic/projects.js.map": "0295b542193d8e1ccca33ac62c342c84a935f57a1d62adbe5ce26c57e3ef7001",
+    "dist/core/semantic/provider-artifacts.d.ts": "a370b6b4466c937169b8f1953e27ffde657d0ab29458f8c8eb1581173f149657",
+    "dist/core/semantic/provider-artifacts.js": "007416e290abbdbdbf21ff4e72688b400f30833b82bb11c3bef26809d0ba1ecc",
+    "dist/core/semantic/provider-artifacts.js.map": "fccda8ad8acc515d4eff80eeca54aae5c8bbe0e7b64795069cc089c0303f748d",
+    "dist/core/semantic/provider-grants.d.ts": "47c575e58a4b660843e02609f402587a51fa0aa8358576a7de5203ae2eb91d59",
+    "dist/core/semantic/provider-grants.js": "ff95eaf489665f0791754dccbe112deb23fd940e2b9719c28b360c416b5f60cb",
+    "dist/core/semantic/provider-grants.js.map": "1f68910acef0924959d938906e0eb67bf02a1f3627bd9d77e4977b760dad6e8e",
+    "dist/core/semantic/provider-guard.d.ts": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+    "dist/core/semantic/provider-guard.js": "cdf2e72aec0b4bb424fdfe7ea3c30e195ece4f11b6e3f296e99c4a3be1bfe592",
+    "dist/core/semantic/provider-guard.js.map": "9f49f754990ccf19a851a8a85353e628ff20887a11654c81125e747a68ff56ee",
+    "dist/core/semantic/provider-plan.d.ts": "5f3457e71292a37430813ffdf5a476808b1d03fb928b1980d4cb8077136ecfb3",
+    "dist/core/semantic/provider-plan.js": "ea34097e807b645139a0e3adb536df6fca7d669a832f6d4e914825f8affc137a",
+    "dist/core/semantic/provider-plan.js.map": "180d38ad9aa9e615b1157f6323118201f31f6b203c0e7e799f9e3d1e0f9b5820",
+    "dist/core/semantic/provider-replay.d.ts": "9f83093ef2e1d4fc52d86fbda6667369f47f44ba9c29400a8810329de4fb995f",
+    "dist/core/semantic/provider-replay.js": "813d67834901f2c1860026e8480d91482491d515980261b4565550a125551cb0",
+    "dist/core/semantic/provider-replay.js.map": "c4a25774a05b7aeb66719841ab295561764bcc57dcf45b121582a162b179ec6b",
+    "dist/core/semantic/provider-runs.d.ts": "056020ecddf2a4a724198756b82a4c31205dcec06082329a48db6d2a6e6048be",
+    "dist/core/semantic/provider-runs.js": "1bf1e5de9e3290860038d3303ea86d729c89d3cc6d326a9f3da37c432771d233",
+    "dist/core/semantic/provider-runs.js.map": "95188e22e0a1c03b32c3166684a2413acb531fd55397adbfd0e511a12865bad4",
+    "dist/core/semantic/publication.d.ts": "6d8a1155a5ecdf67748ff23ad55ab0e1e0dce79f3a1296a6beb07d2a925a08ac",
+    "dist/core/semantic/publication.js": "213a3e579eaed59700b25c6e2e2743283000ae8601fe2a39035ba998f5590558",
+    "dist/core/semantic/publication.js.map": "ba09847b78c34b70e75299a5e6f17da2b3f6605dc14471a0c0e4949a2d1eeb96",
+    "dist/core/semantic/query.d.ts": "b1832b0990bd94f88615cfc06d3b108ece39b6e9e6964b4caf041d1ffba28c07",
+    "dist/core/semantic/query.js": "acc96771406bf33186bda4e3c11aa517a1f491414895280d7f0cf8e533579bf5",
+    "dist/core/semantic/query.js.map": "062e5d80333d865858718abf42901237f743021c196f7480ac5d8d82863316b8",
+    "dist/core/semantic/read.d.ts": "2bf7db5bd091f16329d63d0ef60cc73c8ac185fac85f77531e12508629a2976f",
+    "dist/core/semantic/read.js": "aa5c2d54fd7407096f9b2dbfc33af7288296095b0243dd70800654e0e1293b98",
+    "dist/core/semantic/read.js.map": "218071fcaa06786c05908c92452fedcbd47e2555e04001a97849e15fa6bd4ab0",
+    "dist/core/semantic/retention-qualification.d.ts": "f64ba64c7ea5a075118a4921033f370531e3ac68b61f04babe5b97a1a674c50e",
+    "dist/core/semantic/retention-qualification.js": "d75f7bc6dc98d1cff175711df3f867d16df1ee3116a463c8afbf1dd59850c3ac",
+    "dist/core/semantic/retention-qualification.js.map": "ce358a7970d99e7943bbcde7cfef955c975f225dd8dbc886840329865dab521e",
+    "dist/core/semantic/rust-qualification.d.ts": "09699da3de89dbf0ef6d6d24c4928650bb9ccad64a5cc5a78aaae10c535f7b5d",
+    "dist/core/semantic/rust-qualification.js": "1221288038f4ad79f8e63d722bbd4117c622d1107b1d1e8d63461b03a9622f84",
+    "dist/core/semantic/rust-qualification.js.map": "1d9ae4fbb9ae0e4ec1f9db21bacb96d1f0977c5287b888730152ec64fc6149ce",
+    "dist/core/semantic/rust.d.ts": "1667d70f6378d5b5668f5769cedc64e0e96f0f7cd8252a8a00555c6e188bcf1f",
+    "dist/core/semantic/rust.js": "18750aa12411d8f060c90e2315f39bac02a98395d4deb06e30b4e881378ccbeb",
+    "dist/core/semantic/rust.js.map": "4c46313a5de293573abbb67d31e58e56b06d387eba39d892012b36381cdef064",
+    "dist/core/semantic/schema.d.ts": "a7e896f4537ba74e827db1396701c91797855fbe390393d9536715fde3ceb833",
+    "dist/core/semantic/schema.js": "da4d01ec96771d81244220972718714f29d999dfa811468bdd59e2f4a1d18195",
+    "dist/core/semantic/schema.js.map": "3a1dab462b9d95623433c72038d2e63018066091c46bc2495875bb1f2918e1f8",
+    "dist/core/semantic/scip-dialects.d.ts": "41d77551477a465c162dddde6beb89ab0f0ef23e033788b60075e512a980a6f7",
+    "dist/core/semantic/scip-dialects.js": "e6170d7dcdf5d7bd2cf92e5d6b2b4de3bcafd1fce8add8813c417955d767d947",
+    "dist/core/semantic/scip-dialects.js.map": "65c7ae0a7523e1791770e013d1a14b5d3add81d2567f0ba014e1d8d735bff8c7",
+    "dist/core/semantic/scip-import.d.ts": "9b958c290e4efcfc58d0289ff06c0a66d4dff9a70731fb55ab58d8fbe5aae516",
+    "dist/core/semantic/scip-import.js": "6e4918d73ffc07caf68ed85d4b3ae03f96a2db5e36a896d787bb9d930ca38dd8",
+    "dist/core/semantic/scip-import.js.map": "3685c857964b8b207afe347470d00ad1f45dc932d1575747b705b79e09bbfcdf",
+    "dist/core/semantic/scip-native.d.ts": "d73df5c1d52dc3ff8922dbc242a463bd3698f42b051f2528cf6a6ded0b5c4b42",
+    "dist/core/semantic/scip-native.js": "c00488eb2ae9f9b4f96931a08e424eccf2e79e7998284cca09cf9a856d336bc9",
+    "dist/core/semantic/scip-native.js.map": "0442e337a6195a8bc8a581bbd212ac65b78aae373b37044ecd3b401b6598e8a7",
+    "dist/core/semantic/scip-symbol.d.ts": "396e953ebaf4fcd698fad1847d87764f53ec3f65ca6cb6cb484ad5143848a78c",
+    "dist/core/semantic/scip-symbol.js": "10e89f1b48b44f41e8daaf6880d0ee7a2d38052f49bee25abd4619d95e5529c1",
+    "dist/core/semantic/scip-symbol.js.map": "1aabe761a925b1012b5403afe21f16fa7bcf70ca54fa6b249b2232659bdb6325",
+    "dist/core/semantic/scip-wire.d.ts": "5ec29893af78eab20f61804d37b9ebed7dbc235cd66b7d822f9584e3b855aa48",
+    "dist/core/semantic/scip-wire.js": "a4f373d495b762274b9e54225d939da7a8c198f8986fe70bb4474da42436b6e1",
+    "dist/core/semantic/scip-wire.js.map": "51ff53a2df83f99ce7e943698386a25d5ac08a9a619fa2793ddea1129024ff3a",
+    "dist/core/semantic/snapshot-report.d.ts": "a13bc4290672fb6bdb49b698bc304f6e05399e618ac13dba6199a3c50dac7df9",
+    "dist/core/semantic/snapshot-report.js": "175dfab76def4b5e4bba5b7a2b6df09065d6fe6e1bd218b7f540e7c84f772341",
+    "dist/core/semantic/snapshot-report.js.map": "6b9641e1a46b031d03ccf04944e136c7fb73abc4355b0630ea1012b74108e6d9",
+    "dist/core/semantic/source-reuse.d.ts": "b1492e3262d1799b3c8d0e48f428bd2002184bc8ed120cdc696d322fe57a78ee",
+    "dist/core/semantic/source-reuse.js": "0a0feb69251ce284f4471bee7462e7a3aacea4d7539a29cf98d2d5c863c6e563",
+    "dist/core/semantic/source-reuse.js.map": "e3a8758f26d028b25d9a10ca1d57078d99687e20626b5c808b4241321b36771c",
+    "dist/core/semantic/store.d.ts": "d2233da8ea3f8c9fa878f608a8aa3d48ffec3a522902e5b9928b0c1333f0339d",
+    "dist/core/semantic/store.js": "31457e1c571c3258f2d1fcab04fa4e4d1808b232b8917bbafc4a1e68972a4d60",
+    "dist/core/semantic/store.js.map": "d74f09a7ab973737fa614db8c734fde0027b1a6d5ad6defff9804556d0ffeedf",
+    "dist/core/semantic/tool-receipt.d.ts": "4b0a1d526c05cae2b9a2118fa8aac56e9cadf82370b5bd8243fae149bb1e8aa5",
+    "dist/core/semantic/tool-receipt.js": "be35b887daa46969d4a606feb479aed2f2a9946420063aae88d2a02807a5878f",
+    "dist/core/semantic/tool-receipt.js.map": "0676bca69f3268934d6441a60f1f22755ae0b9b8c32df031dfd1782748135a5e",
+    "dist/core/semantic/typescript-inputs.d.ts": "030f5bf52fc88dfe45958fa10419f89fa9570958d4d879d1b87d71ac900bc885",
+    "dist/core/semantic/typescript-inputs.js": "d62e84eb4fea7393bff82031edb18cfe1a1a82420d3d03afd062fc429f465077",
+    "dist/core/semantic/typescript-inputs.js.map": "f3658d9c0496b203bbd99c0bf8902455b82fbb29f6513b63431e58b6bc78e85d",
+    "dist/core/semantic/typescript.d.ts": "73dbc3204d4d3cd2f627043e632e7170dab14a86072d70aec3ca86a5ce57e589",
+    "dist/core/semantic/typescript.js": "77c5669fa0ea19afb3764c0ab3e7d61256d2fc9fe1fbe9b41d89a2fdc80f4a74",
+    "dist/core/semantic/typescript.js.map": "c439a6b539b0752c3d46ae6d046354cb66ac21d9107ab7f9f01dc8afdc2aaa3b",
+    "dist/core/storage/sqlite.d.ts": "21dd6226fd34d6417c397394701035bb2df2bd2e9eca776b62fe2d417a0cb06c",
+    "dist/core/storage/sqlite.js": "2bc17787c24555da446783a29d546fe9fae0881de843709f0016c56587ffebef",
+    "dist/core/storage/sqlite.js.map": "0d73f361294eb66f35dc012c927b88d0ce0b0842f689182811257784e3889094",
+    "dist/mcp/index.d.ts": "ea2e071b7a91b9211ddf9aea60c82720023c76eef209c62d45913b240b1530e6",
+    "dist/mcp/index.js": "03a0a42ec43c4d7506b6d0b00517f1394514e00582a714e158351985ea8420f2",
+    "dist/mcp/index.js.map": "b1035106be55f3a6976cde5130805bf4d358ebbd86c8eb3d7a52c7fbd193a510",
+    "dist/server/index.d.ts": "3c6ce7555bb938cdff80dd760f62c2be5669cbcd74b255b53285ddc522355f7d",
+    "dist/server/index.js": "6a7e19cc3dc8e3e96aa5fe9af3976e3b6fe511de05e15fcd91ee3aa91c61fdfa",
+    "dist/server/index.js.map": "ee9aba9fc8cbae718323c61f8d335540cdfef119f73677486378d7c8a7d6f2ab",
+    "dist/ui/assets/graph-COT4eVoL.js": "73c0d71a3a1260c7ba557bde3de618fb4d46b301dc22037c981f19875cad95f8",
+    "dist/ui/assets/icons-DiDGfHZm.js": "17e9b050053ac14e2a5555f54eed04c00688ac6a289d4cbaeecf2b8866fc60f5",
+    "dist/ui/assets/index-BocKDMZD.css": "3b8832b0a9e5f3f04a392866984b2e33af89779cbb7ac9e325b6c85d298f0c4a",
+    "dist/ui/assets/index-O6fWixM6.js": "52477951e388edefb26d38a7910ff97dabd3f2ba89630c76c89737cc4faad15f",
+    "dist/ui/assets/layout-SwuvQeKT.js": "fd137b746272cd66eff6ae9efaa1e42b48891a320842b7b213ee26e0c2a0b16f",
+    "dist/ui/index.html": "57145682695d65edec7efe50c0bced868720d0bd75a0cfe190a7695161a23df0"
+  },
+  "packageLockSha256": "67ecc7ad22eb9bcaa7827050226852bd6e7cafb79b7f5d07af6e567f71df83bc",
+  "browserReceipt": "semantic-core-stage5-authority-canvas-local.json",
+  "limits": "Test runtime overlaps final self-analysis and is not indexing or publication throughput. All required tools/old sources were enabled; the first 266/271 missing-tool run remains rejected, independently retained. Compiler and ProGraph native RSS are not inferred from suite duration. Linux qualification is separate.",
+  "postSuiteReleaseBuild": {
+    "exitCode": 0,
+    "logSha256": "abd21eba0eb9e74ba2c3393d3e904fced9be97e263616412df893c4d023bc6a5",
+    "identicalProductBytes": true,
+    "removedTestOnlyArtifacts": []
+  }
+}
