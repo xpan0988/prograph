@@ -61,7 +61,7 @@ test("real analysis records its own report even while legacy filesystem metadata
 
 async function ready(file: string) { const until = performance.now() + 10000; while (performance.now() < until) { try { await stat(file); return; } catch { await new Promise(r => setTimeout(r, 20)); } } throw Error("Writer did not reach publication probe"); }
 test("killed writers retain either both old facts/report or both new facts/report at all recovery points", async () => {
-  for (const point of ["before-seal", "before-publish", "during-publish", "after-publish"]) {
+  for (const point of ["before-seal", "before-publish", "during-publish", "during-compatibility", "after-publish"]) {
     const { root, repository, index } = await fixture(), filename = path.join(index, "semantic.sqlite"), probe = path.join(root, "ready");
     const store = new SemanticStore(filename), initial = await base(store, repository, index, "one"), first = store.publish(initial.runs, undefined, [], initial.report);
     const original = readSnapshotReport(store.db, first)!; store.close();
@@ -77,6 +77,7 @@ test("killed writers retain either both old facts/report or both new facts/repor
       try {
         const active = recovered.activeSnapshot()!, report = readSnapshotReport(recovered.db, active)!;
         expect(active).toBe(point === "after-publish" ? first + 1 : first); expect(report.snapshot).toBe(active); expect(report.sourceCatalogue).toBe(digest(point === "after-publish" ? "two" : "one"));
+        expect(JSON.parse((recovered.sql("SELECT metadata_json FROM nodes WHERE id='file'").get()as{metadata_json:string}).metadata_json)).toHaveProperty("revision",point === "after-publish"?"two":"one");expect(recovered.sql("SELECT value FROM cq_meta WHERE key='snapshot'").get()).toEqual({value:String(active)});
         expect(readSnapshotReport(recovered.db, first)).toEqual(original); expect(recovered.db.pragma("integrity_check", { simple: true })).toBe("ok"); expect(recovered.db.pragma("foreign_key_check")).toEqual([]);
       } finally { recovered.close(); }
     } finally { child.kill("SIGKILL"); }

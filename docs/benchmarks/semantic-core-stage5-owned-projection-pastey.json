@@ -1,0 +1,132 @@
+{
+  "format": 1,
+  "scope": "Offline historical graph data oracle for incremental compatibility projection functions only. Historical Semantic Core 2.1 lacks owned projection facts/reports; this is not an owned semantic migration, source freshness, compiler/provider, interactive query or performance qualification. No semantic metadata, claims, reports or authority marker is fabricated.",
+  "source": "/private/tmp/prograph-step2-pastey-fixed/graph.sqlite",
+  "sourceBefore": "513679fe5d9ce5bad0ba39655f4c3ce8239864c0933621ad1795f86afff3323e",
+  "sourceAfter": "513679fe5d9ce5bad0ba39655f4c3ce8239864c0933621ad1795f86afff3323e",
+  "target": "/private/tmp/prograph-historical-cq-7xSPJ0/graph.sqlite",
+  "oldPreparation": {
+    "nodes": 35970,
+    "edges": 69570,
+    "diagnostics": 42311
+  },
+  "input": {
+    "nodes": 35970,
+    "edges": 69570,
+    "diagnostics": 42311,
+    "bytes": 64736134,
+    "rows": 147851
+  },
+  "work": {
+    "nodes": 35970,
+    "edges": 69570,
+    "architecturePairs": 659,
+    "files": 321
+  },
+  "checks": [
+    {
+      "label": "kind counts code",
+      "equal": true,
+      "actual": "b51c7180a00ce4bbb0e834081dca5c9dfcf1c300a05cadc3e2dcdbead7c8e285",
+      "expected": "b51c7180a00ce4bbb0e834081dca5c9dfcf1c300a05cadc3e2dcdbead7c8e285"
+    },
+    {
+      "label": "complete file relationships code",
+      "equal": true,
+      "actual": "6a97d0c92b4cc6a7ae2a257fe21c6852d852ae734f6a774087589266ab519233",
+      "expected": "6a97d0c92b4cc6a7ae2a257fe21c6852d852ae734f6a774087589266ab519233"
+    },
+    {
+      "label": "kind counts code+docs",
+      "equal": true,
+      "actual": "2759e1a30a6e63c7d8871c413fb2d4511a2bd70303475e846856053b8f371b3a",
+      "expected": "2759e1a30a6e63c7d8871c413fb2d4511a2bd70303475e846856053b8f371b3a"
+    },
+    {
+      "label": "complete file relationships code+docs",
+      "equal": true,
+      "actual": "8128958808171394b01019c4693c7b798a64a453be8d9de38232aaffeff828da",
+      "expected": "8128958808171394b01019c4693c7b798a64a453be8d9de38232aaffeff828da"
+    },
+    {
+      "label": "kind counts code+config",
+      "equal": true,
+      "actual": "0f49c99abb13b860e3f2fa2d0f5d0f6cce35b08ef2c695e784f17fa069014f6b",
+      "expected": "0f49c99abb13b860e3f2fa2d0f5d0f6cce35b08ef2c695e784f17fa069014f6b"
+    },
+    {
+      "label": "complete file relationships code+config",
+      "equal": true,
+      "actual": "f3288a144f954d1d290878b64ed1c980f6f96fc38eeee8a39b9ddd28b0de9972",
+      "expected": "f3288a144f954d1d290878b64ed1c980f6f96fc38eeee8a39b9ddd28b0de9972"
+    },
+    {
+      "label": "kind counts code+tests",
+      "equal": true,
+      "actual": "723b65dcdb82e7585bdacc0106b3c879d8c1d3fdf6baa7841be0e09b17fc40cc",
+      "expected": "723b65dcdb82e7585bdacc0106b3c879d8c1d3fdf6baa7841be0e09b17fc40cc"
+    },
+    {
+      "label": "complete file relationships code+tests",
+      "equal": true,
+      "actual": "9d5f5d57b270bec106409185eb4729a4019679c59435da4418fa24ce9842e8d3",
+      "expected": "9d5f5d57b270bec106409185eb4729a4019679c59435da4418fa24ce9842e8d3"
+    },
+    {
+      "label": "kind counts full",
+      "equal": true,
+      "actual": "c31f6b6c14ae77656be793680f7a91a2474b6ef10838e815622011b145d9b018",
+      "expected": "c31f6b6c14ae77656be793680f7a91a2474b6ef10838e815622011b145d9b018"
+    },
+    {
+      "label": "complete file relationships full",
+      "equal": true,
+      "actual": "a53abde4a2deea5d01682b906ddc3867fa559c544347ff1a6436767c84778731",
+      "expected": "a53abde4a2deea5d01682b906ddc3867fa559c544347ff1a6436767c84778731"
+    },
+    {
+      "label": "complete context degrees against independent raw graph",
+      "equal": true,
+      "actual": "39b8e2117d828a9900f20de855358668e764e3774e9e04d867685bc8add92562",
+      "expected": "39b8e2117d828a9900f20de855358668e764e3774e9e04d867685bc8add92562"
+    },
+    {
+      "label": "all retained legacy top-2000 context degrees",
+      "equal": true,
+      "actual": "aafbb50a6116e6c2a8b0b6f21ac0c5998126409cfe34216c075c8bb36259e445",
+      "expected": "aafbb50a6116e6c2a8b0b6f21ac0c5998126409cfe34216c075c8bb36259e445"
+    },
+    {
+      "label": "bounded context candidates against stable-ID bulk rank",
+      "equal": true,
+      "actual": "8072d9ebb3d16493f889c57ed4e923fda0b9f9c369810de9d1e5413b6924765d",
+      "expected": "8072d9ebb3d16493f889c57ed4e923fda0b9f9c369810de9d1e5413b6924765d"
+    },
+    {
+      "label": "complete stable-ID architecture payloads tier 0",
+      "equal": true,
+      "actual": "ab9b293b57ea7825e50f69c7ba6c6bb9480816b881ca04b2a6070df3031324e2",
+      "expected": "ab9b293b57ea7825e50f69c7ba6c6bb9480816b881ca04b2a6070df3031324e2"
+    },
+    {
+      "label": "complete stable-ID architecture payloads tier 1",
+      "equal": true,
+      "actual": "829221ec6612d9242392e8534a4499f5378c6d64d3f1628d55a87d32e1201dcc",
+      "expected": "829221ec6612d9242392e8534a4499f5378c6d64d3f1628d55a87d32e1201dcc"
+    },
+    {
+      "label": "complete stable-ID architecture payloads tier 2",
+      "equal": true,
+      "actual": "829221ec6612d9242392e8534a4499f5378c6d64d3f1628d55a87d32e1201dcc",
+      "expected": "829221ec6612d9242392e8534a4499f5378c6d64d3f1628d55a87d32e1201dcc"
+    }
+  ],
+  "integrity": "ok",
+  "foreignKeys": [],
+  "ordering": "Explicit BINARY comparison and stable-ID ordered input for complete bounded evidence and underlying-edge samples. Stored zero incoming/outgoing counts are compared before interactive induced-subgraph decoration.",
+  "implementationDigests": {
+    "semantic/compatibility-global": "2cbca01d742a08213953716bcd3a8131f9c434dbf7b4eeefae6848f527037a9e",
+    "query/file-architecture": "2e0fa19cd8a23720d5399d887bfc322df5c182f58e4a49aca1610cb560c5093d",
+    "query/global-projections": "04e4457dcb6cbf3dbbfb85176b7bcad4ca3e6bd9cc944763f8eb37d9eb343c54"
+  }
+}

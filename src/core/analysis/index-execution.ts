@@ -5,8 +5,8 @@ import type { RepositoryStatus } from "./state.js";
 import type { RustOptions } from "../semantic/rust.js";
 import { runProviderProcess, ProviderProcessError } from "../semantic/process.js";
 
-export type IndexOperation = "analyze" | "sync" | "status" | "managed" | "rust" | "clang" | "scip";
-export interface IndexRequest { operation: IndexOperation; repository: string; index?: string; input?: string; manifestFile?: string; providerOptions?: Partial<Pick<RustOptions, "analyzer" | "analyzerSha256" | "toolchain" | "target" | "features" | "noDefaultFeatures" | "timeoutMs">> }
+export type IndexOperation = "analyze" | "sync" | "status" | "managed" | "rust" | "clang" | "scip" | "export-compat" | "prepare-queries";
+export interface IndexRequest { operation: IndexOperation; repository: string; index?: string; input?: string; snapshot?: number; manifestFile?: string; providerOptions?: Partial<Pick<RustOptions, "analyzer" | "analyzerSha256" | "toolchain" | "target" | "features" | "noDefaultFeatures" | "timeoutMs">> }
 export interface IndexExecutionOptions { timeoutMs?: number; signal?: AbortSignal }
 export type AnalysisSummary = Pick<AnalysisResult, "manifest" | "adapterRuns" | "outputDirectory">;
 export class IndexExecutionError extends Error {
@@ -37,7 +37,7 @@ async function acquire(slot: typeof work, deadline: number, signal?: AbortSignal
 export function executeIndex(request: IndexRequest & { operation: "analyze" }, options?: IndexExecutionOptions): Promise<AnalysisSummary>;
 export function executeIndex(request: IndexRequest & { operation: "sync" }, options?: IndexExecutionOptions): Promise<SyncResult>;
 export function executeIndex(request: IndexRequest & { operation: "status" }, options?: IndexExecutionOptions): Promise<RepositoryStatus>;
-export function executeIndex(request: IndexRequest & { operation: "managed" | "rust" | "clang" | "scip" }, options?: IndexExecutionOptions): Promise<Record<string, unknown>>;
+export function executeIndex(request: IndexRequest & { operation: "managed" | "rust" | "clang" | "scip" | "export-compat" | "prepare-queries" }, options?: IndexExecutionOptions): Promise<Record<string, unknown>>;
 export async function executeIndex(request: IndexRequest, options: IndexExecutionOptions = {}): Promise<unknown> {
   const timeout = options.timeoutMs ?? (request.operation === "status" ? 30000 : 1800000);
   if (!Number.isSafeInteger(timeout) || timeout < 1 || timeout > 3600000) throw Error("Invalid index request deadline");

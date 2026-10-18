@@ -1,4 +1,5 @@
 import Database from "better-sqlite3";
+import { publishCompatibilityCache } from "./compatibility-cache.js";
 import { writeSnapshotReport, type SnapshotReportInput } from "./snapshot-report.js";
 import { createHash } from "node:crypto";
 import { SEMANTIC_SQL } from "./schema.js";
@@ -12,7 +13,7 @@ import { canonical, semanticKey, PREDICATES, SEMANTIC_FORMAT_VERSION, SEMANTIC_S
   type EntityKind, type FactInput, type OccurrenceInput, type SemanticSymbol, type SupportAlternative } from "./model.js";
 
 export interface PublicationHooks {
-  fault?: (point: "before-seal" | "before-publish" | "during-publish" | "after-publish") => void;
+  fault?: (point: "before-seal" | "before-publish" | "during-publish" | "during-compatibility" | "after-publish") => void;
   measure?: (stage: string, durationMs: number) => void;
 }
 export class SemanticStore {
@@ -274,7 +275,7 @@ export class SemanticStore {
         this.sql("INSERT INTO sc_provider_recipes VALUES(?,?,?,?,?,?,?) ON CONFLICT(key) DO UPDATE SET kind=excluded.kind,recipe_json=excluded.recipe_json,trust=excluded.trust,version=excluded.version,authorization=excluded.authorization,updated_at=excluded.updated_at")
           .run(registration.key, registration.kind, canonical(registration.recipe), registration.trust, registration.version, registration.authorization, new Date().toISOString());
       }
-      if (report) { writeSnapshotReport(this, id, key, report); measure("snapshot-report"); }
+      if (report) { writeSnapshotReport(this, id, key, report); measure("snapshot-report"); publishCompatibilityCache(this,id,parent); measure("compatibility-projection"); }
       this.sql("INSERT INTO sc_meta VALUES('active',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(String(id));
       return id;
     })();

@@ -4,7 +4,6 @@ import { access, writeFile } from "node:fs/promises";
 import { Command, Option } from "commander";
 import open from "open";
 import { executeIndex } from "../core/analysis/index-execution.js";
-import { prepareQueryIndex } from "../core/analysis/prepare-queries.js";
 import { watchRepository } from "../core/analysis/watch.js";
 import { type BoundedQuery, type ConfidenceQuery } from "../core/query/query-service.js";
 import { isolatedQueryForRepository, isolatedSemanticRead, type AsyncQueryClient } from "../core/query/isolation.js";
@@ -270,6 +269,14 @@ for (const operation of ["gc", "pin", "unpin"] as const) addFormat(addIndex(sema
     } finally { store.close(); }
   });
 
+addFormat(addIndex(semanticCommand.command("export-compat [path]").description("Rebuild a separate legacy rollback index from a retained Semantic Core snapshot")))
+  .requiredOption("--output <directory>", "new output path; existing paths are never replaced")
+  .option("--snapshot <number>", "retained snapshot; defaults to active", Number)
+  .action(async (input = ".", options: FormatOptions & { index?: string; output: string; snapshot?: number }) => {
+    const result = await executeIndex({ operation: "export-compat", repository: path.resolve(input), input: path.resolve(options.output), ...(options.index ? { index: path.resolve(options.index) } : {}), ...(options.snapshot !== undefined ? { snapshot: options.snapshot } : {}) });
+    writeResult(result, options.format);
+  });
+
 addFormat(semanticCommand.command("tool-receipt <path>").description("Hash an explicit immutable semantic tool or SDK directory"))
   .action(async (file: string, options: FormatOptions) => { const receipt = await toolReceipt(path.resolve(file)); writeResult({ path: path.resolve(file), sha256: receipt.sha256, files: receipt.files, bytes: receipt.bytes }, options.format); });
 addFormat(addIndex(semanticCommand.command("index-project <configuration>").description("Explicit pinned Python/Go/Java/C# SCIP production from a declared compiler context")))
@@ -317,7 +324,7 @@ for (const operation of SEMANTIC_OPERATIONS) {
 addFormat(addIndex(program.command("prepare-queries [path]").description("Offline preparation of bounded global query projections for an existing graph")))
   .action(async (input = ".", options: FormatOptions & { index?: string }) => {
     const root = await resolveRepositoryRoot(input); const selected = path.resolve(options.index ?? path.join(root, ".prograph"));
-    writeResult(prepareQueryIndex(selected.endsWith(".sqlite") ? selected : path.join(selected, "graph.sqlite")), options.format);
+    writeResult(await executeIndex({operation:"prepare-queries",repository:root,index:selected}),options.format);
   });
 addFormat(addIndex(program.command("files-page [path]").description("Read a bounded keyset page of indexed files")))
   .addOption(new Option("--scope <scope>", "graph scope").choices(["code", "code+docs", "code+config", "code+tests", "full"]).default("code"))

@@ -32,7 +32,8 @@ test.skipIf(!retentionRuntime)('actual 2.12 writer policy upgrade invalidates un
  const receipt=JSON.parse(await readFile(path.join(retentionRuntime!,'baseline-receipt.json'),'utf8'));expect(receipt.commit).toBe('d38b47b1f3fc0f917f9c1052c868fe29b92b173b');for(const[file,hash]of Object.entries(receipt.digests))expect(digest(await readFile(path.join(retentionRuntime!,'dist',file)))).toBe(hash);
  const old=await import(/* @vite-ignore */pathToFileURL(path.join(retentionRuntime!,'dist/core/analysis/analyze.js')).href)as typeof import('../src/core/analysis/analyze.js');
  const f=await fixture(false),first=await old.analyzeRepository(f.repo,{output:f.index});expect(first.manifest.semanticCore?.status,first.manifest.semanticCore?.reason).toBe('partial');
- const db=new SemanticStore(path.join(f.index,'semantic.sqlite'));let snapshot:number,claims:string;
+ const {SemanticStore:AcceptedStore}=await import(/* @vite-ignore */pathToFileURL(path.join(retentionRuntime!,'dist/core/semantic/store.js')).href)as typeof import('../src/core/semantic/store.js');
+ const db=new AcceptedStore(path.join(f.index,'semantic.sqlite'));let snapshot:number,claims:string;
  try{snapshot=db.activeSnapshot()!;db.pinSnapshot(snapshot,'policy-upgrade');claims=digest(canonical(db.sql('SELECT c.key FROM sc_active a JOIN sc_claims c ON c.id=a.claim WHERE a.snapshot=? ORDER BY c.key').all(snapshot)));expect(db.sql("SELECT value FROM sc_meta WHERE key='schema'").get()).toEqual({value:'2.0.0-step2.12'})}finally{db.close()}
  expect(await repositoryStatus(f.repo,f.index)).toMatchObject({state:'stale',schemaChanged:false,adapterVersionsChanged:true,modifiedFiles:[]});expect((await syncRepository(f.repo,f.index)).statusAfter.state).toBe('fresh');
  const clean=path.join(f.root,'clean');await analyzeRepository(f.repo,{output:clean});expect(await semanticSnapshot(f.index)).toEqual(await semanticSnapshot(clean));

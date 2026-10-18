@@ -5,7 +5,7 @@ import type { ConfidenceQuery } from "./query-service.js";
 import { scopedNodes, scopedEdges } from "./scope.js";
 
 /** Offline file projection. Interactive readers select from durable aggregated rows. */
-export function fileArchitecture(allNodes: GraphNode[], allEdges: GraphEdge[], maxNodes: number, options: ConfidenceQuery = {}): { nodes: GraphNode[]; edges: GraphEdge[]; truncated: boolean } {
+export function fileArchitecture(allNodes: GraphNode[], allEdges: GraphEdge[], maxNodes: number, options: ConfidenceQuery = {}, compare: (left: string, right: string) => number = (left, right) => left.localeCompare(right)): { nodes: GraphNode[]; edges: GraphEdge[]; truncated: boolean } {
     const nodes = scopedNodes(allNodes, options);
     const nodeById = new Map(nodes.map((node) => [node.id, node]));
     const fileNodes = new Map<string, GraphNode>();
@@ -95,14 +95,14 @@ export function fileArchitecture(allNodes: GraphNode[], allEdges: GraphEdge[], m
     }
 
     const sortedFiles = [...fileNodes.values()]
-      .sort((left, right) => (left.file ?? left.qualifiedName).localeCompare(right.file ?? right.qualifiedName))
+      .sort((left, right) => compare(left.file ?? left.qualifiedName, right.file ?? right.qualifiedName))
       .slice(0, maxNodes);
     const visibleIds = new Set(sortedFiles.map((node) => node.id));
     const externalIds = new Set([...aggregated.values()].flatMap(edge => [edge.source.id, edge.target.id]));
     const externalNodes = [...nodes]
       .filter((node) => node.kind === "external_package")
       .filter((node) => externalIds.has(node.id))
-      .sort((left, right) => left.qualifiedName.localeCompare(right.qualifiedName))
+      .sort((left, right) => compare(left.qualifiedName, right.qualifiedName))
       .slice(0, Math.max(0, maxNodes - sortedFiles.length));
     for (const node of externalNodes) visibleIds.add(node.id);
 
@@ -124,7 +124,7 @@ export function fileArchitecture(allNodes: GraphNode[], allEdges: GraphEdge[], m
           outgoingCount,
           ...(containedSymbols.length > 64 ? { containedSymbolsTruncated: true } : {}),
           containedSymbols: containedSymbols
-            .sort((left, right) => (left.startLine ?? 0) - (right.startLine ?? 0) || left.name.localeCompare(right.name))
+            .sort((left, right) => (left.startLine ?? 0) - (right.startLine ?? 0) || compare(left.name, right.name))
             .slice(0, 64).map((symbol) => ({
               id: symbol.id,
               name: symbol.name,
@@ -157,7 +157,7 @@ export function fileArchitecture(allNodes: GraphNode[], allEdges: GraphEdge[], m
           },
         } satisfies GraphEdge;
       })
-      .sort((left, right) => left.source.localeCompare(right.source) || left.target.localeCompare(right.target) || left.kind.localeCompare(right.kind));
+      .sort((left, right) => compare(left.source, right.source) || compare(left.target, right.target) || compare(left.kind, right.kind));
 
     return { nodes: decoratedNodes, edges, truncated: fileNodes.size + externalNodes.length > decoratedNodes.length };
   }

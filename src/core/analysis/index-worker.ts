@@ -6,6 +6,9 @@ import { indexManagedProject } from "../semantic/managed-scip.js";
 import { indexRust } from "../semantic/rust.js";
 import { indexClang } from "../semantic/clang.js";
 import { importScip, type ScipManifest } from "../semantic/scip-import.js";
+import path from "node:path";
+import { exportCompatibilitySnapshot } from "../semantic/compatibility-export.js";
+import { prepareQueryIndex } from "./prepare-queries.js";
 import { boundedInput } from "../semantic/inputs.js";
 import type { IndexRequest } from "./index-execution.js";
 
@@ -13,7 +16,8 @@ try {
   const payload = process.argv[2] ?? "";
   if (Buffer.byteLength(payload) > 32768) throw Error("Index control request exceeds 32 KiB");
   const request = JSON.parse(payload) as IndexRequest;
-  if (!request || !["analyze", "sync", "status", "managed", "rust", "clang", "scip"].includes(request.operation) || typeof request.repository !== "string" || request.repository.length > 4096 || Object.keys(request).some(key => !["operation", "repository", "index", "input", "manifestFile", "providerOptions"].includes(key)) || [request.index, request.input, request.manifestFile].some(value => value !== undefined && (typeof value !== "string" || value.length > 4096))) throw Error("Invalid index request");
+  if (!request || !["analyze", "sync", "status", "managed", "rust", "clang", "scip", "export-compat", "prepare-queries"].includes(request.operation) || typeof request.repository !== "string" || request.repository.length > 4096 || Object.keys(request).some(key => !["operation", "repository", "index", "input", "manifestFile", "providerOptions", "snapshot"].includes(key)) || [request.index, request.input, request.manifestFile].some(value => value !== undefined && (typeof value !== "string" || value.length > 4096))) throw Error("Invalid index request");
+  if (request.snapshot !== undefined && (!Number.isSafeInteger(request.snapshot) || request.snapshot < 1 || request.operation !== "export-compat")) throw Error("Invalid export snapshot");
   const options = request.providerOptions;
   if (options !== undefined && (!options || typeof options !== "object" || Array.isArray(options)
     || Object.keys(options).some(key => !["analyzer", "analyzerSha256", "toolchain", "target", "features", "noDefaultFeatures", "timeoutMs"].includes(key))
@@ -27,9 +31,13 @@ try {
     value = { manifest: result.manifest, adapterRuns: result.adapterRuns, outputDirectory: result.outputDirectory };
   } else if (request.operation === "sync") value = await syncRepository(request.repository, request.index);
   else if (request.operation === "status") value = await repositoryStatus(request.repository, request.index);
+  else if(request.operation==="prepare-queries"){const selected=path.resolve(request.index??path.join(request.repository,".prograph"));value=prepareQueryIndex(selected.endsWith(".sqlite")?selected:path.join(selected,"graph.sqlite"));}
   else {
     if (!request.input) throw Error("Provider input required");
-    if (request.operation === "managed") value = await indexManagedProject(request.repository, request.input, request.index, options?.timeoutMs !== undefined ? { timeoutMs: options.timeoutMs } : {});
+    if (request.operation === "export-compat") {
+      const selected = path.resolve(request.index ?? path.join(request.repository, ".prograph"));
+      value = await exportCompatibilitySnapshot(selected, request.input, request.snapshot);
+    } else if (request.operation === "managed") value = await indexManagedProject(request.repository, request.input, request.index, options?.timeoutMs !== undefined ? { timeoutMs: options.timeoutMs } : {});
     else if (request.operation === "clang") value = await indexClang(request.repository, request.input, request.index);
     else if (request.operation === "rust") {
       if (!options?.analyzer || !options.analyzerSha256 || !options.toolchain) throw Error("Explicit Rust tool receipts required");

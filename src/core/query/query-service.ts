@@ -4,6 +4,7 @@ import Database from "better-sqlite3";
 import type { Diagnostic, EdgeKind, GraphEdge, GraphNode, GraphScope, NodeKind } from "../graph/schema.js";
 import { graphNodeFromRow, type NodeRow } from "../storage/sqlite.js";
 import { resolveRepositoryRoot } from "../repository/repository.js";
+import { CompatibilityGlobalRead } from "./compatibility-global-read.js";
 import { GlobalRead, type FilePageOptions } from "./global-read.js";
 import { NavigationRead, type NavigationLimits } from "./navigation.js";
 
@@ -55,9 +56,13 @@ function isTestFile(file: string): boolean {
 
 export class QueryService {
   readonly database: Database.Database;
+  private readonly semanticCompatibility: boolean;
+  private activeRead: NavigationRead | undefined;
+  private activeGlobal: CompatibilityGlobalRead | undefined;
 
   constructor(databasePath: string, private readonly navigationLimits: NavigationLimits = {}) {
     this.database = new Database(databasePath, { readonly: true, fileMustExist: true });
+    this.semanticCompatibility=!!this.database.prepare("SELECT 1 FROM sqlite_master WHERE name='sc_meta'").get();
   }
 
   close(): void {
@@ -72,7 +77,9 @@ export class QueryService {
     });
   }
 
-  adapters(): unknown[] {
+  adapters(): unknown[] { return this.readNavigation(()=>this.readAdapters()); }
+
+  private readAdapters(): unknown[] {
     const stored = this.database.prepare("SELECT CASE WHEN length(value)<=1048576 THEN value END AS value FROM schema_metadata WHERE key = ?").get("adapterMetadata") as { value: string | null } | undefined;
     if (stored?.value === null) throw Error("Adapter metadata exceeds 1 MiB");
     const metadata = JSON.parse(stored?.value ?? "{}") as Record<string, unknown>;
@@ -107,8 +114,7 @@ export class QueryService {
   }
 
   symbol(id: string): GraphNode | undefined {
-    const row = this.database.prepare("SELECT * FROM nodes WHERE id = ?").get(id) as NodeRow | undefined;
-    return row ? graphNodeFromRow(row) : undefined;
+    return this.readNavigation(read=>read.node(id));
   }
 
   callers(id: string, maxNodes = 50, options: ConfidenceQuery = {}): { symbol?: GraphNode; nodes: GraphNode[]; edges: GraphEdge[] } {
@@ -276,9 +282,8 @@ export class QueryService {
   }
 
   private nodesByIds(ids: string[]): GraphNode[] {
-    if (!ids.length) return [];
-    const placeholders = ids.map(() => "?").join(",");
-    return (this.database.prepare(`SELECT * FROM nodes WHERE id IN (${placeholders})`).all(...ids) as NodeRow[]).map(graphNodeFromRow);
+    if(!this.activeRead)return this.readNavigation(()=>this.nodesByIds(ids));
+    return [...new Set(ids)].sort((a,b)=>Buffer.compare(Buffer.from(a),Buffer.from(b))).map(id=>this.activeRead!.node(id)).filter((node):node is GraphNode=>!!node);
   }
 
   private edgesTouching(ids: string[], options: ConfidenceQuery = {}): GraphEdge[] {
@@ -286,9 +291,10 @@ export class QueryService {
   }
 
   private readNavigation<T>(execute: (read: NavigationRead) => T): T {
+    if(this.activeRead)return execute(this.activeRead);
     return this.database.transaction(() => {
       const read = new NavigationRead(this.database, this.navigationLimits);
-      const result = execute(read); read.check(); return result;
+      this.activeRead=read;try{if(this.semanticCompatibility)this.activeGlobal=new CompatibilityGlobalRead(this.database,read);const result=execute(read);read.check();return result}finally{this.activeGlobal=undefined;this.activeRead=undefined}
     }).deferred();
   }
 
@@ -298,8 +304,8 @@ export class QueryService {
     return !!source && !!target && nodeInScope(source, scope(options)) && nodeInScope(target, scope(options));
   }
 
-  private readGlobal<T>(execute: (view: GlobalRead, read: NavigationRead) => T): T {
-    return this.readNavigation(read => execute(new GlobalRead(this.database, read), read));
+  private readGlobal<T>(execute: (view: Pick<GlobalRead,keyof GlobalRead>, read: NavigationRead) => T): T {
+    return this.readNavigation(read => execute(this.activeGlobal??new GlobalRead(this.database, read), read));
   }
 
 }

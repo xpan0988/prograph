@@ -3,8 +3,7 @@ import Database from "better-sqlite3";
 import { GLOBAL_QUERY_SQL, materializeGlobalQueries } from "../query/global-projections.js";
 import type { AdapterRun, AnalysisManifest, Diagnostic, GraphData, GraphEdge, GraphNode } from "../graph/schema.js";
 
-const SCHEMA_SQL = `
-PRAGMA journal_mode = WAL;
+export const COMPATIBILITY_SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS schema_metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS repository_metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS analysis_runs (
@@ -75,7 +74,8 @@ CREATE INDEX IF NOT EXISTS idx_diagnostics_severity ON diagnostics(severity);
 export async function persistGraph(outputDirectory: string, graph: GraphData, manifest: AnalysisManifest, adapterRuns: AdapterRun[]): Promise<void> {
   const database = new Database(path.join(outputDirectory, "graph.sqlite"));
   try {
-    database.exec(SCHEMA_SQL);
+    database.pragma("journal_mode=WAL");
+    database.exec(COMPATIBILITY_SCHEMA_SQL);
     database.exec(GLOBAL_QUERY_SQL);
     const persist = database.transaction(() => {
       for (const table of ["schema_metadata", "repository_metadata", "files", "nodes", "edges", "diagnostics", "adapter_runs"]) {

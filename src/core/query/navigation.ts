@@ -26,7 +26,9 @@ export class NavigationRead {
   private readonly maxCandidates: number;
   private readonly maxBytes: number;
   private readonly deadline: number;
+  private readonly stableKeys: boolean;
   constructor(private readonly db: Database.Database, private readonly limits: NavigationLimits = {}) {
+    this.stableKeys=!!db.prepare("SELECT 1 FROM sqlite_master WHERE name='cg_meta'").get();
     this.maxCandidates = limits.maxCandidates ?? 20000;
     this.maxBytes = limits.maxPayloadBytes ?? 8 * 1024 ** 2;
     this.deadline = limits.deadlineMs ?? 1000;
@@ -60,6 +62,10 @@ export class NavigationRead {
     yield* this.fileNodes(file, true);
   }
   *fileNodes(file: string, rootsOnly = false): Generator<GraphNode> {
+    if(this.stableKeys){
+      const query=this.db.prepare(`SELECT n.* FROM cq_nodes q INDEXED BY cq_node_file_navigation CROSS JOIN nodes n ON n.id=q.node WHERE q.file=? ${rootsOnly?"AND q.kind NOT IN ('file','directory','repository','unresolved_symbol')":""} ORDER BY q.start_line,q.name,q.node`);
+      for(const row of query.iterate(file)as Iterable<NodeRow>){this.charge(row);const node=graphNodeFromRow(row);this.cache.set(node.id,node);yield node}return;
+    }
     const query = this.db.prepare(`SELECT * FROM nodes INDEXED BY idx_nodes_file WHERE file=? ${rootsOnly ? "AND kind NOT IN ('file','directory','repository','unresolved_symbol') ORDER BY start_line" : "ORDER BY start_line,name"}`);
     for (const row of query.iterate(file) as Iterable<NodeRow>) { this.charge(row); const node = graphNodeFromRow(row); this.cache.set(node.id, node); yield node; }
   }
@@ -73,6 +79,7 @@ export class NavigationRead {
   }
   /** Merge indexed streams in insertion order, matching the former full-table scan. */
   *edges(ids: Iterable<string>, direction: Direction): Generator<GraphEdge> {
+    if(this.stableKeys){yield* this.stableEdges(ids,direction);return}
     const columns = direction === "both" ? ["source", "target"] as const : [direction];
     const statements = new Map(columns.map(column => [column, this.db.prepare(`SELECT rowid AS cursor,* FROM edges INDEXED BY idx_edges_${column} WHERE ${column}=? AND rowid>? ORDER BY rowid LIMIT ?`)]));
     const streams: Array<{ id: string; column: "source" | "target"; after: number; rows: EdgeCursor[]; offset: number }> = [];
@@ -100,4 +107,15 @@ export class NavigationRead {
       if (stream.offset === stream.rows.length) { fill(stream, 32); if (!stream.rows.length) streams.splice(best, 1); }
     }
   }
+  private *stableEdges(ids:Iterable<string>,direction:Direction):Generator<GraphEdge>{
+    const columns=direction==='both'?['source','target']as const:[direction];
+    type Row=EdgeRow&{cursor:string};
+    const statements=new Map(columns.map(column=>[column,this.db.prepare(`SELECT q.edge AS cursor,e.* FROM cq_edges q INDEXED BY cq_edge_${column} CROSS JOIN edges e ON e.id=q.edge WHERE q.${column}=? AND q.edge>? ORDER BY q.edge LIMIT ?`)]));
+    const streams:Array<{id:string;column:'source'|'target';after:string;rows:Row[];offset:number}>=[];
+    const fill=(stream:typeof streams[number],count:number)=>{this.check();const remaining=this.maxCandidates-this.candidates;if(remaining<=0)throw new QueryBudgetError('candidates',`${this.maxCandidates} raw rows`);stream.rows=statements.get(stream.column)!.all(stream.id,stream.after,Math.min(count,remaining))as Row[];stream.offset=0;for(const row of stream.rows)this.charge(row);if(!stream.rows.length)this.charge({})};
+    for(const id of new Set(ids))for(const column of columns){const stream={id,column,after:'',rows:[]as Row[],offset:0};fill(stream,1);if(stream.rows.length)streams.push(stream)}
+    let previous='';const compare=(a:string,b:string)=>Buffer.compare(Buffer.from(a),Buffer.from(b));
+    while(streams.length){this.check();let best=0;for(let i=1;i<streams.length;i++)if(compare(streams[i]!.rows[streams[i]!.offset]!.cursor,streams[best]!.rows[streams[best]!.offset]!.cursor)<0)best=i;const stream=streams[best]!,row=stream.rows[stream.offset++]!;stream.after=row.cursor;if(row.cursor!==previous){previous=row.cursor;yield graphEdgeFromRow(row)}if(stream.offset===stream.rows.length){fill(stream,32);if(!stream.rows.length)streams.splice(best,1)}}
+  }
+
 }

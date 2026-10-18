@@ -1,0 +1,165 @@
+{
+  "scope": "Read-only real retained ProGraph snapshot; offline cache migration on an SQLite online backup; no source reanalysis or freshness claim",
+  "source": "/private/tmp/prograph-retention-self-20261017/semantic.sqlite",
+  "sourceBefore": "b6fc03d8dd70e5da6a67d8a9ebc90fc2f8c25522de245fcd1a1535bc60ef67ef",
+  "sourceAfter": "b6fc03d8dd70e5da6a67d8a9ebc90fc2f8c25522de245fcd1a1535bc60ef67ef",
+  "target": "/private/tmp/prograph-owned-cache-real-R95CjG/semantic.sqlite",
+  "work": {
+    "cache": {
+      "classifiedRows": 33554,
+      "classifiedBytes": 15563362,
+      "resolvedKeys": 33450,
+      "resolvedBytes": 15511576,
+      "changedPayloads": 33450
+    },
+    "queries": {
+      "bootstrap": true,
+      "payloadChanges": 33450,
+      "nodeContributions": 8341,
+      "edgeContributions": 20847,
+      "fileContributions": 246,
+      "architecturePairs": 954
+    },
+    "snapshot": 2,
+    "durationMs": 6314.243875,
+    "integrity": "ok",
+    "foreignKeys": [],
+    "retainedSourceSnapshot": 1
+  },
+  "results": [
+    {
+      "method": "overview",
+      "args": [],
+      "equal": true,
+      "current": "d590ba7ffefe1bcbc8008c5039b289072575efeaa7033a6a4632948bd01fa3fb",
+      "legacy": "d590ba7ffefe1bcbc8008c5039b289072575efeaa7033a6a4632948bd01fa3fb",
+      "currentBytes": 7042,
+      "legacyBytes": 7042
+    },
+    {
+      "method": "overview",
+      "args": [
+        {
+          "scope": "full"
+        }
+      ],
+      "equal": true,
+      "current": "5f7612f173ba76deb99de5490b291f9b87c3d72ec8c36e6b48568e2ea47c33bd",
+      "legacy": "5f7612f173ba76deb99de5490b291f9b87c3d72ec8c36e6b48568e2ea47c33bd",
+      "currentBytes": 7458,
+      "legacyBytes": 7458
+    },
+    {
+      "method": "files",
+      "args": [],
+      "equal": true,
+      "current": "0d6070d391b089ed0cee9a0f103981cef6904c6bbe86a02451c7680a64cf77f9",
+      "legacy": "0d6070d391b089ed0cee9a0f103981cef6904c6bbe86a02451c7680a64cf77f9",
+      "currentBytes": 20367,
+      "legacyBytes": 20367
+    },
+    {
+      "method": "architecture",
+      "args": [
+        30
+      ],
+      "equal": false,
+      "current": "5fe25f12f8a4b4d4f6bdb2a44c27322735bcfd786b00a6b7c315fb40ddaa3d47",
+      "legacy": "3d217834c3b94fc7a66f7e826fb2a6bf58925fb17fc9ff326981a8e0018f7929",
+      "currentBytes": 548197,
+      "legacyBytes": 548190
+    },
+    {
+      "method": "architecture",
+      "args": [
+        30,
+        {
+          "scope": "full"
+        }
+      ],
+      "equal": true,
+      "current": "5e3172329380316cc7a9a2eff7b2ddc5141ddf802c8ffe5f0c57aab3787f0226",
+      "legacy": "5e3172329380316cc7a9a2eff7b2ddc5141ddf802c8ffe5f0c57aab3787f0226",
+      "currentBytes": 17169,
+      "legacyBytes": 17169
+    },
+    {
+      "method": "context",
+      "args": [
+        "semantic provider source",
+        {
+          "maxSymbols": 50
+        }
+      ],
+      "equal": true,
+      "current": "06442f17adb37d4292fd5eb79d2ae5c17ca1bec454c3db7b440ebb9816ad3856",
+      "legacy": "06442f17adb37d4292fd5eb79d2ae5c17ca1bec454c3db7b440ebb9816ad3856",
+      "currentBytes": 48559,
+      "legacyBytes": 48559
+    },
+    {
+      "method": "frameworkBindings",
+      "args": [
+        "tauri"
+      ],
+      "equal": true,
+      "current": "437b1fd28b459f5c6ccf00d09b4eccfc61c767b4f8f689ac0e9ba4f4220821e8",
+      "legacy": "437b1fd28b459f5c6ccf00d09b4eccfc61c767b4f8f689ac0e9ba4f4220821e8",
+      "currentBytes": 22026,
+      "legacyBytes": 22026
+    },
+    {
+      "method": "frameworkBindings",
+      "args": [
+        null,
+        {
+          "scope": "full",
+          "includeUnresolved": true
+        }
+      ],
+      "equal": true,
+      "current": "c9c8cd9fda2df92e2605ecb44fdede2244df8b9da947f0f7c7eaf5677aed4606",
+      "legacy": "c9c8cd9fda2df92e2605ecb44fdede2244df8b9da947f0f7c7eaf5677aed4606",
+      "currentBytes": 34541,
+      "legacyBytes": 34541
+    }
+  ],
+  "reference": {
+    "method": "Original bulk fileArchitecture algorithm with explicit BINARY comparison and stable-ID ordered node/edge input. Complete payloads compared including bounded evidence and underlying-edge samples.",
+    "equal": true,
+    "expectedHash": "739fd5398866c45ed4ed70d16e8638119b0aecdcdd8ee8a64e90e563ebbccc72",
+    "actualHash": "739fd5398866c45ed4ed70d16e8638119b0aecdcdd8ee8a64e90e563ebbccc72",
+    "changedFieldsAgainstLegacy": [
+      {
+        "edge": "fileedge:typescript:file:093eb922d0b15db0->typescript:file:0c1ff485bafa8ed3:calls+imports",
+        "field": "evidence"
+      },
+      {
+        "edge": "fileedge:typescript:file:33c3d0e082f88974->typescript:file:61b83e940fd661bc:calls+imports",
+        "field": "evidence"
+      },
+      {
+        "edge": "fileedge:typescript:file:7849ae4fc9dc8e1e->typescript:file:0c1ff485bafa8ed3:calls+imports",
+        "field": "evidence"
+      },
+      {
+        "edge": "fileedge:typescript:file:7bbe514b9a2010e5->typescript:file:61b83e940fd661bc:calls+imports",
+        "field": "evidence"
+      },
+      {
+        "edge": "fileedge:typescript:file:98c1e3bdf5071023->typescript:file:356cdedee4ed2480:calls+imports",
+        "field": "evidence"
+      },
+      {
+        "edge": "fileedge:typescript:file:98c1e3bdf5071023->typescript:file:356cdedee4ed2480:calls+imports",
+        "field": "metadata"
+      },
+      {
+        "edge": "fileedge:typescript:file:d54a9cc6972e20f7->typescript:file:61b83e940fd661bc:calls+imports",
+        "field": "evidence"
+      }
+    ],
+    "sourceCodeHash": "2e0fa19cd8a23720d5399d887bfc322df5c182f58e4a49aca1610cb560c5093d"
+  },
+  "qualification": "Seven of eight methods retain complete normalized legacy payloads; code architecture deliberately samples by stable relationship ID rather than insertion order. The complete new payload must equal the independent bulk reference under that declared ordering. No fields or evidence are dropped from this comparison; it is not source freshness, compiler rerun, 1M LOC or throughput qualification."
+}
