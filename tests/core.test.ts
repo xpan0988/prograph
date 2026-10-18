@@ -594,7 +594,7 @@ describe("UI layout contract", () => {
 
   test("bounds framework canvas work while retaining the selected boundary and complete source result", () => {
     const nodes = Array.from({ length: 600 }, (_, i): GraphNode => ({ id: `n${i}`, name: `n${i}`, qualifiedName: `n${i}`, kind: "function", adapter: "test", metadata: {} }));
-    const edges: GraphEdge[] = [599, 598, 597].map(i => ({ id: `e${i}`, source: "n599", target: `n${i - 1}`, kind: "invokes_command", confidence: "exact", evidence: [], metadata: {} }));
+    const edges: GraphEdge[] = [599, 598, 597].map(i => ({ id: `e${i}`, source: "n599", target: `n${i - 1}`, kind: "invokes", confidence: "exact", evidence: [], metadata: {} }));
     const graph = { nodes, edges };
     const canvas = limitCanvasGraph(graph, 3, "n599");
     expect(canvas.nodes.map(node => node.id)).toEqual(["n597", "n598", "n599"]);

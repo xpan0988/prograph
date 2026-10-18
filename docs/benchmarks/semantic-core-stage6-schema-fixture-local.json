@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "scope": "Post-audit one-word test-data correction only: use the actual GraphEdge kind invokes instead of invokes_command. Runtime, helper algorithm, assertions, limits and all schemas are unchanged.",
+  "baseline": "bdf6868e261793cc4921cb4f7be283bf2eb95b1e",
+  "tests": {
+    "passed": 42,
+    "failed": 0,
+    "skipped": 0,
+    "files": 1,
+    "rawReportSha256": "bd80c6a609a8831bbc9ad5b3d67d4032d5bb856254939e42a618b3e73156baeb"
+  },
+  "testSourceSha256": "ca729b114f6f1d3cf9d9c8e6426641a7e6f9d12d5cb116b8e42ce1fa977c22a8",
+  "previousFullMainCi": {
+    "run": 39149834810,
+    "sha": "bdf6868e261793cc4921cb4f7be283bf2eb95b1e",
+    "nodeSeries": [
+      20,
+      22,
+      24
+    ],
+    "perJobPassed": 271,
+    "perJobSkipped": 0,
+    "perJobOracleChecks": 18,
+    "requiredBuildRecoveryVerifier": "All actually completed successfully; decoded final logs checked."
+  },
+  "qualification": "Earlier complete 271-test local run and runtime matrices remain immutable evidence for their recorded source. This exact test-only correction receives focused validation here and a separate full current-head Linux matrix, not a fabricated new full local run.",
+  "schemaTypecheck": "Corrected exact fixture expression passes TypeScript semantic checking against the actual src/core/graph/schema.ts GraphEdge type, with no emit"
+}
