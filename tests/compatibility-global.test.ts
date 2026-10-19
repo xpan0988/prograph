@@ -79,6 +79,11 @@ test('incremental scalar summaries and file rows agree with the frozen compatibi
       ["SELECT edge,mask,level FROM cq_edges INDEXED BY cq_edge_pair WHERE source=? AND target=? AND edge>? ORDER BY edge LIMIT 1", ['a', 'b', '']],
       ["SELECT node FROM cq_nodes WHERE context_eligible=1 ORDER BY degree DESC,qualified,node LIMIT 2000", []],
       ["SELECT node FROM cq_scope_nodes WHERE scope=? ORDER BY rank,qualified,node LIMIT 101", ['full']],
+      // A node can belong to every scope/framework. Publication must not scan
+      // all other symbols to clear these rows once for every changed node.
+      ["DELETE FROM cq_scope_nodes WHERE node=?", ['a']],
+      ["DELETE FROM cq_boundaries WHERE node=?", ['a']],
+      ["SELECT framework FROM cq_boundaries WHERE node=?", ['a']],
       ["SELECT edge FROM cq_flow WHERE source=? AND target=? AND level=? ORDER BY edge LIMIT 24", ['a', 'b', 0]],
     ] as const) {
       const plan = store.sql('EXPLAIN QUERY PLAN ' + sql).all(...args) as Array<{
@@ -88,8 +93,12 @@ test('incremental scalar summaries and file rows agree with the frozen compatibi
       expect(plan.some(row => /SEARCH|USING INDEX|USING COVERING INDEX/.test(row.detail))).toBe(true);
     }
     const before = store.sql('SELECT * FROM cq_nodes ORDER BY node').all();
+    const beforeScopes = store.sql('SELECT * FROM cq_scope_nodes ORDER BY scope,node').all();
+    const beforeBoundaries = store.sql('SELECT * FROM cq_boundaries ORDER BY framework,node').all();
     store.db.transaction(() => { const changesAgain = changes.filter(change => change.kind === 'node').map(change => ({ ...change, before: change.after })); const nodes = updateCompatibilityNodes(store, changesAgain); updateCompatibilityEdges(store, changesAgain, nodes.edgeNodes); })();
     expect(store.sql('SELECT * FROM cq_nodes ORDER BY node').all()).toEqual(before);
+    expect(store.sql('SELECT * FROM cq_scope_nodes ORDER BY scope,node').all()).toEqual(beforeScopes);
+    expect(store.sql('SELECT * FROM cq_boundaries ORDER BY framework,node').all()).toEqual(beforeBoundaries);
   }
   finally {
     legacy.close();

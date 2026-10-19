@@ -18,6 +18,7 @@ CREATE INDEX IF NOT EXISTS cq_node_file_id ON cq_nodes(file,arch_symbol,node);
 CREATE INDEX IF NOT EXISTS cq_node_file_kind ON cq_nodes(file,kind,node);
 CREATE TABLE IF NOT EXISTS cq_scope_nodes(scope TEXT NOT NULL,node TEXT NOT NULL,rank INTEGER NOT NULL,qualified TEXT NOT NULL,PRIMARY KEY(scope,node));
 CREATE INDEX IF NOT EXISTS cq_scope_order ON cq_scope_nodes(scope,rank,qualified,node);
+CREATE INDEX IF NOT EXISTS cq_scope_node ON cq_scope_nodes(node,scope);
 CREATE TABLE IF NOT EXISTS cq_counts(scope TEXT NOT NULL,dimension TEXT NOT NULL,kind TEXT NOT NULL,n INTEGER NOT NULL CHECK(n>=0),PRIMARY KEY(scope,dimension,kind));
 CREATE TABLE IF NOT EXISTS cq_file_counts(scope TEXT NOT NULL,path TEXT NOT NULL,nodes INTEGER NOT NULL,outgoing INTEGER NOT NULL,incoming INTEGER NOT NULL,PRIMARY KEY(scope,path));
 CREATE TABLE IF NOT EXISTS cq_files(scope TEXT NOT NULL,path TEXT NOT NULL,data TEXT NOT NULL,bytes INTEGER GENERATED ALWAYS AS(length(CAST(data AS BLOB))) STORED,PRIMARY KEY(scope,path));
@@ -47,6 +48,7 @@ CREATE TABLE IF NOT EXISTS cq_arch_edges(level INTEGER NOT NULL,source TEXT NOT 
 CREATE INDEX IF NOT EXISTS cq_arch_target ON cq_arch_edges(level,target,source);
 CREATE TABLE IF NOT EXISTS cq_boundaries(framework TEXT NOT NULL,node TEXT NOT NULL,kind TEXT NOT NULL,name TEXT NOT NULL,PRIMARY KEY(framework,node));
 CREATE INDEX IF NOT EXISTS cq_boundary_order ON cq_boundaries(framework,kind,name,node);
+CREATE INDEX IF NOT EXISTS cq_boundary_node ON cq_boundaries(node,framework);
 CREATE TABLE IF NOT EXISTS cq_boundary_edges(framework TEXT NOT NULL,node TEXT NOT NULL,level INTEGER NOT NULL,edge TEXT NOT NULL,PRIMARY KEY(framework,node,level,edge));
 CREATE INDEX IF NOT EXISTS cq_boundary_edge ON cq_boundary_edges(edge);
 CREATE TABLE IF NOT EXISTS cq_cycles(scope TEXT NOT NULL,level INTEGER NOT NULL,ordinal INTEGER NOT NULL,data TEXT NOT NULL,bytes INTEGER GENERATED ALWAYS AS(length(CAST(data AS BLOB))) STORED,PRIMARY KEY(scope,level,ordinal));

@@ -1,0 +1,3640 @@
+{
+  "format": 1,
+  "scope": "Two serial fresh indexes of one frozen actual Pastey source capture, control first then indexed, all publication and legacy SQLite/JSON exports included. Separate fresh Node processes, production index-worker V8 2GiB bound, no forced GC, no cache eviction; single samples not p95. No external semantic producer invoked; bundled TypeScript compiler included in ProGraph RSS. Source capture/hash validation outside timer.",
+  "root": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-source-scale-pair-0GBZO2",
+  "original": "/Users/xiyuanpan/Pastey",
+  "originalHead": "8714e1ee57e00b70fdf1e03d6c182a8ef984ded0",
+  "copiedFiles": 421,
+  "copiedInventory": "046e71411c366bd85acffc12a83cfc80590016e0223629aac9ac11f454ab6e6b",
+  "originalStatusHash": "1890b604505948afe783aa9466dc5d7009e56a6f84d5e569b9f6771fc36e941d",
+  "originalStatusAfter": "04a345f14f7c3889d1732cdb1d3f929671b006ac8458c5fe2158f8eaf17ef14f",
+  "node": "v25.9.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "driverSource": "import {writeFile,readFile,stat} from 'node:fs/promises';import {pathToFileURL} from 'node:url';import {createHash} from 'node:crypto';import path from 'node:path';\nconst runtime=process.argv[2],source=process.argv[3],output=process.argv[4],report=process.argv[5],load=x=>import(pathToFileURL(path.join(runtime,x+'.js')).href);\nconst {analyzeRepository}=await load('analysis/analyze'),{SemanticStore}=await load('semantic/store'),{scanRepository}=await load('repository/repository'),{canonical,digest}=await load('semantic/model');\nconst scan=await scanRepository(source,output);const inventory=digest(canonical([...scan.snapshot.fileContents].map(([f,t])=>[f,digest(t)]).sort()));\nconst stages=[];const original=SemanticStore.prototype.publish;SemanticStore.prototype.publish=function(...args){this.hooks.measure=(stage,ms)=>stages.push({stage,ms});return original.apply(this,args)};\nconst start=performance.now(),result=await analyzeRepository(source,{output}),elapsedMs=performance.now()-start,analysisResources=process.resourceUsage();\nif(result.manifest.semanticCore?.status==='failed')throw Error(result.manifest.semanticCore.reason);\nconst end=await scanRepository(source,output);if(digest(canonical([...end.snapshot.fileContents].map(([f,t])=>[f,digest(t)]).sort()))!==inventory)throw Error('Source changed during measured analysis');\nconst store=new SemanticStore(path.join(output,'semantic.sqlite'));const checksums={};\nfunction rows(name,sql){const h=createHash('sha256');let count=0;for(const row of store.sql(sql).iterate()){h.update(canonical(row)+'\\n');count++}checksums[name]={count,sha256:h.digest('hex')}}\nrows('visibleClaims',\"SELECT c.key FROM sc_active a JOIN sc_claims c ON c.id=a.claim WHERE a.snapshot=1 ORDER BY c.key\");\nrows('occurrences',\"SELECT e.key,o.context,o.start_byte,o.end_byte,o.line,o.column_num,o.end_line,o.end_column,o.role FROM sc_occurrences o JOIN sc_entities e ON e.id=o.entity ORDER BY e.key\");\nrows('calls',\"SELECT x.key caller,y.key callee,c.site_count,c.confidence,e.key sample FROM sc_calls c JOIN sc_entities x ON x.id=c.caller JOIN sc_entities y ON y.id=c.callee JOIN sc_claims e ON e.id=c.sample_claim WHERE snapshot=1 ORDER BY x.key,y.key\");\nrows('scopeRows','SELECT * FROM cq_scope_nodes ORDER BY scope,node');rows('boundaries','SELECT * FROM cq_boundaries ORDER BY framework,node');\nrows('edges','SELECT * FROM edges ORDER BY id');rows('diagnostics','SELECT code,severity,message,file,line,column,adapter,metadata_json FROM diagnostics ORDER BY code,severity,message,file,line,column,adapter,metadata_json');\nrows('nodes',\"SELECT * FROM nodes WHERE kind<>'repository' ORDER BY id\");\nconst reportData={elapsedMs,analysisResources,stages,inventory,selectedFiles:scan.snapshot.files.length,codeFiles:[...scan.snapshot.fileContents].filter(([f])=>/\\.(?:[cm]?tsx?|jsx?|rs|py|java|c|h|cpp|cc|cxx|go|cs)$/.test(f)).map(([file,text])=>({file,lines:text.split('\\n').length})),manifest:result.manifest,checksums,integrity:store.db.pragma('integrity_check',{simple:true}),foreignKeys:store.db.pragma('foreign_key_check'),durability:{journal:store.db.pragma('journal_mode',{simple:true}),synchronous:store.db.pragma('synchronous',{simple:true})},databaseBytes:(await stat(path.join(output,'semantic.sqlite'))).size};store.close();await writeFile(report,JSON.stringify(reportData,null,2)+'\\n');console.log(JSON.stringify({report,elapsedMs,maxRssKiB:analysisResources.maxRSS,checksums}));\n",
+  "results": [
+    {
+      "name": "control",
+      "index": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-source-scale-pair-0GBZO2/control-index",
+      "runtime": "/private/tmp/prograph-source-scale-control/dist/core",
+      "report": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-source-scale-pair-0GBZO2/control.json",
+      "data": {
+        "elapsedMs": 195187.319834,
+        "analysisResources": {
+          "userCPUTime": 144875381,
+          "systemCPUTime": 35208244,
+          "maxRSS": 1592304,
+          "sharedMemorySize": 0,
+          "unsharedDataSize": 0,
+          "unsharedStackSize": 0,
+          "minorPageFault": 290191,
+          "majorPageFault": 100,
+          "swappedOut": 0,
+          "fsRead": 0,
+          "fsWrite": 0,
+          "ipcSent": 0,
+          "ipcReceived": 2,
+          "signalsCount": 0,
+          "voluntaryContextSwitches": 913563,
+          "involuntaryContextSwitches": 140992
+        },
+        "stages": [
+          {
+            "stage": "content-key",
+            "ms": 9.99591700000019
+          },
+          {
+            "stage": "membership",
+            "ms": 103.95704100000148
+          },
+          {
+            "stage": "support-eligibility",
+            "ms": 48.48225000000093
+          },
+          {
+            "stage": "navigation",
+            "ms": 896.6634589999958
+          },
+          {
+            "stage": "symbols",
+            "ms": 0.007041000004392117
+          },
+          {
+            "stage": "call-summary",
+            "ms": 16.924542000000656
+          },
+          {
+            "stage": "snapshot-report",
+            "ms": 0.543666999998095
+          },
+          {
+            "stage": "compatibility-projection",
+            "ms": 129021.18091600001
+          },
+          {
+            "stage": "pointer-and-commit",
+            "ms": 990.0587919999962
+          }
+        ],
+        "inventory": "729c1eb199f09ccd9739634699bdc004388402544fcc8806c674ba471b6365b8",
+        "selectedFiles": 315,
+        "codeFiles": [
+          {
+            "file": "docs/research/native-nat-traversal-poc/src/main.rs",
+            "lines": 169
+          },
+          {
+            "file": "docs/research/native-nat-traversal-poc/stun_probe.py",
+            "lines": 40
+          },
+          {
+            "file": "scripts/generate-transfer-fixtures.ts",
+            "lines": 337
+          },
+          {
+            "file": "scripts/replay-transfer-planner-scenarios.ts",
+            "lines": 276
+          },
+          {
+            "file": "src-tauri/build.rs",
+            "lines": 4
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-absolute-path/src/absolutize.rs",
+            "lines": 172
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-absolute-path/src/lib.rs",
+            "lines": 766
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/lib.rs",
+            "lines": 50
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/pipe.rs",
+            "lines": 376
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/pipe_tests.rs",
+            "lines": 20
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/process.rs",
+            "lines": 482
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/process_group.rs",
+            "lines": 306
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/process_group_tests.rs",
+            "lines": 95
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/pty.rs",
+            "lines": 564
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/tests.rs",
+            "lines": 1607
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/unix_io.rs",
+            "lines": 110
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/win/conpty.rs",
+            "lines": 193
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/win/job.rs",
+            "lines": 233
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/win/mod.rs",
+            "lines": 182
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/win/procthreadattr.rs",
+            "lines": 128
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/win/psuedocon.rs",
+            "lines": 369
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/windows_input.rs",
+            "lines": 36
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/windows_input_tests.rs",
+            "lines": 17
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/windows_tests.rs",
+            "lines": 421
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/tests/conpty_search_path.rs",
+            "lines": 71
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-string/src/json.rs",
+            "lines": 123
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-string/src/lib.rs",
+            "lines": 166
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-string/src/truncate.rs",
+            "lines": 157
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-string/src/truncate/tests.rs",
+            "lines": 118
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/build.rs",
+            "lines": 40
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/sandbox_smoketests.py",
+            "lines": 937
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/acl.rs",
+            "lines": 823
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/acl_tests.rs",
+            "lines": 16
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/allow.rs",
+            "lines": 381
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/audit.rs",
+            "lines": 402
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/command_runner/main.rs",
+            "lines": 13
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/command_runner/win.rs",
+            "lines": 738
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/command_runner/win/cwd_junction.rs",
+            "lines": 141
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/command_runner/win/input_loop_tests.rs",
+            "lines": 86
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/main.rs",
+            "lines": 13
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win.rs",
+            "lines": 1297
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win/firewall.rs",
+            "lines": 606
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win/no_reparse_dir.rs",
+            "lines": 155
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win/no_reparse_dir_tests.rs",
+            "lines": 65
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win/read_acl_mutex.rs",
+            "lines": 62
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win/sandbox_users.rs",
+            "lines": 586
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win/setup_runtime_bin.rs",
+            "lines": 118
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win/setup_runtime_bin_tests.rs",
+            "lines": 28
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win_acl_tests.rs",
+            "lines": 30
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/cap.rs",
+            "lines": 204
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/conpty/mod.rs",
+            "lines": 172
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/deny_read_acl.rs",
+            "lines": 120
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/deny_read_resolver.rs",
+            "lines": 786
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/deny_read_resolver_access_tests.rs",
+            "lines": 251
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/deny_read_state.rs",
+            "lines": 88
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/deny_read_walker.rs",
+            "lines": 152
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/deny_read_walker_tests.rs",
+            "lines": 18
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/desktop.rs",
+            "lines": 458
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/desktop_tests.rs",
+            "lines": 243
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/dpapi.rs",
+            "lines": 86
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/elevated/ipc_framed.rs",
+            "lines": 293
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/elevated/mod.rs",
+            "lines": 4
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/elevated/runner_client.rs",
+            "lines": 775
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/elevated/runner_pipe.rs",
+            "lines": 136
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/elevated_impl.rs",
+            "lines": 341
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/env.rs",
+            "lines": 178
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/helper_materialization.rs",
+            "lines": 604
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/hide_users.rs",
+            "lines": 159
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/identity.rs",
+            "lines": 385
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/lib.rs",
+            "lines": 876
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/logging.rs",
+            "lines": 160
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/mechanics.rs",
+            "lines": 179
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/path_normalization.rs",
+            "lines": 32
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/proc_thread_attr.rs",
+            "lines": 116
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/process.rs",
+            "lines": 356
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/protocol_types.rs",
+            "lines": 560
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/resolved_permissions.rs",
+            "lines": 501
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/sandbox_utils.rs",
+            "lines": 120
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/setup.rs",
+            "lines": 2335
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/setup_error.rs",
+            "lines": 290
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/spawn_prep.rs",
+            "lines": 720
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/ssh_config_dependencies.rs",
+            "lines": 250
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/stdio_bridge.rs",
+            "lines": 127
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/stdio_bridge_tests.rs",
+            "lines": 64
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/token.rs",
+            "lines": 511
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/token_tests.rs",
+            "lines": 70
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/unified_exec/backends/elevated.rs",
+            "lines": 283
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/unified_exec/backends/elevated_tests.rs",
+            "lines": 195
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/unified_exec/backends/legacy.rs",
+            "lines": 488
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/unified_exec/backends/mod.rs",
+            "lines": 4
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/unified_exec/backends/windows_common.rs",
+            "lines": 177
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/unified_exec/mod.rs",
+            "lines": 186
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/unified_exec/tests.rs",
+            "lines": 1142
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/wfp.rs",
+            "lines": 423
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/wfp/filter_specs.rs",
+            "lines": 125
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/wfp_setup.rs",
+            "lines": 39
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/winutil.rs",
+            "lines": 242
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/workspace_acl.rs",
+            "lines": 31
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/wrapper.rs",
+            "lines": 346
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/wrapper_tests.rs",
+            "lines": 121
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/tests/helper_manifest.rs",
+            "lines": 84
+          },
+          {
+            "file": "src-tauri/src/bin/pastey-managed-execute-probe.rs",
+            "lines": 29
+          },
+          {
+            "file": "src-tauri/src/bridge_auth.rs",
+            "lines": 1693
+          },
+          {
+            "file": "src-tauri/src/bridge_lifecycle.rs",
+            "lines": 1200
+          },
+          {
+            "file": "src-tauri/src/bridge_plan.rs",
+            "lines": 4008
+          },
+          {
+            "file": "src-tauri/src/bridge_plan/protocol.rs",
+            "lines": 2864
+          },
+          {
+            "file": "src-tauri/src/bridge_plan_v2.rs",
+            "lines": 2114
+          },
+          {
+            "file": "src-tauri/src/capability_acquisition_confirmation.rs",
+            "lines": 375
+          },
+          {
+            "file": "src-tauri/src/capability_probe.rs",
+            "lines": 671
+          },
+          {
+            "file": "src-tauri/src/chunk_frame.rs",
+            "lines": 282
+          },
+          {
+            "file": "src-tauri/src/cleanup.rs",
+            "lines": 33
+          },
+          {
+            "file": "src-tauri/src/commands.rs",
+            "lines": 8655
+          },
+          {
+            "file": "src-tauri/src/config.rs",
+            "lines": 537
+          },
+          {
+            "file": "src-tauri/src/crypto.rs",
+            "lines": 241
+          },
+          {
+            "file": "src-tauri/src/dev_tools.rs",
+            "lines": 64
+          },
+          {
+            "file": "src-tauri/src/developer_terminal.rs",
+            "lines": 1583
+          },
+          {
+            "file": "src-tauri/src/device_identity.rs",
+            "lines": 450
+          },
+          {
+            "file": "src-tauri/src/device_profile.rs",
+            "lines": 578
+          },
+          {
+            "file": "src-tauri/src/diagnostics.rs",
+            "lines": 391
+          },
+          {
+            "file": "src-tauri/src/discovery.rs",
+            "lines": 1802
+          },
+          {
+            "file": "src-tauri/src/effect_authority.rs",
+            "lines": 3657
+          },
+          {
+            "file": "src-tauri/src/error.rs",
+            "lines": 62
+          },
+          {
+            "file": "src-tauri/src/execution_backend.rs",
+            "lines": 564
+          },
+          {
+            "file": "src-tauri/src/execution_world.rs",
+            "lines": 1380
+          },
+          {
+            "file": "src-tauri/src/file_candidates.rs",
+            "lines": 2068
+          },
+          {
+            "file": "src-tauri/src/host_admission.rs",
+            "lines": 773
+          },
+          {
+            "file": "src-tauri/src/host_identity.rs",
+            "lines": 607
+          },
+          {
+            "file": "src-tauri/src/host_process.rs",
+            "lines": 707
+          },
+          {
+            "file": "src-tauri/src/host_runtime.rs",
+            "lines": 1066
+          },
+          {
+            "file": "src-tauri/src/link_benchmark.rs",
+            "lines": 450
+          },
+          {
+            "file": "src-tauri/src/logging.rs",
+            "lines": 217
+          },
+          {
+            "file": "src-tauri/src/main.rs",
+            "lines": 516
+          },
+          {
+            "file": "src-tauri/src/managed_execution.rs",
+            "lines": 3394
+          },
+          {
+            "file": "src-tauri/src/managed_objects.rs",
+            "lines": 820
+          },
+          {
+            "file": "src-tauri/src/managed_resources.rs",
+            "lines": 4502
+          },
+          {
+            "file": "src-tauri/src/managed_runtime_config.rs",
+            "lines": 313
+          },
+          {
+            "file": "src-tauri/src/managed_worker_coordinator.rs",
+            "lines": 4015
+          },
+          {
+            "file": "src-tauri/src/managed_workspace.rs",
+            "lines": 430
+          },
+          {
+            "file": "src-tauri/src/models.rs",
+            "lines": 688
+          },
+          {
+            "file": "src-tauri/src/native_agent.rs",
+            "lines": 16018
+          },
+          {
+            "file": "src-tauri/src/native_agent/admission.rs",
+            "lines": 107
+          },
+          {
+            "file": "src-tauri/src/native_agent/capability.rs",
+            "lines": 307
+          },
+          {
+            "file": "src-tauri/src/native_agent/capability/claude_code.rs",
+            "lines": 586
+          },
+          {
+            "file": "src-tauri/src/native_agent/capability/claude_code/tests.rs",
+            "lines": 475
+          },
+          {
+            "file": "src-tauri/src/native_agent/capability/codex.rs",
+            "lines": 3747
+          },
+          {
+            "file": "src-tauri/src/native_agent/capability/fake_longjob.rs",
+            "lines": 287
+          },
+          {
+            "file": "src-tauri/src/native_agent/sessions.rs",
+            "lines": 636
+          },
+          {
+            "file": "src-tauri/src/native_agent/sessions/claude.rs",
+            "lines": 838
+          },
+          {
+            "file": "src-tauri/src/native_agent/sessions/codex.rs",
+            "lines": 547
+          },
+          {
+            "file": "src-tauri/src/native_agent/sessions/remote.rs",
+            "lines": 786
+          },
+          {
+            "file": "src-tauri/src/native_agent/sessions/remote/tests.rs",
+            "lines": 379
+          },
+          {
+            "file": "src-tauri/src/native_agent/sessions/tests.rs",
+            "lines": 805
+          },
+          {
+            "file": "src-tauri/src/native_agent_pair_harness.rs",
+            "lines": 2747
+          },
+          {
+            "file": "src-tauri/src/native_v2_orchestration.rs",
+            "lines": 7267
+          },
+          {
+            "file": "src-tauri/src/natural_v2.rs",
+            "lines": 1089
+          },
+          {
+            "file": "src-tauri/src/network_broker.rs",
+            "lines": 2475
+          },
+          {
+            "file": "src-tauri/src/object_refs.rs",
+            "lines": 203
+          },
+          {
+            "file": "src-tauri/src/peer_capabilities.rs",
+            "lines": 890
+          },
+          {
+            "file": "src-tauri/src/regular_file_set_transfer.rs",
+            "lines": 521
+          },
+          {
+            "file": "src-tauri/src/room_control.rs",
+            "lines": 5058
+          },
+          {
+            "file": "src-tauri/src/room_control/native_session_pair_tests.rs",
+            "lines": 226
+          },
+          {
+            "file": "src-tauri/src/safe_file_identity.rs",
+            "lines": 1178
+          },
+          {
+            "file": "src-tauri/src/session_read_access.rs",
+            "lines": 242
+          },
+          {
+            "file": "src-tauri/src/session_read_access/tests.rs",
+            "lines": 291
+          },
+          {
+            "file": "src-tauri/src/storage.rs",
+            "lines": 5806
+          },
+          {
+            "file": "src-tauri/src/transfer.rs",
+            "lines": 7998
+          },
+          {
+            "file": "src-tauri/src/transfer_orchestration.rs",
+            "lines": 227
+          },
+          {
+            "file": "src-tauri/src/transfer_tuning.rs",
+            "lines": 224
+          },
+          {
+            "file": "src-tauri/src/unattended_access.rs",
+            "lines": 341
+          },
+          {
+            "file": "src-tauri/src/windows_codex_backend.rs",
+            "lines": 1112
+          },
+          {
+            "file": "src-tauri/src/windows_verifier_diagnostics.rs",
+            "lines": 245
+          },
+          {
+            "file": "src-tauri/src/worker_harness.rs",
+            "lines": 1654
+          },
+          {
+            "file": "src-tauri/src/worker_provider.rs",
+            "lines": 1671
+          },
+          {
+            "file": "src-tauri/src/worker_provider_config.rs",
+            "lines": 1066
+          },
+          {
+            "file": "src-tauri/tests/windows_execution_world.rs",
+            "lines": 152
+          },
+          {
+            "file": "src/App.tsx",
+            "lines": 1817
+          },
+          {
+            "file": "src/components/CodeDisplay.tsx",
+            "lines": 10
+          },
+          {
+            "file": "src/components/DeveloperTerminalViewport.tsx",
+            "lines": 202
+          },
+          {
+            "file": "src/components/OperationTimeline.tsx",
+            "lines": 81
+          },
+          {
+            "file": "src/components/TrayStatus.tsx",
+            "lines": 13
+          },
+          {
+            "file": "src/features/workspace/AgentTaskLifecycle.tsx",
+            "lines": 698
+          },
+          {
+            "file": "src/features/workspace/BridgeDetails.tsx",
+            "lines": 212
+          },
+          {
+            "file": "src/features/workspace/BridgeNetworkPanel.tsx",
+            "lines": 152
+          },
+          {
+            "file": "src/features/workspace/BridgeWorkspace.tsx",
+            "lines": 389
+          },
+          {
+            "file": "src/features/workspace/DeveloperModeScreen.tsx",
+            "lines": 90
+          },
+          {
+            "file": "src/features/workspace/DeviceTrustSettings.tsx",
+            "lines": 84
+          },
+          {
+            "file": "src/features/workspace/KnownDevicesSettings.tsx",
+            "lines": 36
+          },
+          {
+            "file": "src/features/workspace/NativeAgentPanel.tsx",
+            "lines": 315
+          },
+          {
+            "file": "src/features/workspace/NativeDecisionPanel.tsx",
+            "lines": 68
+          },
+          {
+            "file": "src/features/workspace/NativeSessionsCard.tsx",
+            "lines": 193
+          },
+          {
+            "file": "src/features/workspace/RemoteFileFinder.tsx",
+            "lines": 143
+          },
+          {
+            "file": "src/features/workspace/SessionReadingSettings.tsx",
+            "lines": 73
+          },
+          {
+            "file": "src/features/workspace/SettingsScreens.tsx",
+            "lines": 352
+          },
+          {
+            "file": "src/features/workspace/UnattendedAccessSettings.tsx",
+            "lines": 73
+          },
+          {
+            "file": "src/features/workspace/WorkspaceChrome.tsx",
+            "lines": 47
+          },
+          {
+            "file": "src/features/workspace/WorkspaceScreens.tsx",
+            "lines": 166
+          },
+          {
+            "file": "src/features/workspace/WorkspaceV2.tsx",
+            "lines": 228
+          },
+          {
+            "file": "src/features/workspace/ui.tsx",
+            "lines": 142
+          },
+          {
+            "file": "src/features/workspace/workspaceTypes.ts",
+            "lines": 45
+          },
+          {
+            "file": "src/features/workspace/workspaceViewModel.ts",
+            "lines": 60
+          },
+          {
+            "file": "src/lib/agentBridge/bridgeDetailPolling.ts",
+            "lines": 24
+          },
+          {
+            "file": "src/lib/agentBridge/config.ts",
+            "lines": 49
+          },
+          {
+            "file": "src/lib/agentBridge/index.ts",
+            "lines": 2
+          },
+          {
+            "file": "src/lib/ai/actionPlanValidator.ts",
+            "lines": 36
+          },
+          {
+            "file": "src/lib/ai/cloudOpenAICompatibleProvider.ts",
+            "lines": 188
+          },
+          {
+            "file": "src/lib/ai/contextSnapshot.ts",
+            "lines": 73
+          },
+          {
+            "file": "src/lib/ai/index.ts",
+            "lines": 9
+          },
+          {
+            "file": "src/lib/ai/naturalV1Plan.ts",
+            "lines": 519
+          },
+          {
+            "file": "src/lib/ai/naturalV2Plan.ts",
+            "lines": 400
+          },
+          {
+            "file": "src/lib/ai/providerInstructionPack.ts",
+            "lines": 38
+          },
+          {
+            "file": "src/lib/ai/providerRiskScanner.ts",
+            "lines": 156
+          },
+          {
+            "file": "src/lib/ai/types.ts",
+            "lines": 179
+          },
+          {
+            "file": "src/lib/appearance.ts",
+            "lines": 24
+          },
+          {
+            "file": "src/lib/authoritativeSnapshots.ts",
+            "lines": 47
+          },
+          {
+            "file": "src/lib/bridgeAddress.ts",
+            "lines": 72
+          },
+          {
+            "file": "src/lib/bridgeDeliveryOutcome.ts",
+            "lines": 52
+          },
+          {
+            "file": "src/lib/bridgeIdentity.ts",
+            "lines": 203
+          },
+          {
+            "file": "src/lib/bridgePeers.ts",
+            "lines": 463
+          },
+          {
+            "file": "src/lib/bridgePlanComposer.ts",
+            "lines": 261
+          },
+          {
+            "file": "src/lib/bridgePlanSearchResults.ts",
+            "lines": 163
+          },
+          {
+            "file": "src/lib/bridgeRoomAdapter.ts",
+            "lines": 178
+          },
+          {
+            "file": "src/lib/bridgeRouting.ts",
+            "lines": 425
+          },
+          {
+            "file": "src/lib/bridgeRoutingRuntime.ts",
+            "lines": 348
+          },
+          {
+            "file": "src/lib/bridgeSelection.ts",
+            "lines": 19
+          },
+          {
+            "file": "src/lib/constants.ts",
+            "lines": 3
+          },
+          {
+            "file": "src/lib/developerTerminalFrontend.ts",
+            "lines": 140
+          },
+          {
+            "file": "src/lib/format.ts",
+            "lines": 82
+          },
+          {
+            "file": "src/lib/nativeAgentReadiness.ts",
+            "lines": 142
+          },
+          {
+            "file": "src/lib/nativeDecisions.ts",
+            "lines": 119
+          },
+          {
+            "file": "src/lib/nativeSessions.ts",
+            "lines": 145
+          },
+          {
+            "file": "src/lib/remoteFileFinder.ts",
+            "lines": 125
+          },
+          {
+            "file": "src/lib/subscriptionLifecycle.ts",
+            "lines": 40
+          },
+          {
+            "file": "src/lib/tauri.ts",
+            "lines": 1123
+          },
+          {
+            "file": "src/lib/transferPlanner.ts",
+            "lines": 889
+          },
+          {
+            "file": "src/lib/transferScheduler.ts",
+            "lines": 1359
+          },
+          {
+            "file": "src/lib/transferState.ts",
+            "lines": 31
+          },
+          {
+            "file": "src/lib/types.ts",
+            "lines": 392
+          },
+          {
+            "file": "src/lib/unattendedAccess.ts",
+            "lines": 46
+          },
+          {
+            "file": "src/main.tsx",
+            "lines": 14
+          },
+          {
+            "file": "tests/bridgeDetailPolling.test.ts",
+            "lines": 65
+          },
+          {
+            "file": "tests/bridgeIdentity.test.ts",
+            "lines": 103
+          },
+          {
+            "file": "tests/bridgePeers.test.ts",
+            "lines": 240
+          },
+          {
+            "file": "tests/bridgeRoomAdapter.test.ts",
+            "lines": 153
+          },
+          {
+            "file": "tests/bridgeRouting.test.ts",
+            "lines": 166
+          },
+          {
+            "file": "tests/bridgeRoutingRuntime.test.ts",
+            "lines": 39
+          },
+          {
+            "file": "tests/controlWindowRuntime.test.ts",
+            "lines": 202
+          },
+          {
+            "file": "tests/developerTerminalFrontend.test.ts",
+            "lines": 218
+          },
+          {
+            "file": "tests/frontendIntegration.test.ts",
+            "lines": 1078
+          },
+          {
+            "file": "tests/layer4ValidationMatrix.test.ts",
+            "lines": 61
+          },
+          {
+            "file": "tests/naturalV1Plan.test.ts",
+            "lines": 352
+          },
+          {
+            "file": "tests/naturalV2Plan.test.ts",
+            "lines": 179
+          },
+          {
+            "file": "tests/transferPlanner.test.ts",
+            "lines": 301
+          },
+          {
+            "file": "tests/transferSchedulerExecution.test.ts",
+            "lines": 1230
+          },
+          {
+            "file": "tools/codex-session-probe/attach_poc.py",
+            "lines": 257
+          },
+          {
+            "file": "tools/codex-session-probe/probe.py",
+            "lines": 79
+          },
+          {
+            "file": "tools/native-session-handoff/observe_claude.py",
+            "lines": 110
+          },
+          {
+            "file": "tools/net-probe/src/lib.rs",
+            "lines": 1010
+          },
+          {
+            "file": "tools/net-probe/src/main.rs",
+            "lines": 209
+          },
+          {
+            "file": "tools/net-probe/src/tests.rs",
+            "lines": 228
+          },
+          {
+            "file": "tools/net-probe/summarize.py",
+            "lines": 103
+          },
+          {
+            "file": "vite.config.ts",
+            "lines": 22
+          }
+        ],
+        "manifest": {
+          "schemaVersion": "1.2.0",
+          "toolVersion": "0.3.0",
+          "repositoryRoot": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-source-scale-pair-0GBZO2/source",
+          "repositoryIdentity": "702ab2dc794f857a",
+          "generatedAt": "2026-10-19T06:57:14.028Z",
+          "adapterRuns": [
+            {
+              "adapter": "typescript",
+              "metadata": {
+                "version": "4",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "semantic",
+                  "modules": "semantic",
+                  "references": "semantic",
+                  "calls": "semantic",
+                  "types": "semantic",
+                  "inheritance": "unsupported",
+                  "generics": "unsupported",
+                  "macros": "unsupported",
+                  "dynamicDispatch": "unsupported"
+                },
+                "projectFileCount": 81,
+                "providers": [
+                  {
+                    "id": "ts-morph/compiler-api",
+                    "version": "5.9.2",
+                    "kind": "compiler",
+                    "available": true
+                  }
+                ],
+                "semanticProviderAvailable": true
+              },
+              "detected": true,
+              "durationMs": 1114,
+              "fileCount": 81,
+              "nodeCount": 3099,
+              "edgeCount": 8660,
+              "diagnosticCount": 1706
+            },
+            {
+              "adapter": "rust",
+              "metadata": {
+                "version": "4",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "syntax",
+                  "modules": "heuristic",
+                  "references": "heuristic",
+                  "calls": "heuristic",
+                  "types": "heuristic",
+                  "inheritance": "syntax",
+                  "generics": "unsupported",
+                  "macros": "syntax",
+                  "dynamicDispatch": "unsupported"
+                },
+                "moduleCount": 249,
+                "unresolvedNodePolicy": "scoped-and-common-method-aggregated",
+                "providers": [
+                  {
+                    "id": "tree-sitter-rust",
+                    "version": "0.24.0",
+                    "kind": "syntax",
+                    "available": true
+                  }
+                ],
+                "semanticProviderAvailable": false
+              },
+              "detected": true,
+              "durationMs": 20705,
+              "fileCount": 174,
+              "nodeCount": 34558,
+              "edgeCount": 62603,
+              "diagnosticCount": 45191
+            },
+            {
+              "adapter": "python",
+              "metadata": {
+                "version": "1",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "syntax",
+                  "modules": "syntax",
+                  "references": "unsupported",
+                  "calls": "heuristic",
+                  "types": "syntax",
+                  "inheritance": "syntax",
+                  "generics": "syntax",
+                  "macros": "unsupported",
+                  "dynamicDispatch": "unsupported"
+                },
+                "providers": [
+                  {
+                    "id": "tree-sitter-python",
+                    "version": "0.25.0",
+                    "kind": "syntax",
+                    "available": true
+                  }
+                ],
+                "semanticProviderAvailable": false
+              },
+              "detected": true,
+              "durationMs": 92,
+              "fileCount": 6,
+              "nodeCount": 763,
+              "edgeCount": 1325,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "java",
+              "metadata": {
+                "version": "1",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "syntax",
+                  "modules": "syntax",
+                  "references": "unsupported",
+                  "calls": "heuristic",
+                  "types": "syntax",
+                  "inheritance": "syntax",
+                  "generics": "syntax",
+                  "macros": "unsupported",
+                  "dynamicDispatch": "unsupported"
+                }
+              },
+              "detected": false,
+              "durationMs": 0,
+              "fileCount": 0,
+              "nodeCount": 0,
+              "edgeCount": 0,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "c",
+              "metadata": {
+                "version": "1",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "syntax",
+                  "modules": "syntax",
+                  "references": "unsupported",
+                  "calls": "heuristic",
+                  "types": "syntax",
+                  "inheritance": "unsupported",
+                  "generics": "unsupported",
+                  "macros": "syntax",
+                  "dynamicDispatch": "unsupported"
+                }
+              },
+              "detected": false,
+              "durationMs": 0,
+              "fileCount": 0,
+              "nodeCount": 0,
+              "edgeCount": 0,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "cpp",
+              "metadata": {
+                "version": "1",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "syntax",
+                  "modules": "syntax",
+                  "references": "unsupported",
+                  "calls": "heuristic",
+                  "types": "syntax",
+                  "inheritance": "syntax",
+                  "generics": "syntax",
+                  "macros": "syntax",
+                  "dynamicDispatch": "unsupported"
+                }
+              },
+              "detected": false,
+              "durationMs": 0,
+              "fileCount": 0,
+              "nodeCount": 0,
+              "edgeCount": 0,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "go",
+              "metadata": {
+                "version": "1",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "syntax",
+                  "modules": "syntax",
+                  "references": "unsupported",
+                  "calls": "heuristic",
+                  "types": "syntax",
+                  "inheritance": "syntax",
+                  "generics": "syntax",
+                  "macros": "unsupported",
+                  "dynamicDispatch": "unsupported"
+                }
+              },
+              "detected": false,
+              "durationMs": 0,
+              "fileCount": 0,
+              "nodeCount": 0,
+              "edgeCount": 0,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "csharp",
+              "metadata": {
+                "version": "1",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "syntax",
+                  "modules": "syntax",
+                  "references": "unsupported",
+                  "calls": "heuristic",
+                  "types": "syntax",
+                  "inheritance": "syntax",
+                  "generics": "syntax",
+                  "macros": "unsupported",
+                  "dynamicDispatch": "unsupported"
+                }
+              },
+              "detected": false,
+              "durationMs": 0,
+              "fileCount": 0,
+              "nodeCount": 0,
+              "edgeCount": 0,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "react",
+              "metadata": {
+                "componentCount": 64
+              },
+              "detected": true,
+              "durationMs": 15,
+              "fileCount": 315,
+              "nodeCount": 311,
+              "edgeCount": 456,
+              "diagnosticCount": 32
+            },
+            {
+              "adapter": "tauri",
+              "metadata": {
+                "commandCount": 123,
+                "eventCount": 8,
+                "unresolvedEventExpressionCount": 2
+              },
+              "detected": true,
+              "durationMs": 275,
+              "fileCount": 315,
+              "nodeCount": 133,
+              "edgeCount": 382,
+              "diagnosticCount": 11
+            },
+            {
+              "adapter": "architecture",
+              "metadata": {
+                "formats": [
+                  "protobuf",
+                  "openapi-json",
+                  "openapi-yaml",
+                  "graphql",
+                  "github-workflow",
+                  "compose"
+                ],
+                "limitations": [
+                  "No external schema reference fetching",
+                  "No generated client or handler matching without explicit API namespace"
+                ]
+              },
+              "detected": true,
+              "durationMs": 6,
+              "fileCount": 315,
+              "nodeCount": 2,
+              "edgeCount": 1,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "markdown",
+              "metadata": {
+                "fileCount": 29
+              },
+              "detected": true,
+              "durationMs": 19,
+              "fileCount": 315,
+              "nodeCount": 331,
+              "edgeCount": 326,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "packageJson",
+              "metadata": {
+                "fileCount": 1
+              },
+              "detected": true,
+              "durationMs": 2,
+              "fileCount": 315,
+              "nodeCount": 43,
+              "edgeCount": 42,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "cargoToml",
+              "metadata": {
+                "fileCount": 7
+              },
+              "detected": true,
+              "durationMs": 3,
+              "fileCount": 315,
+              "nodeCount": 116,
+              "edgeCount": 109,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "tauriConfig",
+              "metadata": {
+                "fileCount": 1
+              },
+              "detected": true,
+              "durationMs": 1,
+              "fileCount": 315,
+              "nodeCount": 9,
+              "edgeCount": 8,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "tauriCapability",
+              "metadata": {
+                "fileCount": 1
+              },
+              "detected": true,
+              "durationMs": 1,
+              "fileCount": 315,
+              "nodeCount": 11,
+              "edgeCount": 10,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "tests",
+              "metadata": {
+                "fileCount": 120
+              },
+              "detected": true,
+              "durationMs": 173,
+              "fileCount": 315,
+              "nodeCount": 1260,
+              "edgeCount": 2341,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "semanticLinker",
+              "metadata": {
+                "linkedEdgeCount": 2089
+              },
+              "detected": true,
+              "durationMs": 158,
+              "fileCount": 315,
+              "nodeCount": 0,
+              "edgeCount": 2089,
+              "diagnosticCount": 0
+            }
+          ],
+          "enabledAdapters": [
+            "typescript",
+            "rust",
+            "python",
+            "react",
+            "tauri",
+            "architecture",
+            "markdown",
+            "packageJson",
+            "cargoToml",
+            "tauriConfig",
+            "tauriCapability",
+            "tests",
+            "semanticLinker"
+          ],
+          "scannedFileCount": 315,
+          "excludedFileCount": 0,
+          "nodeCount": 40641,
+          "edgeCount": 78396,
+          "diagnosticCount": 46940,
+          "analysisDuration": 190136,
+          "semanticCore": {
+            "format": 2,
+            "status": "partial",
+            "snapshot": 1,
+            "context": "sc2:context:867426011bd20d27778f158044deee329e81e7db8387887751e782c36d3aab8f",
+            "durationMs": 141930
+          }
+        },
+        "checksums": {
+          "visibleClaims": {
+            "count": 234946,
+            "sha256": "5374232534de8590dee9761be2541c12725764ab3ef9d7d4c50fe676e450e801"
+          },
+          "occurrences": {
+            "count": 41438,
+            "sha256": "aba2d48774215ab7bf657ba35ab8ee752f1c32a030817a674960fe86d3b60c70"
+          },
+          "calls": {
+            "count": 3757,
+            "sha256": "7235096d392589fba3b66291667c3dc25b3d90e5f2d4a40c55a42082b44cae49"
+          },
+          "scopeRows": {
+            "count": 197892,
+            "sha256": "49e71280d00580d755223ae02563ef640f0e9942e3102e2821ada42d08647ed5"
+          },
+          "boundaries": {
+            "count": 393,
+            "sha256": "f5d82fc62246a88f0ac521be436c49b3d9536f6c1595eb08158dcb37af57277b"
+          },
+          "edges": {
+            "count": 78396,
+            "sha256": "a963166a27ff775cfe92a162b34b32fa6324956f71fbf3013ff114550d7abf8a"
+          },
+          "diagnostics": {
+            "count": 46940,
+            "sha256": "50e7f3ff55301c10941d4d2a4899fad4277f0d45e6c69f8e21abe000fa79b4e3"
+          },
+          "nodes": {
+            "count": 40640,
+            "sha256": "f00be092f9762093f6272319e0ebc56cb906d47453c34b75bf54d621f2a3d20f"
+          }
+        },
+        "integrity": "ok",
+        "foreignKeys": [],
+        "durability": {
+          "journal": "wal",
+          "synchronous": 2
+        },
+        "databaseBytes": 896040960,
+        "plans": {
+          "cq_scope_nodes": [
+            {
+              "id": 3,
+              "parent": 0,
+              "notused": 216,
+              "detail": "SCAN cq_scope_nodes"
+            }
+          ],
+          "cq_boundaries": [
+            {
+              "id": 3,
+              "parent": 0,
+              "notused": 216,
+              "detail": "SCAN cq_boundaries"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "indexed",
+      "index": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-source-scale-pair-0GBZO2/indexed-index",
+      "runtime": "/Users/xiyuanpan/prograph/dist/core",
+      "report": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-source-scale-pair-0GBZO2/indexed.json",
+      "data": {
+        "elapsedMs": 100549.101292,
+        "analysisResources": {
+          "userCPUTime": 60526736,
+          "systemCPUTime": 20825589,
+          "maxRSS": 1644736,
+          "sharedMemorySize": 0,
+          "unsharedDataSize": 0,
+          "unsharedStackSize": 0,
+          "minorPageFault": 342808,
+          "majorPageFault": 1336,
+          "swappedOut": 0,
+          "fsRead": 0,
+          "fsWrite": 0,
+          "ipcSent": 0,
+          "ipcReceived": 2,
+          "signalsCount": 0,
+          "voluntaryContextSwitches": 875500,
+          "involuntaryContextSwitches": 182205
+        },
+        "stages": [
+          {
+            "stage": "content-key",
+            "ms": 24.05625000000873
+          },
+          {
+            "stage": "membership",
+            "ms": 304.66404099999636
+          },
+          {
+            "stage": "support-eligibility",
+            "ms": 28.445000000006985
+          },
+          {
+            "stage": "navigation",
+            "ms": 3504.948292000001
+          },
+          {
+            "stage": "symbols",
+            "ms": 0.008416999990004115
+          },
+          {
+            "stage": "call-summary",
+            "ms": 18.353541000004043
+          },
+          {
+            "stage": "snapshot-report",
+            "ms": 0.546541999996407
+          },
+          {
+            "stage": "compatibility-projection",
+            "ms": 21007.363417
+          },
+          {
+            "stage": "pointer-and-commit",
+            "ms": 1144.2122499999969
+          }
+        ],
+        "inventory": "729c1eb199f09ccd9739634699bdc004388402544fcc8806c674ba471b6365b8",
+        "selectedFiles": 315,
+        "codeFiles": [
+          {
+            "file": "docs/research/native-nat-traversal-poc/src/main.rs",
+            "lines": 169
+          },
+          {
+            "file": "docs/research/native-nat-traversal-poc/stun_probe.py",
+            "lines": 40
+          },
+          {
+            "file": "scripts/generate-transfer-fixtures.ts",
+            "lines": 337
+          },
+          {
+            "file": "scripts/replay-transfer-planner-scenarios.ts",
+            "lines": 276
+          },
+          {
+            "file": "src-tauri/build.rs",
+            "lines": 4
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-absolute-path/src/absolutize.rs",
+            "lines": 172
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-absolute-path/src/lib.rs",
+            "lines": 766
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/lib.rs",
+            "lines": 50
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/pipe.rs",
+            "lines": 376
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/pipe_tests.rs",
+            "lines": 20
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/process.rs",
+            "lines": 482
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/process_group.rs",
+            "lines": 306
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/process_group_tests.rs",
+            "lines": 95
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/pty.rs",
+            "lines": 564
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/tests.rs",
+            "lines": 1607
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/unix_io.rs",
+            "lines": 110
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/win/conpty.rs",
+            "lines": 193
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/win/job.rs",
+            "lines": 233
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/win/mod.rs",
+            "lines": 182
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/win/procthreadattr.rs",
+            "lines": 128
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/win/psuedocon.rs",
+            "lines": 369
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/windows_input.rs",
+            "lines": 36
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/windows_input_tests.rs",
+            "lines": 17
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/src/windows_tests.rs",
+            "lines": 421
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-pty/tests/conpty_search_path.rs",
+            "lines": 71
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-string/src/json.rs",
+            "lines": 123
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-string/src/lib.rs",
+            "lines": 166
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-string/src/truncate.rs",
+            "lines": 157
+          },
+          {
+            "file": "src-tauri/crates/codex-utils-string/src/truncate/tests.rs",
+            "lines": 118
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/build.rs",
+            "lines": 40
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/sandbox_smoketests.py",
+            "lines": 937
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/acl.rs",
+            "lines": 823
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/acl_tests.rs",
+            "lines": 16
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/allow.rs",
+            "lines": 381
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/audit.rs",
+            "lines": 402
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/command_runner/main.rs",
+            "lines": 13
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/command_runner/win.rs",
+            "lines": 738
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/command_runner/win/cwd_junction.rs",
+            "lines": 141
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/command_runner/win/input_loop_tests.rs",
+            "lines": 86
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/main.rs",
+            "lines": 13
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win.rs",
+            "lines": 1297
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win/firewall.rs",
+            "lines": 606
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win/no_reparse_dir.rs",
+            "lines": 155
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win/no_reparse_dir_tests.rs",
+            "lines": 65
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win/read_acl_mutex.rs",
+            "lines": 62
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win/sandbox_users.rs",
+            "lines": 586
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win/setup_runtime_bin.rs",
+            "lines": 118
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win/setup_runtime_bin_tests.rs",
+            "lines": 28
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/bin/setup_main/win_acl_tests.rs",
+            "lines": 30
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/cap.rs",
+            "lines": 204
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/conpty/mod.rs",
+            "lines": 172
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/deny_read_acl.rs",
+            "lines": 120
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/deny_read_resolver.rs",
+            "lines": 786
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/deny_read_resolver_access_tests.rs",
+            "lines": 251
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/deny_read_state.rs",
+            "lines": 88
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/deny_read_walker.rs",
+            "lines": 152
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/deny_read_walker_tests.rs",
+            "lines": 18
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/desktop.rs",
+            "lines": 458
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/desktop_tests.rs",
+            "lines": 243
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/dpapi.rs",
+            "lines": 86
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/elevated/ipc_framed.rs",
+            "lines": 293
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/elevated/mod.rs",
+            "lines": 4
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/elevated/runner_client.rs",
+            "lines": 775
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/elevated/runner_pipe.rs",
+            "lines": 136
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/elevated_impl.rs",
+            "lines": 341
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/env.rs",
+            "lines": 178
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/helper_materialization.rs",
+            "lines": 604
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/hide_users.rs",
+            "lines": 159
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/identity.rs",
+            "lines": 385
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/lib.rs",
+            "lines": 876
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/logging.rs",
+            "lines": 160
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/mechanics.rs",
+            "lines": 179
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/path_normalization.rs",
+            "lines": 32
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/proc_thread_attr.rs",
+            "lines": 116
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/process.rs",
+            "lines": 356
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/protocol_types.rs",
+            "lines": 560
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/resolved_permissions.rs",
+            "lines": 501
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/sandbox_utils.rs",
+            "lines": 120
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/setup.rs",
+            "lines": 2335
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/setup_error.rs",
+            "lines": 290
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/spawn_prep.rs",
+            "lines": 720
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/ssh_config_dependencies.rs",
+            "lines": 250
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/stdio_bridge.rs",
+            "lines": 127
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/stdio_bridge_tests.rs",
+            "lines": 64
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/token.rs",
+            "lines": 511
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/token_tests.rs",
+            "lines": 70
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/unified_exec/backends/elevated.rs",
+            "lines": 283
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/unified_exec/backends/elevated_tests.rs",
+            "lines": 195
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/unified_exec/backends/legacy.rs",
+            "lines": 488
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/unified_exec/backends/mod.rs",
+            "lines": 4
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/unified_exec/backends/windows_common.rs",
+            "lines": 177
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/unified_exec/mod.rs",
+            "lines": 186
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/unified_exec/tests.rs",
+            "lines": 1142
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/wfp.rs",
+            "lines": 423
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/wfp/filter_specs.rs",
+            "lines": 125
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/wfp_setup.rs",
+            "lines": 39
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/winutil.rs",
+            "lines": 242
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/workspace_acl.rs",
+            "lines": 31
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/wrapper.rs",
+            "lines": 346
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/src/wrapper_tests.rs",
+            "lines": 121
+          },
+          {
+            "file": "src-tauri/crates/windows-codex-sandbox/tests/helper_manifest.rs",
+            "lines": 84
+          },
+          {
+            "file": "src-tauri/src/bin/pastey-managed-execute-probe.rs",
+            "lines": 29
+          },
+          {
+            "file": "src-tauri/src/bridge_auth.rs",
+            "lines": 1693
+          },
+          {
+            "file": "src-tauri/src/bridge_lifecycle.rs",
+            "lines": 1200
+          },
+          {
+            "file": "src-tauri/src/bridge_plan.rs",
+            "lines": 4008
+          },
+          {
+            "file": "src-tauri/src/bridge_plan/protocol.rs",
+            "lines": 2864
+          },
+          {
+            "file": "src-tauri/src/bridge_plan_v2.rs",
+            "lines": 2114
+          },
+          {
+            "file": "src-tauri/src/capability_acquisition_confirmation.rs",
+            "lines": 375
+          },
+          {
+            "file": "src-tauri/src/capability_probe.rs",
+            "lines": 671
+          },
+          {
+            "file": "src-tauri/src/chunk_frame.rs",
+            "lines": 282
+          },
+          {
+            "file": "src-tauri/src/cleanup.rs",
+            "lines": 33
+          },
+          {
+            "file": "src-tauri/src/commands.rs",
+            "lines": 8655
+          },
+          {
+            "file": "src-tauri/src/config.rs",
+            "lines": 537
+          },
+          {
+            "file": "src-tauri/src/crypto.rs",
+            "lines": 241
+          },
+          {
+            "file": "src-tauri/src/dev_tools.rs",
+            "lines": 64
+          },
+          {
+            "file": "src-tauri/src/developer_terminal.rs",
+            "lines": 1583
+          },
+          {
+            "file": "src-tauri/src/device_identity.rs",
+            "lines": 450
+          },
+          {
+            "file": "src-tauri/src/device_profile.rs",
+            "lines": 578
+          },
+          {
+            "file": "src-tauri/src/diagnostics.rs",
+            "lines": 391
+          },
+          {
+            "file": "src-tauri/src/discovery.rs",
+            "lines": 1802
+          },
+          {
+            "file": "src-tauri/src/effect_authority.rs",
+            "lines": 3657
+          },
+          {
+            "file": "src-tauri/src/error.rs",
+            "lines": 62
+          },
+          {
+            "file": "src-tauri/src/execution_backend.rs",
+            "lines": 564
+          },
+          {
+            "file": "src-tauri/src/execution_world.rs",
+            "lines": 1380
+          },
+          {
+            "file": "src-tauri/src/file_candidates.rs",
+            "lines": 2068
+          },
+          {
+            "file": "src-tauri/src/host_admission.rs",
+            "lines": 773
+          },
+          {
+            "file": "src-tauri/src/host_identity.rs",
+            "lines": 607
+          },
+          {
+            "file": "src-tauri/src/host_process.rs",
+            "lines": 707
+          },
+          {
+            "file": "src-tauri/src/host_runtime.rs",
+            "lines": 1066
+          },
+          {
+            "file": "src-tauri/src/link_benchmark.rs",
+            "lines": 450
+          },
+          {
+            "file": "src-tauri/src/logging.rs",
+            "lines": 217
+          },
+          {
+            "file": "src-tauri/src/main.rs",
+            "lines": 516
+          },
+          {
+            "file": "src-tauri/src/managed_execution.rs",
+            "lines": 3394
+          },
+          {
+            "file": "src-tauri/src/managed_objects.rs",
+            "lines": 820
+          },
+          {
+            "file": "src-tauri/src/managed_resources.rs",
+            "lines": 4502
+          },
+          {
+            "file": "src-tauri/src/managed_runtime_config.rs",
+            "lines": 313
+          },
+          {
+            "file": "src-tauri/src/managed_worker_coordinator.rs",
+            "lines": 4015
+          },
+          {
+            "file": "src-tauri/src/managed_workspace.rs",
+            "lines": 430
+          },
+          {
+            "file": "src-tauri/src/models.rs",
+            "lines": 688
+          },
+          {
+            "file": "src-tauri/src/native_agent.rs",
+            "lines": 16018
+          },
+          {
+            "file": "src-tauri/src/native_agent/admission.rs",
+            "lines": 107
+          },
+          {
+            "file": "src-tauri/src/native_agent/capability.rs",
+            "lines": 307
+          },
+          {
+            "file": "src-tauri/src/native_agent/capability/claude_code.rs",
+            "lines": 586
+          },
+          {
+            "file": "src-tauri/src/native_agent/capability/claude_code/tests.rs",
+            "lines": 475
+          },
+          {
+            "file": "src-tauri/src/native_agent/capability/codex.rs",
+            "lines": 3747
+          },
+          {
+            "file": "src-tauri/src/native_agent/capability/fake_longjob.rs",
+            "lines": 287
+          },
+          {
+            "file": "src-tauri/src/native_agent/sessions.rs",
+            "lines": 636
+          },
+          {
+            "file": "src-tauri/src/native_agent/sessions/claude.rs",
+            "lines": 838
+          },
+          {
+            "file": "src-tauri/src/native_agent/sessions/codex.rs",
+            "lines": 547
+          },
+          {
+            "file": "src-tauri/src/native_agent/sessions/remote.rs",
+            "lines": 786
+          },
+          {
+            "file": "src-tauri/src/native_agent/sessions/remote/tests.rs",
+            "lines": 379
+          },
+          {
+            "file": "src-tauri/src/native_agent/sessions/tests.rs",
+            "lines": 805
+          },
+          {
+            "file": "src-tauri/src/native_agent_pair_harness.rs",
+            "lines": 2747
+          },
+          {
+            "file": "src-tauri/src/native_v2_orchestration.rs",
+            "lines": 7267
+          },
+          {
+            "file": "src-tauri/src/natural_v2.rs",
+            "lines": 1089
+          },
+          {
+            "file": "src-tauri/src/network_broker.rs",
+            "lines": 2475
+          },
+          {
+            "file": "src-tauri/src/object_refs.rs",
+            "lines": 203
+          },
+          {
+            "file": "src-tauri/src/peer_capabilities.rs",
+            "lines": 890
+          },
+          {
+            "file": "src-tauri/src/regular_file_set_transfer.rs",
+            "lines": 521
+          },
+          {
+            "file": "src-tauri/src/room_control.rs",
+            "lines": 5058
+          },
+          {
+            "file": "src-tauri/src/room_control/native_session_pair_tests.rs",
+            "lines": 226
+          },
+          {
+            "file": "src-tauri/src/safe_file_identity.rs",
+            "lines": 1178
+          },
+          {
+            "file": "src-tauri/src/session_read_access.rs",
+            "lines": 242
+          },
+          {
+            "file": "src-tauri/src/session_read_access/tests.rs",
+            "lines": 291
+          },
+          {
+            "file": "src-tauri/src/storage.rs",
+            "lines": 5806
+          },
+          {
+            "file": "src-tauri/src/transfer.rs",
+            "lines": 7998
+          },
+          {
+            "file": "src-tauri/src/transfer_orchestration.rs",
+            "lines": 227
+          },
+          {
+            "file": "src-tauri/src/transfer_tuning.rs",
+            "lines": 224
+          },
+          {
+            "file": "src-tauri/src/unattended_access.rs",
+            "lines": 341
+          },
+          {
+            "file": "src-tauri/src/windows_codex_backend.rs",
+            "lines": 1112
+          },
+          {
+            "file": "src-tauri/src/windows_verifier_diagnostics.rs",
+            "lines": 245
+          },
+          {
+            "file": "src-tauri/src/worker_harness.rs",
+            "lines": 1654
+          },
+          {
+            "file": "src-tauri/src/worker_provider.rs",
+            "lines": 1671
+          },
+          {
+            "file": "src-tauri/src/worker_provider_config.rs",
+            "lines": 1066
+          },
+          {
+            "file": "src-tauri/tests/windows_execution_world.rs",
+            "lines": 152
+          },
+          {
+            "file": "src/App.tsx",
+            "lines": 1817
+          },
+          {
+            "file": "src/components/CodeDisplay.tsx",
+            "lines": 10
+          },
+          {
+            "file": "src/components/DeveloperTerminalViewport.tsx",
+            "lines": 202
+          },
+          {
+            "file": "src/components/OperationTimeline.tsx",
+            "lines": 81
+          },
+          {
+            "file": "src/components/TrayStatus.tsx",
+            "lines": 13
+          },
+          {
+            "file": "src/features/workspace/AgentTaskLifecycle.tsx",
+            "lines": 698
+          },
+          {
+            "file": "src/features/workspace/BridgeDetails.tsx",
+            "lines": 212
+          },
+          {
+            "file": "src/features/workspace/BridgeNetworkPanel.tsx",
+            "lines": 152
+          },
+          {
+            "file": "src/features/workspace/BridgeWorkspace.tsx",
+            "lines": 389
+          },
+          {
+            "file": "src/features/workspace/DeveloperModeScreen.tsx",
+            "lines": 90
+          },
+          {
+            "file": "src/features/workspace/DeviceTrustSettings.tsx",
+            "lines": 84
+          },
+          {
+            "file": "src/features/workspace/KnownDevicesSettings.tsx",
+            "lines": 36
+          },
+          {
+            "file": "src/features/workspace/NativeAgentPanel.tsx",
+            "lines": 315
+          },
+          {
+            "file": "src/features/workspace/NativeDecisionPanel.tsx",
+            "lines": 68
+          },
+          {
+            "file": "src/features/workspace/NativeSessionsCard.tsx",
+            "lines": 193
+          },
+          {
+            "file": "src/features/workspace/RemoteFileFinder.tsx",
+            "lines": 143
+          },
+          {
+            "file": "src/features/workspace/SessionReadingSettings.tsx",
+            "lines": 73
+          },
+          {
+            "file": "src/features/workspace/SettingsScreens.tsx",
+            "lines": 352
+          },
+          {
+            "file": "src/features/workspace/UnattendedAccessSettings.tsx",
+            "lines": 73
+          },
+          {
+            "file": "src/features/workspace/WorkspaceChrome.tsx",
+            "lines": 47
+          },
+          {
+            "file": "src/features/workspace/WorkspaceScreens.tsx",
+            "lines": 166
+          },
+          {
+            "file": "src/features/workspace/WorkspaceV2.tsx",
+            "lines": 228
+          },
+          {
+            "file": "src/features/workspace/ui.tsx",
+            "lines": 142
+          },
+          {
+            "file": "src/features/workspace/workspaceTypes.ts",
+            "lines": 45
+          },
+          {
+            "file": "src/features/workspace/workspaceViewModel.ts",
+            "lines": 60
+          },
+          {
+            "file": "src/lib/agentBridge/bridgeDetailPolling.ts",
+            "lines": 24
+          },
+          {
+            "file": "src/lib/agentBridge/config.ts",
+            "lines": 49
+          },
+          {
+            "file": "src/lib/agentBridge/index.ts",
+            "lines": 2
+          },
+          {
+            "file": "src/lib/ai/actionPlanValidator.ts",
+            "lines": 36
+          },
+          {
+            "file": "src/lib/ai/cloudOpenAICompatibleProvider.ts",
+            "lines": 188
+          },
+          {
+            "file": "src/lib/ai/contextSnapshot.ts",
+            "lines": 73
+          },
+          {
+            "file": "src/lib/ai/index.ts",
+            "lines": 9
+          },
+          {
+            "file": "src/lib/ai/naturalV1Plan.ts",
+            "lines": 519
+          },
+          {
+            "file": "src/lib/ai/naturalV2Plan.ts",
+            "lines": 400
+          },
+          {
+            "file": "src/lib/ai/providerInstructionPack.ts",
+            "lines": 38
+          },
+          {
+            "file": "src/lib/ai/providerRiskScanner.ts",
+            "lines": 156
+          },
+          {
+            "file": "src/lib/ai/types.ts",
+            "lines": 179
+          },
+          {
+            "file": "src/lib/appearance.ts",
+            "lines": 24
+          },
+          {
+            "file": "src/lib/authoritativeSnapshots.ts",
+            "lines": 47
+          },
+          {
+            "file": "src/lib/bridgeAddress.ts",
+            "lines": 72
+          },
+          {
+            "file": "src/lib/bridgeDeliveryOutcome.ts",
+            "lines": 52
+          },
+          {
+            "file": "src/lib/bridgeIdentity.ts",
+            "lines": 203
+          },
+          {
+            "file": "src/lib/bridgePeers.ts",
+            "lines": 463
+          },
+          {
+            "file": "src/lib/bridgePlanComposer.ts",
+            "lines": 261
+          },
+          {
+            "file": "src/lib/bridgePlanSearchResults.ts",
+            "lines": 163
+          },
+          {
+            "file": "src/lib/bridgeRoomAdapter.ts",
+            "lines": 178
+          },
+          {
+            "file": "src/lib/bridgeRouting.ts",
+            "lines": 425
+          },
+          {
+            "file": "src/lib/bridgeRoutingRuntime.ts",
+            "lines": 348
+          },
+          {
+            "file": "src/lib/bridgeSelection.ts",
+            "lines": 19
+          },
+          {
+            "file": "src/lib/constants.ts",
+            "lines": 3
+          },
+          {
+            "file": "src/lib/developerTerminalFrontend.ts",
+            "lines": 140
+          },
+          {
+            "file": "src/lib/format.ts",
+            "lines": 82
+          },
+          {
+            "file": "src/lib/nativeAgentReadiness.ts",
+            "lines": 142
+          },
+          {
+            "file": "src/lib/nativeDecisions.ts",
+            "lines": 119
+          },
+          {
+            "file": "src/lib/nativeSessions.ts",
+            "lines": 145
+          },
+          {
+            "file": "src/lib/remoteFileFinder.ts",
+            "lines": 125
+          },
+          {
+            "file": "src/lib/subscriptionLifecycle.ts",
+            "lines": 40
+          },
+          {
+            "file": "src/lib/tauri.ts",
+            "lines": 1123
+          },
+          {
+            "file": "src/lib/transferPlanner.ts",
+            "lines": 889
+          },
+          {
+            "file": "src/lib/transferScheduler.ts",
+            "lines": 1359
+          },
+          {
+            "file": "src/lib/transferState.ts",
+            "lines": 31
+          },
+          {
+            "file": "src/lib/types.ts",
+            "lines": 392
+          },
+          {
+            "file": "src/lib/unattendedAccess.ts",
+            "lines": 46
+          },
+          {
+            "file": "src/main.tsx",
+            "lines": 14
+          },
+          {
+            "file": "tests/bridgeDetailPolling.test.ts",
+            "lines": 65
+          },
+          {
+            "file": "tests/bridgeIdentity.test.ts",
+            "lines": 103
+          },
+          {
+            "file": "tests/bridgePeers.test.ts",
+            "lines": 240
+          },
+          {
+            "file": "tests/bridgeRoomAdapter.test.ts",
+            "lines": 153
+          },
+          {
+            "file": "tests/bridgeRouting.test.ts",
+            "lines": 166
+          },
+          {
+            "file": "tests/bridgeRoutingRuntime.test.ts",
+            "lines": 39
+          },
+          {
+            "file": "tests/controlWindowRuntime.test.ts",
+            "lines": 202
+          },
+          {
+            "file": "tests/developerTerminalFrontend.test.ts",
+            "lines": 218
+          },
+          {
+            "file": "tests/frontendIntegration.test.ts",
+            "lines": 1078
+          },
+          {
+            "file": "tests/layer4ValidationMatrix.test.ts",
+            "lines": 61
+          },
+          {
+            "file": "tests/naturalV1Plan.test.ts",
+            "lines": 352
+          },
+          {
+            "file": "tests/naturalV2Plan.test.ts",
+            "lines": 179
+          },
+          {
+            "file": "tests/transferPlanner.test.ts",
+            "lines": 301
+          },
+          {
+            "file": "tests/transferSchedulerExecution.test.ts",
+            "lines": 1230
+          },
+          {
+            "file": "tools/codex-session-probe/attach_poc.py",
+            "lines": 257
+          },
+          {
+            "file": "tools/codex-session-probe/probe.py",
+            "lines": 79
+          },
+          {
+            "file": "tools/native-session-handoff/observe_claude.py",
+            "lines": 110
+          },
+          {
+            "file": "tools/net-probe/src/lib.rs",
+            "lines": 1010
+          },
+          {
+            "file": "tools/net-probe/src/main.rs",
+            "lines": 209
+          },
+          {
+            "file": "tools/net-probe/src/tests.rs",
+            "lines": 228
+          },
+          {
+            "file": "tools/net-probe/summarize.py",
+            "lines": 103
+          },
+          {
+            "file": "vite.config.ts",
+            "lines": 22
+          }
+        ],
+        "manifest": {
+          "schemaVersion": "1.2.0",
+          "toolVersion": "0.3.0",
+          "repositoryRoot": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-source-scale-pair-0GBZO2/source",
+          "repositoryIdentity": "702ab2dc794f857a",
+          "generatedAt": "2026-10-19T07:00:46.832Z",
+          "adapterRuns": [
+            {
+              "adapter": "typescript",
+              "metadata": {
+                "version": "4",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "semantic",
+                  "modules": "semantic",
+                  "references": "semantic",
+                  "calls": "semantic",
+                  "types": "semantic",
+                  "inheritance": "unsupported",
+                  "generics": "unsupported",
+                  "macros": "unsupported",
+                  "dynamicDispatch": "unsupported"
+                },
+                "projectFileCount": 81,
+                "providers": [
+                  {
+                    "id": "ts-morph/compiler-api",
+                    "version": "5.9.2",
+                    "kind": "compiler",
+                    "available": true
+                  }
+                ],
+                "semanticProviderAvailable": true
+              },
+              "detected": true,
+              "durationMs": 1284,
+              "fileCount": 81,
+              "nodeCount": 3099,
+              "edgeCount": 8660,
+              "diagnosticCount": 1706
+            },
+            {
+              "adapter": "rust",
+              "metadata": {
+                "version": "4",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "syntax",
+                  "modules": "heuristic",
+                  "references": "heuristic",
+                  "calls": "heuristic",
+                  "types": "heuristic",
+                  "inheritance": "syntax",
+                  "generics": "unsupported",
+                  "macros": "syntax",
+                  "dynamicDispatch": "unsupported"
+                },
+                "moduleCount": 249,
+                "unresolvedNodePolicy": "scoped-and-common-method-aggregated",
+                "providers": [
+                  {
+                    "id": "tree-sitter-rust",
+                    "version": "0.24.0",
+                    "kind": "syntax",
+                    "available": true
+                  }
+                ],
+                "semanticProviderAvailable": false
+              },
+              "detected": true,
+              "durationMs": 23945,
+              "fileCount": 174,
+              "nodeCount": 34558,
+              "edgeCount": 62603,
+              "diagnosticCount": 45191
+            },
+            {
+              "adapter": "python",
+              "metadata": {
+                "version": "1",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "syntax",
+                  "modules": "syntax",
+                  "references": "unsupported",
+                  "calls": "heuristic",
+                  "types": "syntax",
+                  "inheritance": "syntax",
+                  "generics": "syntax",
+                  "macros": "unsupported",
+                  "dynamicDispatch": "unsupported"
+                },
+                "providers": [
+                  {
+                    "id": "tree-sitter-python",
+                    "version": "0.25.0",
+                    "kind": "syntax",
+                    "available": true
+                  }
+                ],
+                "semanticProviderAvailable": false
+              },
+              "detected": true,
+              "durationMs": 105,
+              "fileCount": 6,
+              "nodeCount": 763,
+              "edgeCount": 1325,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "java",
+              "metadata": {
+                "version": "1",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "syntax",
+                  "modules": "syntax",
+                  "references": "unsupported",
+                  "calls": "heuristic",
+                  "types": "syntax",
+                  "inheritance": "syntax",
+                  "generics": "syntax",
+                  "macros": "unsupported",
+                  "dynamicDispatch": "unsupported"
+                }
+              },
+              "detected": false,
+              "durationMs": 0,
+              "fileCount": 0,
+              "nodeCount": 0,
+              "edgeCount": 0,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "c",
+              "metadata": {
+                "version": "1",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "syntax",
+                  "modules": "syntax",
+                  "references": "unsupported",
+                  "calls": "heuristic",
+                  "types": "syntax",
+                  "inheritance": "unsupported",
+                  "generics": "unsupported",
+                  "macros": "syntax",
+                  "dynamicDispatch": "unsupported"
+                }
+              },
+              "detected": false,
+              "durationMs": 0,
+              "fileCount": 0,
+              "nodeCount": 0,
+              "edgeCount": 0,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "cpp",
+              "metadata": {
+                "version": "1",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "syntax",
+                  "modules": "syntax",
+                  "references": "unsupported",
+                  "calls": "heuristic",
+                  "types": "syntax",
+                  "inheritance": "syntax",
+                  "generics": "syntax",
+                  "macros": "syntax",
+                  "dynamicDispatch": "unsupported"
+                }
+              },
+              "detected": false,
+              "durationMs": 0,
+              "fileCount": 0,
+              "nodeCount": 0,
+              "edgeCount": 0,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "go",
+              "metadata": {
+                "version": "1",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "syntax",
+                  "modules": "syntax",
+                  "references": "unsupported",
+                  "calls": "heuristic",
+                  "types": "syntax",
+                  "inheritance": "syntax",
+                  "generics": "syntax",
+                  "macros": "unsupported",
+                  "dynamicDispatch": "unsupported"
+                }
+              },
+              "detected": false,
+              "durationMs": 0,
+              "fileCount": 0,
+              "nodeCount": 0,
+              "edgeCount": 0,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "csharp",
+              "metadata": {
+                "version": "1",
+                "capabilities": {
+                  "syntax": "syntax",
+                  "symbols": "syntax",
+                  "modules": "syntax",
+                  "references": "unsupported",
+                  "calls": "heuristic",
+                  "types": "syntax",
+                  "inheritance": "syntax",
+                  "generics": "syntax",
+                  "macros": "unsupported",
+                  "dynamicDispatch": "unsupported"
+                }
+              },
+              "detected": false,
+              "durationMs": 0,
+              "fileCount": 0,
+              "nodeCount": 0,
+              "edgeCount": 0,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "react",
+              "metadata": {
+                "componentCount": 64
+              },
+              "detected": true,
+              "durationMs": 19,
+              "fileCount": 315,
+              "nodeCount": 311,
+              "edgeCount": 456,
+              "diagnosticCount": 32
+            },
+            {
+              "adapter": "tauri",
+              "metadata": {
+                "commandCount": 123,
+                "eventCount": 8,
+                "unresolvedEventExpressionCount": 2
+              },
+              "detected": true,
+              "durationMs": 324,
+              "fileCount": 315,
+              "nodeCount": 133,
+              "edgeCount": 382,
+              "diagnosticCount": 11
+            },
+            {
+              "adapter": "architecture",
+              "metadata": {
+                "formats": [
+                  "protobuf",
+                  "openapi-json",
+                  "openapi-yaml",
+                  "graphql",
+                  "github-workflow",
+                  "compose"
+                ],
+                "limitations": [
+                  "No external schema reference fetching",
+                  "No generated client or handler matching without explicit API namespace"
+                ]
+              },
+              "detected": true,
+              "durationMs": 7,
+              "fileCount": 315,
+              "nodeCount": 2,
+              "edgeCount": 1,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "markdown",
+              "metadata": {
+                "fileCount": 29
+              },
+              "detected": true,
+              "durationMs": 23,
+              "fileCount": 315,
+              "nodeCount": 331,
+              "edgeCount": 326,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "packageJson",
+              "metadata": {
+                "fileCount": 1
+              },
+              "detected": true,
+              "durationMs": 2,
+              "fileCount": 315,
+              "nodeCount": 43,
+              "edgeCount": 42,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "cargoToml",
+              "metadata": {
+                "fileCount": 7
+              },
+              "detected": true,
+              "durationMs": 4,
+              "fileCount": 315,
+              "nodeCount": 116,
+              "edgeCount": 109,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "tauriConfig",
+              "metadata": {
+                "fileCount": 1
+              },
+              "detected": true,
+              "durationMs": 1,
+              "fileCount": 315,
+              "nodeCount": 9,
+              "edgeCount": 8,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "tauriCapability",
+              "metadata": {
+                "fileCount": 1
+              },
+              "detected": true,
+              "durationMs": 1,
+              "fileCount": 315,
+              "nodeCount": 11,
+              "edgeCount": 10,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "tests",
+              "metadata": {
+                "fileCount": 120
+              },
+              "detected": true,
+              "durationMs": 200,
+              "fileCount": 315,
+              "nodeCount": 1260,
+              "edgeCount": 2341,
+              "diagnosticCount": 0
+            },
+            {
+              "adapter": "semanticLinker",
+              "metadata": {
+                "linkedEdgeCount": 2089
+              },
+              "detected": true,
+              "durationMs": 205,
+              "fileCount": 315,
+              "nodeCount": 0,
+              "edgeCount": 2089,
+              "diagnosticCount": 0
+            }
+          ],
+          "enabledAdapters": [
+            "typescript",
+            "rust",
+            "python",
+            "react",
+            "tauri",
+            "architecture",
+            "markdown",
+            "packageJson",
+            "cargoToml",
+            "tauriConfig",
+            "tauriCapability",
+            "tests",
+            "semanticLinker"
+          ],
+          "scannedFileCount": 315,
+          "excludedFileCount": 0,
+          "nodeCount": 40641,
+          "edgeCount": 78396,
+          "diagnosticCount": 46940,
+          "analysisDuration": 95700,
+          "semanticCore": {
+            "format": 2,
+            "status": "partial",
+            "snapshot": 1,
+            "context": "sc2:context:867426011bd20d27778f158044deee329e81e7db8387887751e782c36d3aab8f",
+            "durationMs": 37321
+          }
+        },
+        "checksums": {
+          "visibleClaims": {
+            "count": 234946,
+            "sha256": "5374232534de8590dee9761be2541c12725764ab3ef9d7d4c50fe676e450e801"
+          },
+          "occurrences": {
+            "count": 41438,
+            "sha256": "aba2d48774215ab7bf657ba35ab8ee752f1c32a030817a674960fe86d3b60c70"
+          },
+          "calls": {
+            "count": 3757,
+            "sha256": "7235096d392589fba3b66291667c3dc25b3d90e5f2d4a40c55a42082b44cae49"
+          },
+          "scopeRows": {
+            "count": 197892,
+            "sha256": "49e71280d00580d755223ae02563ef640f0e9942e3102e2821ada42d08647ed5"
+          },
+          "boundaries": {
+            "count": 393,
+            "sha256": "f5d82fc62246a88f0ac521be436c49b3d9536f6c1595eb08158dcb37af57277b"
+          },
+          "edges": {
+            "count": 78396,
+            "sha256": "a963166a27ff775cfe92a162b34b32fa6324956f71fbf3013ff114550d7abf8a"
+          },
+          "diagnostics": {
+            "count": 46940,
+            "sha256": "50e7f3ff55301c10941d4d2a4899fad4277f0d45e6c69f8e21abe000fa79b4e3"
+          },
+          "nodes": {
+            "count": 40640,
+            "sha256": "f00be092f9762093f6272319e0ebc56cb906d47453c34b75bf54d621f2a3d20f"
+          }
+        },
+        "integrity": "ok",
+        "foreignKeys": [],
+        "durability": {
+          "journal": "wal",
+          "synchronous": 2
+        },
+        "databaseBytes": 908472320,
+        "plans": {
+          "cq_scope_nodes": [
+            {
+              "id": 4,
+              "parent": 0,
+              "notused": 55,
+              "detail": "SEARCH cq_scope_nodes USING INDEX cq_scope_node (node=?)"
+            }
+          ],
+          "cq_boundaries": [
+            {
+              "id": 4,
+              "parent": 0,
+              "notused": 55,
+              "detail": "SEARCH cq_boundaries USING INDEX cq_boundary_node (node=?)"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "runtimeDelta": {
+    "baseline": "e3ebdb03b8c04c5870d961c2997b79a56c7b2b67",
+    "changes": [
+      "cq_scope_node(node,scope)",
+      "cq_boundary_node(node,framework)"
+    ],
+    "storageVersion": "2.0.0-step2.14",
+    "queryProjectionVersion": "owned-query-1",
+    "compatibility": "Additive indexes only; no schema, fact, claim, identity, eligibility, payload or durability change. IF NOT EXISTS adopts them on ordinary transactional publication; existing projection contents are reused."
+  },
+  "sourceIsolation": "Original Pastey checkout changed independently while the experiment ran (status hashes differ). ProGraph only read/copied it. Both analyses use the identical frozen copy; selected inventory is checked before and after each run. No original-checkout freshness or unchanged-current-status claim.",
+  "captureDriverSource": "import {mkdtemp,mkdir,readFile,writeFile,lstat,symlink,copyFile} from 'node:fs/promises';\nimport path from 'node:path';import os from 'node:os';import {execFileSync} from 'node:child_process';import {createHash} from 'node:crypto';\nconst hash=x=>createHash('sha256').update(x).digest('hex');\nconst root=await mkdtemp(path.join(os.tmpdir(),'prograph-source-scale-pair-')),source=path.join(root,'source');await mkdir(source);\nconst original='/Users/xiyuanpan/Pastey',repository='/Users/xiyuanpan/prograph';\nconst originalHead=execFileSync('git',['-C',original,'rev-parse','HEAD'],{encoding:'utf8'}).trim();\nconst gitStatus=()=>execFileSync('git',['-C',original,'status','--porcelain=v1','-z'],{encoding:'utf8'});\nconst before=hash(gitStatus()), files=execFileSync('git',['-C',original,'ls-files','-c','-o','--exclude-standard','-z'],{encoding:'utf8'}).split('\\0').filter(Boolean).sort();const copied=[];\nfor(const file of files){const input=path.join(original,file),dest=path.join(source,file);let info;try{info=await lstat(input)}catch(e){if(e.code==='ENOENT')continue;throw e}if(!info.isFile())continue;if(info.size>32*1024**2)throw Error('Source copy file exceeds bound');const data=await readFile(input);await mkdir(path.dirname(dest),{recursive:true});await writeFile(dest,data);copied.push([file,hash(data)]);}\nawait symlink(path.join(original,'node_modules'),path.join(source,'node_modules'),'dir');\nif(hash(gitStatus())!==before)throw Error('Original checkout changed during frozen source capture; retry capture');\nconst driver=path.join(root,'analyze.mjs');await writeFile(driver,`import {writeFile,readFile,stat} from 'node:fs/promises';import {pathToFileURL} from 'node:url';import {createHash} from 'node:crypto';import path from 'node:path';\nconst runtime=process.argv[2],source=process.argv[3],output=process.argv[4],report=process.argv[5],load=x=>import(pathToFileURL(path.join(runtime,x+'.js')).href);\nconst {analyzeRepository}=await load('analysis/analyze'),{SemanticStore}=await load('semantic/store'),{scanRepository}=await load('repository/repository'),{canonical,digest}=await load('semantic/model');\nconst scan=await scanRepository(source,output);const inventory=digest(canonical([...scan.snapshot.fileContents].map(([f,t])=>[f,digest(t)]).sort()));\nconst stages=[];const original=SemanticStore.prototype.publish;SemanticStore.prototype.publish=function(...args){this.hooks.measure=(stage,ms)=>stages.push({stage,ms});return original.apply(this,args)};\nconst start=performance.now(),result=await analyzeRepository(source,{output}),elapsedMs=performance.now()-start,analysisResources=process.resourceUsage();\nif(result.manifest.semanticCore?.status==='failed')throw Error(result.manifest.semanticCore.reason);\nconst end=await scanRepository(source,output);if(digest(canonical([...end.snapshot.fileContents].map(([f,t])=>[f,digest(t)]).sort()))!==inventory)throw Error('Source changed during measured analysis');\nconst store=new SemanticStore(path.join(output,'semantic.sqlite'));const checksums={};\nfunction rows(name,sql){const h=createHash('sha256');let count=0;for(const row of store.sql(sql).iterate()){h.update(canonical(row)+'\\\\n');count++}checksums[name]={count,sha256:h.digest('hex')}}\nrows('visibleClaims',\"SELECT c.key FROM sc_active a JOIN sc_claims c ON c.id=a.claim WHERE a.snapshot=1 ORDER BY c.key\");\nrows('occurrences',\"SELECT e.key,o.context,o.start_byte,o.end_byte,o.line,o.column_num,o.end_line,o.end_column,o.role FROM sc_occurrences o JOIN sc_entities e ON e.id=o.entity ORDER BY e.key\");\nrows('calls',\"SELECT x.key caller,y.key callee,c.site_count,c.confidence,e.key sample FROM sc_calls c JOIN sc_entities x ON x.id=c.caller JOIN sc_entities y ON y.id=c.callee JOIN sc_claims e ON e.id=c.sample_claim WHERE snapshot=1 ORDER BY x.key,y.key\");\nrows('scopeRows','SELECT * FROM cq_scope_nodes ORDER BY scope,node');rows('boundaries','SELECT * FROM cq_boundaries ORDER BY framework,node');\nrows('edges','SELECT * FROM edges ORDER BY id');rows('diagnostics','SELECT code,severity,message,file,line,column,adapter,metadata_json FROM diagnostics ORDER BY code,severity,message,file,line,column,adapter,metadata_json');\nrows('nodes',\"SELECT * FROM nodes WHERE kind<>'repository' ORDER BY id\");\nconst reportData={elapsedMs,analysisResources,stages,inventory,selectedFiles:scan.snapshot.files.length,codeFiles:[...scan.snapshot.fileContents].filter(([f])=>/\\\\.(?:[cm]?tsx?|jsx?|rs|py|java|c|h|cpp|cc|cxx|go|cs)$/.test(f)).map(([file,text])=>({file,lines:text.split('\\\\n').length})),manifest:result.manifest,checksums,integrity:store.db.pragma('integrity_check',{simple:true}),foreignKeys:store.db.pragma('foreign_key_check'),durability:{journal:store.db.pragma('journal_mode',{simple:true}),synchronous:store.db.pragma('synchronous',{simple:true})},databaseBytes:(await stat(path.join(output,'semantic.sqlite'))).size};store.close();await writeFile(report,JSON.stringify(reportData,null,2)+'\\\\n');console.log(JSON.stringify({report,elapsedMs,maxRssKiB:analysisResources.maxRSS,checksums}));\n`);\nconst results=[];for(const [name,runtime] of [['control','/private/tmp/prograph-source-scale-control/dist/core'],['indexed',repository+'/dist/core']]){const index=path.join(root,name+'-index'),report=path.join(root,name+'.json');execFileSync(process.execPath,['--max-old-space-size=2048',driver,runtime,source,index,report],{stdio:['ignore','inherit','inherit'],cwd:repository});results.push({name,index,runtime,report,data:JSON.parse(await readFile(report,'utf8'))});}\nif(JSON.stringify(results[0].data.checksums)!==JSON.stringify(results[1].data.checksums))throw Error('Full source/projection equivalence mismatch');\nconst receipt={format:1,scope:'Two serial fresh indexes of one frozen actual Pastey source capture, control first then indexed, all publication and legacy SQLite/JSON exports included. Separate fresh Node processes, production index-worker V8 2GiB bound, no forced GC, no cache eviction; single samples not p95. No external semantic producer invoked; bundled TypeScript compiler included in ProGraph RSS. Source capture/hash validation outside timer.',root,original,originalHead,copiedFiles:copied.length,copiedInventory:hash(JSON.stringify(copied)),originalStatusHash:before,originalStatusAfter:hash(gitStatus()),node:process.version,platform:process.platform,arch:process.arch,driverSource:await readFile(driver,'utf8'),results};await writeFile('/private/tmp/prograph-source-scale-pair.json',JSON.stringify(receipt,null,2)+'\\n');console.log('PAIR PASSED '+root);\n",
+  "implementationDigests": {
+    "src/core/semantic/compatibility-global.ts": "cbd6acdfe475c971cd17b50006bda27f42d384d1ec98c9ef8280e3d69bcde1a9",
+    "tests/compatibility-global.test.ts": "1c3f53527718cad28abeb855145539e56f5fd65a56009ccd97fb486bd68abc2a",
+    "dist/core/semantic/compatibility-global.js": "e0be430ae4820ca353d3fc1b339d439fad5eca8d43f0ca86209922cde678177f"
+  },
+  "focusedValidation": {
+    "tests": 8,
+    "failed": 0,
+    "skipped": 0,
+    "suites": [
+      "compatibility-cache",
+      "compatibility-global",
+      "compatibility-query-oracle",
+      "compatibility-support"
+    ],
+    "reportSha256": "dee4865d97c8ae5fbf96f9dfcc8d634a011f0de7747ab106a3ebcbe058548c94",
+    "lint": "Node and UI typecheck pass",
+    "build": "Complete Node and UI build pass",
+    "recovery": {
+      "node": "v25.9.0",
+      "probes": [
+        {
+          "point": "before-seal",
+          "exitCode": 57,
+          "activeSnapshot": 1,
+          "visible": [
+            "callee"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        },
+        {
+          "point": "before-publish",
+          "exitCode": 57,
+          "activeSnapshot": 1,
+          "visible": [
+            "callee"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        },
+        {
+          "point": "during-publish",
+          "exitCode": 57,
+          "activeSnapshot": 1,
+          "visible": [
+            "callee"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        },
+        {
+          "point": "after-publish",
+          "exitCode": 57,
+          "activeSnapshot": 2,
+          "visible": [
+            "other"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        }
+      ],
+      "corruption": {
+        "refused": true,
+        "unchanged": true
+      }
+    }
+  },
+  "rejectedAttempt": {
+    "reason": "Benchmark-only post-analysis SQL witness used nonexistent o.column instead of actual o.column_num; first control index completed but validation aborted before writing a timing receipt. Not a qualified before/after sample. Only witness spelling corrected; no product code, measured operation, durability or validation requirement removed.",
+    "logSha256": "510bb7d05e62bbeb1622489385a5e73a3b695aedb0762635711030e13a6d972d",
+    "index": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-source-scale-pair-VTVTAD/control-index"
+  },
+  "diagnosticProfile": {
+    "scope": "Separate preliminary instrumented original-checkout run; not before/after timing qualification. Original checkout and cache state differ from frozen pair. CPU sampling and stage logs explain index choice.",
+    "path": "/private/tmp/prograph-source-profile-baseline/CPU.20261019.174742.30569.0.001.cpuprofile",
+    "sha256": "de37b905cbb78f5f34b6f8335140fbac48bf58601156e574813c6d70d6b1e83e",
+    "wallMs": 194715.202709,
+    "sampledInclusiveSeconds": {
+      "updateCompatibilityNodes": 119.806,
+      "publishCompatibilityQueries": 124.116,
+      "inferredReceiverType": 9.578
+    },
+    "stages": [
+      {
+        "profile": "analysis:start",
+        "atMs": 377,
+        "memory": {
+          "rss": 171065344,
+          "heapTotal": 61751296,
+          "heapUsed": 49700864,
+          "external": 2378478,
+          "arrayBuffers": 33249
+        },
+        "maxRssKiB": 167056
+      },
+      {
+        "profile": "analysis:scan",
+        "atMs": 467,
+        "memory": {
+          "rss": 185286656,
+          "heapTotal": 72941568,
+          "heapUsed": 62736576,
+          "external": 10528870,
+          "arrayBuffers": 8183601
+        },
+        "maxRssKiB": 180944
+      },
+      {
+        "profile": "adapter:typescript",
+        "atMs": 1956,
+        "memory": {
+          "rss": 478969856,
+          "heapTotal": 367001600,
+          "heapUsed": 241974216,
+          "external": 18057005,
+          "arrayBuffers": 15711736
+        },
+        "maxRssKiB": 467744
+      },
+      {
+        "profile": "adapter:rust",
+        "atMs": 23221,
+        "memory": {
+          "rss": 868122624,
+          "heapTotal": 456704000,
+          "heapUsed": 341549816,
+          "external": 2396752,
+          "arrayBuffers": 51483
+        },
+        "maxRssKiB": 847776
+      },
+      {
+        "profile": "adapter:python",
+        "atMs": 23342,
+        "memory": {
+          "rss": 899842048,
+          "heapTotal": 474300416,
+          "heapUsed": 381806224,
+          "external": 2397229,
+          "arrayBuffers": 51960
+        },
+        "maxRssKiB": 878752
+      },
+      {
+        "profile": "adapter:java",
+        "atMs": 23344,
+        "memory": {
+          "rss": 901120000,
+          "heapTotal": 475578368,
+          "heapUsed": 384533216,
+          "external": 2397229,
+          "arrayBuffers": 51960
+        },
+        "maxRssKiB": 880000
+      },
+      {
+        "profile": "adapter:c",
+        "atMs": 23344,
+        "memory": {
+          "rss": 902414336,
+          "heapTotal": 476856320,
+          "heapUsed": 387117864,
+          "external": 2397229,
+          "arrayBuffers": 51960
+        },
+        "maxRssKiB": 881264
+      },
+      {
+        "profile": "adapter:cpp",
+        "atMs": 23345,
+        "memory": {
+          "rss": 903708672,
+          "heapTotal": 478134272,
+          "heapUsed": 389693136,
+          "external": 2397229,
+          "arrayBuffers": 51960
+        },
+        "maxRssKiB": 882528
+      },
+      {
+        "profile": "adapter:go",
+        "atMs": 23345,
+        "memory": {
+          "rss": 905035776,
+          "heapTotal": 479412224,
+          "heapUsed": 391462432,
+          "external": 2397229,
+          "arrayBuffers": 51960
+        },
+        "maxRssKiB": 883824
+      },
+      {
+        "profile": "adapter:csharp",
+        "atMs": 23346,
+        "memory": {
+          "rss": 906362880,
+          "heapTotal": 480690176,
+          "heapUsed": 393069576,
+          "external": 2397229,
+          "arrayBuffers": 51960
+        },
+        "maxRssKiB": 885120
+      },
+      {
+        "profile": "analysis:owned",
+        "atMs": 50078,
+        "memory": {
+          "rss": 1186889728,
+          "heapTotal": 902643712,
+          "heapUsed": 808653400,
+          "external": 2470312,
+          "arrayBuffers": 125043
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "semantic:start",
+        "atMs": 50094,
+        "memory": {
+          "rss": 1190363136,
+          "heapTotal": 903938048,
+          "heapUsed": 810657080,
+          "external": 2470512,
+          "arrayBuffers": 125243
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "semantic:start",
+        "atMs": 50109,
+        "memory": {
+          "rss": 1190723584,
+          "heapTotal": 904200192,
+          "heapUsed": 813148216,
+          "external": 2470512,
+          "arrayBuffers": 125243
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "typescript:files:typescript/root",
+        "atMs": 50151,
+        "memory": {
+          "rss": 1190969344,
+          "heapTotal": 904445952,
+          "heapUsed": 793800432,
+          "external": 2470512,
+          "arrayBuffers": 125243
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "typescript:program:typescript/root",
+        "atMs": 50269,
+        "memory": {
+          "rss": 1222688768,
+          "heapTotal": 952107008,
+          "heapUsed": 871116392,
+          "external": 2470512,
+          "arrayBuffers": 125243
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "typescript:done:typescript/root",
+        "atMs": 56865,
+        "memory": {
+          "rss": 985841664,
+          "heapTotal": 489635840,
+          "heapUsed": 308578624,
+          "external": 21027529,
+          "arrayBuffers": 18691776
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "semantic:start",
+        "atMs": 56870,
+        "memory": {
+          "rss": 985841664,
+          "heapTotal": 489635840,
+          "heapUsed": 309253512,
+          "external": 21027529,
+          "arrayBuffers": 18691776
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "typescript:files:typescript/project:tsconfig.node.json",
+        "atMs": 56871,
+        "memory": {
+          "rss": 985923584,
+          "heapTotal": 489635840,
+          "heapUsed": 309450976,
+          "external": 21027529,
+          "arrayBuffers": 18691776
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "typescript:program:typescript/project:tsconfig.node.json",
+        "atMs": 56976,
+        "memory": {
+          "rss": 990150656,
+          "heapTotal": 492371968,
+          "heapUsed": 369345992,
+          "external": 18237778,
+          "arrayBuffers": 15902025
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "typescript:done:typescript/project:tsconfig.node.json",
+        "atMs": 57081,
+        "memory": {
+          "rss": 1007796224,
+          "heapTotal": 513064960,
+          "heapUsed": 383080680,
+          "external": 31841730,
+          "arrayBuffers": 29505977
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "semantic:start",
+        "atMs": 57096,
+        "memory": {
+          "rss": 1007796224,
+          "heapTotal": 513064960,
+          "heapUsed": 383748400,
+          "external": 31841730,
+          "arrayBuffers": 29505977
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "typescript:files:typescript/project:<inferred>",
+        "atMs": 57110,
+        "memory": {
+          "rss": 1008041984,
+          "heapTotal": 513212416,
+          "heapUsed": 396963808,
+          "external": 31841730,
+          "arrayBuffers": 29505977
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "typescript:program:typescript/project:<inferred>",
+        "atMs": 57320,
+        "memory": {
+          "rss": 1027686400,
+          "heapTotal": 578977792,
+          "heapUsed": 496943600,
+          "external": 30127467,
+          "arrayBuffers": 27791714
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "typescript:done:typescript/project:<inferred>",
+        "atMs": 59499,
+        "memory": {
+          "rss": 1053769728,
+          "heapTotal": 657031168,
+          "heapUsed": 537685104,
+          "external": 42382218,
+          "arrayBuffers": 40046465
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "semantic:before-publish",
+        "atMs": 59777,
+        "memory": {
+          "rss": 1070727168,
+          "heapTotal": 318652416,
+          "heapUsed": 159894968,
+          "external": 43037617,
+          "arrayBuffers": 40701864
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "semantic:published",
+        "atMs": 190553,
+        "memory": {
+          "rss": 660914176,
+          "heapTotal": 573702144,
+          "heapUsed": 480727208,
+          "external": 3519332,
+          "arrayBuffers": 1183579
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "analysis:semantic",
+        "atMs": 190572,
+        "memory": {
+          "rss": 661209088,
+          "heapTotal": 573702144,
+          "heapUsed": 480734528,
+          "external": 3519332,
+          "arrayBuffers": 1183579
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "analysis:sqlite-export",
+        "atMs": 194639,
+        "memory": {
+          "rss": 730693632,
+          "heapTotal": 595804160,
+          "heapUsed": 467930624,
+          "external": 3046244,
+          "arrayBuffers": 708443
+        },
+        "maxRssKiB": 1257552
+      },
+      {
+        "profile": "analysis:done",
+        "atMs": 195084,
+        "memory": {
+          "rss": 1311981568,
+          "heapTotal": 604323840,
+          "heapUsed": 420321632,
+          "external": 120623278,
+          "arrayBuffers": 118285477
+        },
+        "maxRssKiB": 1426720
+      }
+    ],
+    "plansBefore": {
+      "scopeDelete": "SCAN cq_scope_nodes",
+      "boundaryDelete": "SCAN cq_boundaries"
+    }
+  },
+  "qualification": "Directional single serial pair, uncontrolled OS caches and other applications; not cold/p95 or million-line qualification. Entire support/navigation/compatibility/query construction, FULL/WAL commit and complete legacy SQLite/JSON export are timed. Original 60s/1GiB source gate remains unmet; no gate revised. Bundled TypeScript compiler shares measured ProGraph RSS. Scope rows grow with selected scopes; additional index disk overhead is measured.",
+  "runtime": {
+    "node": "v25.9.0",
+    "versions": {
+      "node": "25.9.0",
+      "acorn": "8.16.0",
+      "ada": "3.4.4",
+      "amaro": "1.1.8",
+      "ares": "1.34.6",
+      "brotli": "1.2.0",
+      "cldr": "48.0",
+      "icu": "78.3",
+      "lief": "0.17.0",
+      "llhttp": "9.3.1",
+      "merve": "1.2.2",
+      "modules": "141",
+      "napi": "10",
+      "nbytes": "0.1.4",
+      "ncrypto": "0.0.1",
+      "nghttp2": "1.68.1",
+      "nghttp3": "",
+      "ngtcp2": "",
+      "openssl": "3.6.2",
+      "simdjson": "4.6.1",
+      "simdutf": "7.3.3",
+      "sqlite": "3.53.0",
+      "tz": "2026a",
+      "undici": "7.24.4",
+      "unicode": "17.0",
+      "uv": "1.52.1",
+      "uvwasi": "0.0.23",
+      "v8": "14.1.146.11-node.25",
+      "zlib": "1.2.12",
+      "zstd": "1.5.7"
+    },
+    "platform": "darwin",
+    "arch": "arm64",
+    "osRelease": "25.5.0",
+    "machine": "arm64",
+    "cpuModels": [
+      "Apple M5"
+    ],
+    "logicalCpus": 10,
+    "totalMemoryBytes": 17179869184
+  }
+}
