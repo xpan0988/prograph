@@ -3636,5 +3636,11 @@
     ],
     "logicalCpus": 10,
     "totalMemoryBytes": 17179869184
+  },
+  "sourceLineAccounting": {
+    "selectedCodeFiles": 261,
+    "physicalCodeFileLines": 173142,
+    "rawSplitEntries": 173403,
+    "method": "Physical lines exclude the extra empty split entry after a trailing LF; blank/comment lines inside selected code files are included. The original raw per-file split counts and all timings are retained unchanged."
   }
 }
