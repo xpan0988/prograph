@@ -1,0 +1,1142 @@
+{
+  "format": 1,
+  "milestone": "Stage 6.2: candidate 1 only, Rust traversal",
+  "status": "Implementation measured; full local suite and implementation CI pending",
+  "baselineRevision": "8ed2d3202900f827f3184ecc3f301aeeaeb6ec7d",
+  "initialGit": {
+    "branch": "main",
+    "clean": true,
+    "originMain": "8ed2d3202900f827f3184ecc3f301aeeaeb6ec7d",
+    "baselineCiRun": 39689557793,
+    "baselineCiObserved": "in_progress before changes"
+  },
+  "implementationSourceSha256": {
+    "src/adapters/language/rust/index.ts": "2e80243e80bc424a53be87c5757037465f8cdc43e0628b9e9b3379d2bf47196d",
+    "tests/rust-traversal.test.ts": "c7ae15b4aa6ad66aec7805cecce3f324ddbe9f381a3d105956e05909d2a2787f",
+    "tests/oracles/rust-stage6-1.ts": "3d8f1981e6b23924f8dfebcdc323861f57efa7183c1e0c665df9a3b0570a7ce9",
+    "scripts/rust-traversal-benchmark.mjs": "2c14abf665ac9e0724b672ecfe121522c2deda5bd6beccb3d3226bf157dc33ee"
+  },
+  "acceptedRustSourceSha256": "3fabb423d0ee7c9bc1742db1761d6f68c2a22238fbd0f8d51be43328a78ee069",
+  "oracleBodySha256": "3dff3c0c665e7909d3a9c0dd25654724c079b8d5fbd4356da9ba0cdc3f1c3030",
+  "environment": {
+    "node": "v25.9.0",
+    "versions": {
+      "node": "25.9.0",
+      "acorn": "8.16.0",
+      "ada": "3.4.4",
+      "amaro": "1.1.8",
+      "ares": "1.34.6",
+      "brotli": "1.2.0",
+      "cldr": "48.0",
+      "icu": "78.3",
+      "lief": "0.17.0",
+      "llhttp": "9.3.1",
+      "merve": "1.2.2",
+      "modules": "141",
+      "napi": "10",
+      "nbytes": "0.1.4",
+      "ncrypto": "0.0.1",
+      "nghttp2": "1.68.1",
+      "nghttp3": "",
+      "ngtcp2": "",
+      "openssl": "3.6.2",
+      "simdjson": "4.6.1",
+      "simdutf": "7.3.3",
+      "sqlite": "3.53.0",
+      "tz": "2026a",
+      "undici": "7.24.4",
+      "unicode": "17.0",
+      "uv": "1.52.1",
+      "uvwasi": "0.0.23",
+      "v8": "14.1.146.11-node.25",
+      "zlib": "1.2.12",
+      "zstd": "1.5.7"
+    },
+    "os": "macOS 26.5.2 (25F84), Darwin 25.5.0, arm64",
+    "hardware": "Apple M5 / Mac17,3, 10 logical CPUs",
+    "physicalMemoryBytes": 17179869184,
+    "v8MaxOldSpaceMiB": 2048,
+    "toolchain": {
+      "versions": {
+        "typescript": "5.9.3",
+        "ts-morph": "27.0.2",
+        "@ts-morph/common": "0.28.1",
+        "tree-sitter": "0.25.1",
+        "tree-sitter-rust": "0.24.0",
+        "tree-sitter-python": "0.25.0",
+        "better-sqlite3": "12.10.0",
+        "vitest": "4.1.8",
+        "vite": "7.3.5"
+      },
+      "bundledTypeScriptVersion": "5.9.2",
+      "sqlite": "3.53.1",
+      "sourceNodeModulesRealpath": "/Users/xiyuanpan/Pastey/node_modules",
+      "hashes": {
+        "package-lock.json": "67ecc7ad22eb9bcaa7827050226852bd6e7cafb79b7f5d07af6e567f71df83bc",
+        "/Users/xiyuanpan/prograph/node_modules/ts-morph/dist/ts-morph.js": "6539389af77636d82fd3eaafde309e68d4396648487a100b0f0bfec297e1b764",
+        "/Users/xiyuanpan/prograph/node_modules/@ts-morph/common/dist/ts-morph-common.js": "62eada58492193641cfb1712a4544d26a4478de275e05aa1aff68b37f2e056f7",
+        "/Users/xiyuanpan/prograph/node_modules/@ts-morph/common/dist/typescript.js": "9b15fee10d00493ef19be4c7b04aaadd7dc88e78e57c6e372a90b13560126510",
+        "/Users/xiyuanpan/prograph/node_modules/typescript/package.json": "822ef7ca6452205657b6288b066481ecf508bfbf43455d715cf7d3ec457561e6",
+        "/Users/xiyuanpan/prograph/node_modules/ts-morph/package.json": "2c5af3ce2bc65a99b6878045446a45e36097e67861fffd066ef6e9251e7671c6",
+        "/Users/xiyuanpan/prograph/node_modules/@ts-morph/common/package.json": "faef4d4f45c3c5f46d7aca9c1265eb9f4a7111987ff9f73d023b164e8c9719d1",
+        "/Users/xiyuanpan/prograph/node_modules/tree-sitter/package.json": "91ca01d07e8ea5f66e6c3ea9de778903471780bdaa91e37daf1b12c85af4e94e",
+        "/Users/xiyuanpan/prograph/node_modules/tree-sitter-rust/package.json": "58a2042ba3e6930f4cc34412fad2525da503c5de034b6050fdb096bfe5b31ead",
+        "/Users/xiyuanpan/prograph/node_modules/tree-sitter-python/package.json": "cc682da95140c947fa0d67f9307e2017def0b4584c15b60386344ac78853d1a8",
+        "/Users/xiyuanpan/prograph/node_modules/better-sqlite3/package.json": "d1db58a099dfdef5d10253e873e358eb1e9e2ebb01fa6ef0d40150e37cef6317",
+        "/Users/xiyuanpan/prograph/node_modules/vitest/package.json": "7514764431c71b6145ac008c36bdb8995d1998dfefe9f7bbbe3ca2da96716f3d",
+        "/Users/xiyuanpan/prograph/node_modules/vite/package.json": "2ce2b783ef4f4511544fa045355e7076f192b1331f6801214173d1910518f5d7",
+        "/Users/xiyuanpan/prograph/node_modules/tree-sitter-rust/prebuilds/darwin-arm64/tree-sitter-rust.node": "136eaa83cde3d8ebaa4f7193d1d11af27b2e02b086c66455a14ba641e17df4be",
+        "/Users/xiyuanpan/prograph/node_modules/tree-sitter-python/prebuilds/darwin-arm64/tree-sitter-python.node": "c65c0e18815ca7d7d0b31a27f365ce16227001c0d3a92f60cdaa2af142b94a0c",
+        "/Users/xiyuanpan/prograph/node_modules/better-sqlite3/build/Release/better_sqlite3.node": "fce741de632e5242334cfdcc6d818414fdb28273b4cbf67b9ac3f38178eff281",
+        "/Users/xiyuanpan/prograph/node_modules/tree-sitter/prebuilds/darwin-arm64/tree-sitter.node": "774ee2cb0e9ebe235e549fb28e59363b2a307d5e3f9355daa8243efd4938c449"
+      }
+    },
+    "toolchainFingerprintsRechecked": true
+  },
+  "corpus": {
+    "originalHead": "8714e1ee57e00b70fdf1e03d6c182a8ef984ded0",
+    "root": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-source-scale-pair-0GBZO2/source",
+    "copiedFiles": 421,
+    "copiedInventory": "046e71411c366bd85acffc12a83cfc80590016e0223629aac9ac11f454ab6e6b",
+    "inventory": "729c1eb199f09ccd9739634699bdc004388402544fcc8806c674ba471b6365b8",
+    "selectedFiles": 315,
+    "selectedBytes": 7452350,
+    "codeFiles": 261,
+    "codeBytes": 6535832,
+    "physicalCodeLines": 173142,
+    "byExtension": {
+      ".py": 6,
+      ".rs": 174,
+      ".ts": 57,
+      ".tsx": 24
+    },
+    "provenance": "Same frozen dirty capture and source-root identity as Stage 6.1; all 421 raw file hashes and selected inventory verified before and after; existing dependency symlink, not a clean checkout of originalHead."
+  },
+  "experiment": {
+    "sequence": [
+      "One focused Rust fresh-process before/after pair, both phase+CPU sampled",
+      "One fresh complete production API analysis, diagnostics/inspector disabled",
+      "Post-run witness/status checks outside timers"
+    ],
+    "confirmatoryRuns": 0,
+    "concurrency": "All measurements serial, no competing heavy local test/benchmark. Full regression started after measurements.",
+    "focusedCommand": "node --max-old-space-size=2048 scripts/rust-traversal-benchmark.mjs RUNTIME_DIST SOURCE REPORT",
+    "acceptedBuild": "git archive 8ed2d32 src package.json tsconfig.json tsconfig.node.json | tar -x -C ACCEPTED; link original node_modules; compile with npm run build:node",
+    "wholeCommand": "node --max-old-space-size=2048 scripts/semantic-profile.mjs baseline SOURCE FRESH_INDEX REPORT",
+    "confounders": [
+      "One directional pair; no repetitions or randomized run order",
+      "Warm OS/dependency caches; no explicit eviction",
+      "CPU sampling and phase observers perturb both focused runs; no independently measured per-side overhead",
+      "Focused harness imports/scans before timer and serializes/hashes after timer; RSS includes startup to post-adapter boundary, excludes final JSON serialization",
+      "Earlier full 84.784 s result is context, not a contemporaneous full control; SQL, scheduling, GC and OS cache variability prevent attributing its entire difference to Rust"
+    ]
+  },
+  "focused": {
+    "before": {
+      "runtime": "/private/tmp/prograph-stage6-2-20261022/accepted/dist",
+      "elapsedMs": 21133.227208,
+      "processCpuMs": 21626.294,
+      "before": {
+        "rss": 84508672,
+        "heapTotal": 25968640,
+        "heapUsed": 21804992,
+        "external": 6240566,
+        "arrayBuffers": 3928673
+      },
+      "after": {
+        "rss": 612696064,
+        "heapTotal": 243187712,
+        "heapUsed": 158736192,
+        "external": 2355684,
+        "arrayBuffers": 43751
+      },
+      "maxRssKiB": 598336,
+      "usage": {
+        "userCPUTime": 21456272,
+        "systemCPUTime": 339333,
+        "maxRSS": 598336,
+        "sharedMemorySize": 0,
+        "unsharedDataSize": 0,
+        "unsharedStackSize": 0,
+        "minorPageFault": 50316,
+        "majorPageFault": 2366,
+        "swappedOut": 0,
+        "fsRead": 0,
+        "fsWrite": 0,
+        "ipcSent": 0,
+        "ipcReceived": 1,
+        "signalsCount": 16862,
+        "voluntaryContextSwitches": 670,
+        "involuntaryContextSwitches": 28959
+      },
+      "phases": [
+        {
+          "phase": "rust-parse",
+          "wallMs": 241.030709,
+          "processCpuMs": 238.488,
+          "before": {
+            "rss": 85622784,
+            "heapTotal": 26755072,
+            "heapUsed": 22914072,
+            "external": 6240606,
+            "arrayBuffers": 3928673
+          },
+          "after": {
+            "rss": 243957760,
+            "heapTotal": 27541504,
+            "heapUsed": 23597632,
+            "external": 6240606,
+            "arrayBuffers": 3928673
+          },
+          "cumulativeMaxRssKiB": 238240,
+          "counts": {
+            "trees": 174
+          }
+        },
+        {
+          "phase": "rust-definitions",
+          "wallMs": 8297.631542,
+          "processCpuMs": 8401.956,
+          "before": {
+            "rss": 243957760,
+            "heapTotal": 27541504,
+            "heapUsed": 23600024,
+            "external": 6240606,
+            "arrayBuffers": 3928673
+          },
+          "after": {
+            "rss": 526155776,
+            "heapTotal": 102580224,
+            "heapUsed": 47071712,
+            "external": 2355684,
+            "arrayBuffers": 43751
+          },
+          "cumulativeMaxRssKiB": 513824,
+          "counts": {
+            "definitions": 5973
+          }
+        },
+        {
+          "phase": "rust-calls",
+          "wallMs": 12587.488083,
+          "processCpuMs": 12975.565,
+          "before": {
+            "rss": 526155776,
+            "heapTotal": 102580224,
+            "heapUsed": 47073216,
+            "external": 2355684,
+            "arrayBuffers": 43751
+          },
+          "after": {
+            "rss": 611434496,
+            "heapTotal": 242024448,
+            "heapUsed": 146437504,
+            "external": 2355684,
+            "arrayBuffers": 43751
+          },
+          "cumulativeMaxRssKiB": 597104,
+          "counts": {
+            "nodes": 34558,
+            "edges": 62603
+          }
+        }
+      ],
+      "counts": {
+        "nodes": 34558,
+        "edges": 62603,
+        "diagnostics": 45191
+      },
+      "orderedJsonBytes": 61299471,
+      "orderedJsonSha256": "a26d9d32455a6f1922087a86a130a555a8c64e002eefa6c87de736d40bc0f4e8",
+      "rawSummarySha256": "a484ca4758a69e00f71a593947407261a89231cd1314796918c8f09bbff39d7f",
+      "cpuProfile": {
+        "sha256": "04ccd40cff108b1f6dd83f5c72e0cec6bd705ced2338d2f09f740ef1f88dc8e9",
+        "requestedIntervalUs": 1000,
+        "samples": 16927,
+        "durationMs": 21144.346,
+        "attribution": "Time-delta weighted sampled stack residence; recursive identical frames counted once per sample. Inclusive rows overlap. Native frames may conceal waits.",
+        "topSelf": [
+          {
+            "function": "TreeCursor",
+            "url": "",
+            "line": 0,
+            "column": 0,
+            "selfSampledSeconds": 11.684375,
+            "inclusiveSampledSeconds": 11.684375
+          },
+          {
+            "function": "unmarshalNode",
+            "url": "file:///PROGRAPH/node_modules/tree-sitter/index.js",
+            "line": 788,
+            "column": 23,
+            "selfSampledSeconds": 1.832001,
+            "inclusiveSampledSeconds": 3.404151
+          },
+          {
+            "function": "get namedChildren",
+            "url": "file:///PROGRAPH/node_modules/tree-sitter/index.js",
+            "line": 170,
+            "column": 20,
+            "selfSampledSeconds": 1.1886,
+            "inclusiveSampledSeconds": 9.81452
+          },
+          {
+            "function": "",
+            "url": "file://ACCEPTED/dist/adapters/language/rust/index.js",
+            "line": 455,
+            "column": 58,
+            "selfSampledSeconds": 1.138929,
+            "inclusiveSampledSeconds": 1.138929
+          },
+          {
+            "function": "unmarshalNodes",
+            "url": "file:///PROGRAPH/node_modules/tree-sitter/index.js",
+            "line": 824,
+            "column": 24,
+            "selfSampledSeconds": 1.072744,
+            "inclusiveSampledSeconds": 5.431383
+          },
+          {
+            "function": "SyntaxNode",
+            "url": "file:///PROGRAPH/node_modules/tree-sitter/index.js",
+            "line": 63,
+            "column": 14,
+            "selfSampledSeconds": 1.059689,
+            "inclusiveSampledSeconds": 1.059689
+          },
+          {
+            "function": "get parent",
+            "url": "file:///PROGRAPH/node_modules/tree-sitter/index.js",
+            "line": 160,
+            "column": 13,
+            "selfSampledSeconds": 0.577409,
+            "inclusiveSampledSeconds": 7.661625
+          },
+          {
+            "function": "walk",
+            "url": "file://ACCEPTED/dist/adapters/language/rust/index.js",
+            "line": 17,
+            "column": 14,
+            "selfSampledSeconds": 0.538224,
+            "inclusiveSampledSeconds": 20.447752
+          },
+          {
+            "function": "marshalNode",
+            "url": "file:///PROGRAPH/node_modules/tree-sitter/index.js",
+            "line": 841,
+            "column": 21,
+            "selfSampledSeconds": 0.325668,
+            "inclusiveSampledSeconds": 0.325668
+          },
+          {
+            "function": "",
+            "url": "file://ACCEPTED/dist/adapters/language/rust/index.js",
+            "line": 447,
+            "column": 40,
+            "selfSampledSeconds": 0.291683,
+            "inclusiveSampledSeconds": 11.716157
+          },
+          {
+            "function": "(garbage collector)",
+            "url": "",
+            "line": 0,
+            "column": 0,
+            "selfSampledSeconds": 0.203949,
+            "inclusiveSampledSeconds": 0.203949
+          },
+          {
+            "function": "enclosing",
+            "url": "file://ACCEPTED/dist/adapters/language/rust/index.js",
+            "line": 73,
+            "column": 19,
+            "selfSampledSeconds": 0.198024,
+            "inclusiveSampledSeconds": 7.457053
+          },
+          {
+            "function": "(program)",
+            "url": "",
+            "line": 0,
+            "column": 0,
+            "selfSampledSeconds": 0.19284,
+            "inclusiveSampledSeconds": 0.19284
+          },
+          {
+            "function": "getID",
+            "url": "file:///PROGRAPH/node_modules/tree-sitter/index.js",
+            "line": 782,
+            "column": 15,
+            "selfSampledSeconds": 0.096647,
+            "inclusiveSampledSeconds": 0.096647
+          },
+          {
+            "function": "",
+            "url": "file://ACCEPTED/dist/adapters/language/rust/index.js",
+            "line": 393,
+            "column": 22,
+            "selfSampledSeconds": 0.066238,
+            "inclusiveSampledSeconds": 0.119967
+          }
+        ],
+        "targets": [
+          {
+            "function": "walk",
+            "url": "file://ACCEPTED/dist/adapters/language/rust/index.js",
+            "line": 17,
+            "column": 14,
+            "selfSampledSeconds": 0.538224,
+            "inclusiveSampledSeconds": 20.447752
+          },
+          {
+            "function": "enclosing",
+            "url": "file://ACCEPTED/dist/adapters/language/rust/index.js",
+            "line": 73,
+            "column": 19,
+            "selfSampledSeconds": 0.198024,
+            "inclusiveSampledSeconds": 7.457053
+          },
+          {
+            "function": "enclosingOwner",
+            "url": "file://ACCEPTED/dist/adapters/language/rust/index.js",
+            "line": 85,
+            "column": 24,
+            "selfSampledSeconds": 0.008776,
+            "inclusiveSampledSeconds": 0.402584
+          },
+          {
+            "function": "inlineModulePath",
+            "url": "file://ACCEPTED/dist/adapters/language/rust/index.js",
+            "line": 60,
+            "column": 26,
+            "selfSampledSeconds": 0.002507,
+            "inclusiveSampledSeconds": 0.012556
+          },
+          {
+            "function": "inferredReceiverType",
+            "url": "file://ACCEPTED/dist/adapters/language/rust/index.js",
+            "line": 377,
+            "column": 38,
+            "selfSampledSeconds": 0.001862,
+            "inclusiveSampledSeconds": 9.557399
+          }
+        ]
+      }
+    },
+    "after": {
+      "runtime": "/Users/xiyuanpan/prograph/dist",
+      "elapsedMs": 1815.464042,
+      "processCpuMs": 1999.186,
+      "before": {
+        "rss": 84361216,
+        "heapTotal": 25444352,
+        "heapUsed": 21806760,
+        "external": 6240566,
+        "arrayBuffers": 3928673
+      },
+      "after": {
+        "rss": 549126144,
+        "heapTotal": 227344384,
+        "heapUsed": 141345192,
+        "external": 2343996,
+        "arrayBuffers": 32063
+      },
+      "maxRssKiB": 536256,
+      "usage": {
+        "userCPUTime": 2055257,
+        "systemCPUTime": 93227,
+        "maxRSS": 536256,
+        "sharedMemorySize": 0,
+        "unsharedDataSize": 0,
+        "unsharedStackSize": 0,
+        "minorPageFault": 34709,
+        "majorPageFault": 188,
+        "swappedOut": 0,
+        "fsRead": 0,
+        "fsWrite": 0,
+        "ipcSent": 0,
+        "ipcReceived": 1,
+        "signalsCount": 1448,
+        "voluntaryContextSwitches": 449,
+        "involuntaryContextSwitches": 6024
+      },
+      "phases": [
+        {
+          "phase": "rust-parse",
+          "wallMs": 233.839292,
+          "processCpuMs": 235.766,
+          "before": {
+            "rss": 85360640,
+            "heapTotal": 26492928,
+            "heapUsed": 22917504,
+            "external": 6240606,
+            "arrayBuffers": 3928673
+          },
+          "after": {
+            "rss": 243875840,
+            "heapTotal": 27803648,
+            "heapUsed": 23637536,
+            "external": 6240606,
+            "arrayBuffers": 3928673
+          },
+          "cumulativeMaxRssKiB": 238160,
+          "counts": {
+            "trees": 174
+          }
+        },
+        {
+          "phase": "rust-definitions",
+          "wallMs": 434.357292,
+          "processCpuMs": 480.21,
+          "before": {
+            "rss": 243875840,
+            "heapTotal": 27803648,
+            "heapUsed": 23639928,
+            "external": 6240606,
+            "arrayBuffers": 3928673
+          },
+          "after": {
+            "rss": 292585472,
+            "heapTotal": 63242240,
+            "heapUsed": 45350528,
+            "external": 2889844,
+            "arrayBuffers": 32063
+          },
+          "cumulativeMaxRssKiB": 285728,
+          "counts": {
+            "definitions": 5973,
+            "visitedNodes": 743342,
+            "selectedWrappers": 15837
+          }
+        },
+        {
+          "phase": "rust-calls",
+          "wallMs": 1140.3854159999999,
+          "processCpuMs": 1273.071,
+          "before": {
+            "rss": 292585472,
+            "heapTotal": 63242240,
+            "heapUsed": 45352032,
+            "external": 2889844,
+            "arrayBuffers": 32063
+          },
+          "after": {
+            "rss": 547864576,
+            "heapTotal": 226181120,
+            "heapUsed": 129344504,
+            "external": 2343996,
+            "arrayBuffers": 32063
+          },
+          "cumulativeMaxRssKiB": 535024,
+          "counts": {
+            "nodes": 34558,
+            "edges": 62603,
+            "visitedNodes": 743342,
+            "selectedWrappers": 62603,
+            "definitionLookups": 56630,
+            "receiverLookups": 32724,
+            "receiverFunctions": 3754,
+            "receiverVisitedNodes": 622115,
+            "receiverBindings": 2191
+          }
+        }
+      ],
+      "counts": {
+        "nodes": 34558,
+        "edges": 62603,
+        "diagnostics": 45191
+      },
+      "orderedJsonBytes": 61299471,
+      "orderedJsonSha256": "a26d9d32455a6f1922087a86a130a555a8c64e002eefa6c87de736d40bc0f4e8",
+      "rawSummarySha256": "ba48a787fa7887ad5ed4cbb4e9fcd1b50389be2babbfaa4ec7dfa560c36eebac",
+      "cpuProfile": {
+        "sha256": "83b2777d71065626b8705035d3a8d2f0a25fc5417637d7343654eaf559bdb397",
+        "requestedIntervalUs": 1000,
+        "samples": 1517,
+        "durationMs": 1826.495,
+        "attribution": "Time-delta weighted sampled stack residence; recursive identical frames counted once per sample. Inclusive rows overlap. Native frames may conceal waits.",
+        "topSelf": [
+          {
+            "function": "TreeCursor",
+            "url": "",
+            "line": 0,
+            "column": 0,
+            "selfSampledSeconds": 0.997877,
+            "inclusiveSampledSeconds": 0.997877
+          },
+          {
+            "function": "walk",
+            "url": "file:///PROGRAPH/dist/adapters/language/rust/index.js",
+            "line": 25,
+            "column": 14,
+            "selfSampledSeconds": 0.308806,
+            "inclusiveSampledSeconds": 1.496185
+          },
+          {
+            "function": "(garbage collector)",
+            "url": "",
+            "line": 0,
+            "column": 0,
+            "selfSampledSeconds": 0.067543,
+            "inclusiveSampledSeconds": 0.067543
+          },
+          {
+            "function": "",
+            "url": "file:///PROGRAPH/dist/adapters/language/rust/index.js",
+            "line": 516,
+            "column": 120,
+            "selfSampledSeconds": 0.054616,
+            "inclusiveSampledSeconds": 0.741934
+          },
+          {
+            "function": "unmarshalNode",
+            "url": "file:///PROGRAPH/node_modules/tree-sitter/index.js",
+            "line": 788,
+            "column": 23,
+            "selfSampledSeconds": 0.041422,
+            "inclusiveSampledSeconds": 0.109524
+          },
+          {
+            "function": "",
+            "url": "file:///PROGRAPH/dist/adapters/language/rust/index.js",
+            "line": 224,
+            "column": 120,
+            "selfSampledSeconds": 0.03755,
+            "inclusiveSampledSeconds": 0.103211
+          },
+          {
+            "function": "unresolvedTarget",
+            "url": "file:///PROGRAPH/dist/adapters/language/rust/index.js",
+            "line": 480,
+            "column": 34,
+            "selfSampledSeconds": 0.018858,
+            "inclusiveSampledSeconds": 0.053816
+          },
+          {
+            "function": "digest",
+            "url": "",
+            "line": 0,
+            "column": 0,
+            "selfSampledSeconds": 0.016327,
+            "inclusiveSampledSeconds": 0.016327
+          },
+          {
+            "function": "SyntaxNode",
+            "url": "file:///PROGRAPH/node_modules/tree-sitter/index.js",
+            "line": 63,
+            "column": 14,
+            "selfSampledSeconds": 0.016293,
+            "inclusiveSampledSeconds": 0.016293
+          },
+          {
+            "function": "edgeId",
+            "url": "file:///PROGRAPH/dist/core/graph/identity.js",
+            "line": 16,
+            "column": 23,
+            "selfSampledSeconds": 0.015026,
+            "inclusiveSampledSeconds": 0.057705
+          },
+          {
+            "function": "addNode",
+            "url": "file:///PROGRAPH/dist/core/graph/builder.js",
+            "line": 8,
+            "column": 12,
+            "selfSampledSeconds": 0.013806,
+            "inclusiveSampledSeconds": 0.013806
+          },
+          {
+            "function": "Hash",
+            "url": "",
+            "line": 0,
+            "column": 0,
+            "selfSampledSeconds": 0.013804,
+            "inclusiveSampledSeconds": 0.013804
+          },
+          {
+            "function": "moduleKey",
+            "url": "file:///PROGRAPH/dist/adapters/language/rust/index.js",
+            "line": 71,
+            "column": 19,
+            "selfSampledSeconds": 0.011356,
+            "inclusiveSampledSeconds": 0.011356
+          },
+          {
+            "function": "childForFieldName",
+            "url": "file:///PROGRAPH/node_modules/tree-sitter/index.js",
+            "line": 264,
+            "column": 20,
+            "selfSampledSeconds": 0.011297,
+            "inclusiveSampledSeconds": 0.115053
+          },
+          {
+            "function": "post",
+            "url": "node:inspector",
+            "line": 115,
+            "column": 7,
+            "selfSampledSeconds": 0.009971,
+            "inclusiveSampledSeconds": 0.009971
+          }
+        ],
+        "targets": [
+          {
+            "function": "walk",
+            "url": "file:///PROGRAPH/dist/adapters/language/rust/index.js",
+            "line": 25,
+            "column": 14,
+            "selfSampledSeconds": 0.308806,
+            "inclusiveSampledSeconds": 1.496185
+          },
+          {
+            "function": "inferredReceiverType",
+            "url": "file:///PROGRAPH/dist/adapters/language/rust/index.js",
+            "line": 392,
+            "column": 38,
+            "selfSampledSeconds": 0.006532,
+            "inclusiveSampledSeconds": 0.354975
+          },
+          {
+            "function": "walk",
+            "url": "file:///PROGRAPH/node_modules/tree-sitter/index.js",
+            "line": 345,
+            "column": 8,
+            "selfSampledSeconds": 0,
+            "inclusiveSampledSeconds": 0.00502
+          }
+        ]
+      }
+    },
+    "difference": {
+      "wallMs": 19317.763166,
+      "processCpuMs": 19627.108,
+      "peakRssKiB": 62080
+    },
+    "equivalence": {
+      "completeOrderedPayload": true,
+      "byteComparisonCommand": "cmp rust-before.json.output.json rust-after.json.output.json",
+      "byteEqual": true,
+      "excludedFields": [],
+      "bytes": 61299471,
+      "sha256": "a26d9d32455a6f1922087a86a130a555a8c64e002eefa6c87de736d40bc0f4e8"
+    }
+  },
+  "whole": {
+    "startedAt": "2026-10-21T23:04:51.474Z",
+    "elapsedMs": 59704.28999999999,
+    "processCpuMs": 49798.78,
+    "maxRssKiB": 1322128,
+    "before": {
+      "atMs": 273.391708,
+      "memory": {
+        "rss": 163037184,
+        "heapTotal": 59179008,
+        "heapUsed": 46597920,
+        "external": 2402256,
+        "arrayBuffers": 29625
+      },
+      "v8": {
+        "total_heap_size": 59179008,
+        "total_heap_size_executable": 786432,
+        "total_physical_size": 59179008,
+        "total_available_size": 2318859112,
+        "used_heap_size": 46602808,
+        "heap_size_limit": 2348810240,
+        "malloced_memory": 1073200,
+        "peak_malloced_memory": 19476480,
+        "does_zap_garbage": 0,
+        "number_of_native_contexts": 1,
+        "number_of_detached_contexts": 0,
+        "total_global_handles_size": 16384,
+        "used_global_handles_size": 15936,
+        "external_memory": 2402296,
+        "total_allocated_bytes": 131267728
+      },
+      "cpu": {
+        "user": 206355,
+        "system": 44548
+      },
+      "usage": {
+        "userCPUTime": 206369,
+        "systemCPUTime": 44550,
+        "maxRSS": 159216,
+        "sharedMemorySize": 0,
+        "unsharedDataSize": 0,
+        "unsharedStackSize": 0,
+        "minorPageFault": 10939,
+        "majorPageFault": 263,
+        "swappedOut": 0,
+        "fsRead": 0,
+        "fsWrite": 0,
+        "ipcSent": 0,
+        "ipcReceived": 0,
+        "signalsCount": 0,
+        "voluntaryContextSwitches": 646,
+        "involuntaryContextSwitches": 864
+      }
+    },
+    "after": {
+      "atMs": 59977.681708,
+      "memory": {
+        "rss": 1200635904,
+        "heapTotal": 576258048,
+        "heapUsed": 415991472,
+        "external": 120648182,
+        "arrayBuffers": 118282979
+      },
+      "v8": {
+        "total_heap_size": 576258048,
+        "total_heap_size_executable": 13369344,
+        "total_physical_size": 576258048,
+        "total_available_size": 1989261304,
+        "used_heap_size": 415992696,
+        "heap_size_limit": 2348810240,
+        "malloced_memory": 1073200,
+        "peak_malloced_memory": 19476480,
+        "does_zap_garbage": 0,
+        "number_of_native_contexts": 1,
+        "number_of_detached_contexts": 0,
+        "total_global_handles_size": 3334144,
+        "used_global_handles_size": 20384,
+        "external_memory": 120648182,
+        "total_allocated_bytes": 27322477784
+      },
+      "cpu": {
+        "user": 33919191,
+        "system": 16130492
+      },
+      "usage": {
+        "userCPUTime": 33919206,
+        "systemCPUTime": 16130494,
+        "maxRSS": 1322128,
+        "sharedMemorySize": 0,
+        "unsharedDataSize": 0,
+        "unsharedStackSize": 0,
+        "minorPageFault": 282988,
+        "majorPageFault": 603,
+        "swappedOut": 0,
+        "fsRead": 0,
+        "fsWrite": 0,
+        "ipcSent": 0,
+        "ipcReceived": 1,
+        "signalsCount": 0,
+        "voluntaryContextSwitches": 866098,
+        "involuntaryContextSwitches": 98190
+      }
+    },
+    "counts": {
+      "nodes": 40641,
+      "edges": 78396,
+      "diagnostics": 46940
+    },
+    "databaseBytes": 908472320,
+    "adapterRuns": [
+      {
+        "adapter": "typescript",
+        "durationMs": 1138,
+        "fileCount": 81,
+        "nodeCount": 3099,
+        "edgeCount": 8660,
+        "diagnosticCount": 1706
+      },
+      {
+        "adapter": "rust",
+        "durationMs": 1735,
+        "fileCount": 174,
+        "nodeCount": 34558,
+        "edgeCount": 62603,
+        "diagnosticCount": 45191
+      },
+      {
+        "adapter": "python",
+        "durationMs": 120,
+        "fileCount": 6,
+        "nodeCount": 763,
+        "edgeCount": 1325,
+        "diagnosticCount": 0
+      },
+      {
+        "adapter": "java",
+        "durationMs": 0,
+        "fileCount": 0,
+        "nodeCount": 0,
+        "edgeCount": 0,
+        "diagnosticCount": 0
+      },
+      {
+        "adapter": "c",
+        "durationMs": 0,
+        "fileCount": 0,
+        "nodeCount": 0,
+        "edgeCount": 0,
+        "diagnosticCount": 0
+      },
+      {
+        "adapter": "cpp",
+        "durationMs": 0,
+        "fileCount": 0,
+        "nodeCount": 0,
+        "edgeCount": 0,
+        "diagnosticCount": 0
+      },
+      {
+        "adapter": "go",
+        "durationMs": 0,
+        "fileCount": 0,
+        "nodeCount": 0,
+        "edgeCount": 0,
+        "diagnosticCount": 0
+      },
+      {
+        "adapter": "csharp",
+        "durationMs": 0,
+        "fileCount": 0,
+        "nodeCount": 0,
+        "edgeCount": 0,
+        "diagnosticCount": 0
+      },
+      {
+        "adapter": "react",
+        "durationMs": 16,
+        "fileCount": 315,
+        "nodeCount": 311,
+        "edgeCount": 456,
+        "diagnosticCount": 32
+      },
+      {
+        "adapter": "tauri",
+        "durationMs": 312,
+        "fileCount": 315,
+        "nodeCount": 133,
+        "edgeCount": 382,
+        "diagnosticCount": 11
+      },
+      {
+        "adapter": "architecture",
+        "durationMs": 6,
+        "fileCount": 315,
+        "nodeCount": 2,
+        "edgeCount": 1,
+        "diagnosticCount": 0
+      },
+      {
+        "adapter": "markdown",
+        "durationMs": 20,
+        "fileCount": 315,
+        "nodeCount": 331,
+        "edgeCount": 326,
+        "diagnosticCount": 0
+      },
+      {
+        "adapter": "packageJson",
+        "durationMs": 1,
+        "fileCount": 315,
+        "nodeCount": 43,
+        "edgeCount": 42,
+        "diagnosticCount": 0
+      },
+      {
+        "adapter": "cargoToml",
+        "durationMs": 4,
+        "fileCount": 315,
+        "nodeCount": 116,
+        "edgeCount": 109,
+        "diagnosticCount": 0
+      },
+      {
+        "adapter": "tauriConfig",
+        "durationMs": 1,
+        "fileCount": 315,
+        "nodeCount": 9,
+        "edgeCount": 8,
+        "diagnosticCount": 0
+      },
+      {
+        "adapter": "tauriCapability",
+        "durationMs": 1,
+        "fileCount": 315,
+        "nodeCount": 11,
+        "edgeCount": 10,
+        "diagnosticCount": 0
+      },
+      {
+        "adapter": "tests",
+        "durationMs": 173,
+        "fileCount": 315,
+        "nodeCount": 1260,
+        "edgeCount": 2341,
+        "diagnosticCount": 0
+      },
+      {
+        "adapter": "semanticLinker",
+        "durationMs": 192,
+        "fileCount": 315,
+        "nodeCount": 0,
+        "edgeCount": 2089,
+        "diagnosticCount": 0
+      }
+    ],
+    "semanticFoundationMs": 24699,
+    "rawSummarySha256": "9432775da70c321dd277eafe39188012b8f7cfbc614e58415087088fa1c61554",
+    "witness": {
+      "format": 1,
+      "sourceStats": {
+        "copiedFiles": 421,
+        "copiedInventory": "046e71411c366bd85acffc12a83cfc80590016e0223629aac9ac11f454ab6e6b",
+        "inventory": "729c1eb199f09ccd9739634699bdc004388402544fcc8806c674ba471b6365b8",
+        "selectedFiles": 315,
+        "selectedBytes": 7452350,
+        "codeFiles": 261,
+        "codeBytes": 6535832,
+        "physicalCodeLines": 173142,
+        "byExtension": {
+          ".py": 6,
+          ".rs": 174,
+          ".ts": 57,
+          ".tsx": 24
+        }
+      },
+      "checksums": {
+        "visibleClaims": {
+          "count": 234946,
+          "sha256": "5374232534de8590dee9761be2541c12725764ab3ef9d7d4c50fe676e450e801"
+        },
+        "occurrences": {
+          "count": 41438,
+          "sha256": "aba2d48774215ab7bf657ba35ab8ee752f1c32a030817a674960fe86d3b60c70"
+        },
+        "calls": {
+          "count": 3757,
+          "sha256": "7235096d392589fba3b66291667c3dc25b3d90e5f2d4a40c55a42082b44cae49"
+        },
+        "scopeRows": {
+          "count": 197892,
+          "sha256": "49e71280d00580d755223ae02563ef640f0e9942e3102e2821ada42d08647ed5"
+        },
+        "boundaries": {
+          "count": 393,
+          "sha256": "f5d82fc62246a88f0ac521be436c49b3d9536f6c1595eb08158dcb37af57277b"
+        },
+        "edges": {
+          "count": 78396,
+          "sha256": "a963166a27ff775cfe92a162b34b32fa6324956f71fbf3013ff114550d7abf8a"
+        },
+        "diagnostics": {
+          "count": 46940,
+          "sha256": "50e7f3ff55301c10941d4d2a4899fad4277f0d45e6c69f8e21abe000fa79b4e3"
+        },
+        "nodes": {
+          "count": 40640,
+          "sha256": "f00be092f9762093f6272319e0ebc56cb906d47453c34b75bf54d621f2a3d20f"
+        }
+      },
+      "sqlite": {
+        "version": "3.53.1",
+        "integrity": "ok",
+        "foreignKeys": [],
+        "journal": "wal",
+        "readConnectionSynchronous": 1,
+        "pageSize": 4096,
+        "pages": 221795,
+        "connectionDefaultCacheSize": -16000,
+        "connectionDefaultMmapSize": 0,
+        "counts": {
+          "facts": 234946,
+          "claims": 234946,
+          "entities": 217234,
+          "occurrences": 41438,
+          "symbols": 9355,
+          "runs": 1193,
+          "owned": 234946,
+          "groups": 20121,
+          "supports": 57693,
+          "projection_rows": 166065,
+          "inputs": 7054
+        }
+      },
+      "jsonWitness": {
+        "nodes": "34ccc16c70eabc69f4d67ef8bf6b80b9f3ef82c0c008200661b397fb8e217704",
+        "edges": "77a75fd0b5437b9ccec8c4c34a1e2d1efc69454577c25a3fbdcc26f78612d3d4",
+        "diagnostics": "41a1c5ff8aebda83ee607abf06ddd06dd2088c5d9404d6b215ebfedfadd701fa"
+      },
+      "bytes": {
+        "semantic.sqlite": 908472320,
+        "graph.sqlite": 197582848,
+        "exports/graph.json": 102548074
+      },
+      "acceptedChecksumsEqual": true,
+      "legacySqliteEqual": true
+    },
+    "freshness": {
+      "repositoryRoot": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-source-scale-pair-0GBZO2/source",
+      "indexDirectory": "/private/tmp/prograph-stage6-2-20261022/production-index",
+      "indexGeneratedAt": "2026-10-21T23:05:21.719Z",
+      "schemaVersion": "1.2.0",
+      "toolVersion": "0.3.0",
+      "enabledAdapters": [
+        "typescript",
+        "rust",
+        "python",
+        "react",
+        "tauri",
+        "architecture",
+        "markdown",
+        "packageJson",
+        "cargoToml",
+        "tauriConfig",
+        "tauriCapability",
+        "tests",
+        "semanticLinker"
+      ],
+      "indexedFileCount": 315,
+      "currentSupportedFileCount": 315,
+      "addedFiles": [],
+      "modifiedFiles": [],
+      "deletedFiles": [],
+      "configChanged": false,
+      "adapterVersionsChanged": false,
+      "schemaChanged": false,
+      "repositoryChanged": false,
+      "authority": "semantic",
+      "semanticPublication": {
+        "state": "matches-semantic-snapshot",
+        "snapshot": 1
+      },
+      "semanticInputsChanged": false,
+      "semanticInputs": {
+        "state": "checked-recorded",
+        "checked": 4644,
+        "additionalChanges": 0
+      },
+      "stale": false,
+      "state": "fresh"
+    },
+    "stage6_1Context": {
+      "elapsedMs": 84783.66175,
+      "maxRssKiB": 1787360
+    },
+    "qualified60SecondGate": false,
+    "qualifiedCoreOnly1GiB": false
+  },
+  "correctness": {
+    "newFocusedTests": 9,
+    "seededCases": 200,
+    "seed": "0x6a12b",
+    "comparison": "Independent frozen pre-optimization extractor; deep equality plus JSON.stringify exact byte ordering of complete result, without normalization or field omissions",
+    "existingFixtureCorpora": [
+      "rust-quality",
+      "rust-verified-misses"
+    ],
+    "fullRegression": "pending",
+    "typecheck": {
+      "command": "npm run typecheck",
+      "passed": true
+    },
+    "build": "pending",
+    "recovery": "pending",
+    "ci": "pending"
+  },
+  "memoryLimits": [
+    "All 174 native trees remain across the cross-file definition barrier; no reparse, disposal or source/compiler lifetime change",
+    "Per-process RSS and V8 heap cannot attribute Core/native Tree-sitter/TS/SQLite memory",
+    "Counters are exact logical observations, not allocation counts: selectedWrappers counts only lazy cursor.currentNode reads, excluding wrappers from child/field APIs",
+    "New resident tables: <=5973 definition references, 3754 function observation caches, 2191 inferable local bindings plus parameter entries; parameter count and per-cache native/heap bytes not separately measured",
+    "No forced GC, heap snapshot or new allocation run; no external semantic provider execution in this corpus"
+  ]
+}

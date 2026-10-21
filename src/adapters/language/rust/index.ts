@@ -17,8 +17,25 @@ interface ParsedFile {
   tree: Parser.Tree;
   fileNode: GraphNode;
   baseModulePath: string[];
-  nodeMap: Map<SyntaxNode, GraphNode>;
+  nodeMap: Map<number, GraphNode>;
+  receivers: Map<number, ReceiverObservations>;
 }
+
+interface ReceiverObservations {
+  parameters: Map<string, string>;
+  locals: Map<string, { bindings: Array<{ start: number; type: string }>; ordered: boolean }>;
+}
+interface TraversalContext {
+  modulePath: string[];
+  owner: GraphNode;
+  impl?: SyntaxNode;
+  trait?: SyntaxNode;
+  functionItem?: SyntaxNode;
+}
+const DEFINITION_KINDS: Partial<Record<string, NodeKind>> = {
+  function_item: "function", function_signature_item: "method", struct_item: "struct",
+  enum_item: "enum", trait_item: "trait", mod_item: "module",
+};
 
 interface Definition {
   graphNode: GraphNode;
@@ -45,9 +62,27 @@ function text(node: SyntaxNode, source: string): string {
   return source.slice(node.startIndex, node.endIndex);
 }
 
-function walk(node: SyntaxNode, visit: (node: SyntaxNode) => void): void {
-  visit(node);
-  for (const child of node.namedChildren) walk(child, visit);
+/** Same named-node preorder as the old recursive namedChildren walk. Anonymous
+ * subtrees are skipped, including during recovery. Only selected callbacks need a
+ * SyntaxNode wrapper; context is saved by depth rather than queried via parents.
+ */
+function walk<T>(root: SyntaxNode, initial: T, visit: (type: string, node: () => SyntaxNode, context: T) => T) {
+  const cursor = root.walk();
+  const contexts = [initial]; let depth = 0; let visited = 0; let materialized = 0;
+  let current: SyntaxNode | undefined;
+  const node = () => { if (!current) { current = cursor.currentNode; materialized++; } return current; };
+  while (true) {
+    current = undefined;
+    if (depth === 0 || cursor.nodeIsNamed) {
+      visited++;
+      const context = visit(cursor.nodeType, node, contexts[depth]!);
+      if (cursor.gotoFirstChild()) { contexts[++depth] = context; continue; }
+    }
+    while (!cursor.gotoNextSibling()) {
+      if (depth === 0) return { visited, materialized };
+      cursor.gotoParent(); contexts.pop(); depth--;
+    }
+  }
 }
 
 function sourceEvidence(file: string, node: SyntaxNode, bindingName?: string): SourceEvidence {
@@ -89,42 +124,6 @@ function fileModulePath(file: string): string[] {
   if (!final || final === "lib" || final === "main") return relative.slice(0, -1);
   if (final === "mod") return relative.slice(0, -1);
   return [...relative.slice(0, -1), final];
-}
-
-function inlineModulePath(node: SyntaxNode, source: string, base: string[]): string[] {
-  const names: string[] = [];
-  let current = node.parent;
-  while (current) {
-    if (current.type === "mod_item" && current.childForFieldName("body")) {
-      const name = getName(current, source);
-      if (name) names.unshift(name);
-    }
-    current = current.parent;
-  }
-  return [...base, ...names];
-}
-
-function enclosing(node: SyntaxNode, type: string): SyntaxNode | undefined {
-  let current: SyntaxNode | null = node.parent;
-  while (current) {
-    if (current.type === type) return current;
-    current = current.parent;
-  }
-  return undefined;
-}
-
-function enclosingFunctionNode(node: SyntaxNode): SyntaxNode | undefined {
-  return enclosing(node, "function_item");
-}
-
-function enclosingOwner(node: SyntaxNode, nodeMap: Map<SyntaxNode, GraphNode>, fileNode: GraphNode): GraphNode {
-  let current: SyntaxNode | null = node;
-  while (current) {
-    const found = nodeMap.get(current);
-    if (found) return found;
-    current = current.parent;
-  }
-  return fileNode;
 }
 
 function itemAttributes(node: SyntaxNode, source: string, file: string): { names: string[]; evidence: SourceEvidence[] } {
@@ -219,6 +218,7 @@ const rustSyntaxAdapter: LanguageAdapter = {
     parser.setLanguage(Rust as unknown as Parser.Language);
     const parsedFiles: ParsedFile[] = [];
     const definitions: Definition[] = [];
+    const definitionsById = new Map<string, Definition>();
     const functionsByPath = new Map<string, Definition[]>();
     const functionsByName = new Map<string, Definition[]>();
     const methodsByTypeAndName = new Map<string, Definition[]>();
@@ -251,29 +251,28 @@ const rustSyntaxAdapter: LanguageAdapter = {
       if (tree.rootNode.hasError) {
         graph.addDiagnostic({ code: "rust-parser-error-node", severity: "warning", message: `Tree-sitter recovered from invalid or unsupported Rust syntax in ${file}`, file, adapter: "rust", metadata: {} });
       }
-      parsedFiles.push({ file, source, tree, fileNode, baseModulePath, nodeMap: new Map() });
+      parsedFiles.push({ file, source, tree, fileNode, baseModulePath, nodeMap: new Map(), receivers: new Map() });
     }
 
     parsedDone({ trees: parsedFiles.length });
     const definitionsDone = beginAnalysisPhase("rust-definitions");
+    let definitionVisits = 0; let definitionWrappers = 0;
     for (const parsed of parsedFiles) {
       const macros: Array<{ text: string; evidence: SourceEvidence; ownerId: string }> = [];
-      walk(parsed.tree.rootNode, (syntaxNode) => {
-        const impl = enclosing(syntaxNode, "impl_item");
-        const trait = enclosing(syntaxNode, "trait_item");
-        const kinds: Partial<Record<string, NodeKind>> = {
-          function_item: impl || trait ? "method" : "function",
-          function_signature_item: "method",
-          struct_item: "struct",
-          enum_item: "enum",
-          trait_item: "trait",
-          mod_item: "module",
-        };
-        const kind = kinds[syntaxNode.type];
+      const observed = walk<TraversalContext>(parsed.tree.rootNode, { modulePath: parsed.baseModulePath, owner: parsed.fileNode }, (type, readNode, context) => {
+        if (!DEFINITION_KINDS[type] && type !== "impl_item" && type !== "use_declaration" && type !== "macro_invocation") return context;
+        const syntaxNode = readNode();
+        let children = context;
+        if (type === "impl_item") children = { ...children, impl: syntaxNode };
+        if (type === "trait_item") children = { ...children, trait: syntaxNode };
+        if (type === "function_item") children = { ...children, functionItem: syntaxNode };
+        const { impl, trait } = context;
+        const kind = type === "function_item" && (impl || trait) ? "method" : DEFINITION_KINDS[type];
         if (kind) {
           const name = getName(syntaxNode, parsed.source);
-          if (!name) return;
-          const modulePath = inlineModulePath(syntaxNode, parsed.source, parsed.baseModulePath);
+          if (!name) return children;
+          const modulePath = context.modulePath;
+          if (type === "mod_item" && syntaxNode.childForFieldName("body")) children = { ...children, modulePath: [...modulePath, name] };
           const ownerType = impl?.childForFieldName("type") ? normalizeType(text(impl.childForFieldName("type")!, parsed.source)) : undefined;
           const implTrait = impl?.childForFieldName("trait");
           const traitOwner = trait ? getName(trait, parsed.source) : implTrait ? text(implTrait, parsed.source) : undefined;
@@ -307,9 +306,13 @@ const rustSyntaxAdapter: LanguageAdapter = {
             },
           };
           graph.addNode(symbolNode);
-          parsed.nodeMap.set(syntaxNode, symbolNode);
+          parsed.nodeMap.set(syntaxNode.id, symbolNode);
+          children = { ...children, owner: symbolNode };
           const definition: Definition = { graphNode: symbolNode, syntaxNode, modulePath, ...(ownerType ? { ownerType } : {}), ...(traitOwner ? { traitOwner } : {}) };
           definitions.push(definition);
+          // Match definitions.find: the first declaration wins even if a recovered
+          // tree ever produces the same stable graph identity more than once.
+          if (!definitionsById.has(symbolNode.id)) definitionsById.set(symbolNode.id, definition);
           if (kind === "function") {
             const key = moduleKey([...modulePath, name]);
             functionsByPath.set(key, [...(functionsByPath.get(key) ?? []), definition]);
@@ -328,21 +331,22 @@ const rustSyntaxAdapter: LanguageAdapter = {
             metadata: {},
           }));
         }
-        if (syntaxNode.type === "use_declaration") {
-          const modulePath = inlineModulePath(syntaxNode, parsed.source, parsed.baseModulePath);
-          const functionOwner = enclosingFunctionNode(syntaxNode);
-          const ownerId = functionOwner ? parsed.nodeMap.get(functionOwner)?.id : undefined;
+        if (type === "use_declaration") {
+          const modulePath = context.modulePath;
+          const ownerId = context.functionItem ? parsed.nodeMap.get(context.functionItem.id)?.id : undefined;
           const bindings = useBindings(syntaxNode, parsed.source).map((binding) => ({ ...binding, ...(ownerId ? { ownerId } : {}) }));
           importsByModule.set(moduleKey(modulePath), [...(importsByModule.get(moduleKey(modulePath)) ?? []), ...bindings]);
         }
-        if (syntaxNode.type === "macro_invocation") {
-          macros.push({ text: text(syntaxNode, parsed.source), evidence: sourceEvidence(parsed.file, syntaxNode), ownerId: enclosingOwner(syntaxNode, parsed.nodeMap, parsed.fileNode).id });
+        if (type === "macro_invocation") {
+          macros.push({ text: text(syntaxNode, parsed.source), evidence: sourceEvidence(parsed.file, syntaxNode), ownerId: context.owner.id });
         }
+        return children;
       });
+      definitionVisits += observed.visited; definitionWrappers += observed.materialized;
       parsed.fileNode.metadata = { ...parsed.fileNode.metadata, macros };
     }
 
-    definitionsDone({ definitions: definitions.length });
+    definitionsDone({ definitions: definitions.length, visitedNodes: definitionVisits, selectedWrappers: definitionWrappers });
     const callsDone = beginAnalysisPhase("rust-calls");
     const visibleImports = (modulePath: string[], ownerId: string): ImportBinding[] =>
       (importsByModule.get(moduleKey(modulePath)) ?? []).filter((binding) => !binding.ownerId || binding.ownerId === ownerId);
@@ -404,34 +408,69 @@ const rustSyntaxAdapter: LanguageAdapter = {
       if (parts.length > 1) return moduleKey(parts);
       return moduleKey([...modulePath, normalizeType(typeName)]);
     };
-    const inferredReceiverType = (call: SyntaxNode, receiver: string, parsed: ParsedFile, modulePath: string[], ownerId: string, implType?: string): string | undefined => {
+    let receiverLookups = 0; let receiverFunctions = 0; let receiverVisits = 0; let receiverBindings = 0;
+    const inferredReceiverType = (call: SyntaxNode, receiver: string, parsed: ParsedFile, modulePath: string[], ownerId: string, implType: string | undefined, fn: SyntaxNode | undefined): string | undefined => {
+      receiverLookups++;
       if (receiver === "self" && implType) return typeKeyFor(implType, modulePath, ownerId);
-      const fn = enclosingFunctionNode(call);
       if (!fn) return undefined;
-      const parameters = fn.childForFieldName("parameters");
-      for (const parameter of parameters?.namedChildren ?? []) {
-        if (parameter.type !== "parameter") continue;
-        const pattern = parameter.childForFieldName("pattern") ?? parameter.namedChildren[0];
-        const type = parameter.childForFieldName("type") ?? parameter.namedChildren.at(-1);
-        if (pattern && type && text(pattern, parsed.source) === receiver) return typeKeyFor(text(type, parsed.source), modulePath, ownerId);
-      }
-      const lets: SyntaxNode[] = [];
-      walk(fn, (node) => {
-        if (node.type === "let_declaration" && node.startIndex < call.startIndex) lets.push(node);
-      });
-      for (const declaration of lets.reverse()) {
-        const pattern = declaration.childForFieldName("pattern") ?? declaration.namedChildren[0];
-        if (!pattern || text(pattern, parsed.source) !== receiver) continue;
-        const type = declaration.childForFieldName("type");
-        if (type) return typeKeyFor(text(type, parsed.source), modulePath, ownerId);
-        const value = declaration.childForFieldName("value");
-        const constructor = value?.type === "call_expression" ? value.childForFieldName("function") : undefined;
-        if (constructor?.type === "scoped_identifier") {
-          const constructorParts = text(constructor, parsed.source).split("::");
-          if (constructorParts.length >= 2) return typeKeyFor(constructorParts.at(-2)!, modulePath, ownerId);
+      let observations = parsed.receivers.get(fn.id);
+      if (!observations) {
+        observations = { parameters: new Map(), locals: new Map() };
+        parsed.receivers.set(fn.id, observations); receiverFunctions++;
+        const parameters = fn.childForFieldName("parameters");
+        for (const parameter of parameters?.namedChildren ?? []) {
+          if (parameter.type !== "parameter") continue;
+          const pattern = parameter.childForFieldName("pattern") ?? parameter.namedChildren[0];
+          const type = parameter.childForFieldName("type") ?? parameter.namedChildren.at(-1);
+          if (pattern && type) {
+            const name = text(pattern, parsed.source);
+            if (!observations.parameters.has(name)) observations.parameters.set(name, text(type, parsed.source));
+          }
         }
+        // Preserve the accepted function-subtree heuristic exactly: parameters
+        // take precedence; nested-block/function lets are observed in preorder;
+        // reassignment and uninferrable lets do not mask earlier typed evidence.
+        // Store raw observations, resolving imports in each call's owner context.
+        const locals = observations.locals;
+        const observed = walk(fn, undefined, (kind, readNode) => {
+          if (kind !== "let_declaration") return;
+          const declaration = readNode();
+          const pattern = declaration.childForFieldName("pattern") ?? declaration.namedChildren[0];
+          if (!pattern) return;
+          const type = declaration.childForFieldName("type");
+          let typeName = type ? text(type, parsed.source) : undefined;
+          if (typeName === undefined) {
+            const value = declaration.childForFieldName("value");
+            const constructor = value?.type === "call_expression" ? value.childForFieldName("function") : undefined;
+            if (constructor?.type === "scoped_identifier") {
+              const parts = text(constructor, parsed.source).split("::");
+              if (parts.length >= 2) typeName = parts.at(-2)!;
+            }
+          }
+          if (typeName === undefined) return;
+          const name = text(pattern, parsed.source), start = declaration.startIndex;
+          const local = locals.get(name) ?? { bindings: [], ordered: true };
+          if (local.bindings.length && local.bindings.at(-1)!.start > start) local.ordered = false;
+          local.bindings.push({ start, type: typeName }); locals.set(name, local); receiverBindings++;
+        });
+        receiverVisits += observed.visited;
       }
-      return undefined;
+      const parameter = observations.parameters.get(receiver);
+      if (parameter !== undefined) return typeKeyFor(parameter, modulePath, ownerId);
+      const local = observations.locals.get(receiver);
+      if (!local) return undefined;
+      const start = call.startIndex;
+      let binding: { start: number; type: string } | undefined;
+      if (local.ordered) {
+        let low = 0, high = local.bindings.length;
+        while (low < high) { const mid = (low + high) >>> 1; if (local.bindings[mid]!.start < start) low = mid + 1; else high = mid; }
+        binding = local.bindings[low - 1];
+      } else {
+        // Defensive recovery fallback: preserve reverse preorder even if a
+        // future grammar/binding presents nonmonotone source positions.
+        for (let i = local.bindings.length - 1; i >= 0; i--) if (local.bindings[i]!.start < start) { binding = local.bindings[i]; break; }
+      }
+      return binding === undefined ? undefined : typeKeyFor(binding.type, modulePath, ownerId);
     };
 
     const unresolvedTarget = (parsed: ParsedFile, owner: GraphNode, callNode: SyntaxNode, callText: string, candidateCount: number): GraphNode => {
@@ -466,15 +505,28 @@ const rustSyntaxAdapter: LanguageAdapter = {
       return created;
     };
 
+    let callVisits = 0; let callWrappers = 0; let definitionLookups = 0;
     for (const parsed of parsedFiles) {
-      walk(parsed.tree.rootNode, (syntaxNode) => {
-        if (syntaxNode.type !== "call_expression") return;
+      const observed = walk<TraversalContext>(parsed.tree.rootNode, { modulePath: parsed.baseModulePath, owner: parsed.fileNode }, (type, readNode, context) => {
+        if (DEFINITION_KINDS[type]) {
+          const syntaxNode = readNode();
+          const owner = parsed.nodeMap.get(syntaxNode.id);
+          let children = owner ? { ...context, owner } : context;
+          if (type === "function_item") children = { ...children, functionItem: syntaxNode };
+          if (type === "mod_item" && syntaxNode.childForFieldName("body")) {
+            const name = getName(syntaxNode, parsed.source);
+            if (name) children = { ...children, modulePath: [...context.modulePath, name] };
+          }
+          return children;
+        }
+        if (type !== "call_expression") return context;
+        const syntaxNode = readNode();
         const fnNode = syntaxNode.childForFieldName("function");
-        if (!fnNode) return;
+        if (!fnNode) return context;
         const callText = text(fnNode, parsed.source);
-        const owner = enclosingOwner(syntaxNode, parsed.nodeMap, parsed.fileNode);
-        const ownerDefinition = definitions.find((item) => item.graphNode.id === owner.id);
-        const modulePath = ownerDefinition?.modulePath ?? inlineModulePath(syntaxNode, parsed.source, parsed.baseModulePath);
+        const owner = context.owner;
+        const ownerDefinition = definitionsById.get(owner.id); definitionLookups++;
+        const modulePath = ownerDefinition?.modulePath ?? context.modulePath;
         const implType = ownerDefinition?.ownerType;
         let candidates: Definition[] = [];
         let resolutionMethod = "unresolved-name";
@@ -484,7 +536,7 @@ const rustSyntaxAdapter: LanguageAdapter = {
           const methodNode = fnNode.childForFieldName("field");
           const receiver = receiverNode ? text(receiverNode, parsed.source) : "";
           const method = methodNode ? text(methodNode, parsed.source) : "";
-          const receiverType = inferredReceiverType(syntaxNode, receiver, parsed, modulePath, owner.id, implType);
+          const receiverType = inferredReceiverType(syntaxNode, receiver, parsed, modulePath, owner.id, implType, context.functionItem);
           if (receiverType && method) {
             candidates = uniqueDefinitions(methodsByTypeAndName.get(`${receiverType}::${method}`) ?? []);
             resolutionMethod = "syntactic-receiver-type";
@@ -514,9 +566,12 @@ const rustSyntaxAdapter: LanguageAdapter = {
           evidence: [{ ...sourceEvidence(parsed.file, syntaxNode, callText), resolutionMethod: confidence === "unresolved" ? "unresolved-name" : resolutionMethod }],
           metadata: { ...(candidates.length > 1 ? { candidateIds: candidates.map((item) => item.graphNode.id) } : {}) },
         }));
+        return context;
       });
+      callVisits += observed.visited; callWrappers += observed.materialized;
     }
-    callsDone({ nodes: graph.nodes.size, edges: graph.edges.size });
+    callsDone({ nodes: graph.nodes.size, edges: graph.edges.size, visitedNodes: callVisits, selectedWrappers: callWrappers,
+      definitionLookups, receiverLookups, receiverFunctions, receiverVisitedNodes: receiverVisits, receiverBindings });
     return graph.result({ moduleCount: new Set(definitions.map((item) => moduleKey(item.modulePath))).size, unresolvedNodePolicy: "scoped-and-common-method-aggregated" });
   },
 };
