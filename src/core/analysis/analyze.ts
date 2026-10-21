@@ -18,6 +18,7 @@ import { runAdapter } from "./adapter-run.js";
 import { deriveOwnedAnalysis } from "../semantic/analysis-passes.js";
 import { indexSemanticFoundation } from "../semantic/typescript.js";
 import { withIndexWork } from "../semantic/maintenance-lock.js";
+import { beginAnalysisPhase } from "./diagnostics.js";
 
 export interface AnalyzeOptions {
   output?: string;
@@ -77,7 +78,10 @@ export async function analyzeRepository(input = ".", options: AnalyzeOptions = {
 
 async function analyzeRepositoryWithLease(root: string, options: AnalyzeOptions): Promise<AnalysisResult> {
   const started = performance.now();
+  const discovered = beginAnalysisPhase("repository-discovery");
   const scan = await scanRepository(root, options.output ? path.resolve(options.output) : undefined);
+  discovered({ selectedFiles: scan.snapshot.files.length });
+  const built = beginAnalysisPhase("syntax-graph");
   const builder = new GraphBuilder();
   builder.merge(baseGraph(scan.snapshot));
   builder.diagnostics.push(...scan.diagnostics);
@@ -90,7 +94,10 @@ async function analyzeRepositoryWithLease(root: string, options: AnalyzeOptions)
     builder.merge(executed.result);
   }
   await mkdir(outputDirectory, { recursive: true });
+  built({ nodes: builder.nodes.size, edges: builder.edges.size });
+  const derived = beginAnalysisPhase("owned-analysis");
   const owned = await deriveOwnedAnalysis(scan.snapshot, builder.result(), path.join(outputDirectory, "semantic.sqlite"));
+  derived({ runs: owned.runs.length, nodes: owned.result.nodes.length, edges: owned.result.edges.length });
   builder.merge(owned.result); adapterRuns.push(...owned.adapterRuns);
   const repositoryNode = [...builder.nodes.values()].find(node => node.kind === "repository");
   if (repositoryNode) repositoryNode.metadata.analysis = adapterRuns.map(({ adapter, detected, metadata }) => ({ adapter, detected, ...metadata }));
@@ -121,6 +128,7 @@ async function analyzeRepositoryWithLease(root: string, options: AnalyzeOptions)
   const state = createIndexState(scan.snapshot, manifest);
   const { files: _sourceFiles, ...stateHeader } = state;
   const semanticStarted = performance.now();
+  const semanticDone = beginAnalysisPhase("semantic-foundation");
   try {
     const semantic = await indexSemanticFoundation(scan.snapshot, graph, path.join(outputDirectory, "semantic.sqlite"), owned, { manifest, stateHeader });
     manifest.semanticCore = { format: 2, status: semantic.coverage.status === "unavailable" ? "unavailable" : "partial", snapshot: semantic.snapshot, context: semantic.context, durationMs: semantic.durationMs };
@@ -130,13 +138,18 @@ async function analyzeRepositoryWithLease(root: string, options: AnalyzeOptions)
     graph.diagnostics.push({ code: "semantic-foundation-failure", severity: "warning", message: String(error), adapter: "semantic-core", metadata: { previousSnapshotIsHistorical: true } });
     manifest.diagnosticCount = graph.diagnostics.length;
   }
+  semanticDone();
   manifest.analysisDuration = Math.round(performance.now() - started);
+  const persisted = beginAnalysisPhase("legacy-sqlite-export");
   await persistGraph(outputDirectory, graph, manifest, adapterRuns);
+  persisted();
+  const exported = beginAnalysisPhase("json-export");
   await Promise.all([
     writeFile(path.join(outputDirectory, "exports", "graph.json"), `${JSON.stringify(graph, null, 2)}\n`),
     writeFile(path.join(outputDirectory, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`),
     writeFile(path.join(outputDirectory, "diagnostics.json"), `${JSON.stringify(graph.diagnostics, null, 2)}\n`),
     writeIndexState(outputDirectory, state),
   ]);
+  exported({ nodes: graph.nodes.length, edges: graph.edges.length, diagnostics: graph.diagnostics.length });
   return { graph, manifest, adapterRuns, outputDirectory };
 }

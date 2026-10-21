@@ -798,6 +798,8 @@ When 1M gates fail, fix global materialization/indexing/batch behavior before en
 
 Pin corpus revisions and dependency/toolchain inputs. Separate discovery, syntax, external indexing, import, passes, publication, exports, warm/cold queries, and UI timing. Measure both first-run and no-op/small-edit/header-edit/config-change/target-change/deletion/failed-provider scenarios. Repeated runs provide distributions and confidence intervals; compare against full-rebuild oracle for correctness. Track source verification/semantic coverage and false-positive relationships alongside speed. Publish hardware/raw metrics and reproducible commands in a future benchmark artifact; do not cite external systems' timings as ProGraph evidence.
 
+The bounded [Stage 6 real-source profiling report](semantic-core-stage6-profiling.md) now records that phase/CPU/allocation evidence for the pinned 173,142-line capture. Its four single serial samples are diagnostic, not distributions or acceptance of the 60 s / Core-only 1 GiB gate. In-process compiler/native RSS attribution and external SDK peak measurements remain explicitly limited.
+
 ## 21. Testing strategy
 
 ### Foundation and storage

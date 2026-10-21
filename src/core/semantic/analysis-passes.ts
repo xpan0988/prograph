@@ -23,6 +23,7 @@ import { partitionBoundaries } from "./boundary-shards.js";
 import { ADAPTER_VERSIONS } from "../analysis/state.js";
 import { ANALYSIS_PASS_VERSIONS } from "./analysis-versions.js";
 import { sourceInventory, semanticInventory } from "./provider-runs.js";
+import { beginAnalysisPhase } from "../analysis/diagnostics.js";
 interface AnalysisPass extends PassContract { adapter?: FrameworkAdapter | undefined }
 function adapterPass(id: string, adapter: FrameworkAdapter, dependencies: string[] = []): AnalysisPass {
   return { id, adapter, version: ANALYSIS_PASS_VERSIONS[id]!, configurationFingerprint: "assigned-per-execution", dependencies,
@@ -67,13 +68,18 @@ export async function deriveOwnedAnalysis(snapshot: RepositorySnapshot, source: 
     store.bindSourceRoot(snapshot.repository.root, snapshot.sourceRoot);
     const parent = store.activeSnapshot();
     const context = semanticKey("analysis-context", [snapshot.repository.identity, OWNED_PASS_VERSION]);
+    const fingerprintDone = beginAnalysisPhase("owned-fingerprint");
     const fingerprint = digest(canonical({ sourceBinding: store.sourceBindingFingerprint(), files: [...snapshot.fileContents].map(([file, text]) => [file, digest(text)]).sort(),
       inputs: source.inputReceipt ?? null, config: snapshot.config, configurationInput: snapshot.configurationInput ?? "not-captured", passes: ordered.map(pass => passContract(pass)), nodes: [...source.nodes].sort((a, b) => a.id.localeCompare(b.id)), edges: [...source.edges].sort((a, b) => a.id.localeCompare(b.id)) }));
+    fingerprintDone();
+    const baseDone = beginAnalysisPhase("syntax-fact-staging");
     const base = writeSyntaxBase(store, snapshot, source, context, fingerprint, { inventory: sourceInventory(snapshot), semanticInventory: semanticInventory(snapshot), versions: digest(canonical(ADAPTER_VERSIONS)) });
+    baseDone({ runs: base.runs.length });
     const baseProjection = base.projection;
     const completed = new Map<string, OwnedProjection>(); const passOwners = new Map<string, number[]>(); const runs = [...base.runs]; const adapterRuns: AdapterRun[] = [];
     const final = new GraphBuilder();
     for (const template of ordered) {
+      const passDone = beginAnalysisPhase(`owned-pass:${template.id}`);
       const pass = { ...template, configurationFingerprint: digest(canonical(snapshot.config)) };
       const input = new GraphBuilder(); input.merge(baseProjection.result);
       const inputNodes = new Map(baseProjection.nodeClaims); const inputEdges = new Map(baseProjection.edgeClaims);
@@ -196,6 +202,7 @@ export async function deriveOwnedAnalysis(snapshot: RepositorySnapshot, source: 
       });
       completed.set(pass.id, sealed);
       final.merge(sealed.result); runs.push(run);
+      passDone({ nodes: sealed.result.nodes.length, edges: sealed.result.edges.length });
     }
     return { parent, runs, result: final.result(), adapterRuns };
   } finally { store.close(); }

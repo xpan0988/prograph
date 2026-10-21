@@ -1,10 +1,12 @@
 import type { AdapterResult, FrameworkAdapter, LanguageAdapter, RepositorySnapshot } from "../adapters/contracts.js";
 import type { AdapterRun } from "../graph/schema.js";
+import { beginAnalysisPhase } from "./diagnostics.js";
 
 export async function runAdapter(adapter: LanguageAdapter | FrameworkAdapter, snapshot: RepositorySnapshot, graph: AdapterResult, framework: boolean): Promise<{ result: AdapterResult; run: AdapterRun }> {
   const applicable = !framework && (adapter as LanguageAdapter).appliesTo;
   if (applicable) snapshot = { ...snapshot, files: snapshot.files.filter(applicable) };
   const started = performance.now();
+  const done = beginAnalysisPhase(`adapter:${adapter.name}`);
   let detected = false;
   let result: AdapterResult = { nodes: [], edges: [], diagnostics: [], metadata: {} };
   try {
@@ -23,7 +25,7 @@ export async function runAdapter(adapter: LanguageAdapter | FrameworkAdapter, sn
       adapter: adapter.name,
       metadata: {},
     });
-  }
+  } finally { done({ nodes: result.nodes.length, edges: result.edges.length, diagnostics: result.diagnostics.length }); }
   return {
     result,
     run: {

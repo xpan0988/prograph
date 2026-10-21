@@ -16,6 +16,7 @@ import { retainProviders, inventoryFromDisk, semanticInventory, sourceInventory 
 import { replayProviders } from "./provider-replay.js";
 import { inputMatches, recordedDigest } from "./input-check.js";
 import { traceCompilerInputs } from "./typescript-inputs.js";
+import { beginAnalysisPhase } from "../analysis/diagnostics.js";
 
 export interface SemanticIndexResult { snapshot: number; context: string; inputFingerprint: string; coverage: Record<string, unknown>; durationMs: number }
 
@@ -25,12 +26,14 @@ async function indexTypeScriptUnit(snapshot: RepositorySnapshot, unit: ProjectUn
   const compilerBundle = require.resolve("@ts-morph/common");
   const selected = unit.sources;
   const environment = await Promise.all(["environment:host","environment:cwd","environment:node"].map(async resource=>({resource,digest:(await recordedDigest(resource,snapshot.repository.root))!})));
+  const compilerDone = beginAnalysisPhase("semantic-typescript-program");
   const project = new Project({ skipAddingFilesFromTsConfig: true, compilerOptions: unit.compilerOptions ?? {} });
   const compilerInputs = traceCompilerInputs(project.getFileSystem());
   // These are exact scanner-selected files, not glob patterns. Glob expansion also
   // enumerates unrelated output directories and cannot qualify module-search inputs.
   for (const file of selected) project.addSourceFileAtPath(snapshot.absoluteFiles.get(file)!);
   const program = project?.getProgram().compilerObject;
+  compilerDone({ sourceFiles: program.getSourceFiles().length });
   const context = unit.context;
   const inputFingerprint = digest(canonical({ sourceBinding: store.sourceBindingFingerprint(), plan: unit.fingerprint, compiler: program.getSourceFiles().map(source => [source.fileName, digest(source.text)]).sort() }));
   const provenance: Provenance = { provider: "typescript/compiler-api", version: `${ts.version}/${TYPESCRIPT_SEMANTIC_VERSION}`, basis: "compiler", method: "compiler-binding", context, inputFingerprint };
@@ -291,13 +294,16 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
       if (unit.language === "typescript" && snapshot.config.adapters.typescript && unit.sources.length) {
         const reused = await reusableUnit(store, snapshot, unit, previous);
         if (reused) { runs.push(...reused); outcomes.push({ status: "partial", project: unit.project, reused: true }); }
-        else { const indexed = await indexTypeScriptUnit(snapshot, unit, store); runs.push(...indexed.runs); outcomes.push(indexed.coverage); }
+        else { const unitDone = beginAnalysisPhase("semantic-typescript"); try { const indexed = await indexTypeScriptUnit(snapshot, unit, store); runs.push(...indexed.runs); outcomes.push(indexed.coverage); } finally { unitDone(); } }
       }
     }
+    const providersDone = beginAnalysisPhase("native-provider-retention-replay");
     const retained = await retainProviders(store, snapshot, parent);
     const native = await replayProviders(store, snapshot, parent, retained); const nativeRuns = native.runs; runs.push(...nativeRuns);
+    providersDone({ retainedRuns: retained.length, nativeRuns: nativeRuns.length });
     // One final cross-unit barrier: an earlier unit's dependency can change while
     // a later compiler is running. Verify selected inputs before the single CAS.
+    const barrierDone = beginAnalysisPhase("source-freshness-barrier");
     const checked = new Set<string>();
     for (const run of runs) for (const input of store.sql("SELECT resource,digest FROM sc_inputs WHERE run=?").all(run) as Array<{ resource: string; digest: string }>) {
       const key = canonical(input); if (checked.has(key)) continue; checked.add(key);
@@ -305,10 +311,13 @@ export async function indexSemanticFoundation(snapshot: RepositorySnapshot, grap
     }
     const finalInventory = await inventoryFromDisk(snapshot.repository.root, path.dirname(filename), 200000);
     if (finalInventory.inventory !== semanticInventory(snapshot) || finalInventory.sourceInventory !== sourceInventory(snapshot) || finalInventory.configurationInput !== snapshot.configurationInput) throw Error("Repository inventory changed before semantic publication");
+    barrierDone({ uniqueInputs: checked.size });
     const tsUnits = plan.units.filter(unit => unit.language === "typescript");
     const context = (tsUnits.find(unit => unit.key === "typescript/root") ?? tsUnits[0])?.context ?? "none";
     const report: SnapshotReportInput | undefined = publication ? { ...publication, manifest: { ...publication.manifest, semanticCore: { format: 2, status: outcomes.length || nativeRuns.length ? "partial" : "unavailable", context, durationMs: Math.round(performance.now() - started) } } } : undefined;
+    const published = beginAnalysisPhase("semantic-publication");
     const snapshotId = store.publish(runs, parent, native.registrations, report);
+    published({ runs: runs.length });
     return { snapshot: snapshotId, context: (tsUnits.find(unit => unit.key === "typescript/root") ?? tsUnits[0])?.context ?? "none", inputFingerprint, coverage: { status: outcomes.length || nativeRuns.length ? "partial" : "unavailable", projects: tsUnits.length, units: outcomes, providers: native.outcomes, reusedUnits: outcomes.filter(outcome => outcome.reused).length, retainedNativeRuns: retained.length }, durationMs: Math.round(performance.now() - started) };
   } finally { store.close(); }
 }

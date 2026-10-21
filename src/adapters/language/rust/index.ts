@@ -1,6 +1,7 @@
 import { createRequire } from "node:module";
 import { capabilities } from "../../../core/adapters/providers.js";
 import path from "node:path";
+import { beginAnalysisPhase } from "../../../core/analysis/diagnostics.js";
 import Parser from "tree-sitter";
 import Rust from "tree-sitter-rust";
 import type { SyntaxNode } from "tree-sitter";
@@ -223,6 +224,7 @@ const rustSyntaxAdapter: LanguageAdapter = {
     const methodsByTypeAndName = new Map<string, Definition[]>();
     const importsByModule = new Map<string, ImportBinding[]>();
     const unresolvedNodes = new Map<string, GraphNode>();
+    const parsedDone = beginAnalysisPhase("rust-parse");
 
     for (const file of rustFiles(snapshot)) {
       const source = snapshot.fileContents.get(file);
@@ -252,6 +254,8 @@ const rustSyntaxAdapter: LanguageAdapter = {
       parsedFiles.push({ file, source, tree, fileNode, baseModulePath, nodeMap: new Map() });
     }
 
+    parsedDone({ trees: parsedFiles.length });
+    const definitionsDone = beginAnalysisPhase("rust-definitions");
     for (const parsed of parsedFiles) {
       const macros: Array<{ text: string; evidence: SourceEvidence; ownerId: string }> = [];
       walk(parsed.tree.rootNode, (syntaxNode) => {
@@ -338,6 +342,8 @@ const rustSyntaxAdapter: LanguageAdapter = {
       parsed.fileNode.metadata = { ...parsed.fileNode.metadata, macros };
     }
 
+    definitionsDone({ definitions: definitions.length });
+    const callsDone = beginAnalysisPhase("rust-calls");
     const visibleImports = (modulePath: string[], ownerId: string): ImportBinding[] =>
       (importsByModule.get(moduleKey(modulePath)) ?? []).filter((binding) => !binding.ownerId || binding.ownerId === ownerId);
     const resolveImportBinding = (binding: ImportBinding, modulePath: string[], seen = new Set<string>()): Definition[] => {
@@ -510,6 +516,7 @@ const rustSyntaxAdapter: LanguageAdapter = {
         }));
       });
     }
+    callsDone({ nodes: graph.nodes.size, edges: graph.edges.size });
     return graph.result({ moduleCount: new Set(definitions.map((item) => moduleKey(item.modulePath))).size, unresolvedNodePolicy: "scoped-and-common-method-aggregated" });
   },
 };

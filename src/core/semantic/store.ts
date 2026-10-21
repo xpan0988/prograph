@@ -9,6 +9,7 @@ import type { ProviderRegistration } from "./provider-plan.js";
 import path from "node:path";
 import { realpathSync, existsSync } from "node:fs";
 import { IndexLease } from "./maintenance-lock.js";
+import { measureAnalysisPhase } from "../analysis/diagnostics.js";
 import { canonical, semanticKey, PREDICATES, SEMANTIC_FORMAT_VERSION, SEMANTIC_SCHEMA_VERSION, READABLE_SEMANTIC_SCHEMAS, validateFact,
   type EntityKind, type FactInput, type OccurrenceInput, type SemanticSymbol, type SupportAlternative } from "./model.js";
 
@@ -249,7 +250,7 @@ export class SemanticStore {
     const parent = arguments.length < 2 ? this.activeSnapshot() : expectedParent;
     this.hooks.fault?.("before-publish");
     let measuredAt = performance.now();
-    const measure = (stage: string) => { const now = performance.now(); this.hooks.measure?.(stage, now - measuredAt); measuredAt = now; };
+    const measure = (stage: string) => { const now = performance.now(); this.hooks.measure?.(stage, now - measuredAt); measureAnalysisPhase(`publication:${stage}`, now - measuredAt); measuredAt = now; };
     const snapshot = this.db.transaction(() => {
       if (this.activeSnapshot() !== parent) throw new Error("Snapshot publication parent changed");
       if((this.sql("SELECT value FROM sc_meta WHERE key='schema'").get() as {value:string}|undefined)?.value!==SEMANTIC_SCHEMA_VERSION || (this.sql("SELECT value FROM sc_meta WHERE key='format'").get() as {value:string}|undefined)?.value!==String(SEMANTIC_FORMAT_VERSION))throw Error("Storage version changed while writer was open; reopen this index");
