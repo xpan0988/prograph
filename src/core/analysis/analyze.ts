@@ -2,7 +2,7 @@ import {prepareAuthorityMigration} from "../semantic/authority-migration.js";
 import { recordAnalysisFailure } from "../semantic/authority.js";
 import { polyglotAdapters } from "../../adapters/language/polyglot/index.js";
 import path from "node:path";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { GraphBuilder } from "../graph/builder.js";
 import { nodeId, validateIdentities, withEdgeId } from "../graph/identity.js";
 import { GRAPH_SCHEMA_VERSION, type AdapterRun, type AnalysisManifest, type GraphData, type GraphNode } from "../graph/schema.js";
@@ -12,7 +12,8 @@ import { rustAdapter } from "../../adapters/language/rust/index.js";
 import type { AdapterResult, RepositorySnapshot } from "../adapters/contracts.js";
 import { persistGraph } from "../storage/sqlite.js";
 import packageJson from "../../../package.json" with { type: "json" };
-import { createIndexState, writeIndexState } from "./state.js";
+import { createIndexState } from "./state.js";
+import { writeJsonExports } from "../storage/json-export.js";
 import { reuseTypeScriptObservations } from "../semantic/source-reuse.js";
 import { runAdapter } from "./adapter-run.js";
 import { deriveOwnedAnalysis } from "../semantic/analysis-passes.js";
@@ -144,12 +145,7 @@ async function analyzeRepositoryWithLease(root: string, options: AnalyzeOptions)
   await persistGraph(outputDirectory, graph, manifest, adapterRuns);
   persisted();
   const exported = beginAnalysisPhase("json-export");
-  await Promise.all([
-    writeFile(path.join(outputDirectory, "exports", "graph.json"), `${JSON.stringify(graph, null, 2)}\n`),
-    writeFile(path.join(outputDirectory, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`),
-    writeFile(path.join(outputDirectory, "diagnostics.json"), `${JSON.stringify(graph.diagnostics, null, 2)}\n`),
-    writeIndexState(outputDirectory, state),
-  ]);
+  await writeJsonExports(outputDirectory, { graph, manifest, diagnostics: graph.diagnostics, state });
   exported({ nodes: graph.nodes.length, edges: graph.edges.length, diagnostics: graph.diagnostics.length });
   return { graph, manifest, adapterRuns, outputDirectory };
 }

@@ -416,4 +416,18 @@ node scripts/semantic-profile-verify.mjs "$SOURCE" "$WORK/production-index" "$WO
 
 Compare saved complete `exports/graph.json` and `diagnostics.json` with `cmp` and streaming SHA-256; for manifest/state remove only the explicit clock fields listed above and compare complete ordered JSON structures. Use the existing `repositoryStatus` API for the separate freshness observation. The Rust helper refuses a mismatched selected inventory. It retains complete result JSON and raw inspector profiles **outside Git**; the compact receipt retains their hashes and reduced CPU/resource evidence. Raw evidence from this run is at `/private/tmp/prograph-stage6-2-20261022`. The accepted build, source/dependency link, compilation and file-witness reads are outside all measurement timers. Inspector files can be opened independently in DevTools; use weighted stacks, not summed inclusive rows.
 
-No incorrect semantic change was discovered or repaired. Validation preflight did find partially cleaned older temporary SDK directories; their remaining launchers were insufficient evidence of complete toolchains. Fresh Node, Go, JDK, .NET and SCIP.NET bundles were restored at their pinned versions and verified against their **original complete bundle hashes** before the full suite started. Python, Java/Go/SCIP tools and rust-analyzer pins are recorded with the local validation evidence. No provider, expensive oracle or assertion was disabled. No optimization after candidate 1 is authorized by this milestone; identity/export work remains a separate next milestone.
+No incorrect semantic change was discovered or repaired. Validation preflight did find partially cleaned older temporary SDK directories; their remaining launchers were insufficient evidence of complete toolchains. Fresh Node, Go, JDK, .NET and SCIP.NET bundles were restored at their pinned versions and verified against their **original complete bundle hashes** before the full suite started. Python, Java/Go/SCIP tools and rust-analyzer pins are recorded with the local validation evidence. No provider, expensive oracle or assertion was disabled. No optimization after candidate 1 was authorized by Stage 6.2; identity/export work required a separate milestone.
+
+## 15. Stage 6.3 — legacy JSON export residency
+
+The separately authorized [Stage 6.3 record](semantic-core-stage6-export-residency.md)
+and [receipt](benchmarks/semantic-core-stage6-export-residency.json) describe bounded
+byte-preserving JSON serialization and the user-approved per-file atomic-export
+contract. Rust, canonical encoding and Semantic Core publication are unchanged.
+The focused pair preserves all four accepted files byte-for-byte, trading
+395.462 → 843.442 ms export time for 1,352,384 → 503,936 KiB cumulative process RSS
+in the saved-output harness. One complete phase run measures 58.864 s /
+1,330,896 KiB, with the process high-water reached before JSON export. This is
+not whole-pipeline memory or time qualification; Core-only RSS remains unknown.
+Complete local regression and actual Node 20/22/24 CI acceptance are pending.
+Stage 6.4 is not authorized by this work.

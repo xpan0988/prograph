@@ -1,10 +1,11 @@
 /** Explicit offline legacy rollback artifact; the source fact database is read-only. */
 import path from "node:path";
-import { mkdtemp, realpath, lstat, mkdir, writeFile, open, readdir, rm, symlink, readlink } from "node:fs/promises";
+import { mkdtemp, realpath, lstat, mkdir, open, readdir, rm, symlink, readlink } from "node:fs/promises";
 import Database from "better-sqlite3";
 import { IndexLease } from "./maintenance-lock.js";
 import { readCompatibilitySnapshot } from "./compatibility-snapshot.js";
 import { persistGraph } from "../storage/sqlite.js";
+import { writePrettyJson } from "../storage/json-stream.js";
 async function syncPath(file: string) {
   const handle = await open(file, "r"); try {
     await handle.sync();
@@ -80,8 +81,11 @@ export async function exportCompatibilitySnapshot(index: string, destination: st
       format: 1, kind: "semantic-compatibility-export", source, sourceDatabase, sourceSnapshot: id!, sourceReport: selected.reportKey, graphHash: selected.hash, ordering: selected.ordering, sourceManifest: selected.manifest,
       coverage: "Legacy compatibility projection only; native facts are not flattened into graph edges", publication: "durable generation + exclusive atomic directory symlink", work: selected.work
     };
-    for (const [file, value] of Object.entries({ "manifest.json": manifest, "state.json": selected.state, "diagnostics.json": selected.graph.diagnostics, "exports/graph.json": selected.graph, "exports/semantic-compatibility.json": receipt }))
-      await writeFile(path.join(generation, file), `${JSON.stringify(value, null, 2)}\n`, { flag: "wx" });
+    for (const [file, value] of Object.entries({ "manifest.json": manifest, "state.json": selected.state, "diagnostics.json": selected.graph.diagnostics, "exports/graph.json": selected.graph, "exports/semantic-compatibility.json": receipt })) {
+      const handle = await open(path.join(generation, file), "wx");
+      try { await writePrettyJson(handle, value); }
+      finally { await handle.close(); }
+    }
     await syncTree(generation);
     // symlink is exclusive (EEXIST), unlike rename over an existing empty folder.
     // Both paths have the same real parent. The complete directory becomes

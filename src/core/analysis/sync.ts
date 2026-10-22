@@ -3,11 +3,12 @@ import {openAuthorityObservation} from "../semantic/authority.js";
 import {readCompatibilitySnapshot} from "../semantic/compatibility-snapshot.js";
 import { recordAnalysisFailure } from "../semantic/authority.js";
 import path from "node:path";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import type { AdapterRun, AnalysisManifest, GraphData } from "../graph/schema.js";
 import type { AdapterResult, RepositorySnapshot } from "../adapters/contracts.js";
 import { analyzeRepository } from "./analyze.js";
-import { createIndexState, repositoryStatus, writeIndexState, type RepositoryStatus } from "./state.js";
+import { createIndexState, repositoryStatus, type RepositoryStatus } from "./state.js";
+import { writeJsonExports } from "../storage/json-export.js";
 import { scanRepository, resolveRepositoryRoot } from "../repository/repository.js";
 import { typescriptAdapter, isTypeScriptFile } from "../../adapters/language/typescript/index.js";
 import { rustAdapter } from "../../adapters/language/rust/index.js";
@@ -189,12 +190,7 @@ async function tryIsolatedIncremental(status: RepositoryStatus, previous: GraphD
   manifest.diagnosticCount = graph.diagnostics.length;
   manifest.analysisDuration = Math.round(performance.now() - started);
   await persistGraph(status.indexDirectory, graph, manifest, adapterRuns);
-  await Promise.all([
-    writeFile(path.join(status.indexDirectory, "exports", "graph.json"), `${JSON.stringify(graph, null, 2)}\n`),
-    writeFile(path.join(status.indexDirectory, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`),
-    writeFile(path.join(status.indexDirectory, "diagnostics.json"), `${JSON.stringify(graph.diagnostics, null, 2)}\n`),
-    writeIndexState(status.indexDirectory, state),
-  ]);
+  await writeJsonExports(status.indexDirectory, { graph, manifest, diagnostics: graph.diagnostics, state });
   const statusAfter = await repositoryStatus(status.repositoryRoot, status.indexDirectory);
   return {
     statusBefore: status,

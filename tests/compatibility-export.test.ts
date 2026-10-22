@@ -9,12 +9,17 @@ import{QueryService}from"../src/core/query/query-service.js";
 import{execFile}from"node:child_process";
 import{promisify}from"node:util";
 import{digest}from"../src/core/semantic/model.js";
+import{readCompatibilitySnapshot}from"../src/core/semantic/compatibility-snapshot.js";
+import{acceptedPrettyJson}from"./oracles/legacy-json-stage6-2.js";
 const cleanup:string[]=[];afterEach(async()=>{for(const p of cleanup.splice(0))await rm(p,{recursive:true,force:true})});
 async function fixture(){const root=await mkdtemp(path.join(os.tmpdir(),'prograph-compat-export-'));cleanup.push(root);const index=path.join(root,'index'),output=path.join(root,'output');const analyzed=await analyzeRepository(path.resolve('tests/fixtures/mixed'),{output:index});return{root,index,output,analyzed}}
 test('durable compatibility export is installed atomically and needs no source graph or repository reads',async()=>{
  const f=await fixture(),file=path.join(f.index,'semantic.sqlite'),before=digest(await readFile(file));
+ expect(await readFile(path.join(f.index,'exports/graph.json'),'utf8')).toBe(acceptedPrettyJson(f.analyzed.graph));expect(await readFile(path.join(f.index,'diagnostics.json'),'utf8')).toBe(acceptedPrettyJson(f.analyzed.graph.diagnostics));
+ const source=new Database(file,{readonly:true});let selected:ReturnType<typeof readCompatibilitySnapshot>;try{selected=source.transaction(()=>readCompatibilitySnapshot(source,f.analyzed.manifest.semanticCore!.snapshot!)).deferred()}finally{source.close()}
  await rm(path.join(f.index,'graph.sqlite'));await rm(path.join(f.index,'exports'),{recursive:true});await rm(path.join(f.index,'manifest.json'));
  const result=await exportCompatibilitySnapshot(f.index,f.output);expect((await lstat(f.output)).isSymbolicLink()).toBe(true);expect(result.counts).toMatchObject({nodes:f.analyzed.graph.nodes.length,edges:f.analyzed.graph.edges.length});
+ expect(await readFile(path.join(f.output,'exports/graph.json'),'utf8')).toBe(acceptedPrettyJson(selected.graph));expect(await readFile(path.join(f.output,'diagnostics.json'),'utf8')).toBe(acceptedPrettyJson(selected.graph.diagnostics));expect(result.graphHash).toBe(selected.hash);
  expect(digest(await readFile(file))).toBe(before);const q=new QueryService(path.join(f.output,'graph.sqlite'));try{expect(q.overview({scope:'full'})).toHaveProperty('counts.nodes',f.analyzed.graph.nodes.length);expect(q.searchSymbols('App').length).toBeGreaterThan(0);expect(q.architecture(100).nodes.length).toBeGreaterThan(0)}finally{q.close()}
  expect(JSON.parse(await readFile(path.join(f.output,'manifest.json'),'utf8'))).toHaveProperty('semanticCore.status','unavailable');
 },30000);
