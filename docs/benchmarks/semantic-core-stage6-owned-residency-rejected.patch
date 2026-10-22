@@ -1,33 +1,13 @@
 --- a/src/core/semantic/analysis-passes.ts
 +++ b/src/core/semantic/analysis-passes.ts
-@@ -19,6 +19,7 @@
- import { OwnedWriter, readOwnedProjection, writeSyntaxBase, normalizeProjection, OWNED_PASS_VERSION, type OwnedProjection } from "./owned-projection.js";
- import { partitionProjection } from "./projection-shards.js";
- import { partitionBoundaries } from "./boundary-shards.js";
+@@ -21,0 +22 @@
 +import { projectionLifetimes } from "./projection-lifetimes.js";
- 
- import { ADAPTER_VERSIONS } from "../analysis/state.js";
- import { ANALYSIS_PASS_VERSIONS } from "./analysis-versions.js";
-@@ -63,6 +64,7 @@
- 
- export async function deriveOwnedAnalysis(snapshot: RepositorySnapshot, source: AdapterResult, filename: string): Promise<OwnedAnalysis> {
-   const ordered = orderPasses(analysisPasses); // Validate before creating any run.
+@@ -65,0 +67 @@
 +  const lifetimes = projectionLifetimes(ordered);
-   const store = new SemanticStore(filename);
-   try {
-     store.bindSourceRoot(snapshot.repository.root, snapshot.sourceRoot);
-@@ -76,20 +78,25 @@
-     const base = writeSyntaxBase(store, snapshot, source, context, fingerprint, { inventory: sourceInventory(snapshot), semanticInventory: semanticInventory(snapshot), versions: digest(canonical(ADAPTER_VERSIONS)) });
-     baseDone({ runs: base.runs.length });
-     const baseProjection = base.projection;
+@@ -79 +81 @@
 -    const completed = new Map<string, OwnedProjection>(); const passOwners = new Map<string, number[]>(); const runs = [...base.runs]; const adapterRuns: AdapterRun[] = [];
 +    const completed = new Map<string, OwnedProjection>(); const passOwners = new Map<string, number[]>(); const passRuns = new Map<string, number>(); const runs = [...base.runs]; const adapterRuns: AdapterRun[] = [];
-     const final = new GraphBuilder();
-     for (const template of ordered) {
-       const passDone = beginAnalysisPhase(`owned-pass:${template.id}`);
-       const pass = { ...template, configurationFingerprint: digest(canonical(snapshot.config)) };
-       const input = new GraphBuilder(); input.merge(baseProjection.result);
-       const inputNodes = new Map(baseProjection.nodeClaims); const inputEdges = new Map(baseProjection.edgeClaims);
+@@ -86,5 +88,2 @@
 -      const ancestors = new Set<string>();
 -      const visit = (id: string) => { if (ancestors.has(id)) return; ancestors.add(id); ordered.find(p => p.id === id)!.dependencies.forEach(visit); };
 -      pass.dependencies.forEach(visit);
@@ -35,9 +15,9 @@
 -        const projection = completed.get(predecessor.id)!; input.merge(projection.result);
 +      for (const predecessor of lifetimes.ancestors.get(pass.id)!) {
 +        const projection = completed.get(predecessor)!; input.merge(projection.result);
-         projection.nodeClaims.forEach((claim, id) => inputNodes.set(id, claim)); projection.edgeClaims.forEach((claim, id) => inputEdges.set(id, claim));
+@@ -91,0 +91 @@
 +        if (lifetimes.lastConsumer.get(predecessor) === pass.id) completed.delete(predecessor);
-       }
+@@ -92,0 +93,7 @@
 +      // The final input now owns independent containers. No later pass needs the
 +      // normalized base view; the caller's original syntax graph is untouched.
 +      if (template === ordered.at(-1)) {
@@ -45,103 +25,47 @@
 +        baseProjection.nodeClaims.clear(); baseProjection.edgeClaims.clear();
 +      }
 +      const releaseInput = () => { input.nodes.clear(); input.edges.clear(); input.diagnostics.length = 0; };
-       measureAnalysisCollections(`owned-input:${pass.id}`, () => ({
-         retainedProjections: completed.size, retainedNodes: [...completed.values()].reduce((n, p) => n + p.result.nodes.length, 0),
-         retainedEdges: [...completed.values()].reduce((n, p) => n + p.result.edges.length, 0),
-@@ -109,7 +116,8 @@
-       // Current evaluation, including negative resolution, admits stable output shards.
-       // The index run owns the source-catalogue receipt and child admission selectors.
-       store.input(run, "source-catalogue", fingerprint);
+@@ -112 +119,2 @@
 -      const shards = pass.adapter ? partitionProjection(store, run, `analysis/pass:${pass.id}@${pass.version}`, pass, snapshot, provenance, base.fileClaims, inputNodes, [...input.nodes.values()], result, base.selector) : undefined;
 +      const shards = pass.adapter ? partitionProjection(store, run, `analysis/pass:${pass.id}@${pass.version}`, pass, snapshot, provenance, base.fileClaims, inputNodes, input.nodes, result, base.selector) : undefined;
 +      if (pass.adapter) { releaseInput(); inputEdges.clear(); }
-       const projection = shards ?? writer.write(result);
-       if (pass.id === "framework-react") {
-         const components = result.nodes.filter(node => node.kind === "react_component");
-@@ -128,10 +136,11 @@
-       });
-       if (pass.id === "boundary-binding") {
-         const boundaries = partitionBoundaries(store, run, `analysis/pass:${pass.id}@${pass.version}`, pass, snapshot, provenance, base.fileClaims, inputNodes, input.result(), inputEdges, base.selector);
+@@ -130,0 +139 @@
 +        releaseInput(); inputEdges.clear();
-         result.metadata = boundaries.metadata; passOwners.set(pass.id, boundaries.runs); runs.push(...boundaries.runs);
-       }
-       if (pass.id === "dependency-projection") {
+@@ -134 +143 @@
 -        const nodes = new Map(input.nodes);
 +        const nodes = input.nodes;
-         let count = 0; let plannedBytes = 0;
-         const shards = new Map<string, Array<{ input: Omit<FactInput, "context" | "provenance" | "supports">; support: string }>>();
-         const dependency = (file: string, input: Omit<FactInput, "context" | "provenance" | "supports">, support: string) => {
-@@ -149,7 +158,7 @@
-               value: { from, to, kind: edge.kind, legacyId: edge.id }, confidence: edge.confidence }, inputEdges.get(edge.id)!);
-           }
-         });
+@@ -152 +161 @@
 -        for (const boundaryRun of passOwners.get("boundary-binding") ?? [completed.get("boundary-binding")!.run]) {
 +        for (const boundaryRun of passOwners.get("boundary-binding") ?? [passRuns.get("boundary-binding")!]) {
-           let after = 0;
-           while (true) {
-             const rows = store.sql(`SELECT c.id,c.key,c.confidence,a.key AS subject,b.key AS object,s.file AS source,t.file AS target FROM sc_owned o
-@@ -166,8 +175,13 @@
-             after = rows.at(-1)!.id;
-           }
-         }
+@@ -168,0 +178,3 @@
 +        // Plans contain IDs, file names and support keys, not graph payloads.
 +        // Release the last input before shard fingerprints/writes allocate more.
 +        edges.length = 0; releaseInput(); inputEdges.clear();
-         measureAnalysisCollections("owned-dependencies:planned", () => ({ facts: count, encodedBytes: plannedBytes, files: shards.size, inputNodes: input.nodes.size, inputEdges: input.edges.size }));
+@@ -170 +182,3 @@
 -        for (const [file, facts] of [...shards].sort(([a], [b]) => a.localeCompare(b))) {
 +        const ownershipShards = shards.size;
 +        for (const file of [...shards.keys()].sort((a, b) => a.localeCompare(b))) {
 +          const facts = shards.get(file)!; shards.delete(file);
-           facts.sort((a, b) => canonical(a).localeCompare(canonical(b)));
-           const inputFingerprint = digest(canonical([context, passContract(pass), file, facts]));
-           const partition = `analysis/pass:${pass.id}@${pass.version}/file:${file}`;
-@@ -184,7 +198,7 @@
-           });
-           store.seal(shard, { ...passContract(pass), status: "partial", file, metadata: { dependencies: facts.length } }); runs.push(shard);
-         }
+@@ -187 +201 @@
 -        result.metadata = { dependencies: count, ownershipShards: shards.size };
 +        result.metadata = { dependencies: count, ownershipShards };
-       }
-       const failure = result.diagnostics.some(diagnostic => diagnostic.code === "adapter-failure");
-       if (failure) throw Error(`Owned pass ${pass.id} failed: ${result.diagnostics.map(item => item.message).join("; ")}`);
-@@ -209,8 +223,10 @@
-         const bucket = diagnoses.get(canonical(diagnostic)), value = bucket?.values[bucket.next++];
-         if (!value) throw Error("Sealed diagnostic payload differs from pass output"); return value;
-       });
+@@ -212 +226,2 @@
 -      completed.set(pass.id, sealed);
 +      if (lifetimes.lastConsumer.has(pass.id)) completed.set(pass.id, sealed);
 +      passRuns.set(pass.id, run);
-       final.merge(sealed.result); runs.push(run);
+@@ -213,0 +229 @@
 +      inputNodes.clear(); inputEdges.clear(); releaseInput();
-       measureAnalysisCollections(`owned-retained:${pass.id}`, () => ({
-         retainedProjections: completed.size, retainedNodes: [...completed.values()].reduce((n, p) => n + p.result.nodes.length, 0),
-         retainedEdges: [...completed.values()].reduce((n, p) => n + p.result.edges.length, 0),
 --- a/src/core/semantic/projection-shards.ts
 +++ b/src/core/semantic/projection-shards.ts
-@@ -10,12 +10,12 @@
-  */
- export function partitionProjection(store: SemanticStore, index: number, partition: string, pass: PassContract,
-   snapshot: RepositorySnapshot, provenance: Provenance, fileClaims: Map<string, string>, inputNodes: Map<string, string>,
+@@ -13 +13 @@
 -  input: GraphNode[], result: AdapterResult, sourceSelector: { key: string; digest: string }) {
 +  input: ReadonlyMap<string, GraphNode> | GraphNode[], result: AdapterResult, sourceSelector: { key: string; digest: string }) {
-   // Match the existing JSON compatibility payload contract before fingerprinting.
-   // Optional undefined fields must not become a different identity from persisted data.
-   result = normalizeProjection(result);
-   const outputNodes = new Map(result.nodes.map(node => [node.id, node]));
+@@ -18 +18 @@
 -  const nodes = new Map([...input, ...result.nodes].map(node => [node.id, node]));
 +  const inputNodesById = Array.isArray(input) ? new Map(input.map(node => [node.id, node])) : input;
-   const groups = new Map<string, { nodes: GraphNode[]; edges: GraphEdge[]; diagnostics: Diagnostic[] }>();
-   const own = (file: string | undefined) => file && snapshot.fileContents.has(file) ? file : "";
-   const group = (file: string) => { let value = groups.get(file); if (!value) { value = { nodes: [], edges: [], diagnostics: [] }; groups.set(file, value); } return value; };
-@@ -32,7 +32,7 @@
-   for (const node of result.nodes) group(own(node.file)).nodes.push(node);
-   const edgeOwners = new Map<string, string>();
-   for (const edge of result.edges) {
+@@ -35 +35 @@
 -    const file = own(edge.evidence.find(e => e.file && snapshot.fileContents.has(e.file))?.file ?? nodes.get(edge.source)?.file);
 +    const file = own(edge.evidence.find(e => e.file && snapshot.fileContents.has(e.file))?.file ?? (outputNodes.get(edge.source) ?? inputNodesById.get(edge.source))?.file);
-     group(file).edges.push(edge); edgeOwners.set(edge.id, file);
-   }
-   for (const diagnostic of result.diagnostics) group(own(diagnostic.file)).diagnostics.push(diagnostic);
 --- /dev/null
 +++ b/src/core/semantic/projection-lifetimes.ts
 @@ -0,0 +1,20 @@

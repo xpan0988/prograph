@@ -1,8 +1,9 @@
 # Stage 6.4 — owned analysis residency
 
-Status: **candidate rejected; accepted extraction retained**. Local and CI
-qualification of the retained diagnostics/oracles is pending. This milestone
-has not established a lower production peak or qualified either scale gate.
+Status: **Stage 6.4 closed with the candidate rejected; accepted extraction retained**.
+The retained diagnostics/oracles passed complete local qualification and actual
+Node 20/22/24 CI. This milestone has not established a lower production peak or
+qualified either scale gate.
 
 The bounded experiment is finished. No further performance run is planned, and
 no other optimization candidate is implemented. The rejected implementation is
@@ -19,6 +20,16 @@ The initial `main` worktree was clean at
 [CI run 39730009001](https://github.com/xpan0988/prograph/actions/runs/39730009001)
 completed successfully before changes. The accepted sources were archived and
 compiled with the same locked dependencies for an independent oracle.
+
+Retained diagnostic/oracle implementation:
+`9f1def17b5ecb402e09a3e07e806ec4928f5e221`. All three jobs in
+[CI run 39750781281](https://github.com/xpan0988/prograph/actions/runs/39750781281)
+passed on the first attempt for that exact SHA: Node 20.20.2 (job 119730515884),
+22.23.3 (119730515981) and 24.22.0 (119730515572). Completed logs show 306 passing
+tests, execution of the three new accepted-runtime oracles, typechecks, full
+build and the strict recovery/evidence verifier. Artifact digests are recorded
+in the receipt. The final closure commit changes documentation/evidence only;
+runtime, tests, scripts, workflow and build/package Git objects remain identical.
 
 Stage 6.3's 58.864 s / 1,330,896 KiB sample is historical context. The new
 same-harness pair and the one permitted confirmatory control give:
@@ -66,6 +77,13 @@ execution order. `GraphBuilder.merge` retains the supplied node/edge objects;
 preserve the Map's original position and take the last payload. Changing this
 order or winner behavior would change accepted output.
 
+Earlier iterations' input builders and claim maps are not stored in `completed`
+or `final`. After their iteration exits, no persistent production owner of those
+containers was identified. They can overlap later allocations while awaiting GC;
+this is not twelve strongly retained complete input graphs. End-of-pass count
+checkpoints observe locals before scope exit. The confirmed long-lived roots are
+the base, completed output views, final accumulator and outer source graph.
+
 `completed` retains each sealed, rehydrated pass projection and claim maps.
 `final` separately accumulates references to its node/edge/diagnostic payloads.
 At the final dependency pass, the cache holds eleven projections: 2,216 node
@@ -73,6 +91,15 @@ entries, 5,764 edge entries and 7,980 claim-map entries. The final graph has
 2,216 nodes and 5,740 edges because 24 edge entries overlap by ID; none may be
 silently discarded before winner selection. At return the original cache still
 has twelve projections, including the empty dependency projection.
+
+A complete post-run SQL payload-size query measures **69,730,705 UTF-8 bytes**
+for the syntax projection and **4,792,280 bytes** for all derived GraphNode,
+GraphEdge and diagnostic payloads combined. The receipt records every pass
+separately, including large `payloadEntity` bodies. These serialized footprints
+are not retained-heap sizes: wrappers, strings, maps, sharing and garbage differ.
+They nevertheless show why the small completed-output cache is a weaker peak
+target than the complete base and transient encodings. Boundary/dependency
+semantic facts remain owned even when their GraphNode/Edge projection is empty.
 
 All preceding production passes are transitive ancestors of the last dependency
 pass. Thus dropping projections only after each whole pass's final consumer
@@ -98,8 +125,8 @@ The existing million-row / 128-MiB work bounds are unchanged.
 
 Writers also reference `RepositorySnapshot`, including the complete source map.
 This is shared ownership, not a separate source-text copy per writer. The frozen
-selected source text is 7,452,350 bytes. Node/edge payloads are ordinary JSON
-observations, not retained compiler ASTs. Compiler/Tree-sitter allocations may
+selected source text is 7,452,350 bytes. The normalized base contains JSON
+payloads rather than native AST references. Compiler/Tree-sitter allocations may
 survive elsewhere or await collection; this investigation does not infer their
 reachability from RSS.
 
@@ -191,7 +218,8 @@ fields, diagnostics, cached shards and a removed dependency. An additional
 100 seeded DAGs matched the old recursive visibility algorithm and never
 released a projection before its transitive final consumer. The candidate's
 focused pass suite also exercised alternative support and removal. All passed
-before the candidate was reverted.
+before the candidate was reverted. The full local suite and CI qualify only
+the retained runtime and diagnostics, not the rejected patch.
 
 The retained oracle tests still compare the accepted implementation independently:
 complete sealed facts/claims/provenance, occurrence/source data, groups/supports,
@@ -201,6 +229,14 @@ incremental rebuild; old snapshot reads; pass failure; and SIGKILL after final
 input assembly followed by successful restart. The source graph is asserted
 unchanged. The rejected lifetime scheduler and its scheduler-only test are not
 shipped as active code.
+
+No production semantic regression or safe-fix prerequisite was found. Oracle
+development initially supplied an unsupported `undefined` source identity and
+an empty SQL-view sort key; those fixture/helper defects were corrected before
+qualification. The accepted extractor also rejected the invalid identity. The
+complete SQL checker then exposed clock-derived report keys and the non-clock
+UUID described below; those observations were handled explicitly, without
+dropping graph fields or weakening accepted tests.
 
 For the full frozen corpus, all graph and diagnostics bytes match:
 
@@ -229,9 +265,21 @@ semantic mismatch or accept the rejected optimization.
 
 Source freshness is `fresh`, with 4,644 observed semantic inputs checked and no
 changed inputs. The existing complete compatibility and semantic witnesses are
-retained. Full local regression, recovery, typecheck/build and exact-commit CI
-results will be recorded here after execution. No assertion or acceptance gate
-has been disabled or relaxed.
+retained. Complete local qualification passed **306/306 tests in 39 files, zero pending**,
+with all real-provider profiles enabled, one worker and oracle seed `0x6a31`.
+The full suite ran once (3,137.872 s including its Node compilation); its 18
+seven-language rebuild comparisons, actual prior-writer/report/authority
+upgrades, pinned history/rollback, source freshness/input invalidation, provider
+replay/CLI, alternative support and Agent-query contracts all passed. The
+complete production Node/UI build, standalone Node/UI typecheck and strict
+evidence verifier passed. All four recovery points exited at the expected
+injected fault, retained the baseline and passed integrity checks; corruption
+was refused without changing bytes. The exact implementation CI matrix also
+passed, as linked above. No assertion or acceptance gate has been disabled or
+relaxed. Live semantic writer observations remained WAL, `synchronous=2`
+(FULL), `cache_size=-16000`, `mmap_size=0`, 4096-byte pages on both sequential
+connections. These are settings, not native resident-memory measurements; the
+read-only verification connection cannot witness historical writer allocation.
 
 ## Retained diagnostics and reproducibility
 
@@ -274,12 +322,22 @@ node scripts/semantic-owned-witness.mjs CONTROL_INDEX CANDIDATE_INDEX SQL.json
 
 The first/confirmatory controls use accepted source plus the retained numeric
 checkpoints. The rejected patch applies on top of those checkpoints, as checked
-with `git apply --check`; compile before the single candidate measurement.
+with `git apply --unidiff-zero --check`; compile before the single candidate measurement.
 Its same corpus and fresh-output command used `phases`; the separate allocation
 run used `memory`. Use independent output directories, serial processes and the
 same heap flag. Do not use an existing index as a fresh baseline. The recorded
 four-run sequence is complete; these instructions do not authorize another
 exploratory benchmark loop.
+
+Full qualification uses the pinned setup and all `PROGRAPH_TEST_*` environments
+in [the CI workflow](../.github/workflows/semantic-core.yml), including real
+managed/Rust tools and all five compiled baseline selections. The local run
+used the same restored profiles as Stage 6.3; environment paths and receipt
+hashes are recorded here. Run `npm test -- --maxWorkers=1` once with those
+environments, `npm run typecheck`, `npm run build`, then
+`node scripts/semantic-recovery.mjs` and `node scripts/verify-ci-evidence.mjs`
+with the produced evidence paths. Missing provider evidence is a verifier
+failure, not a qualified test skip.
 
 ## Remaining work and limits
 

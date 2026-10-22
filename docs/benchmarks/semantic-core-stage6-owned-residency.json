@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "status": "candidate rejected; qualification pending",
+  "status": "Stage 6.4 closed; candidate rejected, accepted extraction retained; diagnostics/oracles locally and CI qualified",
   "baseline": {
     "runtime": "1790cf4c2a9ec017d92023bfa75ecfd672ac993a",
     "acceptance": "97bcab797c4c5f838f87bfcfd5e298bbaa6cef0b",
@@ -10,8 +10,9 @@
   "candidate": {
     "accepted": false,
     "patch": "semantic-core-stage6-owned-residency-rejected.patch",
-    "patchSha256": "934a12f8f5dd9a4ac6bdba69f55b04c5ff969daa134aae65fb3f6c0538aa249e",
-    "reason": "No defensible production peak RSS improvement; both ordinary controls lower than candidate. End-phase heap/allocation reclamation is not peak proof."
+    "patchSha256": "b8c4f4cf95d5dee8be13f7d764eb3927cabc135392cce64bea99fcfc0540ee9d",
+    "reason": "No defensible production peak RSS improvement; both ordinary controls lower than candidate. End-phase heap/allocation reclamation is not peak proof.",
+    "patchFormat": "zero-context unified diff; git apply --unidiff-zero"
   },
   "environment": {
     "node": "v25.9.0",
@@ -25,7 +26,8 @@
       "OS caches not flushed",
       "Desktop browser and other applications active",
       "Substantial memory pressure/compression and different initial heaps; no subsystem attribution from RSS"
-    ]
+    ],
+    "osBuild": "25F84"
   },
   "corpus": {
     "verifiedAt": "2026-10-22T08:28:01.024Z",
@@ -1535,7 +1537,36 @@
           "maxRssKiB": 1041104
         }
       ],
-      "rawReportSha256": "f7f7ba3ba46835c16295841674fdb059a384a7e905b7381f2c82899bf0147dcd"
+      "rawReportSha256": "f7f7ba3ba46835c16295841674fdb059a384a7e905b7381f2c82899bf0147dcd",
+      "startedAt": "2026-10-22T08:28:19.874Z",
+      "endedAt": "2026-10-22T08:29:19.284Z",
+      "mode": "phases",
+      "node": "v25.9.0",
+      "flags": [
+        "--max-old-space-size=2048"
+      ],
+      "sqliteConnections": [
+        {
+          "atMs": 4462.102417,
+          "filename": "/private/tmp/prograph-stage6-4-20261022/baseline-index/semantic.sqlite",
+          "journal": "wal",
+          "synchronous": 2,
+          "cacheSize": -16000,
+          "mmapSize": 0,
+          "pageSize": 4096
+        },
+        {
+          "atMs": 29679.463792,
+          "filename": "/private/tmp/prograph-stage6-4-20261022/baseline-index/semantic.sqlite",
+          "journal": "wal",
+          "synchronous": 2,
+          "cacheSize": -16000,
+          "mmapSize": 0,
+          "pageSize": 4096
+        }
+      ],
+      "methodCalls": {},
+      "diagnosticErrors": []
     },
     "optimized": {
       "kind": "rejected-candidate",
@@ -2885,7 +2916,36 @@
           "maxRssKiB": 1177504
         }
       ],
-      "rawReportSha256": "de0948f6c2888241cd02055617961dea5b2be91e93cc738dde1e07eb48f6cfd9"
+      "rawReportSha256": "de0948f6c2888241cd02055617961dea5b2be91e93cc738dde1e07eb48f6cfd9",
+      "startedAt": "2026-10-22T08:34:03.822Z",
+      "endedAt": "2026-10-22T08:35:02.354Z",
+      "mode": "phases",
+      "node": "v25.9.0",
+      "flags": [
+        "--max-old-space-size=2048"
+      ],
+      "sqliteConnections": [
+        {
+          "atMs": 4220.367875,
+          "filename": "/private/tmp/prograph-stage6-4-20261022/optimized-index/semantic.sqlite",
+          "journal": "wal",
+          "synchronous": 2,
+          "cacheSize": -16000,
+          "mmapSize": 0,
+          "pageSize": 4096
+        },
+        {
+          "atMs": 28613.099,
+          "filename": "/private/tmp/prograph-stage6-4-20261022/optimized-index/semantic.sqlite",
+          "journal": "wal",
+          "synchronous": 2,
+          "cacheSize": -16000,
+          "mmapSize": 0,
+          "pageSize": 4096
+        }
+      ],
+      "methodCalls": {},
+      "diagnosticErrors": []
     },
     "confirm-baseline": {
       "kind": "accepted-plus-diagnostics",
@@ -4235,7 +4295,36 @@
           "maxRssKiB": 1173856
         }
       ],
-      "rawReportSha256": "51bb13141b7febc600a96190825d3793bae1106d518a5295c1cf83a234249c16"
+      "rawReportSha256": "51bb13141b7febc600a96190825d3793bae1106d518a5295c1cf83a234249c16",
+      "startedAt": "2026-10-22T08:37:00.506Z",
+      "endedAt": "2026-10-22T08:37:59.697Z",
+      "mode": "phases",
+      "node": "v25.9.0",
+      "flags": [
+        "--max-old-space-size=2048"
+      ],
+      "sqliteConnections": [
+        {
+          "atMs": 4278.927875,
+          "filename": "/private/tmp/prograph-stage6-4-20261022/confirm-baseline-index/semantic.sqlite",
+          "journal": "wal",
+          "synchronous": 2,
+          "cacheSize": -16000,
+          "mmapSize": 0,
+          "pageSize": 4096
+        },
+        {
+          "atMs": 29950.173125,
+          "filename": "/private/tmp/prograph-stage6-4-20261022/confirm-baseline-index/semantic.sqlite",
+          "journal": "wal",
+          "synchronous": 2,
+          "cacheSize": -16000,
+          "mmapSize": 0,
+          "pageSize": 4096
+        }
+      ],
+      "methodCalls": {},
+      "diagnosticErrors": []
     },
     "memory": {
       "kind": "rejected-candidate-allocation-profile",
@@ -5730,7 +5819,46 @@
             "owned-projection": 11562992
           }
         }
-      ]
+      ],
+      "startedAt": "2026-10-22T08:39:26.724Z",
+      "endedAt": "2026-10-22T08:40:28.173Z",
+      "mode": "memory",
+      "node": "v25.9.0",
+      "flags": [
+        "--max-old-space-size=2048"
+      ],
+      "sqliteConnections": [
+        {
+          "atMs": 4599.494459,
+          "filename": "/private/tmp/prograph-stage6-4-20261022/memory-index/semantic.sqlite",
+          "journal": "wal",
+          "synchronous": 2,
+          "cacheSize": -16000,
+          "mmapSize": 0,
+          "pageSize": 4096
+        },
+        {
+          "atMs": 29872.094167,
+          "filename": "/private/tmp/prograph-stage6-4-20261022/memory-index/semantic.sqlite",
+          "journal": "wal",
+          "synchronous": 2,
+          "cacheSize": -16000,
+          "mmapSize": 0,
+          "pageSize": 4096
+        }
+      ],
+      "methodCalls": {
+        "graphResults": 35,
+        "graphArraySlots": 3041049,
+        "sql": 6719601,
+        "begin": 1193,
+        "seal": 1193,
+        "batch": 3343,
+        "addEntity": 235199,
+        "addFact": 234946,
+        "addOccurrence": 41438
+      },
+      "diagnosticErrors": []
     }
   },
   "equivalence": {
@@ -6443,9 +6571,565 @@
       },
       "stale": false,
       "state": "fresh"
+    },
+    "acceptedWitnesses": {
+      "baseline": {
+        "format": 1,
+        "sourceStats": {
+          "copiedFiles": 421,
+          "copiedInventory": "046e71411c366bd85acffc12a83cfc80590016e0223629aac9ac11f454ab6e6b",
+          "inventory": "729c1eb199f09ccd9739634699bdc004388402544fcc8806c674ba471b6365b8",
+          "selectedFiles": 315,
+          "selectedBytes": 7452350,
+          "codeFiles": 261,
+          "codeBytes": 6535832,
+          "physicalCodeLines": 173142,
+          "byExtension": {
+            ".py": 6,
+            ".rs": 174,
+            ".ts": 57,
+            ".tsx": 24
+          }
+        },
+        "checksums": {
+          "visibleClaims": {
+            "count": 234946,
+            "sha256": "5374232534de8590dee9761be2541c12725764ab3ef9d7d4c50fe676e450e801"
+          },
+          "occurrences": {
+            "count": 41438,
+            "sha256": "aba2d48774215ab7bf657ba35ab8ee752f1c32a030817a674960fe86d3b60c70"
+          },
+          "calls": {
+            "count": 3757,
+            "sha256": "7235096d392589fba3b66291667c3dc25b3d90e5f2d4a40c55a42082b44cae49"
+          },
+          "scopeRows": {
+            "count": 197892,
+            "sha256": "49e71280d00580d755223ae02563ef640f0e9942e3102e2821ada42d08647ed5"
+          },
+          "boundaries": {
+            "count": 393,
+            "sha256": "f5d82fc62246a88f0ac521be436c49b3d9536f6c1595eb08158dcb37af57277b"
+          },
+          "edges": {
+            "count": 78396,
+            "sha256": "a963166a27ff775cfe92a162b34b32fa6324956f71fbf3013ff114550d7abf8a"
+          },
+          "diagnostics": {
+            "count": 46940,
+            "sha256": "50e7f3ff55301c10941d4d2a4899fad4277f0d45e6c69f8e21abe000fa79b4e3"
+          },
+          "nodes": {
+            "count": 40640,
+            "sha256": "f00be092f9762093f6272319e0ebc56cb906d47453c34b75bf54d621f2a3d20f"
+          }
+        },
+        "sqlite": {
+          "version": "3.53.1",
+          "integrity": "ok",
+          "foreignKeys": [],
+          "journal": "wal",
+          "readConnectionSynchronous": 1,
+          "pageSize": 4096,
+          "pages": 221795,
+          "connectionDefaultCacheSize": -16000,
+          "connectionDefaultMmapSize": 0,
+          "counts": {
+            "facts": 234946,
+            "claims": 234946,
+            "entities": 217234,
+            "occurrences": 41438,
+            "symbols": 9355,
+            "runs": 1193,
+            "owned": 234946,
+            "groups": 20121,
+            "supports": 57693,
+            "projection_rows": 166065,
+            "inputs": 7054
+          }
+        },
+        "jsonWitness": {
+          "nodes": "34ccc16c70eabc69f4d67ef8bf6b80b9f3ef82c0c008200661b397fb8e217704",
+          "edges": "77a75fd0b5437b9ccec8c4c34a1e2d1efc69454577c25a3fbdcc26f78612d3d4",
+          "diagnostics": "41a1c5ff8aebda83ee607abf06ddd06dd2088c5d9404d6b215ebfedfadd701fa"
+        },
+        "bytes": {
+          "semantic.sqlite": 908472320,
+          "graph.sqlite": 197582848,
+          "exports/graph.json": 102548074
+        },
+        "acceptedChecksumsEqual": true,
+        "legacySqliteEqual": true
+      },
+      "candidate": {
+        "format": 1,
+        "sourceStats": {
+          "copiedFiles": 421,
+          "copiedInventory": "046e71411c366bd85acffc12a83cfc80590016e0223629aac9ac11f454ab6e6b",
+          "inventory": "729c1eb199f09ccd9739634699bdc004388402544fcc8806c674ba471b6365b8",
+          "selectedFiles": 315,
+          "selectedBytes": 7452350,
+          "codeFiles": 261,
+          "codeBytes": 6535832,
+          "physicalCodeLines": 173142,
+          "byExtension": {
+            ".py": 6,
+            ".rs": 174,
+            ".ts": 57,
+            ".tsx": 24
+          }
+        },
+        "checksums": {
+          "visibleClaims": {
+            "count": 234946,
+            "sha256": "5374232534de8590dee9761be2541c12725764ab3ef9d7d4c50fe676e450e801"
+          },
+          "occurrences": {
+            "count": 41438,
+            "sha256": "aba2d48774215ab7bf657ba35ab8ee752f1c32a030817a674960fe86d3b60c70"
+          },
+          "calls": {
+            "count": 3757,
+            "sha256": "7235096d392589fba3b66291667c3dc25b3d90e5f2d4a40c55a42082b44cae49"
+          },
+          "scopeRows": {
+            "count": 197892,
+            "sha256": "49e71280d00580d755223ae02563ef640f0e9942e3102e2821ada42d08647ed5"
+          },
+          "boundaries": {
+            "count": 393,
+            "sha256": "f5d82fc62246a88f0ac521be436c49b3d9536f6c1595eb08158dcb37af57277b"
+          },
+          "edges": {
+            "count": 78396,
+            "sha256": "a963166a27ff775cfe92a162b34b32fa6324956f71fbf3013ff114550d7abf8a"
+          },
+          "diagnostics": {
+            "count": 46940,
+            "sha256": "50e7f3ff55301c10941d4d2a4899fad4277f0d45e6c69f8e21abe000fa79b4e3"
+          },
+          "nodes": {
+            "count": 40640,
+            "sha256": "f00be092f9762093f6272319e0ebc56cb906d47453c34b75bf54d621f2a3d20f"
+          }
+        },
+        "sqlite": {
+          "version": "3.53.1",
+          "integrity": "ok",
+          "foreignKeys": [],
+          "journal": "wal",
+          "readConnectionSynchronous": 1,
+          "pageSize": 4096,
+          "pages": 221795,
+          "connectionDefaultCacheSize": -16000,
+          "connectionDefaultMmapSize": 0,
+          "counts": {
+            "facts": 234946,
+            "claims": 234946,
+            "entities": 217234,
+            "occurrences": 41438,
+            "symbols": 9355,
+            "runs": 1193,
+            "owned": 234946,
+            "groups": 20121,
+            "supports": 57693,
+            "projection_rows": 166065,
+            "inputs": 7054
+          }
+        },
+        "jsonWitness": {
+          "nodes": "34ccc16c70eabc69f4d67ef8bf6b80b9f3ef82c0c008200661b397fb8e217704",
+          "edges": "77a75fd0b5437b9ccec8c4c34a1e2d1efc69454577c25a3fbdcc26f78612d3d4",
+          "diagnostics": "41a1c5ff8aebda83ee607abf06ddd06dd2088c5d9404d6b215ebfedfadd701fa"
+        },
+        "bytes": {
+          "semantic.sqlite": 908472320,
+          "graph.sqlite": 197582848,
+          "exports/graph.json": 102548074
+        },
+        "acceptedChecksumsEqual": true,
+        "legacySqliteEqual": true
+      }
     }
   },
   "validation": {
-    "status": "running"
+    "local": {
+      "tests": 306,
+      "files": 39,
+      "pending": 0,
+      "fullSuiteRuns": 1,
+      "steps": [
+        {
+          "label": "full-tests",
+          "command": "npm",
+          "args": [
+            "test",
+            "--",
+            "--maxWorkers=1",
+            "--reporter=default",
+            "--reporter=json",
+            "--outputFile=/private/tmp/prograph-stage6-4-20261022/test-results.json"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 3137872
+        },
+        {
+          "label": "build",
+          "command": "npm",
+          "args": [
+            "run",
+            "build"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 8694
+        },
+        {
+          "label": "recovery",
+          "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node",
+          "args": [
+            "scripts/semantic-recovery.mjs",
+            "/private/tmp/prograph-stage6-4-20261022/recovery.json"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 368
+        },
+        {
+          "label": "verifier",
+          "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node",
+          "args": [
+            "scripts/verify-ci-evidence.mjs",
+            "/private/tmp/prograph-stage6-4-20261022/test-results.json",
+            "/private/tmp/prograph-stage6-4-20261022/recovery.json",
+            "/private/tmp/prograph-stage6-4-20261022/oracle.json",
+            "/private/tmp/prograph-stage6-4-20261022/upgrade.json",
+            "/private/tmp/prograph-stage6-4-20261022/retention-upgrade.json",
+            "/private/tmp/prograph-stage6-4-20261022/authority-upgrade.json"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 55
+        }
+      ],
+      "standaloneTypecheck": {
+        "command": "npm run typecheck",
+        "exitCode": 0
+      },
+      "oracle": {
+        "seed": 27185,
+        "complete": true,
+        "checks": 18,
+        "expected": 18
+      },
+      "recovery": {
+        "node": "v25.9.0",
+        "probes": [
+          {
+            "point": "before-seal",
+            "exitCode": 57,
+            "activeSnapshot": 1,
+            "visible": [
+              "callee"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          },
+          {
+            "point": "before-publish",
+            "exitCode": 57,
+            "activeSnapshot": 1,
+            "visible": [
+              "callee"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          },
+          {
+            "point": "during-publish",
+            "exitCode": 57,
+            "activeSnapshot": 1,
+            "visible": [
+              "callee"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          },
+          {
+            "point": "after-publish",
+            "exitCode": 57,
+            "activeSnapshot": 2,
+            "visible": [
+              "other"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          }
+        ],
+        "corruption": {
+          "refused": true,
+          "unchanged": true
+        }
+      },
+      "focused": {
+        "candidateOwnedTests": 4,
+        "candidatePassTests": 9,
+        "retainedOwnedTests": 3,
+        "diagnosticTests": 4
+      },
+      "receiptSha256": {
+        "test-results.json": "697422413bef981bb10c98aa4f5d2b97307e86e957892fe83a60e68154050471",
+        "oracle.json": "2f5a39ab51535ed38623d9f09b1a8e34baa362d3dead7b37cd82cf14f4e8f0e6",
+        "upgrade.json": "0e153410e1be79e2b7eeebb413a7af034209b47ba86bb58ba2cf7879e56af5e8",
+        "retention-upgrade.json": "2b380ea86c3c295b6630ed3bce8bf51a94cc1deb5dfacc2ba250a65c260e33c1",
+        "authority-upgrade.json": "62d11dcf00339054581359507d86896e68f0c4fdfecf7b3f56000297add69ba9",
+        "recovery.json": "abdbd8216328c10191ebcca64958a04fb66950ca34c04fef898b274ad8661ba9",
+        "validation-steps.json": "5a69cb7571b4608f79f1a60f3300395c4e5dc93ac34e14d3d9031d4a77ad6e53",
+        "typecheck.log": "b6afb03e277309bb5c81c26ee5941d9f67fd438e350389dfffa093d60b117431",
+        "focused-owned-final.json": "1dfc7f884f5d5c35c2e8e7d191e171ef2357edf3448103d411a4d86a3a36e780",
+        "focused-tests.json": "123f520071c438343c53ee8622775e9c6e0b0567f6342b39baf0814a8d03603b",
+        "retained-owned-final.json": "8a03f5b4f8d3aaa1bca791c2be75aaee83eb1329faa2947c8fc09bbc6f6c2eb0"
+      },
+      "environments": {
+        "PROGRAPH_TEST_OWNED_BASELINE_RUNTIME": "/private/tmp/prograph-stage6-4-20261022/accepted",
+        "PROGRAPH_TEST_MANAGED_PROFILES": "/private/tmp/prograph-stage6-2-20261022/tools/profiles-restored.json",
+        "PROGRAPH_TEST_RUST_ANALYZER": "/private/tmp/prograph-stage6-2-20261022/tools/rust-analyzer",
+        "PROGRAPH_TEST_RUST_TOOLCHAIN": "/Users/xiyuanpan/.rustup/toolchains/stable-aarch64-apple-darwin/bin",
+        "PROGRAPH_TEST_ORACLE_SEED": "0x6a31",
+        "PROGRAPH_TEST_BASELINE_RUNTIME": "/private/tmp/prograph-stage6-2-20261022/previous-writers/accepted-JCfbDm",
+        "PROGRAPH_TEST_REPORT_BASELINE_RUNTIME": "/private/tmp/prograph-stage6-2-20261022/previous-writers/accepted-BRb6X4",
+        "PROGRAPH_TEST_RETENTION_BASELINE_RUNTIME": "/private/tmp/prograph-stage6-2-20261022/previous-writers/accepted-2ATMOd",
+        "PROGRAPH_TEST_AUTHORITY_BASELINE_RUNTIME": "/private/tmp/prograph-stage6-2-20261022/previous-writers/accepted-2gjbVn"
+      }
+    },
+    "oracleDevelopment": {
+      "initialFocusedReport": "focused-tests.json",
+      "reportIncludes": "9 candidate pass tests and 4 diagnostic tests passed; 2 provisional oracle tests failed for invalid source-undefined fixture and empty ORDER BY for SQL view; both corrected and final oracles passed.",
+      "productionSemanticFixes": 0,
+      "sqlComparison": "Authenticate and compare clockless reports and references; retain raw non-clock legacy UUID difference as unequal."
+    }
+  },
+  "implementation": {
+    "commit": "9f1def17b5ecb402e09a3e07e806ec4928f5e221",
+    "scope": "Only opt-in diagnostics/oracles/evidence. Rejected optimization reverted before commit.",
+    "ci": {
+      "run": 39750781281,
+      "url": "https://github.com/xpan0988/prograph/actions/runs/39750781281",
+      "status": "completed",
+      "jobs": [
+        {
+          "node": 20,
+          "job": 119730515884,
+          "shaPresent": true,
+          "logCharacters": 92026,
+          "lines": [
+            "2026-10-22T08:50:40.6387768Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +9f1def17b5ecb402e09a3e07e806ec4928f5e221:refs/remotes/origin/main",
+            "2026-10-22T08:50:41.7844080Z  * [new ref]         9f1def17b5ecb402e09a3e07e806ec4928f5e221 -> origin/main",
+            "2026-10-22T08:50:41.8505231Z 9f1def17b5ecb402e09a3e07e806ec4928f5e221",
+            "2026-10-22T08:50:46.1946938Z node: v20.20.2",
+            "2026-10-22T08:55:41.1368058Z  ✓ tests/owned-residency.test.ts (3 tests) 15174ms",
+            "2026-10-22T09:22:33.9046744Z       Tests  306 passed (306)",
+            "2026-10-22T09:22:48.0627965Z Verified 306 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, atomic default authority, verified migration rollback/pins and old-reader export, complete build, four recovery probes and corruption refusal"
+          ],
+          "version": "v20.20.2",
+          "conclusion": "success",
+          "passedTests": 306,
+          "ownedOracleTests": 3,
+          "buildTypecheckRecoveryVerifier": "passed"
+        },
+        {
+          "node": 22,
+          "job": 119730515981,
+          "shaPresent": true,
+          "logCharacters": 90825,
+          "lines": [
+            "2026-10-22T08:50:38.4143131Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +9f1def17b5ecb402e09a3e07e806ec4928f5e221:refs/remotes/origin/main",
+            "2026-10-22T08:50:38.9110776Z  * [new ref]         9f1def17b5ecb402e09a3e07e806ec4928f5e221 -> origin/main",
+            "2026-10-22T08:50:38.9708947Z 9f1def17b5ecb402e09a3e07e806ec4928f5e221",
+            "2026-10-22T08:50:39.3894340Z node: v22.23.3",
+            "2026-10-22T08:54:46.0203021Z  ✓ tests/owned-residency.test.ts (3 tests) 12407ms",
+            "2026-10-22T09:18:25.8406197Z       Tests  306 passed (306)",
+            "2026-10-22T09:18:38.1725395Z Verified 306 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, atomic default authority, verified migration rollback/pins and old-reader export, complete build, four recovery probes and corruption refusal"
+          ],
+          "version": "v22.23.3",
+          "conclusion": "success",
+          "passedTests": 306,
+          "ownedOracleTests": 3,
+          "buildTypecheckRecoveryVerifier": "passed"
+        },
+        {
+          "node": 24,
+          "job": 119730515572,
+          "shaPresent": true,
+          "logCharacters": 92799,
+          "lines": [
+            "2026-10-22T08:50:38.6918291Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +9f1def17b5ecb402e09a3e07e806ec4928f5e221:refs/remotes/origin/main",
+            "2026-10-22T08:50:39.2732645Z  * [new ref]         9f1def17b5ecb402e09a3e07e806ec4928f5e221 -> origin/main",
+            "2026-10-22T08:50:39.3396863Z 9f1def17b5ecb402e09a3e07e806ec4928f5e221",
+            "2026-10-22T08:50:42.0880520Z node: v24.22.0",
+            "2026-10-22T08:54:37.3383945Z  ✓ tests/owned-residency.test.ts (3 tests) 11534ms",
+            "2026-10-22T09:25:20.0722287Z       Tests  306 passed (306)",
+            "2026-10-22T09:25:31.7260994Z Verified 306 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, atomic default authority, verified migration rollback/pins and old-reader export, complete build, four recovery probes and corruption refusal"
+          ],
+          "version": "v24.22.0",
+          "conclusion": "success",
+          "passedTests": 306,
+          "ownedOracleTests": 3,
+          "buildTypecheckRecoveryVerifier": "passed"
+        }
+      ],
+      "conclusion": "success",
+      "attempt": 1,
+      "createdAt": "2026-10-22T08:50:32Z",
+      "completedAt": "2026-10-22T09:25:36Z",
+      "artifacts": [
+        {
+          "id": 12415710874,
+          "name": "semantic-evidence-node-20",
+          "digest": "sha256:082340bd68f0cc8caeb4e09927827a66df3b0577e9d5b1658bcc3e1f434d37a0",
+          "headSha": "9f1def17b5ecb402e09a3e07e806ec4928f5e221"
+        },
+        {
+          "id": 12415646050,
+          "name": "semantic-evidence-node-24",
+          "digest": "sha256:8bb9282597f1e54df9664b00d0d1db01d596e9a938ab967b28719f5964ebf023",
+          "headSha": "9f1def17b5ecb402e09a3e07e806ec4928f5e221"
+        },
+        {
+          "id": 12414712785,
+          "name": "semantic-evidence-node-22",
+          "digest": "sha256:860cf8d13e7d2f86dba3091bf12b0c599882dfd639c6c7cca5138a8d8e2919ad",
+          "headSha": "9f1def17b5ecb402e09a3e07e806ec4928f5e221"
+        }
+      ]
+    },
+    "qualifiedGitObjects": {
+      "src": "b7fcb9fb8a3c12d205eaeec3eb72da0267f5aeb7",
+      "tests": "76c034215d5c5bc2ff748618442efc3e9e4c8758",
+      "scripts": "af6c3f29a88458063d56d12da50c9536092f009a",
+      ".github": "0fba6d4f90da65f50e1d5ec43a4bb3aa7a35d59a",
+      "package.json": "39429b4ee6c2e4a4b139ba77e86e7d75e97eaf75",
+      "package-lock.json": "459b1f73972d707e18fcd509ba2e80e847175555",
+      "tsconfig.json": "b2d7cf0ff06aca8882d9204cb586ec9b21f4033a",
+      "tsconfig.node.json": "ee3d35a856da84e3d991afd1d7fc5f6a0975202f",
+      "tsconfig.ui.json": "f1ddda45b32f85dc29264d37eb4c457ebc6c16c7",
+      "vite.config.ts": "3b182070454dd696f96507cb4e5011e15133d299"
+    },
+    "recordOnlyChanges": "Closure commit changes docs/ only; qualified runtime/test/script/workflow/package/build objects verified identical to 9f1def1."
+  },
+  "metricSemantics": {
+    "elapsed": "Measured wall time through complete analyzeRepository return, including exports; phase boundaries sampled synchronously.",
+    "rss": "Instantaneous process-wide resident bytes at boundaries; shared/native/compiler memory not attributed.",
+    "maxRss": "Kernel process-wide cumulative high-water, KiB; phase attribution is the interval between observations.",
+    "v8Heap": "Instantaneous used and committed allocator bytes; includes garbage awaiting collection; committed is not RSS.",
+    "external": "Instantaneous V8 external/ArrayBuffer counters overlap and do not cover all native allocations.",
+    "cpu": "Measured cumulative process user/system microseconds differenced across phase boundaries; no subsystem CPU attribution.",
+    "allocated": "V8 cumulative allocated bytes differenced across the phase; not retained heap or peak.",
+    "counts": "Exact container entry counts at the observation point, not distinct objects or retained heap bytes.",
+    "planBytes": "Exact existing canonical UTF-8 byte charge for the whole dependency recipe plan; not heap size.",
+    "gc": "Observed GC entries and pauses; no requested forced GC.",
+    "sampling": "Estimated surviving JS allocations at requested 32768-byte intervals, categorized by allocating call stacks. Not dominator or reachability proof."
+  },
+  "projectionSizes": {
+    "method": "Complete sc_projection_rows joined to sealed fact payloads; UTF-8 length of value_json or complete payloadEntity canonical, including wrapper, summed per pass. Claim-key UTF-8 bytes counted per row. Serialized sizes are not retained heap/RSS; no GC or object materialization requested.",
+    "sql": "SELECT r.partition_key,p.kind,COUNT(*) n,SUM(length(CAST(CASE WHEN json_extract(f.value_json,'$.payloadEntity') IS NOT NULL THEN e.canonical ELSE f.value_json END AS BLOB))) payload_bytes,SUM(length(CAST(c.key AS BLOB))) claim_key_bytes\nFROM sc_projection_rows p JOIN sc_runs r ON r.id=p.run JOIN sc_claims c ON c.id=p.claim JOIN sc_facts f ON f.id=c.fact LEFT JOIN sc_entities e ON e.key=json_extract(f.value_json,'$.payloadEntity') WHERE r.partition_key LIKE 'analysis/%' GROUP BY r.id,p.kind ORDER BY r.id,p.kind",
+    "summary": {
+      "analysis/catalogue": {
+        "nodes": 0,
+        "edges": 0,
+        "diagnostics": 0,
+        "payloadBytes": 0,
+        "claimKeyBytes": 0
+      },
+      "analysis/source": {
+        "nodes": 38489,
+        "edges": 72656,
+        "diagnostics": 46897,
+        "payloadBytes": 69730705,
+        "claimKeyBytes": 11695108
+      },
+      "analysis/pass:framework-react@4": {
+        "nodes": 311,
+        "edges": 456,
+        "diagnostics": 32,
+        "payloadBytes": 301409,
+        "claimKeyBytes": 59126
+      },
+      "analysis/pass:framework-tauri@4": {
+        "nodes": 133,
+        "edges": 382,
+        "diagnostics": 11,
+        "payloadBytes": 237513,
+        "claimKeyBytes": 38924
+      },
+      "analysis/pass:schema-contracts@4": {
+        "nodes": 2,
+        "edges": 1,
+        "diagnostics": 0,
+        "payloadBytes": 823,
+        "claimKeyBytes": 222
+      },
+      "analysis/pass:documentation@4": {
+        "nodes": 331,
+        "edges": 326,
+        "diagnostics": 0,
+        "payloadBytes": 371188,
+        "claimKeyBytes": 48618
+      },
+      "analysis/pass:package-config@4": {
+        "nodes": 43,
+        "edges": 42,
+        "diagnostics": 0,
+        "payloadBytes": 46035,
+        "claimKeyBytes": 6290
+      },
+      "analysis/pass:cargo-config@4": {
+        "nodes": 116,
+        "edges": 109,
+        "diagnostics": 0,
+        "payloadBytes": 130279,
+        "claimKeyBytes": 16650
+      },
+      "analysis/pass:tauri-config@4": {
+        "nodes": 9,
+        "edges": 8,
+        "diagnostics": 0,
+        "payloadBytes": 9692,
+        "claimKeyBytes": 1258
+      },
+      "analysis/pass:tauri-capabilities@4": {
+        "nodes": 11,
+        "edges": 10,
+        "diagnostics": 0,
+        "payloadBytes": 13871,
+        "claimKeyBytes": 1554
+      },
+      "analysis/pass:test-relevance@4": {
+        "nodes": 1260,
+        "edges": 2341,
+        "diagnostics": 0,
+        "payloadBytes": 2357205,
+        "claimKeyBytes": 266474
+      },
+      "analysis/pass:knowledge-links@4": {
+        "nodes": 0,
+        "edges": 2089,
+        "diagnostics": 0,
+        "payloadBytes": 1324265,
+        "claimKeyBytes": 154586
+      },
+      "analysis/pass:boundary-binding@3": {
+        "nodes": 0,
+        "edges": 0,
+        "diagnostics": 0,
+        "payloadBytes": 0,
+        "claimKeyBytes": 0
+      },
+      "analysis/pass:dependency-projection@3": {
+        "nodes": 0,
+        "edges": 0,
+        "diagnostics": 0,
+        "payloadBytes": 0,
+        "claimKeyBytes": 0
+      }
+    }
   }
 }
