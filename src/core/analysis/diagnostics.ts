@@ -40,3 +40,10 @@ export function beginAnalysisPhase(phase: string): (counts?: Readonly<Record<str
 export function measureAnalysisPhase(phase: string, durationMs: number): void {
   if (observer) emit(observer, { kind: "measure", phase, id: ++sequence, atMs: performance.now(), counts: { durationMs } });
 }
+
+/** Evaluate numeric collection sizes only when diagnostics are installed. */
+export function measureAnalysisCollections(phase: string, counts: () => Readonly<Record<string, number>>): void {
+  if (!observer) return;
+  try { emit(observer, { kind: "measure", phase, id: ++sequence, atMs: performance.now(), counts: counts() }); }
+  catch { /* Collection observation cannot affect analysis. */ }
+}

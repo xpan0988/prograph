@@ -23,7 +23,7 @@ import { partitionBoundaries } from "./boundary-shards.js";
 import { ADAPTER_VERSIONS } from "../analysis/state.js";
 import { ANALYSIS_PASS_VERSIONS } from "./analysis-versions.js";
 import { sourceInventory, semanticInventory } from "./provider-runs.js";
-import { beginAnalysisPhase } from "../analysis/diagnostics.js";
+import { beginAnalysisPhase, measureAnalysisCollections } from "../analysis/diagnostics.js";
 interface AnalysisPass extends PassContract { adapter?: FrameworkAdapter | undefined }
 function adapterPass(id: string, adapter: FrameworkAdapter, dependencies: string[] = []): AnalysisPass {
   return { id, adapter, version: ANALYSIS_PASS_VERSIONS[id]!, configurationFingerprint: "assigned-per-execution", dependencies,
@@ -90,6 +90,14 @@ export async function deriveOwnedAnalysis(snapshot: RepositorySnapshot, source: 
         const projection = completed.get(predecessor.id)!; input.merge(projection.result);
         projection.nodeClaims.forEach((claim, id) => inputNodes.set(id, claim)); projection.edgeClaims.forEach((claim, id) => inputEdges.set(id, claim));
       }
+      measureAnalysisCollections(`owned-input:${pass.id}`, () => ({
+        retainedProjections: completed.size, retainedNodes: [...completed.values()].reduce((n, p) => n + p.result.nodes.length, 0),
+        retainedEdges: [...completed.values()].reduce((n, p) => n + p.result.edges.length, 0),
+        retainedClaims: [...completed.values()].reduce((n, p) => n + p.nodeClaims.size + p.edgeClaims.size, 0),
+        baseNodes: baseProjection.result.nodes.length, baseEdges: baseProjection.result.edges.length, baseDiagnostics: baseProjection.result.diagnostics.length,
+        inputNodes: input.nodes.size, inputEdges: input.edges.size, inputDiagnostics: input.diagnostics.length,
+        inputNodeClaims: inputNodes.size, inputEdgeClaims: inputEdges.size,
+      }));
       const run = store.begin(`analysis/pass:${pass.id}@${pass.version}`, context, fingerprint);
       const provenance: Provenance = { provider: `pass:${pass.id}`, version: pass.version, basis: "inference", method: "owned-semantic-pass", context, inputFingerprint: fingerprint };
       const writer = new OwnedWriter(store, run, snapshot, provenance, base.selector, base.fileClaims, inputNodes);
@@ -158,6 +166,7 @@ export async function deriveOwnedAnalysis(snapshot: RepositorySnapshot, source: 
             after = rows.at(-1)!.id;
           }
         }
+        measureAnalysisCollections("owned-dependencies:planned", () => ({ facts: count, encodedBytes: plannedBytes, files: shards.size, inputNodes: input.nodes.size, inputEdges: input.edges.size }));
         for (const [file, facts] of [...shards].sort(([a], [b]) => a.localeCompare(b))) {
           facts.sort((a, b) => canonical(a).localeCompare(canonical(b)));
           const inputFingerprint = digest(canonical([context, passContract(pass), file, facts]));
@@ -202,6 +211,14 @@ export async function deriveOwnedAnalysis(snapshot: RepositorySnapshot, source: 
       });
       completed.set(pass.id, sealed);
       final.merge(sealed.result); runs.push(run);
+      measureAnalysisCollections(`owned-retained:${pass.id}`, () => ({
+        retainedProjections: completed.size, retainedNodes: [...completed.values()].reduce((n, p) => n + p.result.nodes.length, 0),
+        retainedEdges: [...completed.values()].reduce((n, p) => n + p.result.edges.length, 0),
+        retainedClaims: [...completed.values()].reduce((n, p) => n + p.nodeClaims.size + p.edgeClaims.size, 0),
+        inputNodes: input.nodes.size, inputEdges: input.edges.size, inputDiagnostics: input.diagnostics.length,
+        inputNodeClaims: inputNodes.size, inputEdgeClaims: inputEdges.size,
+        finalNodes: final.nodes.size, finalEdges: final.edges.size,
+      }));
       passDone({ nodes: sealed.result.nodes.length, edges: sealed.result.edges.length });
     }
     return { parent, runs, result: final.result(), adapterRuns };

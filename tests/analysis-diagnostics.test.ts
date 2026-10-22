@@ -2,7 +2,7 @@ import { afterEach, expect, test } from "vitest";
 import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { beginAnalysisPhase, installAnalysisDiagnostics, measureAnalysisPhase, type AnalysisDiagnostic } from "../src/core/analysis/diagnostics.js";
+import { beginAnalysisPhase, installAnalysisDiagnostics, measureAnalysisPhase, measureAnalysisCollections, type AnalysisDiagnostic } from "../src/core/analysis/diagnostics.js";
 import { analyzeRepository } from "../src/core/analysis/analyze.js";
 import { semanticSnapshot } from "./oracles/semantic-snapshot.js";
 
@@ -31,6 +31,18 @@ test("observer failures and reentrant observations do not escape into indexing",
   uninstall = installAnalysisDiagnostics(() => { calls++; beginAnalysisPhase("recursive")(); throw Error("observer failure"); });
   expect(() => beginAnalysisPhase("outer")()).not.toThrow();
   expect(calls).toBe(2);
+});
+
+test("collection diagnostics are lazy, numeric, and cannot fail analysis", () => {
+  let calls = 0;
+  const counts = () => { calls++; return { rows: 3 }; };
+  measureAnalysisCollections("disabled", counts); expect(calls).toBe(0);
+  const events: AnalysisDiagnostic[] = [];
+  uninstall = installAnalysisDiagnostics(event => events.push(event));
+  measureAnalysisCollections("collections", counts);
+  expect(calls).toBe(1); expect(events[0]!.counts).toEqual({ rows: 3 });
+  expect(() => measureAnalysisCollections("broken", () => { throw Error("observation failed"); })).not.toThrow();
+  expect(events).toHaveLength(1);
 });
 
 test("enabled diagnostics preserve complete fixture semantic and compatibility results", async () => {

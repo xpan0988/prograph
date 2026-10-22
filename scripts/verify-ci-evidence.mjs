@@ -6,6 +6,8 @@ assert.equal(tests.success, true);
 assert.ok(tests.numTotalTests > 0);
 assert.equal(tests.numPassedTests, tests.numTotalTests);
 assert.equal(tests.numPendingTests, 0);
+const ownedResidency = tests.testResults.find(file => /[/\\]owned-residency\.test\.ts$/.test(file.name));
+assert.ok(ownedResidency && ownedResidency.assertionResults.length === 3 && ownedResidency.assertionResults.every(test => test.status === 'passed'), 'Accepted-runtime owned output, history, failure and cancellation oracles must execute');
 const rust = tests.testResults.find(file => /[/\\]semantic-rust\.test\.ts$/.test(file.name));
 assert.ok(rust && rust.assertionResults.length >= 9, 'Actual Rust qualification suite must execute');
 assert.ok(rust.assertionResults.every(test => test.status === 'passed'));

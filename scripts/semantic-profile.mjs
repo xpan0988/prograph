@@ -80,7 +80,8 @@ if (mode !== 'baseline') {
   uninstall = installAnalysisDiagnostics(event => {
     events.push({ ...event, ...resources() });
     // Synchronous inspector snapshots sample live allocations without requesting GC.
-    if (mode === 'memory' && event.kind === 'end' && ['adapter:rust', 'owned-analysis', 'semantic-typescript', 'semantic-publication', 'json-export'].includes(event.phase)) {
+    const ownedCheckpoint = event.kind === 'measure' && ['owned-input:dependency-projection', 'owned-dependencies:planned', 'owned-retained:dependency-projection'].includes(event.phase);
+    if (mode === 'memory' && (ownedCheckpoint || event.kind === 'end' && ['adapter:rust', 'owned-analysis', 'semantic-typescript', 'semantic-publication', 'json-export'].includes(event.phase))) {
       const start = performance.now();
       session.post('HeapProfiler.getSamplingProfile', {}, (error, result) => {
         if (error) { diagnosticErrors.push(String(error)); return; }
