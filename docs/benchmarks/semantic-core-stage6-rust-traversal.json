@@ -1,14 +1,15 @@
 {
   "format": 1,
   "milestone": "Stage 6.2: candidate 1 only, Rust traversal",
-  "status": "Implementation measured; full local suite and implementation CI pending",
+  "status": "Accepted: candidate 1 only; full local acceptance and Node 20/22/24 CI passed",
   "baselineRevision": "8ed2d3202900f827f3184ecc3f301aeeaeb6ec7d",
   "initialGit": {
     "branch": "main",
     "clean": true,
     "originMain": "8ed2d3202900f827f3184ecc3f301aeeaeb6ec7d",
     "baselineCiRun": 39689557793,
-    "baselineCiObserved": "in_progress before changes"
+    "baselineCiObserved": "in_progress before changes",
+    "baselineCiFinallyPassed": true
   },
   "implementationSourceSha256": {
     "src/adapters/language/rust/index.ts": "2e80243e80bc424a53be87c5757037465f8cdc43e0628b9e9b3379d2bf47196d",
@@ -286,7 +287,12 @@
             "line": 455,
             "column": 58,
             "selfSampledSeconds": 1.138929,
-            "inclusiveSampledSeconds": 1.138929
+            "inclusiveSampledSeconds": 1.138929,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 476,
+            "sourceColumn": 50,
+            "sourceRevision": "8ed2d3202900f827f3184ecc3f301aeeaeb6ec7d",
+            "expression": "definitions.find predicate"
           },
           {
             "function": "unmarshalNodes",
@@ -318,7 +324,11 @@
             "line": 17,
             "column": 14,
             "selfSampledSeconds": 0.538224,
-            "inclusiveSampledSeconds": 20.447752
+            "inclusiveSampledSeconds": 20.447752,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 48,
+            "sourceColumn": 14,
+            "sourceRevision": "8ed2d3202900f827f3184ecc3f301aeeaeb6ec7d"
           },
           {
             "function": "marshalNode",
@@ -334,7 +344,11 @@
             "line": 447,
             "column": 40,
             "selfSampledSeconds": 0.291683,
-            "inclusiveSampledSeconds": 11.716157
+            "inclusiveSampledSeconds": 11.716157,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 470,
+            "sourceColumn": 34,
+            "sourceRevision": "8ed2d3202900f827f3184ecc3f301aeeaeb6ec7d"
           },
           {
             "function": "(garbage collector)",
@@ -350,7 +364,11 @@
             "line": 73,
             "column": 19,
             "selfSampledSeconds": 0.198024,
-            "inclusiveSampledSeconds": 7.457053
+            "inclusiveSampledSeconds": 7.457053,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 107,
+            "sourceColumn": 19,
+            "sourceRevision": "8ed2d3202900f827f3184ecc3f301aeeaeb6ec7d"
           },
           {
             "function": "(program)",
@@ -374,7 +392,11 @@
             "line": 393,
             "column": 22,
             "selfSampledSeconds": 0.066238,
-            "inclusiveSampledSeconds": 0.119967
+            "inclusiveSampledSeconds": 0.119967,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 419,
+            "sourceColumn": 16,
+            "sourceRevision": "8ed2d3202900f827f3184ecc3f301aeeaeb6ec7d"
           }
         ],
         "targets": [
@@ -384,7 +406,11 @@
             "line": 17,
             "column": 14,
             "selfSampledSeconds": 0.538224,
-            "inclusiveSampledSeconds": 20.447752
+            "inclusiveSampledSeconds": 20.447752,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 48,
+            "sourceColumn": 14,
+            "sourceRevision": "8ed2d3202900f827f3184ecc3f301aeeaeb6ec7d"
           },
           {
             "function": "enclosing",
@@ -392,7 +418,11 @@
             "line": 73,
             "column": 19,
             "selfSampledSeconds": 0.198024,
-            "inclusiveSampledSeconds": 7.457053
+            "inclusiveSampledSeconds": 7.457053,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 107,
+            "sourceColumn": 19,
+            "sourceRevision": "8ed2d3202900f827f3184ecc3f301aeeaeb6ec7d"
           },
           {
             "function": "enclosingOwner",
@@ -400,7 +430,11 @@
             "line": 85,
             "column": 24,
             "selfSampledSeconds": 0.008776,
-            "inclusiveSampledSeconds": 0.402584
+            "inclusiveSampledSeconds": 0.402584,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 120,
+            "sourceColumn": 24,
+            "sourceRevision": "8ed2d3202900f827f3184ecc3f301aeeaeb6ec7d"
           },
           {
             "function": "inlineModulePath",
@@ -408,7 +442,11 @@
             "line": 60,
             "column": 26,
             "selfSampledSeconds": 0.002507,
-            "inclusiveSampledSeconds": 0.012556
+            "inclusiveSampledSeconds": 0.012556,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 94,
+            "sourceColumn": 26,
+            "sourceRevision": "8ed2d3202900f827f3184ecc3f301aeeaeb6ec7d"
           },
           {
             "function": "inferredReceiverType",
@@ -416,7 +454,11 @@
             "line": 377,
             "column": 38,
             "selfSampledSeconds": 0.001862,
-            "inclusiveSampledSeconds": 9.557399
+            "inclusiveSampledSeconds": 9.557399,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 407,
+            "sourceColumn": 34,
+            "sourceRevision": "8ed2d3202900f827f3184ecc3f301aeeaeb6ec7d"
           }
         ]
       }
@@ -568,7 +610,11 @@
             "line": 25,
             "column": 14,
             "selfSampledSeconds": 0.308806,
-            "inclusiveSampledSeconds": 1.496185
+            "inclusiveSampledSeconds": 1.496185,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 69,
+            "sourceColumn": 14,
+            "sourceRevision": "c4569685f2027e4cbf9c2b28e47121e42daf8bf9"
           },
           {
             "function": "(garbage collector)",
@@ -584,7 +630,11 @@
             "line": 516,
             "column": 120,
             "selfSampledSeconds": 0.054616,
-            "inclusiveSampledSeconds": 0.741934
+            "inclusiveSampledSeconds": 0.741934,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 510,
+            "sourceColumn": 132,
+            "sourceRevision": "c4569685f2027e4cbf9c2b28e47121e42daf8bf9"
           },
           {
             "function": "unmarshalNode",
@@ -600,7 +650,11 @@
             "line": 224,
             "column": 120,
             "selfSampledSeconds": 0.03755,
-            "inclusiveSampledSeconds": 0.103211
+            "inclusiveSampledSeconds": 0.103211,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 262,
+            "sourceColumn": 132,
+            "sourceRevision": "c4569685f2027e4cbf9c2b28e47121e42daf8bf9"
           },
           {
             "function": "unresolvedTarget",
@@ -608,7 +662,11 @@
             "line": 480,
             "column": 34,
             "selfSampledSeconds": 0.018858,
-            "inclusiveSampledSeconds": 0.053816
+            "inclusiveSampledSeconds": 0.053816,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 476,
+            "sourceColumn": 30,
+            "sourceRevision": "c4569685f2027e4cbf9c2b28e47121e42daf8bf9"
           },
           {
             "function": "digest",
@@ -632,7 +690,11 @@
             "line": 16,
             "column": 23,
             "selfSampledSeconds": 0.015026,
-            "inclusiveSampledSeconds": 0.057705
+            "inclusiveSampledSeconds": 0.057705,
+            "source": "src/core/graph/identity.ts",
+            "sourceLine": 27,
+            "sourceColumn": 23,
+            "sourceRevision": "c4569685f2027e4cbf9c2b28e47121e42daf8bf9"
           },
           {
             "function": "addNode",
@@ -640,7 +702,11 @@
             "line": 8,
             "column": 12,
             "selfSampledSeconds": 0.013806,
-            "inclusiveSampledSeconds": 0.013806
+            "inclusiveSampledSeconds": 0.013806,
+            "source": "src/core/graph/builder.ts",
+            "sourceLine": 12,
+            "sourceColumn": 10,
+            "sourceRevision": "c4569685f2027e4cbf9c2b28e47121e42daf8bf9"
           },
           {
             "function": "Hash",
@@ -656,7 +722,11 @@
             "line": 71,
             "column": 19,
             "selfSampledSeconds": 0.011356,
-            "inclusiveSampledSeconds": 0.011356
+            "inclusiveSampledSeconds": 0.011356,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 106,
+            "sourceColumn": 19,
+            "sourceRevision": "c4569685f2027e4cbf9c2b28e47121e42daf8bf9"
           },
           {
             "function": "childForFieldName",
@@ -682,7 +752,11 @@
             "line": 25,
             "column": 14,
             "selfSampledSeconds": 0.308806,
-            "inclusiveSampledSeconds": 1.496185
+            "inclusiveSampledSeconds": 1.496185,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 69,
+            "sourceColumn": 14,
+            "sourceRevision": "c4569685f2027e4cbf9c2b28e47121e42daf8bf9"
           },
           {
             "function": "inferredReceiverType",
@@ -690,7 +764,11 @@
             "line": 392,
             "column": 38,
             "selfSampledSeconds": 0.006532,
-            "inclusiveSampledSeconds": 0.354975
+            "inclusiveSampledSeconds": 0.354975,
+            "source": "src/adapters/language/rust/index.ts",
+            "sourceLine": 412,
+            "sourceColumn": 34,
+            "sourceRevision": "c4569685f2027e4cbf9c2b28e47121e42daf8bf9"
           },
           {
             "function": "walk",
@@ -1112,7 +1190,47 @@
       "maxRssKiB": 1787360
     },
     "qualified60SecondGate": false,
-    "qualifiedCoreOnly1GiB": false
+    "qualifiedCoreOnly1GiB": false,
+    "completeExportEquivalence": {
+      "baselineIndex": "/private/tmp/prograph-stage6-profile-20261022/baseline-index",
+      "newIndex": "/private/tmp/prograph-stage6-2-20261022/production-index",
+      "files": {
+        "exports/graph.json": {
+          "bytes": 102548074,
+          "sha256": "0183e8f4f580a5d567f21160b8285568de60307a536c415fe6c0ced30001d28a",
+          "byteEqual": true,
+          "excludedFields": [],
+          "method": "Complete-file streaming SHA-256 and independent cmp exit 0"
+        },
+        "diagnostics.json": {
+          "bytes": 15529775,
+          "sha256": "631fa69e6fdd6f49b339303a9b454228e05a9f79fb362d9a5a7e6b86bf6503ce",
+          "byteEqual": true,
+          "excludedFields": [],
+          "method": "Complete-file streaming SHA-256 and independent cmp exit 0"
+        },
+        "manifest.json": {
+          "completeOrderedStructuralEquality": true,
+          "excludedFields": [
+            "/generatedAt",
+            "/analysisDuration",
+            "/semanticCore/durationMs",
+            "/adapterRuns/*/durationMs"
+          ],
+          "sha256": "457b112b51b666cb2641977bebe11801a3d92b12ecc50efbfa078f2c948110db",
+          "justification": "generatedAt comes from the run timestamp; analysisDuration, semanticCore.durationMs and adapterRuns durationMs are measured elapsed times in analyze.ts/adapter-run.ts. No semantic, identity, source/config hash, ordering or counts omitted."
+        },
+        "state.json": {
+          "completeOrderedStructuralEquality": true,
+          "excludedFields": [
+            "/generatedAt"
+          ],
+          "sha256": "e6c6fb5ad10587853f86b5fdec20c9f8f9beeb5ef38279b82cedc7a765fc1ca8",
+          "justification": "generatedAt comes from the run timestamp; analysisDuration, semanticCore.durationMs and adapterRuns durationMs are measured elapsed times in analyze.ts/adapter-run.ts. No semantic, identity, source/config hash, ordering or counts omitted."
+        }
+      }
+    },
+    "completeExportWitnessSha256": "ed557cc9bc5ac5c8e6a3bb188180c6355aabb2fc64e451c54ef6063eaf77ef08"
   },
   "correctness": {
     "newFocusedTests": 9,
@@ -1123,14 +1241,1381 @@
       "rust-quality",
       "rust-verified-misses"
     ],
-    "fullRegression": "pending",
+    "fullRegression": {
+      "node": "v25.9.0",
+      "passed": true,
+      "tests": 283,
+      "files": 36,
+      "failed": 0,
+      "pending": 0,
+      "seed": "0x6a12b",
+      "steps": [
+        {
+          "label": "full-tests",
+          "command": "npm",
+          "args": [
+            "test",
+            "--",
+            "--maxWorkers=1",
+            "--reporter=default",
+            "--reporter=json",
+            "--outputFile=/private/tmp/prograph-stage6-2-20261022/test-results.json"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 2518953
+        },
+        {
+          "label": "build",
+          "command": "npm",
+          "args": [
+            "run",
+            "build"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 8427
+        },
+        {
+          "label": "recovery",
+          "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node",
+          "args": [
+            "scripts/semantic-recovery.mjs",
+            "/private/tmp/prograph-stage6-2-20261022/recovery.json"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 360
+        },
+        {
+          "label": "verifier",
+          "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node",
+          "args": [
+            "scripts/verify-ci-evidence.mjs",
+            "/private/tmp/prograph-stage6-2-20261022/test-results.json",
+            "/private/tmp/prograph-stage6-2-20261022/recovery.json",
+            "/private/tmp/prograph-stage6-2-20261022/oracle.json",
+            "/private/tmp/prograph-stage6-2-20261022/upgrade.json",
+            "/private/tmp/prograph-stage6-2-20261022/retention-upgrade.json",
+            "/private/tmp/prograph-stage6-2-20261022/authority-upgrade.json"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 55
+        }
+      ],
+      "rawEvidenceSha256": {
+        "test-results.json": "69b26e60a7b6132ae7a0d88f53d50b9b82bd62abdfdc5575e3eb3829042c0cf6",
+        "oracle.json": "c459830d21bacc6bb19a89c4b84720d3235cc821e6af10197960613795b7160b",
+        "upgrade.json": "95f8c03bb98e8f6c9155372a329c7ea38421dc794846f92063235751542a8bf3",
+        "retention-upgrade.json": "ab1b1bc0aaebe3d1edfd80df6af92b37580514b62fe39f5698257605a0d6fb23",
+        "authority-upgrade.json": "8cb4d6fd4b4fb73758c94ea3c190ead1dc7a00db1922228ba80b80e8ca5bf445",
+        "recovery.json": "abdbd8216328c10191ebcca64958a04fb66950ca34c04fef898b274ad8661ba9",
+        "validation-steps.json": "a2aef72440cbcaf06dcf984a1a808b4f96618359d8a74b9d86d8f6a1e0fbaabd",
+        "tools/profiles-restored.json": "84767d38230b950529154446794bd647a11fa363fd43e6b3ec60bd872fc11f46"
+      },
+      "focused": {
+        "tests": 9,
+        "seededCases": 200,
+        "assertions": [
+          {
+            "title": "the independent oracle body is the exact pre-optimization 8ed2d32 extractor",
+            "status": "passed"
+          },
+          {
+            "title": "complete existing rust-quality fixture output matches the original extractor",
+            "status": "passed"
+          },
+          {
+            "title": "complete existing rust-verified-misses fixture output matches the original extractor",
+            "status": "passed"
+          },
+          {
+            "title": "ordered cross-file/module definitions, aliases, scoped imports and ambiguity remain identical",
+            "status": "passed"
+          },
+          {
+            "title": "receiver parameters, shadowing, earlier/later lets, reassignment and nested-function observations preserve the accepted heuristic",
+            "status": "passed"
+          },
+          {
+            "title": "self, Self, explicit types, impl/trait ownership and static/instance ambiguity do not change confidence",
+            "status": "passed"
+          },
+          {
+            "title": "Unicode, attributes, macros, nested blocks and recovery preserve complete anchors and serialization",
+            "status": "passed"
+          },
+          {
+            "title": "receiver caches never cross source revisions or function owners and build observations at most once per function",
+            "status": "passed"
+          },
+          {
+            "title": "200 deterministic syntax/recovery cases match every ordered field of the frozen extractor",
+            "status": "passed"
+          }
+        ]
+      },
+      "oracle": {
+        "measuredAt": "2026-10-21T23:41:15.140Z",
+        "node": "v25.9.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "initialSeed": 434475,
+        "sourceRoot": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-multiprovider-Q3sMrB",
+        "complete": true,
+        "expectedChecks": 18,
+        "scope": "Actual TS/Clang/Rust/Python/Go/Java/Csharp tools, fresh independent index and reauthorized execution control per edit; no copied facts or producer outputs",
+        "evidence": [
+          {
+            "edit": "initial",
+            "seed": 2216342749,
+            "hashes": {
+              "analysisReports": "a06f18cde1230160a51035230d1ed5614a85bfce6bba3d172eaaecc47922796f",
+              "facts": "a620fd8e584821cb6684e4afc5bd626c1bbce37717f5bbb07ee8027af37be95a",
+              "claims": "b093b0c71f49d2b41f72a55d135c330f36c9b165b79e29161780f88a05aa8982",
+              "coverage": "3f5eb8ef8cbfdf5d8685def09ceb597665bddd07bb8c6d82f534793aba68bee4",
+              "navigation": "0869c5a7b2e254748b1ec8a5d68b6dfecaa52d7d18a671aaf4a17426a706fac2",
+              "calls": "9330b7b50a796715250b3f2fccf1caf17c0a14cb832bd53c7cb9bfe8bd9d4067",
+              "projections": "0530566d604568999ad17c76aa4082f96ac30779ca67beef7dc7769a8d441fa0"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 309,
+              "claims": 309,
+              "coverage": 87,
+              "navigation": 309,
+              "calls": 7,
+              "projections": 121
+            }
+          },
+          {
+            "edit": "add Python module without editing importer",
+            "seed": 1064251544,
+            "hashes": {
+              "analysisReports": "96305771212a453a559f2806e83e32542d5fb0bc0ec3239f34fa441a3dd200f7",
+              "facts": "ad867be87b6a13e2b4ea43e17dc7b56e0d16792d3e211f5e7a4977a7672bcf69",
+              "claims": "f7ce475694d3e92c211d2667175a5885f2a35efb2ac2875fcf393c0a206f9ea2",
+              "coverage": "dc73403c1be3b78bd83825be39bdf3af3de3bd29eee797b3cf4e74d3cd2dd3a6",
+              "navigation": "de8c2fef87d3150fb82c927a2e8a3a9632da18205b1dbb292fe6beedee2476b1",
+              "calls": "9330b7b50a796715250b3f2fccf1caf17c0a14cb832bd53c7cb9bfe8bd9d4067",
+              "projections": "10e1bd896aabb8380ca05dd0169a7ca6476786c42062b49dc54978a6fa75e042"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 328,
+              "claims": 330,
+              "coverage": 91,
+              "navigation": 330,
+              "calls": 7,
+              "projections": 130
+            }
+          },
+          {
+            "edit": "modify exported TS overload",
+            "seed": 1064251544,
+            "hashes": {
+              "analysisReports": "3181e2037c4a94da41629281876e12e117bd055499136309bc90e769fc2aefba",
+              "facts": "a567047edcb748939358eff448860bdd2275ff0082ae544d1ce19db12e681684",
+              "claims": "13c7e3a209ab4087a0f08b190ccd35f320d49eb8b0f53fa1c98128028dc1b262",
+              "coverage": "76120bfc15bac6bab7314b15c0e72fdcae3626337d222863423488ed2cad8f2f",
+              "navigation": "b35eac587c2cee70c430cb554d941d4262a24eae3efca9b63e48bcc3fa467a0a",
+              "calls": "9330b7b50a796715250b3f2fccf1caf17c0a14cb832bd53c7cb9bfe8bd9d4067",
+              "projections": "183f008ba4bc55185b4488d0869b7ef5b5eda14f815ea40aab7da131a8aa1776"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 342,
+              "claims": 344,
+              "coverage": 91,
+              "navigation": 344,
+              "calls": 7,
+              "projections": 134
+            }
+          },
+          {
+            "edit": "rename Java source",
+            "seed": 1064251544,
+            "hashes": {
+              "analysisReports": "b96f5b227505345902cc25b946054460b97ff2a9836fc825f90d4b38d94664cf",
+              "facts": "11ba53298a0243fbca5b5d7743ae894ac01cba252dc14c51e0bdae34e6ebb71d",
+              "claims": "42e01629cbe193b27f9b3c3ff1bc87a3b1b5e7909241a9431a20f6a9d3c36e80",
+              "coverage": "ef1b52432dbfd783c7bceaafd9fe80cbfd8c6ae544619c3ef4b7aa2f97b4a470",
+              "navigation": "687bc7a4c47ea8b08175316c4f9e0dd1794ead60a3e4939ce3e4e574ca4a627c",
+              "calls": "9330b7b50a796715250b3f2fccf1caf17c0a14cb832bd53c7cb9bfe8bd9d4067",
+              "projections": "a0c047d86fc445c2343271181a707acac1cae5888be392c2e2755c635f0618ae"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 342,
+              "claims": 344,
+              "coverage": 91,
+              "navigation": 344,
+              "calls": 7,
+              "projections": 134
+            }
+          },
+          {
+            "edit": "delete shadow Python module",
+            "seed": 1064251544,
+            "hashes": {
+              "analysisReports": "e1dac0106e3ef692ba7da7cdcb55dafc6889a9089f6476b25fa495c8fca36d1c",
+              "facts": "9c52b05f7d9a57849fa12016a724be14f79565580a5a9828f050b9b7b225ce12",
+              "claims": "7a9ad0b16f767b46f47f2270aa19eb5b8d78954b7a1a8d15880568a7f43ece41",
+              "coverage": "49ebf9597d9f9fe8b9af29f95166072ee1ee76d617dba60b038f36fc74cb9c4b",
+              "navigation": "69e7b034f69a5bb112ddb2f1cd0411da9201fdbf5822ff13a9661f9a08717c92",
+              "calls": "9330b7b50a796715250b3f2fccf1caf17c0a14cb832bd53c7cb9bfe8bd9d4067",
+              "projections": "bba3d6937364303a4ef69ad35f0f57c638469eb532540c98157ef92d2e40e31f"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 323,
+              "claims": 323,
+              "coverage": 87,
+              "navigation": 323,
+              "calls": 7,
+              "projections": 125
+            }
+          },
+          {
+            "edit": "documentation only",
+            "seed": 2169043735,
+            "hashes": {
+              "analysisReports": "d856e9a67f9692f53c1d51826e70b571cfbe54429387e70199dc7c1a00d7dbe5",
+              "facts": "a1bc46b036cd4507719e48fba469d2dcefe920fc8cb1b4407f9693c68ed07906",
+              "claims": "dd380b8ece05e32e095006e68df91692d9b369ec42bc40966ab5efda7fc5fa0f",
+              "coverage": "49ebf9597d9f9fe8b9af29f95166072ee1ee76d617dba60b038f36fc74cb9c4b",
+              "navigation": "dcbff29b41bd8de976e82c73f4790e4e301643e77beafdce9ebea78d8d4bc8c9",
+              "calls": "9330b7b50a796715250b3f2fccf1caf17c0a14cb832bd53c7cb9bfe8bd9d4067",
+              "projections": "756c63941ae4e07a31212cee0150b2261204b8b2d1beab93db03c14fb242a0d9"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 323,
+              "claims": 323,
+              "coverage": 87,
+              "navigation": 323,
+              "calls": 7,
+              "projections": 125
+            }
+          },
+          {
+            "edit": "C header dependency",
+            "seed": 1718476170,
+            "hashes": {
+              "analysisReports": "a5ae85a0da32a5fe0e77186a52f62f202628d76c47a9dcb2157397cc8729fcce",
+              "facts": "752f75e2da6084ec1efa734136030a617453ad0b37a53e5f95889605bae2e1d3",
+              "claims": "382d4037ba51c3d68e5a9d1444baacf92b5053721031a8c19e4bf7d6e88cb012",
+              "coverage": "49ebf9597d9f9fe8b9af29f95166072ee1ee76d617dba60b038f36fc74cb9c4b",
+              "navigation": "2146640e7d58fdd4919d6f39f36ab188db4ad7239354d853e6f221553f9d58e8",
+              "calls": "9330b7b50a796715250b3f2fccf1caf17c0a14cb832bd53c7cb9bfe8bd9d4067",
+              "projections": "61c2c4d374dd8ae6ff955715d57b81860c530315d30c6963b7d3c0c38463c043"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 325,
+              "claims": 325,
+              "coverage": 87,
+              "navigation": 325,
+              "calls": 7,
+              "projections": 127
+            }
+          },
+          {
+            "edit": "Go target tags",
+            "seed": 1718476170,
+            "hashes": {
+              "analysisReports": "bcd58a0b0a596ab8ebbcb1536b07aacfba9000242d8821a893945a86705e0f37",
+              "facts": "40b70d2627f1ce65362fdcfa2a72d7f6dab6e7909d7e7548d38f03b50e26b31c",
+              "claims": "04383bbd58f09fd86f0ca00db98d2835e3e8c1ecdeb68b2a4f95ff4122f7415d",
+              "coverage": "49ebf9597d9f9fe8b9af29f95166072ee1ee76d617dba60b038f36fc74cb9c4b",
+              "navigation": "7d1d0880d8f9225061b2d5aa57fa47501cf68554f4f296562a757505c5ff7fd7",
+              "calls": "29bb3ce0bc600fcd9a15b69424a4ac39da7adf3b688cc870906ab2ddcdd7eef1",
+              "projections": "61c2c4d374dd8ae6ff955715d57b81860c530315d30c6963b7d3c0c38463c043"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 325,
+              "claims": 325,
+              "coverage": 87,
+              "navigation": 325,
+              "calls": 7,
+              "projections": 127
+            }
+          },
+          {
+            "edit": "Rust feature variant",
+            "seed": 1718476170,
+            "hashes": {
+              "analysisReports": "9943d7820c8e0789bccc41e22cb950dd010bfdcd963cbf1d6066398de51132ae",
+              "facts": "5bb9ae7b2214f4ce751ff6cfe1467cf02a72c7e639b18d26b2140c46e6d35b95",
+              "claims": "d24402dd608a1cd51eb566fef0604cb122a2852107c55ab17b79a9d777690c9d",
+              "coverage": "49ebf9597d9f9fe8b9af29f95166072ee1ee76d617dba60b038f36fc74cb9c4b",
+              "navigation": "2c921608708dfd13359b18fe1f705f9807c4845d898b71846a5d8d0e645454b8",
+              "calls": "75454d64b9a3db856ed8aee561f3b9ca81d919186fe0ed1893efba9e4201f9e5",
+              "projections": "50c7c71cd7ed37e62a3f3d333579497e6b9947899c6851250a6925afdca559e1"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 325,
+              "claims": 325,
+              "coverage": 87,
+              "navigation": 325,
+              "calls": 7,
+              "projections": 127
+            }
+          },
+          {
+            "edit": "project compiler configuration",
+            "seed": 1718476170,
+            "hashes": {
+              "analysisReports": "10cca82660ea7a1eac18587a6e5667e28dcae8d78c4df8dae399cd23b1a13013",
+              "facts": "06e16afa32fce3bf1ac44cc73748d8760d346704f28857ffcc9ec1338e7fb4a3",
+              "claims": "8873d6984998d9f452eeed0f04f3bb76255f81e7f71e644518c3ac7fbb316de7",
+              "coverage": "49ebf9597d9f9fe8b9af29f95166072ee1ee76d617dba60b038f36fc74cb9c4b",
+              "navigation": "3df8fe93b733b48a5626a9370d8cc91d58f3b5b32c9f4b35dd6f0d3247a64911",
+              "calls": "eb6e4d9f4e9d0e4e08ec665368d951a04660b09471ec4460977137327ae9d3df",
+              "projections": "50c7c71cd7ed37e62a3f3d333579497e6b9947899c6851250a6925afdca559e1"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 325,
+              "claims": 325,
+              "coverage": 87,
+              "navigation": 325,
+              "calls": 7,
+              "projections": 127
+            }
+          },
+          {
+            "edit": "Java language level",
+            "seed": 1718476170,
+            "hashes": {
+              "analysisReports": "23b0734efed5514ee14b58fb5fe2175d5173b40ee62956a99867e23b1fd72b93",
+              "facts": "f1c318bc681082e332298cf8cdb26336128b646f7201b30f921acd780f3ae075",
+              "claims": "fcddf89dbd584b799da6066861e4155bcee67c8b46d9475b75d710f594ea49c4",
+              "coverage": "49ebf9597d9f9fe8b9af29f95166072ee1ee76d617dba60b038f36fc74cb9c4b",
+              "navigation": "3256d603f7c664d1d0c8130aaec20ad4ba96f4d5c7721d8d20be5f9613398dcf",
+              "calls": "eab8869741be5eeb399a43ccb03b0db8d6fc63db44f8ab53ba801f61869eae3a",
+              "projections": "50c7c71cd7ed37e62a3f3d333579497e6b9947899c6851250a6925afdca559e1"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 325,
+              "claims": 325,
+              "coverage": 87,
+              "navigation": 325,
+              "calls": 7,
+              "projections": 127
+            }
+          },
+          {
+            "edit": "Csharp variant defines",
+            "seed": 1718476170,
+            "hashes": {
+              "analysisReports": "05b150682a08cc7e4db64380267653bccd172c2064e4dedd6e22358974793f9b",
+              "facts": "2399abfcfcd83e0cf6fa5157d22555a8dd80b2e50e6df86adcc38a73b094983f",
+              "claims": "92b1dce8685f6bdbc89797116bbfa0180337c9786296d1fec8271bc71d9f8a6a",
+              "coverage": "49ebf9597d9f9fe8b9af29f95166072ee1ee76d617dba60b038f36fc74cb9c4b",
+              "navigation": "be961323c259aa2af506ce9e9f11e6c5697d18e40e028dedd47b2c1a3f7228bf",
+              "calls": "1a1b9ec9d17a084f37cec7027a6e1b16c905a03d09ca23c60eabfb843d138d63",
+              "projections": "50c7c71cd7ed37e62a3f3d333579497e6b9947899c6851250a6925afdca559e1"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 325,
+              "claims": 325,
+              "coverage": 87,
+              "navigation": 325,
+              "calls": 7,
+              "projections": 127
+            }
+          },
+          {
+            "edit": "schema contract replacement",
+            "seed": 3636604769,
+            "hashes": {
+              "analysisReports": "1408248083d19534fe0cce76aecdce299ef659a6dc2bf856e0238da654708d48",
+              "facts": "f1dfce461c9c853d8b9b5b1ff5462fa134214fee44daba79bc3f332787ea7d10",
+              "claims": "147883e7aea281f17134ebb1cc7e08e8b9a4259c3413f3287e37e53a5e5573bc",
+              "coverage": "49ebf9597d9f9fe8b9af29f95166072ee1ee76d617dba60b038f36fc74cb9c4b",
+              "navigation": "b23b08dcc4e7a39a83f413f45c9e5e876925323f09d15e641ae92be3a6c5a59d",
+              "calls": "1a1b9ec9d17a084f37cec7027a6e1b16c905a03d09ca23c60eabfb843d138d63",
+              "projections": "ebcbc5d5ba952c727beeb16dc6ee882d1efcb5c69b08497294aa429e3f728309"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 325,
+              "claims": 325,
+              "coverage": 87,
+              "navigation": 325,
+              "calls": 7,
+              "projections": 127
+            }
+          },
+          {
+            "edit": "producer receipt mismatch",
+            "seed": 3636604769,
+            "hashes": {
+              "analysisReports": "328e508930acb960c59e3173cfff74e9c28ed1f576a080d67175bed792ca98bf",
+              "facts": "a520740671552464490b81093023b1d1f8a866e839ed9b51c3ede5f1f3015963",
+              "claims": "0c33ab40ac3973e12b04d517ba42dacba2e05c15cf29ceeecb970380f22dc295",
+              "coverage": "6826f1a193b1dc67ffea6f0d0a97769b61d94e925573b2eec20257dad7d623b5",
+              "navigation": "6c69f488574cb5f17e63720c18fe0a33fe06b3b6e504cd2e7aa3c5f31cbe85ef",
+              "calls": "e224a1b5d664fa46fa9cfb091cd3a6fd688d96e0deece25d311d3ea38543a9e1",
+              "projections": "ebcbc5d5ba952c727beeb16dc6ee882d1efcb5c69b08497294aa429e3f728309"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 287,
+              "claims": 287,
+              "coverage": 77,
+              "navigation": 287,
+              "calls": 6,
+              "projections": 127
+            }
+          },
+          {
+            "edit": "restore qualified producer",
+            "seed": 3636604769,
+            "hashes": {
+              "analysisReports": "1408248083d19534fe0cce76aecdce299ef659a6dc2bf856e0238da654708d48",
+              "facts": "f1dfce461c9c853d8b9b5b1ff5462fa134214fee44daba79bc3f332787ea7d10",
+              "claims": "147883e7aea281f17134ebb1cc7e08e8b9a4259c3413f3287e37e53a5e5573bc",
+              "coverage": "49ebf9597d9f9fe8b9af29f95166072ee1ee76d617dba60b038f36fc74cb9c4b",
+              "navigation": "b23b08dcc4e7a39a83f413f45c9e5e876925323f09d15e641ae92be3a6c5a59d",
+              "calls": "1a1b9ec9d17a084f37cec7027a6e1b16c905a03d09ca23c60eabfb843d138d63",
+              "projections": "ebcbc5d5ba952c727beeb16dc6ee882d1efcb5c69b08497294aa429e3f728309"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 325,
+              "claims": 325,
+              "coverage": 87,
+              "navigation": 325,
+              "calls": 7,
+              "projections": 127
+            }
+          },
+          {
+            "edit": "Rust feature variant",
+            "seed": 3636604769,
+            "hashes": {
+              "analysisReports": "1408248083d19534fe0cce76aecdce299ef659a6dc2bf856e0238da654708d48",
+              "facts": "f1dfce461c9c853d8b9b5b1ff5462fa134214fee44daba79bc3f332787ea7d10",
+              "claims": "147883e7aea281f17134ebb1cc7e08e8b9a4259c3413f3287e37e53a5e5573bc",
+              "coverage": "49ebf9597d9f9fe8b9af29f95166072ee1ee76d617dba60b038f36fc74cb9c4b",
+              "navigation": "b23b08dcc4e7a39a83f413f45c9e5e876925323f09d15e641ae92be3a6c5a59d",
+              "calls": "1a1b9ec9d17a084f37cec7027a6e1b16c905a03d09ca23c60eabfb843d138d63",
+              "projections": "ebcbc5d5ba952c727beeb16dc6ee882d1efcb5c69b08497294aa429e3f728309"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 325,
+              "claims": 325,
+              "coverage": 87,
+              "navigation": 325,
+              "calls": 7,
+              "projections": 127
+            }
+          },
+          {
+            "edit": "Csharp variant defines",
+            "seed": 3636604769,
+            "hashes": {
+              "analysisReports": "1408248083d19534fe0cce76aecdce299ef659a6dc2bf856e0238da654708d48",
+              "facts": "f1dfce461c9c853d8b9b5b1ff5462fa134214fee44daba79bc3f332787ea7d10",
+              "claims": "147883e7aea281f17134ebb1cc7e08e8b9a4259c3413f3287e37e53a5e5573bc",
+              "coverage": "49ebf9597d9f9fe8b9af29f95166072ee1ee76d617dba60b038f36fc74cb9c4b",
+              "navigation": "b23b08dcc4e7a39a83f413f45c9e5e876925323f09d15e641ae92be3a6c5a59d",
+              "calls": "1a1b9ec9d17a084f37cec7027a6e1b16c905a03d09ca23c60eabfb843d138d63",
+              "projections": "ebcbc5d5ba952c727beeb16dc6ee882d1efcb5c69b08497294aa429e3f728309"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 325,
+              "claims": 325,
+              "coverage": 87,
+              "navigation": 325,
+              "calls": 7,
+              "projections": 127
+            }
+          },
+          {
+            "edit": "Java language level",
+            "seed": 3636604769,
+            "hashes": {
+              "analysisReports": "1408248083d19534fe0cce76aecdce299ef659a6dc2bf856e0238da654708d48",
+              "facts": "f1dfce461c9c853d8b9b5b1ff5462fa134214fee44daba79bc3f332787ea7d10",
+              "claims": "147883e7aea281f17134ebb1cc7e08e8b9a4259c3413f3287e37e53a5e5573bc",
+              "coverage": "49ebf9597d9f9fe8b9af29f95166072ee1ee76d617dba60b038f36fc74cb9c4b",
+              "navigation": "b23b08dcc4e7a39a83f413f45c9e5e876925323f09d15e641ae92be3a6c5a59d",
+              "calls": "1a1b9ec9d17a084f37cec7027a6e1b16c905a03d09ca23c60eabfb843d138d63",
+              "projections": "ebcbc5d5ba952c727beeb16dc6ee882d1efcb5c69b08497294aa429e3f728309"
+            },
+            "counts": {
+              "analysisReports": 1,
+              "facts": 325,
+              "claims": 325,
+              "coverage": 87,
+              "navigation": 325,
+              "calls": 7,
+              "projections": 127
+            }
+          }
+        ]
+      },
+      "upgrades": {
+        "previous": {
+          "baseline": {
+            "commit": "6eefca04b5032f3416fcc95bda23dec4bb8f65db",
+            "runtime": "/private/tmp/prograph-stage6-2-20261022/previous-writers/accepted-JCfbDm",
+            "node": "v25.9.0",
+            "compiler": "5.9.3",
+            "scope": "Accepted source compiled using current locked dependencies; not historical binary performance evidence",
+            "digests": {
+              "core/semantic/model.js": "504527f0eab68a55364af39cfc62bb645a19701c4f2e5208186d3c95f62696b5",
+              "core/semantic/managed-scip.js": "333ad4e67ddc1570bf8b1a15834866489f468a3bee5b2f991c359098a6a1203c",
+              "core/semantic/provider-replay.js": "5a955825b925b261d28fe14fd8eaa51bb47a0f88e08dfea9fe11a5d31673a9a9"
+            }
+          },
+          "sourceRoot": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-multiprovider-ccG4lD",
+          "pinned": 3,
+          "historicalClaimHash": "ebdf51939cb941c9d46afbbe4ef9a519f992b4db40871038544e9fa8b554c4d8",
+          "cleanRebuildHash": "116e466ed5feff2098368a353d43f0ad08a2cc513ab75847828fb55ffb8281b1",
+          "counts": {
+            "analysisReports": 1,
+            "facts": 105,
+            "claims": 105,
+            "coverage": 37,
+            "navigation": 105,
+            "calls": 3,
+            "projections": 39
+          },
+          "pinnedGc": {
+            "collected": {
+              "snapshots": 0,
+              "snapshot_reports": 0,
+              "observed_inputs": 0,
+              "runs": 0,
+              "claims": 0,
+              "facts": 0,
+              "sources": 0,
+              "provenance": 0,
+              "groups": 0,
+              "entities": 0,
+              "origin_runs": 0
+            },
+            "active": 4,
+            "artifacts": {
+              "state": "deferred",
+              "reason": "Retained source has no unique root witness; no workspace deleted"
+            }
+          },
+          "unpinnedGc": "complete",
+          "freshness": "fresh"
+        },
+        "report": {
+          "baseline": {
+            "commit": "892d91833cfd22639da3f34948969a24a1ea96bb",
+            "runtime": "/private/tmp/prograph-stage6-2-20261022/previous-writers/accepted-BRb6X4",
+            "node": "v25.9.0",
+            "compiler": "5.9.3",
+            "scope": "Accepted source compiled using current locked dependencies; not historical binary performance evidence",
+            "digests": {
+              "core/semantic/model.js": "cc36ed9de1f4c2fc2762dfa53f7d7448ea3d9475f9cc19c3ee8f60ab07a4e163",
+              "core/semantic/managed-scip.js": "333ad4e67ddc1570bf8b1a15834866489f468a3bee5b2f991c359098a6a1203c",
+              "core/semantic/provider-replay.js": "813d67834901f2c1860026e8480d91482491d515980261b4565550a125551cb0"
+            }
+          },
+          "historicalClaimHash": "6c510bc499422ec495f147d7e297c9a4d4dc3e5da3291d0bb3c03322e934f1ed",
+          "historicalReportHash": "d632d2ab27dccbb501c8c91f6df0023395541528b1f5cbbe7388875ead8531da",
+          "cleanRebuildHash": "167a684d8b2f165ace751f891930e030f16ff80977fc4eedb065ae8e6b8525b4",
+          "pinnedGc": {
+            "snapshots": 1,
+            "snapshot_reports": 0,
+            "observed_inputs": 0,
+            "runs": 1,
+            "claims": 1,
+            "facts": 1,
+            "sources": 0,
+            "provenance": 1,
+            "groups": 0,
+            "entities": 2,
+            "origin_runs": 0
+          },
+          "unpinnedGc": {
+            "snapshots": 1,
+            "snapshot_reports": 1,
+            "observed_inputs": 0,
+            "runs": 18,
+            "claims": 20,
+            "facts": 14,
+            "sources": 0,
+            "provenance": 5,
+            "groups": 1,
+            "entities": 8,
+            "origin_runs": 0
+          },
+          "freshness": "fresh"
+        },
+        "authority": {
+          "baseline": {
+            "commit": "b96118fc7513191b33af5d82caef387ad2c8e01e",
+            "runtime": "/private/tmp/prograph-stage6-2-20261022/previous-writers/accepted-2gjbVn",
+            "node": "v25.9.0",
+            "compiler": "5.9.3",
+            "scope": "Accepted source compiled using current locked dependencies; not historical binary performance evidence",
+            "digests": {
+              "core/semantic/model.js": "ddf493a22601a830a3701e4db18d45805bdd671a4783530af2c53481703c5688",
+              "core/semantic/managed-scip.js": "333ad4e67ddc1570bf8b1a15834866489f468a3bee5b2f991c359098a6a1203c",
+              "core/semantic/provider-replay.js": "813d67834901f2c1860026e8480d91482491d515980261b4565550a125551cb0"
+            }
+          },
+          "historicalReportHash": "28fe2e07164192843e50f52f9fcb3c5b39a8a03a56705ac8571abe2053a49fba",
+          "pinnedGc": {
+            "snapshots": 0,
+            "snapshot_reports": 0,
+            "observed_inputs": 0,
+            "runs": 0,
+            "claims": 0,
+            "facts": 0,
+            "sources": 0,
+            "provenance": 0,
+            "groups": 0,
+            "entities": 0,
+            "origin_runs": 0
+          },
+          "unpinnedGc": {
+            "snapshots": 1,
+            "snapshot_reports": 1,
+            "observed_inputs": 92,
+            "runs": 15,
+            "claims": 0,
+            "facts": 0,
+            "sources": 0,
+            "provenance": 0,
+            "groups": 0,
+            "entities": 0,
+            "origin_runs": -1
+          },
+          "authority": "semantic",
+          "freshness": "fresh",
+          "legacySchema": "1.2.0",
+          "rollbackOldReader": "passed"
+        }
+      },
+      "recovery": {
+        "node": "v25.9.0",
+        "probes": [
+          {
+            "point": "before-seal",
+            "exitCode": 57,
+            "activeSnapshot": 1,
+            "visible": [
+              "callee"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          },
+          {
+            "point": "before-publish",
+            "exitCode": 57,
+            "activeSnapshot": 1,
+            "visible": [
+              "callee"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          },
+          {
+            "point": "during-publish",
+            "exitCode": 57,
+            "activeSnapshot": 1,
+            "visible": [
+              "callee"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          },
+          {
+            "point": "after-publish",
+            "exitCode": 57,
+            "activeSnapshot": 2,
+            "visible": [
+              "other"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          }
+        ],
+        "corruption": {
+          "refused": true,
+          "unchanged": true
+        }
+      },
+      "managedProfiles": {
+        "python": {
+          "format": 1,
+          "id": "python-probe",
+          "language": "python",
+          "root": ".",
+          "package": {
+            "name": "prograph-probe",
+            "version": "0.1.0"
+          },
+          "runtime": {
+            "path": "/private/tmp/prograph-stage6-2-20261022/sdk/node/node-v20.20.2-darwin-arm64",
+            "sha256": "b39f9f4fa193f4ebe6c46e0966be097fe192dfd702a6ca487814c3b7188eeb1a",
+            "entry": "bin/node"
+          },
+          "producer": {
+            "path": "/private/tmp/prograph-authority-final-python-wL4MU5/package",
+            "sha256": "ea0a69c0838b60811e5292a370a911c40c104a19c4e76cd57c9938867b7c495d",
+            "entry": "index.js"
+          },
+          "python": {
+            "interpreter": {
+              "path": "/Library/Frameworks/Python.framework/Versions/3.14",
+              "sha256": "3aa7e0f2ea88deb1d0aba4de31e9ec462edb4e3964b49823d19c803ea52d227d",
+              "entry": "bin/python3"
+            },
+            "version": "3.11"
+          }
+        },
+        "go": {
+          "format": 1,
+          "id": "go-probe",
+          "language": "go",
+          "root": ".",
+          "package": {
+            "name": "example.org/prographprobe",
+            "version": "0.1.0"
+          },
+          "runtime": {
+            "path": "/private/tmp/prograph-stage6-2-20261022/sdk/go/go",
+            "sha256": "89ebaf8e3fd86afd90c0191f43c23d88ab0b45ca1329fab504fb94951c0d3830",
+            "entry": "bin/go"
+          },
+          "producer": {
+            "path": "/private/tmp/prograph-stage4-tools/scip-go/scip-go",
+            "sha256": "dedb659aa95faa2bd45c4dd1f0dddba0e6277545a6cdbe9078a76ce38ea37cb3"
+          },
+          "go": {
+            "os": "darwin",
+            "arch": "arm64"
+          }
+        },
+        "java": {
+          "format": 1,
+          "id": "java-probe",
+          "language": "java",
+          "root": ".",
+          "package": {
+            "name": "prograph-probe",
+            "version": "0.1.0"
+          },
+          "runtime": {
+            "path": "/private/tmp/prograph-stage6-2-20261022/sdk/jdk/jdk-21.0.12.1+1/Contents/Home",
+            "sha256": "091d18fd255db7b8f3d2189135547e0e8edd5392bfcca6e7578616e8144a8433",
+            "entry": "bin/java"
+          },
+          "producer": {
+            "path": "/private/tmp/prograph-stage6-2-20261022/tools/scip-java",
+            "sha256": "a694cae143c32c5b6226362fb4bd268a8d13d3cd9b482819b3b0029a9a97b8fe"
+          },
+          "java": {
+            "release": 17,
+            "plugins": [
+              {
+                "path": "/private/tmp/prograph-stage6-2-20261022/tools/javac.jar",
+                "sha256": "1c7ad1c8361f6ea9f9758e4b55decd4869b0ac7bb8610127aca045173ff590ef"
+              },
+              {
+                "path": "/private/tmp/prograph-stage6-2-20261022/tools/shared.jar",
+                "sha256": "8c58e069af784b178347849f9b0e127781d9070210201ac6617947ace4f895be"
+              },
+              {
+                "path": "/private/tmp/prograph-stage6-2-20261022/tools/bindings.jar",
+                "sha256": "ab1c627cb9ff6a8b0f05d91ee329c0ef281819ed011a2b2806fa7ea5f16c1006"
+              },
+              {
+                "path": "/private/tmp/prograph-stage6-2-20261022/tools/protobuf.jar",
+                "sha256": "780e269712d59ae34b87b702ce26aede7982804299dd56a65aa84bda6c145268"
+              }
+            ]
+          }
+        },
+        "csharp": {
+          "format": 1,
+          "id": "csharp-probe",
+          "language": "csharp",
+          "root": ".",
+          "package": {
+            "name": "prograph-probe",
+            "version": "0.1.0"
+          },
+          "runtime": {
+            "path": "/private/tmp/prograph-stage6-2-20261022/sdk/dotnet/.",
+            "sha256": "1cd65ad9bbfb4ec5440d2574e7346d9b50ec6d2b9ef4a96ce425603a46d960c8",
+            "entry": "dotnet"
+          },
+          "producer": {
+            "path": "/private/tmp/prograph-stage6-2-20261022/sdk/scip-dotnet/tools/net10.0/any",
+            "sha256": "fa057a36774654870c0f081e8826765f952e8ca415a17e5cd5bf87b540c15ab4",
+            "entry": "scip-dotnet.dll"
+          },
+          "csharp": {
+            "projects": [
+              {
+                "file": "Probe.csproj",
+                "targetFramework": "net10.0",
+                "assembly": "Probe",
+                "sources": [
+                  "Foo.cs"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "rustAnalyzer": {
+        "release": "2026-10-12",
+        "executableSha256": "c863e967a7244fa3687d7bd6235ac7abae5a7ce44bcbf8307eb1dc80aa85f397",
+        "archiveSha256": "a2e45e828b37bfc4b507c2ca456e8b61096e0bdfbae225f3d33295546d1eeacf",
+        "rustc": "1.95.0 (59807616e 2026-04-14)"
+      },
+      "preflight": "Incomplete temporary SDK directories were detected before test execution; fresh pinned bundles were restored with their original full bundle hashes. No assertion or tool test disabled."
+    },
     "typecheck": {
       "command": "npm run typecheck",
       "passed": true
     },
-    "build": "pending",
-    "recovery": "pending",
-    "ci": "pending"
+    "build": {
+      "passed": true,
+      "command": "npm run build"
+    },
+    "recovery": {
+      "passed": true,
+      "probes": 4,
+      "corruptionRefusal": true
+    },
+    "ci": {
+      "runId": 39692694809,
+      "url": "https://github.com/xpan0988/prograph/actions/runs/39692694809",
+      "headSha": "c4569685f2027e4cbf9c2b28e47121e42daf8bf9",
+      "runAttempt": 1,
+      "passed": true,
+      "observedAt": "2026-10-22T00:14:18Z",
+      "jobs": [
+        {
+          "node": 20,
+          "version": "v20.20.2",
+          "jobId": 119542486214,
+          "url": "https://github.com/xpan0988/prograph/actions/runs/39692694809/job/119542486214",
+          "status": "completed",
+          "conclusion": "success",
+          "passed": 283,
+          "files": 36,
+          "pending": 0,
+          "rustTraversalTests": 9,
+          "oracleSeed": "20",
+          "qualificationEvidence": [
+            "2026-10-21T23:30:06.2876346Z  \u2713 tests/rust-traversal.test.ts (9 tests) 1990ms",
+            "2026-10-21T23:52:24.1664568Z  Test Files  36 passed (36)",
+            "2026-10-21T23:52:24.1665562Z       Tests  283 passed (283)",
+            "2026-10-21T23:52:24.1667110Z    Duration  1755.35s (transform 4.05s, setup 0ms, import 21.19s, tests 2784.75s, environment 3ms)",
+            "2026-10-21T23:52:37.7210023Z Verified 283 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, atomic default authority, verified migration rollback/pins and old-reader export, complete build, four recovery probes and corruption refusal"
+          ],
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install explicit Rust qualification tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Run npm run lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Compile accepted prior writer for actual upgrade oracle",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run actions/setup-go@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Run actions/setup-dotnet@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Install pinned mainstream semantic qualification tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Complete tests, including actual Rust producer",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete Node and UI build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Transaction and process recovery probes",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Require executed qualification and recovery evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Post Run actions/setup-dotnet@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28
+            },
+            {
+              "name": "Post Run actions/setup-go@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 30
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 31
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 32
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 33
+            }
+          ]
+        },
+        {
+          "node": 22,
+          "version": "v22.23.3",
+          "jobId": 119542486135,
+          "url": "https://github.com/xpan0988/prograph/actions/runs/39692694809/job/119542486135",
+          "status": "completed",
+          "conclusion": "success",
+          "passed": 283,
+          "files": 36,
+          "pending": 0,
+          "rustTraversalTests": 9,
+          "oracleSeed": "22",
+          "qualificationEvidence": [
+            "2026-10-21T23:32:05.8368912Z  \u2713 tests/rust-traversal.test.ts (9 tests) 2839ms",
+            "2026-10-22T00:12:14.0338184Z  Test Files  36 passed (36)",
+            "2026-10-22T00:12:14.0339256Z       Tests  283 passed (283)",
+            "2026-10-22T00:12:14.0342597Z    Duration  2953.69s (transform 5.47s, setup 0ms, import 29.98s, tests 4317.82s, environment 6ms)",
+            "2026-10-22T00:12:33.4269925Z Verified 283 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, atomic default authority, verified migration rollback/pins and old-reader export, complete build, four recovery probes and corruption refusal"
+          ],
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install explicit Rust qualification tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Run npm run lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Compile accepted prior writer for actual upgrade oracle",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run actions/setup-go@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Run actions/setup-dotnet@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Install pinned mainstream semantic qualification tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Complete tests, including actual Rust producer",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete Node and UI build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Transaction and process recovery probes",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Require executed qualification and recovery evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Post Run actions/setup-dotnet@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28
+            },
+            {
+              "name": "Post Run actions/setup-go@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 30
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 31
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 32
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 33
+            }
+          ]
+        },
+        {
+          "node": 24,
+          "version": "v24.21.0",
+          "jobId": 119542485952,
+          "url": "https://github.com/xpan0988/prograph/actions/runs/39692694809/job/119542485952",
+          "status": "completed",
+          "conclusion": "success",
+          "passed": 283,
+          "files": 36,
+          "pending": 0,
+          "rustTraversalTests": 9,
+          "oracleSeed": "24",
+          "qualificationEvidence": [
+            "2026-10-21T23:32:02.0520537Z  \u2713 tests/rust-traversal.test.ts (9 tests) 2328ms",
+            "2026-10-22T00:12:09.7212887Z  Test Files  36 passed (36)",
+            "2026-10-22T00:12:09.7214262Z       Tests  283 passed (283)",
+            "2026-10-22T00:12:09.7217697Z    Duration  2945.86s (transform 4.55s, setup 0ms, import 24.17s, tests 4309.28s, environment 4ms)",
+            "2026-10-22T00:12:24.8542526Z Verified 283 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, atomic default authority, verified migration rollback/pins and old-reader export, complete build, four recovery probes and corruption refusal"
+          ],
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install explicit Rust qualification tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Run npm run lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Compile accepted prior writer for actual upgrade oracle",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run actions/setup-go@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Run actions/setup-dotnet@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Install pinned mainstream semantic qualification tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Complete tests, including actual Rust producer",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete Node and UI build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Transaction and process recovery probes",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Require executed qualification and recovery evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Post Run actions/setup-dotnet@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28
+            },
+            {
+              "name": "Post Run actions/setup-go@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 30
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 31
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 32
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 33
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12391326323,
+          "name": "semantic-evidence-node-20",
+          "size_in_bytes": 24961,
+          "digest": "sha256:2d37b01da0d902b09817a20a2c07d93634a3160e05fe64879cac9d4307e84397",
+          "headSha": "c4569685f2027e4cbf9c2b28e47121e42daf8bf9"
+        },
+        {
+          "id": 12391039528,
+          "name": "semantic-evidence-node-24",
+          "size_in_bytes": 25221,
+          "digest": "sha256:a99d1b220b2b9a0a6c770010c4adc3d6629e803b8d5ee9141c5aaf4cd4ccacc8",
+          "headSha": "c4569685f2027e4cbf9c2b28e47121e42daf8bf9"
+        },
+        {
+          "id": 12390774971,
+          "name": "semantic-evidence-node-22",
+          "size_in_bytes": 25021,
+          "digest": "sha256:03e0ce73254d58d7482d8919c6f3da7280b2cfc0e604e53f714355d0b01e2131",
+          "headSha": "c4569685f2027e4cbf9c2b28e47121e42daf8bf9"
+        }
+      ],
+      "baselineFinal": {
+        "runId": 39689557793,
+        "headSha": "8ed2d3202900f827f3184ecc3f301aeeaeb6ec7d",
+        "observedAt": "2026-10-22T00:11:00Z",
+        "jobs": [
+          {
+            "id": 119532069477,
+            "name": "regression (22)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 119532069661,
+            "name": "regression (20)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 119532069664,
+            "name": "regression (24)",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      }
+    }
   },
   "memoryLimits": [
     "All 174 native trees remain across the cross-file definition barrier; no reparse, disposal or source/compiler lifetime change",
@@ -1138,5 +2623,16 @@
     "Counters are exact logical observations, not allocation counts: selectedWrappers counts only lazy cursor.currentNode reads, excluding wrappers from child/field APIs",
     "New resident tables: <=5973 definition references, 3754 function observation caches, 2191 inferable local bindings plus parameter entries; parameter count and per-cache native/heap bytes not separately measured",
     "No forced GC, heap snapshot or new allocation run; no external semantic provider execution in this corpus"
-  ]
+  ],
+  "implementationRevision": "c4569685f2027e4cbf9c2b28e47121e42daf8bf9",
+  "acceptanceTrees": {
+    "src": "65680d71907a9c843437fee9a0d53863b341d48c",
+    "tests": "a9adb6512a3e9790d0e9a07fd1d5de325c04df7c",
+    "scripts": "4a85dcc61ea62c1f94f077ae8b02a29cf17c1bce",
+    ".github": "6f64d9e1fb92860fd14289d07f3cacaa75d5fc8f",
+    "package.json": "39429b4ee6c2e4a4b139ba77e86e7d75e97eaf75",
+    "package-lock.json": "459b1f73972d707e18fcd509ba2e80e847175555",
+    "tsconfig.json": "b2d7cf0ff06aca8882d9204cb586ec9b21f4033a",
+    "tsconfig.node.json": "ee3d35a856da84e3d991afd1d7fc5f6a0975202f"
+  }
 }
