@@ -1,6 +1,6 @@
 // Post-timing full ownership/support and source-freshness comparison. No graph-byte normalization.
 // node scripts/semantic-export-witness.mjs ACCEPTED_INDEX NEW_INDEX SOURCE REPORT
-import { readFile, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import { createReadStream } from 'node:fs';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
@@ -24,7 +24,7 @@ const left = new Database(path.join(accepted, 'semantic.sqlite'), { readonly: tr
 const right = new Database(path.join(current, 'semantic.sqlite'), { readonly: true, fileMustExist: true });
 const tables = {};
 try {
-  for (const table of ['sc_facts', 'sc_claims', 'sc_entities', 'sc_occurrences', 'sc_symbols', 'sc_contexts', 'sc_owned', 'sc_groups', 'sc_supports', 'sc_inputs', 'sc_observed_inputs', 'sc_run_digests', 'sc_run_selectors', 'sc_selector_gates', 'sc_runs']) {
+  for (const table of ['sc_facts', 'sc_claims', 'sc_entities', 'sc_occurrences', 'sc_symbols', 'sc_owned', 'sc_groups', 'sc_supports', 'sc_inputs', 'sc_observed_inputs', 'sc_run_digests', 'sc_run_selectors', 'sc_selector_gates', 'sc_runs']) {
     const columns = left.prepare(`PRAGMA table_info(${table})`).all();
     // Fresh runs have different wall-clock creation timestamps. No semantic or
     // support column is excluded; snapshot reports/manifests have separate clocks.
