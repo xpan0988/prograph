@@ -1,9 +1,9 @@
 {
   "format": 1,
   "milestone": "Stage 6.3",
-  "status": "Implementation measured; complete local regression and CI pending",
+  "status": "Accepted Stage 6.3 implementation; complete local qualification and exact Node 20/22/24 CI passed. General time/Core-only memory gates remain unqualified.",
   "baselineRevision": "a598004f253d68361936bd09786c9a27776b0e04",
-  "implementationRevision": null,
+  "implementationRevision": "1790cf4c2a9ec017d92023bfa75ecfd672ac993a",
   "acceptedRustSourceSha256": "2e80243e80bc424a53be87c5757037465f8cdc43e0628b9e9b3379d2bf47196d",
   "sourceHashes": {
     "src/core/storage/json-stream.ts": "64e845dfa82d904e2bc405e1ecb8e980d88920da0fbd58884f4826f31bb7c96a",
@@ -16,7 +16,7 @@
     "tests/compatibility-export.test.ts": "e390371be7a7addee8519a54e09270796690d1083005d85cee00416dca66a598",
     "tests/oracles/legacy-json-stage6-2.ts": "fa8356eb95236bb2fa23f5d545f16c405dba58b5fde2765423ebca107ee30bc0",
     "scripts/semantic-export-profile.mjs": "5e0514bea564680f0ae5342c327be553483d23b727c0ceb6c99fff799e4e8d0b",
-    "scripts/semantic-export-witness.mjs": "937497aefa439c8d4b3b1279eb97fdfe09d651fd1fdad50143985aa96458e9ed"
+    "scripts/semantic-export-witness.mjs": "6afdeb78892c076ea5e61835c2cfc4ef8b774a18b2d91cf96e526a96ab9e3021"
   },
   "environment": {
     "node": "v25.9.0",
@@ -265,7 +265,9 @@
           "bytes": 38664,
           "sha256": "5a264ef4548a77102b9c085a45e5e2ff25b81919843b4ca7b60cbc3af4c75c68"
         }
-      }
+      },
+      "maxRssBeforeKiB": 491248,
+      "exportHighWaterIncreaseKiB": 861136
     },
     "after": {
       "elapsedMs": 843.441791,
@@ -339,11 +341,13 @@
           "bytes": 38664,
           "sha256": "5a264ef4548a77102b9c085a45e5e2ff25b81919843b4ca7b60cbc3af4c75c68"
         }
-      }
+      },
+      "maxRssBeforeKiB": 471808,
+      "exportHighWaterIncreaseKiB": 32128
     },
     "completeBytesEqual": true,
     "acceptedFilesEqual": true,
-    "limits": "One serial pair, same runtime/flags/inputs. Diagnostics input is separately parsed in both arms (production shares graph.diagnostics); input loading outside timer but inside cumulative RSS. Before lacks fsync, after includes per-file fsync/publication. No forced GC. Cache/order/GC effects and differing initial heap remain; focused RSS savings are not a production/Core RSS claim."
+    "limits": "One serial pair, same runtime/flags/inputs. Diagnostics input is separately parsed in both arms (production shares graph.diagnostics); input loading outside timer but inside cumulative RSS. Before lacks fsync, after includes per-file fsync/publication. No forced GC. Cache/order/GC effects and differing initial heap remain; focused RSS savings are not a production/Core RSS claim. High-water captured through export return, before hashing/report generation."
   },
   "whole": {
     "startedAt": "2026-10-22T04:16:50.725Z",
@@ -1697,15 +1701,902 @@
       "acceptedChecksumsEqual": true,
       "legacySqliteEqual": true
     },
-    "limits": "One lightly instrumented phase run. No controlled whole-analysis baseline at Stage 6.3; Stage 6.2 single uninstrumented sample remains context. Shared in-process RSS cannot be partitioned into Core/compiler/native. Phase endpoints miss instantaneous values; cumulative getrusage high-water brackets peak interval."
+    "limits": "One lightly instrumented phase run. No controlled whole-analysis baseline at Stage 6.3; Stage 6.2 single uninstrumented sample remains context. Shared in-process RSS cannot be partitioned into Core/compiler/native. Phase endpoints miss instantaneous values; cumulative getrusage high-water brackets peak interval. High-water captured through analysis/export return, before post-timing verification/report generation.",
+    "jsonExportGc": {
+      "count": 37,
+      "totalPauseMs": 40.58999824523926,
+      "measurement": "Process-wide perf_hooks events timestamped during export; no forced GC"
+    },
+    "ownershipAndFreshness": {
+      "format": 1,
+      "files": {
+        "exports/graph.json": {
+          "equal": true,
+          "bytes": 102548074,
+          "sha256": "0183e8f4f580a5d567f21160b8285568de60307a536c415fe6c0ced30001d28a"
+        },
+        "diagnostics.json": {
+          "equal": true,
+          "bytes": 15529775,
+          "sha256": "631fa69e6fdd6f49b339303a9b454228e05a9f79fb362d9a5a7e6b86bf6503ce"
+        }
+      },
+      "tables": {
+        "sc_facts": {
+          "count": 234946,
+          "sha256": "d57c875ccd301ec4c658327e25d75b32e2b6cf92bf87b9ec2e0c84161c29023e",
+          "equal": true,
+          "excludedColumns": []
+        },
+        "sc_claims": {
+          "count": 234946,
+          "sha256": "011ecdb68d3065e126d6e5ca8ad41dd5fc20874d902d76e421841f5e45bbc749",
+          "equal": true,
+          "excludedColumns": []
+        },
+        "sc_entities": {
+          "count": 217234,
+          "sha256": "87b460e1a9ec4767bdf861709ac2955a1fba6e2abf0ced0fb188235d363ba77b",
+          "equal": true,
+          "excludedColumns": []
+        },
+        "sc_occurrences": {
+          "count": 41438,
+          "sha256": "fbd0e4ff56d23768d2e08b9eb76934c13486ba0ee3ef935c3e85749333d2d4eb",
+          "equal": true,
+          "excludedColumns": []
+        },
+        "sc_symbols": {
+          "count": 9355,
+          "sha256": "991368f53958d9c74c333a638dcf99df9d2c7bbd71083b86dbeeff488d9a6d5a",
+          "equal": true,
+          "excludedColumns": []
+        },
+        "sc_owned": {
+          "count": 234946,
+          "sha256": "8c052b7361bf86c2689df001269c6b26460dfc9d61c30439ce9be39971d14a9f",
+          "equal": true,
+          "excludedColumns": []
+        },
+        "sc_groups": {
+          "count": 20121,
+          "sha256": "925a771b7cc07c5ae5a67ed45f49db133d63ba5236f5e9380ff4e3f1375c30a9",
+          "equal": true,
+          "excludedColumns": []
+        },
+        "sc_supports": {
+          "count": 57693,
+          "sha256": "f888e12db6f6bf0e56183a23dc252430d7e98d9fb69f51df54a1b87574968e7a",
+          "equal": true,
+          "excludedColumns": []
+        },
+        "sc_inputs": {
+          "count": 7054,
+          "sha256": "810f74c4507804f93244f71b313153d7c26fa970c47023a4529dbb8ccccb2fa0",
+          "equal": true,
+          "excludedColumns": []
+        },
+        "sc_observed_inputs": {
+          "count": 928,
+          "sha256": "7d546e1e6fac3890f94f8bb954b7d967880fe907b019e5cbdd0e76d1e4314494",
+          "equal": true,
+          "excludedColumns": []
+        },
+        "sc_run_digests": {
+          "count": 1193,
+          "sha256": "1c274075b4806a7084b5f63600f6a008ed2c6d7faa664f349ba02996fa7d06aa",
+          "equal": true,
+          "excludedColumns": []
+        },
+        "sc_run_selectors": {
+          "count": 774,
+          "sha256": "01fc655c665c63fe647041623d5a07c4431d5c22eb5d667122a6e21eba35b9b1",
+          "equal": true,
+          "excludedColumns": []
+        },
+        "sc_selector_gates": {
+          "count": 689,
+          "sha256": "9c5560e399b62be9fc9c772faf89f2fa61306c937cdc35993567cf84d36c70a6",
+          "equal": true,
+          "excludedColumns": []
+        },
+        "sc_runs": {
+          "count": 1193,
+          "sha256": "c26ff261d717ccf87c84e421eca44ab3f458f7be8e92a216cd310f8ae3a4a104",
+          "equal": true,
+          "excludedColumns": [
+            "created_at"
+          ]
+        }
+      },
+      "freshness": {
+        "repositoryRoot": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-source-scale-pair-0GBZO2/source",
+        "indexDirectory": "/private/tmp/prograph-stage6-3-20261022/production-index",
+        "indexGeneratedAt": "2026-10-22T04:17:19.442Z",
+        "schemaVersion": "1.2.0",
+        "toolVersion": "0.3.0",
+        "enabledAdapters": [
+          "typescript",
+          "rust",
+          "python",
+          "react",
+          "tauri",
+          "architecture",
+          "markdown",
+          "packageJson",
+          "cargoToml",
+          "tauriConfig",
+          "tauriCapability",
+          "tests",
+          "semanticLinker"
+        ],
+        "indexedFileCount": 315,
+        "currentSupportedFileCount": 315,
+        "addedFiles": [],
+        "modifiedFiles": [],
+        "deletedFiles": [],
+        "configChanged": false,
+        "adapterVersionsChanged": false,
+        "schemaChanged": false,
+        "repositoryChanged": false,
+        "authority": "semantic",
+        "semanticPublication": {
+          "state": "matches-semantic-snapshot",
+          "snapshot": 1
+        },
+        "semanticInputsChanged": false,
+        "semanticInputs": {
+          "state": "checked-recorded",
+          "checked": 4644,
+          "additionalChanges": 0
+        },
+        "stale": false,
+        "state": "fresh"
+      },
+      "limits": "Raw graph/diagnostics compared completely without normalization. Complete selected SQL rows compared in primary-key order; only sc_runs.created_at excluded. Complete semantic report/manifest run clocks are not byte-compared across analyses."
+    },
+    "jsonExportV8": {
+      "begin": {
+        "total_heap_size": 620642304,
+        "total_physical_size": 620642304,
+        "used_heap_size": 503744680,
+        "malloced_memory": 1073200,
+        "external_memory": 3073838
+      },
+      "end": {
+        "total_heap_size": 540753920,
+        "total_physical_size": 540753920,
+        "used_heap_size": 461594944,
+        "malloced_memory": 1073200,
+        "external_memory": 7044457
+      }
+    }
   },
   "validation": {
     "focusedTests": 23,
     "typecheck": "passed",
-    "fullLocal": "running",
-    "build": "pending",
-    "recovery": "pending",
-    "ci": "pending"
+    "fullLocal": {
+      "numTotalTests": 302,
+      "numPassedTests": 302,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numTotalTestSuites": 47,
+      "numPassedTestSuites": 47,
+      "success": true,
+      "runs": 1,
+      "sourceAndTestTreesIdenticalToImplementation": true,
+      "testFilesPassed": 38
+    },
+    "build": "passed: complete Node/UI",
+    "recovery": {
+      "node": "v25.9.0",
+      "probes": [
+        {
+          "point": "before-seal",
+          "exitCode": 57,
+          "activeSnapshot": 1,
+          "visible": [
+            "callee"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        },
+        {
+          "point": "before-publish",
+          "exitCode": 57,
+          "activeSnapshot": 1,
+          "visible": [
+            "callee"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        },
+        {
+          "point": "during-publish",
+          "exitCode": 57,
+          "activeSnapshot": 1,
+          "visible": [
+            "callee"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        },
+        {
+          "point": "after-publish",
+          "exitCode": 57,
+          "activeSnapshot": 2,
+          "visible": [
+            "other"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        }
+      ],
+      "corruption": {
+        "refused": true,
+        "unchanged": true
+      }
+    },
+    "ci": {
+      "runId": 39723311750,
+      "url": "https://github.com/xpan0988/prograph/actions/runs/39723311750",
+      "headSha": "1790cf4c2a9ec017d92023bfa75ecfd672ac993a",
+      "runAttempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "passed": true,
+      "completedAt": "2026-10-22T05:43:34Z",
+      "jobs": [
+        {
+          "node": 20,
+          "version": "v20.20.2",
+          "jobId": 119641493250,
+          "status": "completed",
+          "conclusion": "success",
+          "passed": 302,
+          "files": 38,
+          "pending": 0,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install explicit Rust qualification tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Run npm run lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Compile accepted prior writer for actual upgrade oracle",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run actions/setup-go@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Run actions/setup-dotnet@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Install pinned mainstream semantic qualification tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Complete tests, including actual Rust producer",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete Node and UI build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Transaction and process recovery probes",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Require executed qualification and recovery evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Post Run actions/setup-dotnet@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28
+            },
+            {
+              "name": "Post Run actions/setup-go@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 30
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 31
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 32
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 33
+            }
+          ],
+          "logEvidence": {
+            "shaPresent": true,
+            "tests": [
+              "2026-10-22T04:48:50.6600765Z  \u2713 tests/json-export.test.ts (12 tests) 633ms",
+              "2026-10-22T04:52:31.8728387Z  \u2713 tests/json-stream.test.ts (7 tests) 484ms",
+              "2026-10-22T05:30:40.9252292Z  Test Files  38 passed (38)",
+              "2026-10-22T05:30:40.9257560Z       Tests  302 passed (302)",
+              "2026-10-22T05:31:01.4822389Z Verified 302 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, atomic default authority, verified migration rollback/pins and old-reader export, complete build, four recovery probes and corruption refusal"
+            ],
+            "node": [
+              "2026-10-22T04:36:37.1021341Z node: v20.20.2",
+              "2026-10-22T04:36:37.1042525Z [command]/opt/hostedtoolcache/node/20.20.2/x64/bin/npm config get cache"
+            ],
+            "recoveryPoints": [
+              {
+                "point": "before-seal",
+                "present": true
+              },
+              {
+                "point": "before-publish",
+                "present": true
+              },
+              {
+                "point": "during-publish",
+                "present": true
+              },
+              {
+                "point": "after-publish",
+                "present": true
+              }
+            ]
+          }
+        },
+        {
+          "node": 22,
+          "version": "v22.23.3",
+          "jobId": 119641493015,
+          "status": "completed",
+          "conclusion": "success",
+          "passed": 302,
+          "files": 38,
+          "pending": 0,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install explicit Rust qualification tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Run npm run lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Compile accepted prior writer for actual upgrade oracle",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run actions/setup-go@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Run actions/setup-dotnet@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Install pinned mainstream semantic qualification tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Complete tests, including actual Rust producer",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete Node and UI build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Transaction and process recovery probes",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Require executed qualification and recovery evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Post Run actions/setup-dotnet@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28
+            },
+            {
+              "name": "Post Run actions/setup-go@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 30
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 31
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 32
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 33
+            }
+          ],
+          "logEvidence": {
+            "shaPresent": true,
+            "tests": [
+              "2026-10-22T04:46:15.2369293Z  \u2713 tests/json-export.test.ts (12 tests) 527ms",
+              "2026-10-22T04:49:33.0791554Z  \u2713 tests/json-stream.test.ts (7 tests) 572ms",
+              "2026-10-22T05:23:16.9086440Z  Test Files  38 passed (38)",
+              "2026-10-22T05:23:16.9087159Z       Tests  302 passed (302)",
+              "2026-10-22T05:23:35.9369268Z Verified 302 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, atomic default authority, verified migration rollback/pins and old-reader export, complete build, four recovery probes and corruption refusal"
+            ],
+            "node": [
+              "2026-10-22T04:36:33.0431536Z Found in cache @ /opt/hostedtoolcache/node/22.23.3/x64",
+              "2026-10-22T04:36:33.4567685Z node: v22.23.3",
+              "2026-10-22T04:36:33.4616938Z [command]/opt/hostedtoolcache/node/22.23.3/x64/bin/npm config get cache"
+            ],
+            "recoveryPoints": [
+              {
+                "point": "before-seal",
+                "present": true
+              },
+              {
+                "point": "before-publish",
+                "present": true
+              },
+              {
+                "point": "during-publish",
+                "present": true
+              },
+              {
+                "point": "after-publish",
+                "present": true
+              }
+            ]
+          }
+        },
+        {
+          "node": 24,
+          "version": "v24.21.0",
+          "jobId": 119641493309,
+          "status": "completed",
+          "conclusion": "success",
+          "passed": 302,
+          "files": 38,
+          "pending": 0,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install explicit Rust qualification tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Run npm run lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Compile accepted prior writer for actual upgrade oracle",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run actions/setup-go@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Run actions/setup-dotnet@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Install pinned mainstream semantic qualification tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Complete tests, including actual Rust producer",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete Node and UI build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Transaction and process recovery probes",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Require executed qualification and recovery evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Post Run actions/setup-dotnet@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28
+            },
+            {
+              "name": "Post Run actions/setup-go@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 30
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 31
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 32
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 33
+            }
+          ],
+          "logEvidence": {
+            "shaPresent": true,
+            "tests": [
+              "2026-10-22T04:47:52.5369418Z  \u2713 tests/json-export.test.ts (12 tests) 574ms",
+              "2026-10-22T04:51:35.0136532Z  \u2713 tests/json-stream.test.ts (7 tests) 484ms",
+              "2026-10-22T05:43:09.8776839Z  Test Files  38 passed (38)",
+              "2026-10-22T05:43:09.8778688Z       Tests  302 passed (302)",
+              "2026-10-22T05:43:27.4693322Z Verified 302 passed tests, actual Rust/Python/Go/Java/C# qualification and Clang/Rust/Python/Go/Java/C# registered replay, owned artifact/maintenance recovery, qualified Clang input tracking, 18 multi-provider clean rebuild checks, actual prior-writer and report-writer upgrades, qualified native-only retention, guarded indexing cancellation/admission and actual provider CLI transport, atomic default authority, verified migration rollback/pins and old-reader export, complete build, four recovery probes and corruption refusal"
+            ],
+            "node": [
+              "2026-10-22T04:36:33.6201825Z Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64",
+              "2026-10-22T04:36:34.0423760Z node: v24.21.0",
+              "2026-10-22T04:36:34.0468687Z [command]/opt/hostedtoolcache/node/24.21.0/x64/bin/npm config get cache"
+            ],
+            "recoveryPoints": [
+              {
+                "point": "before-seal",
+                "present": true
+              },
+              {
+                "point": "before-publish",
+                "present": true
+              },
+              {
+                "point": "during-publish",
+                "present": true
+              },
+              {
+                "point": "after-publish",
+                "present": true
+              }
+            ]
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12404761217,
+          "name": "semantic-evidence-node-24",
+          "size_in_bytes": 26263,
+          "url": "https://api.github.com/repos/xpan0988/prograph/actions/artifacts/12404761217",
+          "archive_download_url": "https://api.github.com/repos/xpan0988/prograph/actions/artifacts/12404761217/zip",
+          "expired": false,
+          "created_at": "2026-10-22T05:43:28Z",
+          "expires_at": "2027-01-20T04:36:25Z",
+          "updated_at": "2026-10-22T05:43:28Z",
+          "digest": "sha256:42e3ba2ccc57fc5cf1af7a54eb5cb00257d34d5ba02378fe2db6ab1e44d5481c",
+          "workflow_run": {
+            "id": 39723311750,
+            "repository_id": 1268602308,
+            "head_repository_id": 1268602308,
+            "head_branch": "main",
+            "head_sha": "1790cf4c2a9ec017d92023bfa75ecfd672ac993a"
+          }
+        },
+        {
+          "id": 12403313981,
+          "name": "semantic-evidence-node-20",
+          "size_in_bytes": 26082,
+          "url": "https://api.github.com/repos/xpan0988/prograph/actions/artifacts/12403313981",
+          "archive_download_url": "https://api.github.com/repos/xpan0988/prograph/actions/artifacts/12403313981/zip",
+          "expired": false,
+          "created_at": "2026-10-22T05:31:02Z",
+          "expires_at": "2027-01-20T04:36:25Z",
+          "updated_at": "2026-10-22T05:31:02Z",
+          "digest": "sha256:e4e68389f82712df1e943165fee2c65af20d20485af9a14458333ab527363c06",
+          "workflow_run": {
+            "id": 39723311750,
+            "repository_id": 1268602308,
+            "head_repository_id": 1268602308,
+            "head_branch": "main",
+            "head_sha": "1790cf4c2a9ec017d92023bfa75ecfd672ac993a"
+          }
+        },
+        {
+          "id": 12403223246,
+          "name": "semantic-evidence-node-22",
+          "size_in_bytes": 26053,
+          "url": "https://api.github.com/repos/xpan0988/prograph/actions/artifacts/12403223246",
+          "archive_download_url": "https://api.github.com/repos/xpan0988/prograph/actions/artifacts/12403223246/zip",
+          "expired": false,
+          "created_at": "2026-10-22T05:23:37Z",
+          "expires_at": "2027-01-20T04:36:25Z",
+          "updated_at": "2026-10-22T05:23:37Z",
+          "digest": "sha256:ce4df87430b6cbb6b7d2b206169f16137fdbe9521dd91023ad26e7bf930731e0",
+          "workflow_run": {
+            "id": 39723311750,
+            "repository_id": 1268602308,
+            "head_repository_id": 1268602308,
+            "head_branch": "main",
+            "head_sha": "1790cf4c2a9ec017d92023bfa75ecfd672ac993a"
+          }
+        }
+      ],
+      "evidence": "Completed job conclusions and required steps, exact checkout SHA, 302 tests / 38 files, focused exporter tests, strict executed-evidence line, four recovery points, and official per-Node artifact digests verified."
+    },
+    "supersededCi": {
+      "run": 39722266016,
+      "head": "589a10516a8ad8c093cbc850ac2fae6e6f1de74c",
+      "accepted": false,
+      "reason": "A post-run witness-helper table typo was corrected; use the exact corrected-commit matrix."
+    },
+    "steps": [
+      {
+        "label": "full-tests",
+        "command": "npm",
+        "args": [
+          "test",
+          "--",
+          "--maxWorkers=1",
+          "--reporter=default",
+          "--reporter=json",
+          "--outputFile=/private/tmp/prograph-stage6-3-20261022/test-results.json"
+        ],
+        "exitCode": 0,
+        "elapsedMs": 2800323
+      },
+      {
+        "label": "build",
+        "command": "npm",
+        "args": [
+          "run",
+          "build"
+        ],
+        "exitCode": 0,
+        "elapsedMs": 6859
+      },
+      {
+        "label": "recovery",
+        "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node",
+        "args": [
+          "scripts/semantic-recovery.mjs",
+          "/private/tmp/prograph-stage6-3-20261022/recovery.json"
+        ],
+        "exitCode": 0,
+        "elapsedMs": 331
+      },
+      {
+        "label": "verifier",
+        "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node",
+        "args": [
+          "scripts/verify-ci-evidence.mjs",
+          "/private/tmp/prograph-stage6-3-20261022/test-results.json",
+          "/private/tmp/prograph-stage6-3-20261022/recovery.json",
+          "/private/tmp/prograph-stage6-3-20261022/oracle.json",
+          "/private/tmp/prograph-stage6-3-20261022/upgrade.json",
+          "/private/tmp/prograph-stage6-3-20261022/retention-upgrade.json",
+          "/private/tmp/prograph-stage6-3-20261022/authority-upgrade.json"
+        ],
+        "exitCode": 0,
+        "elapsedMs": 53
+      }
+    ],
+    "strictEvidenceVerifier": "passed"
   },
   "rawReports": {
     "root": "/private/tmp/prograph-stage6-3-20261022",
@@ -1716,7 +2607,20 @@
       "production-witness": "9fb0b08c26a75d66e890c6392af4debe703ada42987332d4d1c948e80e61c1aa",
       "preflight": "f02f83741651ce6aa41c436e9474de35905f89d9fd368ef0b53cebd0bc4e326c",
       "fs-contract": "c9bd1b1f7fb9d7e8c1da1f6228550ba4eb7aa83eaceb2d6cad4e9e2958a79f43",
-      "production-byte-equivalence": "c3594b9d2e3773047e9fe9bd9705552c183a40bc8c698ed60edc6534373a7afd"
+      "production-byte-equivalence": "c3594b9d2e3773047e9fe9bd9705552c183a40bc8c698ed60edc6534373a7afd",
+      "test-results": "faabf5b8b4802dac0da35e1a31e730649bf339d12031826b8eafe917ce842f20",
+      "recovery": "abdbd8216328c10191ebcca64958a04fb66950ca34c04fef898b274ad8661ba9",
+      "oracle": "c4127df24e4ef13098e731835ca55b9ff85647dab0cc9330c248bcf4593ca5cd",
+      "upgrade": "fe2e7fac105e896a7c2ccf482941ee3269b987ecde72e35d24f45d5bb28de88c",
+      "retention-upgrade": "fc6c4428bfdd7eafd4aa6383fdfa60031ac9d39946b889ab415565a577f3aeeb",
+      "authority-upgrade": "34a73ff3f1606025917fa47292e1f508dadb2fd7a928572bfe49d434033bf1b0",
+      "ownership-witness": "32a9439d0fecaded1f9d84abbd8935b67ed79877a027ff3c6b8994d67e63b1d3",
+      "validation-steps": "f57adb473addfd625858fd2f43f1d97b74b7e45ac66de3276daa1275cf3deb28",
+      "ci-proof-20": "cfcf6efe4101021e7fada1d2e39abbcfdf0b0a9abe7431a3dcdf050c85811089",
+      "ci-proof-22": "dbf058f80597afac4ba03b0801bc4d6308f8320da0bea20de62ff71c738bf92a",
+      "ci-proof-24": "eaa3aa9acb987aa9801ab63dd5185104b70983f441cbd656184a437f108a1f11",
+      "ci-final-run": "b312f498018cda2820a73e3fe94bd40de733b2535b59ef43c1770999d042888d",
+      "ci-artifacts": "a713104d09d9f555f35db6905aa172038b6344a408c545a7a42469b57b2ce04f"
     }
   },
   "limits": {
@@ -1725,5 +2629,39 @@
     "coreOnlyMemoryGateQualified": false,
     "millionLineQualification": false,
     "confirmatoryRuns": 0
+  },
+  "implementationTrees": {
+    "src": "224add9ae77c3f2cb57b8346c4137ca1823e798f",
+    "tests": "807ad14b94fa39af1c9ab95ae8f77a77711d4770",
+    "scripts": "3f2a8a722840afa08f2515f7dc2a3ccd6274e3ba"
+  },
+  "toolchain": {
+    "packageVersions": {
+      "typescript": "5.9.3",
+      "ts-morph": "27.0.2",
+      "@ts-morph/common": "0.28.1",
+      "tree-sitter": "0.25.1",
+      "tree-sitter-rust": "0.24.0",
+      "tree-sitter-python": "0.25.0",
+      "better-sqlite3": "12.10.0",
+      "vitest": "4.1.8",
+      "vite": "7.3.5"
+    },
+    "bundledTypeScriptVersion": "5.9.2",
+    "sqlite": "3.53.1",
+    "verifiedBy": "Recorded dependency/native hashes were rechecked before measurements"
+  },
+  "preliminaryRevision": "589a10516a8ad8c093cbc850ac2fae6e6f1de74c",
+  "acceptanceInputObjects": {
+    "src": "224add9ae77c3f2cb57b8346c4137ca1823e798f",
+    "tests": "807ad14b94fa39af1c9ab95ae8f77a77711d4770",
+    "scripts": "3f2a8a722840afa08f2515f7dc2a3ccd6274e3ba",
+    "package.json": "39429b4ee6c2e4a4b139ba77e86e7d75e97eaf75",
+    "package-lock.json": "459b1f73972d707e18fcd509ba2e80e847175555",
+    "tsconfig.json": "b2d7cf0ff06aca8882d9204cb586ec9b21f4033a",
+    "tsconfig.node.json": "ee3d35a856da84e3d991afd1d7fc5f6a0975202f",
+    "tsconfig.ui.json": "f1ddda45b32f85dc29264d37eb4c457ebc6c16c7",
+    "vite.config.ts": "3b182070454dd696f96507cb4e5011e15133d299",
+    ".github/workflows/semantic-core.yml": "da558e785dfa10a92b223549ddab38ba60969965"
   }
 }

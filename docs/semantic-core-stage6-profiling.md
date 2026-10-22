@@ -429,5 +429,11 @@ The focused pair preserves all four accepted files byte-for-byte, trading
 in the saved-output harness. One complete phase run measures 58.864 s /
 1,330,896 KiB, with the process high-water reached before JSON export. This is
 not whole-pipeline memory or time qualification; Core-only RSS remains unknown.
-Complete local regression and actual Node 20/22/24 CI acceptance are pending.
+Implementation `1790cf4` is accepted: 302/302 local tests across 38 files,
+Node/UI typechecks and full build, four recovery probes, corruption refusal,
+14 complete semantic/ownership table comparisons and source freshness passed.
+All three actual Node 20/22/24 jobs in
+[run 39723311750](https://github.com/xpan0988/prograph/actions/runs/39723311750)
+passed for the exact implementation SHA on the first attempt; their completed
+logs and official artifact digests are recorded in the receipt.
 Stage 6.4 is not authorized by this work.

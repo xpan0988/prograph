@@ -1,8 +1,8 @@
 # Stage 6.3 — bounded legacy JSON export
 
-Status: implementation measured; required full local regression and CI are in progress.
-No Stage 6.3 acceptance yet. The 60-second and
-1-GiB gates remain unqualified. Core-only RSS has not been established.
+Status: **Stage 6.3 accepted, 22 October 2026**. Complete local qualification and
+actual Node 20/22/24 CI passed for the exact implementation below. The 60-second
+and 1-GiB gates remain unqualified. Core-only RSS has not been established.
 
 ## Baseline and scope
 
@@ -12,7 +12,16 @@ implementation `c4569685f2027e4cbf9c2b28e47121e42daf8bf9`. The baseline push CI
 [run 39698750479](https://github.com/xpan0988/prograph/actions/runs/39698750479)
 completed successfully. The Rust adapter's SHA-256 is
 `2e80243e80bc424a53be87c5757037465f8cdc43e0628b9e9b3379d2bf47196d`;
-Stage 6.3 must leave it unchanged.
+Stage 6.3 leaves it unchanged.
+
+Implementation: `1790cf4c2a9ec017d92023bfa75ecfd672ac993a`, pushed normally to
+`main` after initial implementation `589a105`. The second commit only corrects
+the post-run witness helper's nonexistent-table entry; production and test trees
+are identical. Required [Node 20/22/24 CI run 39723311750](https://github.com/xpan0988/prograph/actions/runs/39723311750)
+completed successfully on its first attempt for this exact SHA. The final
+acceptance record changes documentation/evidence only; runtime, test, script,
+package, build-configuration and workflow Git objects are recorded unchanged in
+the receipt.
 
 The accepted Stage 6.2 complete run was 59.704 seconds with 1,322,128 KiB process
 high-water RSS. That single sample is context, not a controlled Stage 6.3 timing
@@ -102,6 +111,14 @@ Historical compatibility export retains exclusive private-generation writes,
 generation sync, cleanup on failure and exclusive directory-symlink publication.
 Only serialization inside that generation changes.
 
+Other complete serializers are intentionally retained: the unused-by-these-paths
+`writeIndexState` library helper still formats its small state document; legacy
+SQLite formats per-row metadata/evidence and small manifest/adapter metadata;
+compatibility reconstruction clones a small manifest and still builds sorted
+graph arrays and a complete canonical string for its existing graph digest.
+Snapshot/canonical encodings and API response serializers are unchanged. None is
+silently represented as having been streamed by this milestone.
+
 The independent test oracle is the literal accepted native serializer at the
 pre-change revision. Initial focused tests cover empty and large arrays,
 sparse and unsupported values, nested metadata, enumeration order, Unicode and
@@ -159,6 +176,8 @@ No forced GC, CPU profile or allocation inspector was used.
 |---|---:|---:|
 | Export wall time | 395.462 ms | 843.442 ms |
 | Cumulative process peak RSS | 1,352,384 KiB | 503,936 KiB |
+| Cumulative peak already reached before export | 491,248 KiB | 471,808 KiB |
+| Additional high-water reached during export | 861,136 KiB | 32,128 KiB |
 | Process RSS immediately before export | 503,037,952 B | 437,141,504 B |
 | Process RSS immediately after export | 1,036,926,976 B | 516,030,464 B |
 | External memory immediately after export | 120,452,184 B | 2,604,983 B |
@@ -171,6 +190,14 @@ saved diagnostics in both arms (production shares `graph.diagnostics`). Initial
 heap/GC states differ despite identical commands and inputs. Twenty-millisecond
 samples miss synchronous peaks; OS caching, run order and allocator/GC variation
 remain confounders. Do not extrapolate that RSS difference to the whole pipeline.
+The additional high-water is a difference of cumulative readings, not an exact
+live-object allocation size; it does establish that the old peak rose during
+export rather than during input loading.
+High-water readings are captured immediately after export/analysis returns;
+post-timing verification and report generation are outside that boundary.
+Measured process user/system CPU time is 312.059/88.992 ms before and
+788.691/79.155 ms after. These process CPU deltas exclude external process work;
+this focused harness launches no compiler/provider.
 
 Both arms produce four complete files byte-identical to accepted output (`cmp`),
 including manifest and state. The graph is **102,548,074 B**, SHA-256
@@ -204,9 +231,17 @@ needed or performed. The pipeline retains the accepted 40,641 nodes, 78,396 edge
 
 The observed process high-water now occurs before JSON export, bracketed by
 owned dependency projection boundaries. JSON export raises no new high-water.
-Its endpoint V8 heap used changes 480.41 → 440.21 MiB, committed heap 591.89 →
+That brackets this run's peak, not exclusive memory ownership by the pass.
+Stage 6.2's uninstrumented sample does not locate its peak, so a location shift
+relative to that sample is not independently established.
+Its endpoint V8 `heapUsed` changes 480.41 → 440.21 MiB, `heapTotal` 591.89 →
 515.70 MiB, external 2.93 → 6.72 MiB and ArrayBuffers 0.68 → 4.46 MiB. These are
 instantaneous process-wide endpoints, not subsystem attribution or export peaks.
+V8 `total_physical_size` equals `heapTotal` at these two endpoints; this does not
+account for all compiler, Tree-sitter, SQLite or other native allocations.
+The observer records 37 GC events during JSON export, totaling 40.590 ms of
+reported pauses. Endpoint decreases include collection/reuse effects; no forced
+collection or claim of architectural lifetime repair follows from them.
 The complete receipt contains CPU-time deltas and cumulative high-water readings
 for all phase intervals. Compiler/native/SQLite memory remains shared and cannot
 be obtained by subtraction.
@@ -214,8 +249,69 @@ be obtained by subtraction.
 The complete production graph and diagnostics also pass raw `cmp` against the
 accepted Stage 6.2 files. All eight accepted complete semantic/compatibility
 hashes match, along with source inventories, legacy SQLite/cache equivalence,
-SQLite integrity and foreign-key witnesses. Required ownership/support,
-freshness, regression and CI acceptance evidence is still being collected.
+SQLite integrity and foreign-key witnesses. A separate complete 14-table
+comparison matches facts, claims, entities, occurrences, symbols, ownership,
+groups, supports, recorded/observed inputs, run digests, selectors and selector
+gates. Only `sc_runs.created_at` is excluded as an independent wall-clock field;
+no semantic/support columns or actual graph bytes are normalized. Across full
+analyses, manifest/report generation clocks and durations are intentionally not
+compared byte-for-byte. The focused pair compares the same saved manifest/state
+inputs without exclusions. New source status is `fresh`, semantic snapshot 1
+matches its report, and 4,644 recorded inputs were checked with no additional
+changes. All 315 indexed source files remain unchanged.
+
+## Local qualification and CI
+
+The complete local suite ran **once**, serially after performance measurement:
+**302/302 tests, 38/38 files, zero failures or pending tests**. All 18 actual
+multi-provider independent rebuild cases, accepted-prior-writer/report/retention/
+authority upgrades, historical compatibility exports, recovery/history/GC,
+source freshness, support ownership, bounded Agent queries and real provider CLI
+transport checks passed. The Rust oracle still passes all nine tests, including
+200 deterministic syntax/recovery cases.
+
+Node/UI typechecks and the complete clean Node/UI production build passed.
+The separate four crash probes (`before-seal`, `before-publish`, `during-publish`,
+`after-publish`) retained valid old/new snapshots and pinned baseline history;
+every integrity result was `ok`. Corruption was refused without changing bytes.
+The strict executed-evidence verifier passed. Pinned managed provider bundles and
+the four accepted prior-writer runtimes use the existing qualification procedure
+in section 14 of the profiling record and the unchanged
+[Node 20/22/24 workflow](../.github/workflows/semantic-core.yml). Local seeded
+oracle evidence uses `PROGRAPH_TEST_ORACLE_SEED=0x6a31`; complete receipts and
+command/exit records are hashed in the machine evidence. No provider, expensive
+oracle or assertion was skipped or weakened.
+
+Local validation commands, with those required pinned runtime/profile variables:
+
+```sh
+npm run typecheck
+npm test -- --maxWorkers=1 --reporter=default --reporter=json --outputFile=TEST_RESULTS.json
+npm run build
+node scripts/semantic-recovery.mjs RECOVERY.json
+node scripts/verify-ci-evidence.mjs TEST_RESULTS.json RECOVERY.json ORACLE.json UPGRADE.json RETENTION_UPGRADE.json AUTHORITY_UPGRADE.json
+```
+
+The suite started at `589a105`; the corrected implementation `1790cf4` has
+identical production and test trees. The only correction was the standalone
+post-run witness helper's nonexistent context-table entry, found by schema
+inspection before comparison and fixed without changing a runtime, test,
+assertion or measurement. Its corrected version subsequently passed the complete
+14-table comparison. No semantic regression or production defect was found.
+Actual exact-commit CI passed on Ubuntu 24.04, first attempt, with all required
+steps successful. Completed logs confirm the checkout SHA, the new 12 export and
+seven serializer tests, all 302 tests, complete build, all four recovery points,
+corruption refusal and the strict executed-evidence verifier in each job:
+
+| Node | Completed job | Tests/files | Result |
+|---|---|---|---|
+| 20.20.2 | [119641493250](https://github.com/xpan0988/prograph/actions/runs/39723311750/job/119641493250) | 302 / 38 | success |
+| 22.23.3 | [119641493015](https://github.com/xpan0988/prograph/actions/runs/39723311750/job/119641493015) | 302 / 38 | success |
+| 24.21.0 | [119641493309](https://github.com/xpan0988/prograph/actions/runs/39723311750/job/119641493309) | 302 / 38 | success |
+
+The receipt includes official per-Node artifact IDs, SHA-256 digests and matching
+workflow head SHAs. The preliminary `589a105` run is not used to substitute for
+the corrected implementation's CI. Stage 6.3 ends here; Stage 6.4 is not started.
 
 ## Reproduction and acceptance
 
@@ -231,16 +327,18 @@ cmp ACCEPTED_INDEX/exports/graph.json FRESH_AFTER/exports/graph.json
 cmp ACCEPTED_INDEX/diagnostics.json FRESH_AFTER/diagnostics.json
 node --max-old-space-size=2048 scripts/semantic-profile.mjs phases FROZEN_SOURCE FRESH_INDEX PRODUCTION_REPORT.json
 node scripts/semantic-profile-verify.mjs FROZEN_SOURCE FRESH_INDEX WITNESS.json
+node scripts/semantic-export-witness.mjs ACCEPTED_INDEX FRESH_INDEX FROZEN_SOURCE OWNERSHIP_WITNESS.json
 cmp ACCEPTED_INDEX/exports/graph.json FRESH_INDEX/exports/graph.json
 cmp ACCEPTED_INDEX/diagnostics.json FRESH_INDEX/diagnostics.json
 ```
 
 The two focused arms are the only focused performance pair; the phase run is the
-only full production analysis. Hashing and database/source verification occur
-after timing, in separate processes. Raw reports remain outside Git at the
+only full production analysis. Focused-file hashing runs afterward in its arm's
+process; complete-analysis database/source verification uses separate post-timing
+processes. Raw reports remain outside Git at the
 receipt's temporary evidence root, with recorded SHA-256 values. No oversized
 profiler traces or heap dumps are committed. Exact full regression/build/recovery
-and actual Node 20/22/24 CI results must pass before acceptance.
+and actual Node 20/22/24 CI results passed before acceptance.
 
 ## Remaining lifetimes and constraints
 
