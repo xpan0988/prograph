@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "status": "Allocation-focused candidate provisionally retained; complete local and exact-commit CI pending",
+  "status": "Accepted allocation-focused adjacent provenance encoding reuse; no whole-analysis CPU/time or portable RSS gain attributed",
   "baseline": {
     "commit": "0e668fb08f9d8046d5c730848b2c2fc7d7cdaf05",
     "implementation": "aff347fce84624d72e3bcf16324088682d34de82",
@@ -57,7 +57,11 @@
       "Apple M5"
     ],
     "memory": 17179869184,
-    "cwd": "/Users/xiyuanpan/prograph"
+    "cwd": "/Users/xiyuanpan/prograph",
+    "macOS": {
+      "version": "26.5.2",
+      "build": "25F84"
+    }
   },
   "corpus": {
     "source": "/var/folders/j5/y1jjfjyd0sj9yh7n9qjk3wyc0000gn/T/prograph-source-scale-pair-0GBZO2/source",
@@ -191,7 +195,24 @@
       }
     ],
     "verifiedAt": "2026-10-25T10:42:05.033Z",
-    "preflightSha256": "55cc505923acd51a3f23535fb55cf61b30eb02c8fa5c4013504cc11bc5a846e5"
+    "preflightSha256": "55cc505923acd51a3f23535fb55cf61b30eb02c8fa5c4013504cc11bc5a846e5",
+    "frozenRevision": "8714e1ee57e00b70fdf1e03d6c182a8ef984ded0 plus authenticated dirty-source capture",
+    "inventories": {
+      "copiedFiles": 421,
+      "copiedInventory": "046e71411c366bd85acffc12a83cfc80590016e0223629aac9ac11f454ab6e6b",
+      "inventory": "729c1eb199f09ccd9739634699bdc004388402544fcc8806c674ba471b6365b8",
+      "selectedFiles": 315,
+      "selectedBytes": 7452350,
+      "codeFiles": 261,
+      "codeBytes": 6535832,
+      "physicalCodeLines": 173142,
+      "byExtension": {
+        ".py": 6,
+        ".rs": 174,
+        ".ts": 57,
+        ".tsx": 24
+      }
+    }
   },
   "sequence": [
     "audit accepted copy",
@@ -2094,7 +2115,23 @@
       "targetedProfileExact": 234946,
       "targetedProfileAvoidedBytes": 72341290,
       "ordinaryCandidateCount": "Not independently instrumented; expected from the same fresh fact writes/data-only producers. Do not report it as an exact candidate runtime counter."
-    }
+    },
+    "commit": "439e051f6b701895b0b8935f22ce27ae2cc2ee7d",
+    "ci": "https://github.com/xpan0988/prograph/actions/runs/40191373538",
+    "fileSha256": {
+      "src/core/semantic/store.ts": "79831d32ef5131fbe139d841a3383349c9571cddf023d22cea790aedde760a6b",
+      "src/core/semantic/provenance-encoding.ts": "ff6461f4b8687cf10f83753da10b4dc9953420a149b4dfbe2c509bec3c69abe9",
+      "scripts/semantic-encoding-audit.mjs": "0adb9d05c0ff151883e4f65955836cec4818fecb6c419645b2a18dcca4375c07",
+      "scripts/semantic-encoding-profile.mjs": "6146ccd103c47fe4853ab54768e60d20168eb095d281de8891f94028505998fb",
+      "scripts/diagnostics/provenance-reuse-candidate.mjs": "b293bbfb0e85e168f5fe31fa154f3ce99647634704df5b5693b910f486baba6c",
+      "scripts/prepare-semantic-baseline.mjs": "23d6c0491d2dbf655482a5502acf9656a821663065970a541487c0a209e6020c",
+      "scripts/verify-ci-evidence.mjs": "c88677c2b22feb63c9e137af19ae14b7d83b3d5e324149183dd1761c8732c387",
+      "tests/encoding-audit.test.ts": "f539f320358eabb22576258e33be53b987a82936aae252ee5388d54fbf5d21ca",
+      "tests/encoding-reuse.test.ts": "197479e52c32a436ef0571641221e9e4a225bb49b5516cb6403bbdad889a567c",
+      "tests/encoding-reuse-runtime.test.ts": "f668b0326c9578750b86f2c709626542ac222ac769ca48863abe5e5ae75b9910",
+      ".github/workflows/semantic-core.yml": "2c5811c5e5319d786a32836b80d4c6ddff4c7aaac7febad57174877d222b7171"
+    },
+    "sourceTestsScriptsAndWorkflowUnchangedAfterCI": true
   },
   "runs": {
     "baseline": {
@@ -8257,6 +8294,16 @@
       "files": 3,
       "source": "focused-final.json",
       "sha256": "a243282f6db4a51e372e3a7533a1f4a347faff97ca4b9f8840d0ae6eac357e56"
+    },
+    "finalHardenedHelperAdmission": {
+      "groups": 1266,
+      "weightedOperations": 234946,
+      "groupsAdmitted": 1266,
+      "weightedAdmitted": 234946,
+      "weightedBytes": 72341290,
+      "completeBytesAndKeysEqual": true,
+      "performanceMeasurement": false,
+      "limitation": "Correctness/admission replay of actual persisted provenance, reconstructed as own data records. Not an independently instrumented candidate analysis branch counter."
     }
   },
   "confounders": {
@@ -8303,13 +8350,508 @@
     "profile": "1ms CPU and 32768-byte surviving-allocation sampling. Input/SQL loading outside region; counters/assertions/witness hashing inside. Frozen prototype precedes final descriptor hardening; not exact final-helper microperformance."
   },
   "validation": {
-    "status": "running",
-    "expectedTests": 325,
-    "expectedFiles": 44
+    "status": "passed",
+    "local": {
+      "tests": 325,
+      "passed": 325,
+      "pending": 0,
+      "files": 44,
+      "fullSuiteRuns": 1,
+      "steps": [
+        {
+          "label": "full-tests",
+          "command": "npm",
+          "args": [
+            "test",
+            "--",
+            "--maxWorkers=1",
+            "--reporter=default",
+            "--reporter=json",
+            "--outputFile=/private/tmp/prograph-stage6-6-20261025/test-results.json"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 2870107
+        },
+        {
+          "label": "typecheck",
+          "command": "npm",
+          "args": [
+            "run",
+            "typecheck"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 3292
+        },
+        {
+          "label": "build",
+          "command": "npm",
+          "args": [
+            "run",
+            "build"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 9358
+        },
+        {
+          "label": "recovery",
+          "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node",
+          "args": [
+            "scripts/semantic-recovery.mjs",
+            "/private/tmp/prograph-stage6-6-20261025/recovery.json"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 427
+        },
+        {
+          "label": "verifier",
+          "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node",
+          "args": [
+            "scripts/verify-ci-evidence.mjs",
+            "/private/tmp/prograph-stage6-6-20261025/test-results.json",
+            "/private/tmp/prograph-stage6-6-20261025/recovery.json",
+            "/private/tmp/prograph-stage6-6-20261025/oracle.json",
+            "/private/tmp/prograph-stage6-6-20261025/upgrade.json",
+            "/private/tmp/prograph-stage6-6-20261025/retention-upgrade.json",
+            "/private/tmp/prograph-stage6-6-20261025/authority-upgrade.json"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 61
+        }
+      ],
+      "oracle": {
+        "seed": 27185,
+        "complete": true,
+        "checks": 18,
+        "expected": 18,
+        "scope": "Actual TS/Clang/Rust/Python/Go/Java/Csharp tools, fresh independent index and reauthorized execution control per edit; no copied facts or producer outputs"
+      },
+      "recovery": {
+        "node": "v25.9.0",
+        "probes": [
+          {
+            "point": "before-seal",
+            "exitCode": 57,
+            "activeSnapshot": 1,
+            "visible": [
+              "callee"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          },
+          {
+            "point": "before-publish",
+            "exitCode": 57,
+            "activeSnapshot": 1,
+            "visible": [
+              "callee"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          },
+          {
+            "point": "during-publish",
+            "exitCode": 57,
+            "activeSnapshot": 1,
+            "visible": [
+              "callee"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          },
+          {
+            "point": "after-publish",
+            "exitCode": 57,
+            "activeSnapshot": 2,
+            "visible": [
+              "other"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          }
+        ],
+        "corruption": {
+          "refused": true,
+          "unchanged": true
+        }
+      },
+      "receipts": {
+        "focused-final.json": "a243282f6db4a51e372e3a7533a1f4a347faff97ca4b9f8840d0ae6eac357e56",
+        "test-results.json": "a971f3de94460cd1f00450338b4fb49af0040cb59b872292922b4347697e3d2d",
+        "validation-steps.json": "15e93224fbe693a11f41c7df2be7274e45e840d60b5d8b92dec4c132b0823200",
+        "oracle.json": "b22a1e3c015651c99065b846bd5d29335e886431a3c10b3c496eb03cfaf1aba2",
+        "upgrade.json": "49588525b95b01f5d884ac3266e102d425594cd9164b7fd0bb899616a593a1ba",
+        "retention-upgrade.json": "a1983b4030023a428f0ec8ce79f596c1c83a7ca995700e6be515a05331d162a9",
+        "authority-upgrade.json": "9a6a5bf334e6564a190f8b1c828bb536ac0cc75fbb56072712829640aa4eecad",
+        "recovery.json": "abdbd8216328c10191ebcca64958a04fb66950ca34c04fef898b274ad8661ba9",
+        "full-tests.log": "29ce996e0155e684f83df202907fc4780c17cce25b21ec82b16c6010fbe0d7bb",
+        "typecheck.log": "b6afb03e277309bb5c81c26ee5941d9f67fd438e350389dfffa093d60b117431",
+        "build.log": "b79515ca5788a738ce66fe09adff41e8313862cbee3641182ca485c2528a1d1b",
+        "recovery.log": "abdbd8216328c10191ebcca64958a04fb66950ca34c04fef898b274ad8661ba9",
+        "verifier.log": "879d28e63ea69d8b77b733a50572a07b743c4fb1009f8bdc1f1731f4be4b6224"
+      },
+      "testFiles": [
+        {
+          "file": "tests/analysis-diagnostics.test.ts",
+          "tests": 4,
+          "passed": 4
+        },
+        {
+          "file": "tests/authority-migration.test.ts",
+          "tests": 7,
+          "passed": 7
+        },
+        {
+          "file": "tests/authority-support.test.ts",
+          "tests": 1,
+          "passed": 1
+        },
+        {
+          "file": "tests/canonical-hash.test.ts",
+          "tests": 8,
+          "passed": 8
+        },
+        {
+          "file": "tests/compatibility-cache.test.ts",
+          "tests": 2,
+          "passed": 2
+        },
+        {
+          "file": "tests/compatibility-export.test.ts",
+          "tests": 4,
+          "passed": 4
+        },
+        {
+          "file": "tests/compatibility-global.test.ts",
+          "tests": 1,
+          "passed": 1
+        },
+        {
+          "file": "tests/compatibility-query-oracle.test.ts",
+          "tests": 4,
+          "passed": 4
+        },
+        {
+          "file": "tests/compatibility-snapshot.test.ts",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "file": "tests/compatibility-support.test.ts",
+          "tests": 1,
+          "passed": 1
+        },
+        {
+          "file": "tests/core.test.ts",
+          "tests": 42,
+          "passed": 42
+        },
+        {
+          "file": "tests/encoding-audit.test.ts",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "file": "tests/encoding-reuse-runtime.test.ts",
+          "tests": 2,
+          "passed": 2
+        },
+        {
+          "file": "tests/encoding-reuse.test.ts",
+          "tests": 5,
+          "passed": 5
+        },
+        {
+          "file": "tests/fingerprint-runtime.test.ts",
+          "tests": 1,
+          "passed": 1
+        },
+        {
+          "file": "tests/global-queries.test.ts",
+          "tests": 7,
+          "passed": 7
+        },
+        {
+          "file": "tests/index-execution.test.ts",
+          "tests": 5,
+          "passed": 5
+        },
+        {
+          "file": "tests/index-provider-cli.test.ts",
+          "tests": 6,
+          "passed": 6
+        },
+        {
+          "file": "tests/json-export.test.ts",
+          "tests": 12,
+          "passed": 12
+        },
+        {
+          "file": "tests/json-stream.test.ts",
+          "tests": 7,
+          "passed": 7
+        },
+        {
+          "file": "tests/owned-residency.test.ts",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "file": "tests/polyglot.test.ts",
+          "tests": 13,
+          "passed": 13
+        },
+        {
+          "file": "tests/provider-guard.test.ts",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "file": "tests/query-runtime.test.ts",
+          "tests": 6,
+          "passed": 6
+        },
+        {
+          "file": "tests/rust-traversal.test.ts",
+          "tests": 9,
+          "passed": 9
+        },
+        {
+          "file": "tests/semantic-artifacts.test.ts",
+          "tests": 13,
+          "passed": 13
+        },
+        {
+          "file": "tests/semantic-authority.test.ts",
+          "tests": 5,
+          "passed": 5
+        },
+        {
+          "file": "tests/semantic-clang-inputs.test.ts",
+          "tests": 8,
+          "passed": 8
+        },
+        {
+          "file": "tests/semantic-core.test.ts",
+          "tests": 17,
+          "passed": 17
+        },
+        {
+          "file": "tests/semantic-diagnostics.test.ts",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "file": "tests/semantic-gc.test.ts",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "file": "tests/semantic-incremental.test.ts",
+          "tests": 2,
+          "passed": 2
+        },
+        {
+          "file": "tests/semantic-ingestion.test.ts",
+          "tests": 35,
+          "passed": 35
+        },
+        {
+          "file": "tests/semantic-inputs.test.ts",
+          "tests": 7,
+          "passed": 7
+        },
+        {
+          "file": "tests/semantic-managed.test.ts",
+          "tests": 8,
+          "passed": 8
+        },
+        {
+          "file": "tests/semantic-multiprovider.test.ts",
+          "tests": 2,
+          "passed": 2
+        },
+        {
+          "file": "tests/semantic-passes.test.ts",
+          "tests": 9,
+          "passed": 9
+        },
+        {
+          "file": "tests/semantic-publication.test.ts",
+          "tests": 9,
+          "passed": 9
+        },
+        {
+          "file": "tests/semantic-replay.test.ts",
+          "tests": 8,
+          "passed": 8
+        },
+        {
+          "file": "tests/semantic-retention.test.ts",
+          "tests": 14,
+          "passed": 14
+        },
+        {
+          "file": "tests/semantic-rust.test.ts",
+          "tests": 10,
+          "passed": 10
+        },
+        {
+          "file": "tests/snapshot-report.test.ts",
+          "tests": 5,
+          "passed": 5
+        },
+        {
+          "file": "tests/source-reuse.test.ts",
+          "tests": 6,
+          "passed": 6
+        },
+        {
+          "file": "tests/watch-isolation.test.ts",
+          "tests": 2,
+          "passed": 2
+        }
+      ]
+    },
+    "ci": {
+      "runId": 40191373538,
+      "url": "https://github.com/xpan0988/prograph/actions/runs/40191373538",
+      "headSha": "439e051f6b701895b0b8935f22ce27ae2cc2ee7d",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "major": 20,
+          "node": "v20.20.2",
+          "id": 121162894545,
+          "url": "https://github.com/xpan0988/prograph/actions/runs/40191373538/job/121162894545",
+          "conclusion": "success",
+          "tests": 325,
+          "files": 44,
+          "strictVerifierPassed": true,
+          "logSha256": "22c80f8e6e8a08f43023696dd8f22a80e83b09a6f6c01c9081cbaa418a503fbf",
+          "requiredSteps": [
+            {
+              "name": "Run npm run lint",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete tests, including actual Rust producer",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete Node and UI build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Transaction and process recovery probes",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require executed qualification and recovery evidence",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "major": 22,
+          "node": "v22.23.3",
+          "id": 121162894558,
+          "url": "https://github.com/xpan0988/prograph/actions/runs/40191373538/job/121162894558",
+          "conclusion": "success",
+          "tests": 325,
+          "files": 44,
+          "strictVerifierPassed": true,
+          "logSha256": "94501e09498fa0498bcd6137b7df7984feb24962924ff8c86e9fb33934225c82",
+          "requiredSteps": [
+            {
+              "name": "Run npm run lint",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete tests, including actual Rust producer",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete Node and UI build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Transaction and process recovery probes",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require executed qualification and recovery evidence",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "major": 24,
+          "node": "v24.21.0",
+          "id": 121162894587,
+          "url": "https://github.com/xpan0988/prograph/actions/runs/40191373538/job/121162894587",
+          "conclusion": "success",
+          "tests": 325,
+          "files": 44,
+          "strictVerifierPassed": true,
+          "logSha256": "9dd5b04a4348ebefa1cbfc92baaa4796344c5c2df54b2608705020363d3bcb88",
+          "requiredSteps": [
+            {
+              "name": "Run npm run lint",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete tests, including actual Rust producer",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete Node and UI build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Transaction and process recovery probes",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require executed qualification and recovery evidence",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12599682465,
+          "name": "semantic-evidence-node-20",
+          "bytes": 27520,
+          "digest": "sha256:5b108bd1b9fc8eb4db53c561fdc389d471eb55899d006dba196c7af3a1f268a8",
+          "headSha": "439e051f6b701895b0b8935f22ce27ae2cc2ee7d"
+        },
+        {
+          "id": 12599539956,
+          "name": "semantic-evidence-node-24",
+          "bytes": 27768,
+          "digest": "sha256:01777d5221d7079a5f85be69931791c7660c763535b30b21da0ad0d91d458aa6",
+          "headSha": "439e051f6b701895b0b8935f22ce27ae2cc2ee7d"
+        },
+        {
+          "id": 12599114648,
+          "name": "semantic-evidence-node-22",
+          "bytes": 27517,
+          "digest": "sha256:5c41b23478643bdfaec8bd5a87c3ec8e36d2ea5713d4fce23293f6da7f5865a5",
+          "headSha": "439e051f6b701895b0b8935f22ce27ae2cc2ee7d"
+        }
+      ],
+      "receiptSha256": "3dbf424dea26c6accbb041e60688283089e20a6d394b2041cf7be0c7ee3aecda"
+    }
   },
   "decision": {
-    "status": "pending full validation",
-    "basis": "Complete bytes/identities agree; observed allocation traffic lower in ordinary final staging and whole run, supported by bounded prototype mechanism. No observed overall peak regression. Whole-analysis CPU/time and portable RSS effects unqualified.",
+    "status": "accepted",
+    "accepted": true,
+    "basis": "Exact independent canonical/SQL/output equivalence, bounded callback-free reuse, lower final ordinary-run allocation traffic consistent with targeted prototype mechanism, no observed overall peak regression, full local and exact implementation matrix passed. Integration remains one pair.",
+    "wholeAnalysisSpeedupAttributed": false,
+    "portablePeakReductionQualified": false,
+    "finalIsolatedHelperCpuMeasured": false,
     "timeGateQualified": false,
     "coreOnlyMemoryGateQualified": false,
     "nextMilestoneStarted": false

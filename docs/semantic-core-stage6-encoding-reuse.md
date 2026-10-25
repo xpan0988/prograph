@@ -1,8 +1,9 @@
 # Stage 6.6 — operation-scoped canonical encoding reuse
 
-Status: one adjacent-provenance reuse candidate is retained for its measured
-allocation benefit, pending complete local and exact-commit CI qualification.
-No other candidate was implemented. Neither scale gate is qualified.
+Status: **accepted allocation-focused adjacent provenance reuse**, implementation
+[`439e051f6b701895b0b8935f22ce27ae2cc2ee7d`](https://github.com/xpan0988/prograph/commit/439e051f6b701895b0b8935f22ce27ae2cc2ee7d).
+Complete local and exact-commit Node 20/22/24 qualification passed. No other
+candidate was implemented. Neither scale gate is qualified.
 
 ## Baseline and measurement boundary
 
@@ -18,6 +19,9 @@ and nine tool trees authenticate against Stage 6.5/6.1. This is the original
 173,142-line capture at the same path. Commands use the repository CWD, Node
 25.9.0 and `--max-old-space-size=2048`, serially without competing heavy work.
 Raw reports/indexes remain outside Git in `/private/tmp/prograph-stage6-6-20261025`.
+Host: Apple M5, 10 logical CPUs, 16 GiB; macOS 26.5.2 / build 25F84,
+Darwin 25.5.0 arm64. Runtime/dependency hashes, source inventories and exact
+phase counters are in the [machine-readable receipt](benchmarks/semantic-core-stage6-encoding-reuse.json).
 
 The opt-in `semantic-encoding-audit.mjs` rewrites **an external compiled build
 copy**, leaving recursive `canonical` unchanged. Prefix edits preserve argument
@@ -214,10 +218,37 @@ The real graph is 102,548,074 bytes, SHA-256
 Diagnostics are 15,529,775 bytes, SHA-256
 `631fa69e6fdd6f49b339303a9b454228e05a9f79fb362d9a5a7e6b86bf6503ce`.
 All 234,946 facts/claims, 41,438 occurrences, 57,693 support atoms and 1,193
-sealed run identities match. Source freshness is fresh. Full local regression,
-Node/UI checks/build, recovery and exact implementation CI are pending.
+sealed run identities match. Source freshness is fresh. A correctness-only replay
+of all 1,266 actual SQL provenance groups verifies the final hardened encoder's
+complete strings/keys and admission, covering 234,946 weighted operations /
+72,341,290 bytes. This is not an independently instrumented candidate-analysis
+branch counter, and adds no performance observation.
 
-The candidate is provisionally retained for the measured allocation benefit and
+The full local suite ran once: **325/325 tests, 44 files, zero skips**. All 18
+real-tool multi-provider rebuild checks passed, with actual prior-writer upgrades,
+incremental/fresh comparisons, retained history, negative dependencies/supports,
+failed publication and rollback. Node/UI typechecks and complete production build
+passed. The four recovery probes retain snapshot 1 before-seal/before-publish/
+during-publish and coherent snapshot 2 after-publish, with baseline history kept.
+Corruption is refused without modifying the database. The strict evidence verifier
+passed. Exact-commit Node 20/22/24 CI for
+[`439e051`](https://github.com/xpan0988/prograph/commit/439e051f6b701895b0b8935f22ce27ae2cc2ee7d)
+in [run 40191373538](https://github.com/xpan0988/prograph/actions/runs/40191373538)
+passed:
+
+| Job | Runtime | Actual result |
+|---|---|---|
+| [Node 20](https://github.com/xpan0988/prograph/actions/runs/40191373538/job/121162894545) | 20.20.2 | 325 tests / 44 files, typechecks, full build, recovery and strict verifier passed |
+| [Node 22](https://github.com/xpan0988/prograph/actions/runs/40191373538/job/121162894558) | 22.23.3 | Same complete qualification passed |
+| [Node 24](https://github.com/xpan0988/prograph/actions/runs/40191373538/job/121162894587) | 24.21.0 | Same complete qualification passed |
+
+Completed-job logs confirm the checkout SHA, all three new oracle files, totals
+and strict verifier. The receipt records log hashes and three artifact digests
+bound to `439e051`. This closure changes documentation/evidence only; runtime,
+tests, scripts and workflow Git objects remain identical to the tested commit.
+A subsequent documentation commit is not claimed as separately CI-tested.
+
+The optimization is **accepted** for the measured allocation benefit and
 unchanged outputs, not for its noisy whole-run timing. Other reuse candidates
 are deferred. A next independent milestone should separate staging/transaction
 CPU from waits using the now-dominant phase evidence before proposing changes.
