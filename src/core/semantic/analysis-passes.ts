@@ -15,6 +15,7 @@ import { validateIdentities } from "../graph/identity.js";
 import { runAdapter } from "../analysis/adapter-run.js";
 import { SemanticStore } from "./store.js";
 import { canonical, digest, semanticKey, type Provenance, type FactInput } from "./model.js";
+import { canonicalDigest, type CanonicalEncodingStats } from "./canonical-hash.js";
 import { orderPasses, passContract, type PassContract } from "./passes.js";
 import { OwnedWriter, readOwnedProjection, writeSyntaxBase, normalizeProjection, OWNED_PASS_VERSION, type OwnedProjection } from "./owned-projection.js";
 import { partitionProjection } from "./projection-shards.js";
@@ -69,9 +70,10 @@ export async function deriveOwnedAnalysis(snapshot: RepositorySnapshot, source: 
     const parent = store.activeSnapshot();
     const context = semanticKey("analysis-context", [snapshot.repository.identity, OWNED_PASS_VERSION]);
     const fingerprintDone = beginAnalysisPhase("owned-fingerprint");
-    const fingerprint = digest(canonical({ sourceBinding: store.sourceBindingFingerprint(), files: [...snapshot.fileContents].map(([file, text]) => [file, digest(text)]).sort(),
-      inputs: source.inputReceipt ?? null, config: snapshot.config, configurationInput: snapshot.configurationInput ?? "not-captured", passes: ordered.map(pass => passContract(pass)), nodes: [...source.nodes].sort((a, b) => a.id.localeCompare(b.id)), edges: [...source.edges].sort((a, b) => a.id.localeCompare(b.id)) }));
-    fingerprintDone();
+    const fingerprintStats: CanonicalEncodingStats = { bytes: 0, chunks: 0, maxChunkBytes: 0, referenceFallback: 0 };
+    const fingerprint = canonicalDigest({ sourceBinding: store.sourceBindingFingerprint(), files: [...snapshot.fileContents].map(([file, text]) => [file, digest(text)]).sort(),
+      inputs: source.inputReceipt ?? null, config: snapshot.config, configurationInput: snapshot.configurationInput ?? "not-captured", passes: ordered.map(pass => passContract(pass)), nodes: [...source.nodes].sort((a, b) => a.id.localeCompare(b.id)), edges: [...source.edges].sort((a, b) => a.id.localeCompare(b.id)) }, fingerprintStats);
+    fingerprintDone({ ...fingerprintStats });
     const baseDone = beginAnalysisPhase("syntax-fact-staging");
     const base = writeSyntaxBase(store, snapshot, source, context, fingerprint, { inventory: sourceInventory(snapshot), semanticInventory: semanticInventory(snapshot), versions: digest(canonical(ADAPTER_VERSIONS)) });
     baseDone({ runs: base.runs.length });

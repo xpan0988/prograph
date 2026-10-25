@@ -45,6 +45,8 @@ jobs:
           echo "PROGRAPH_TEST_AUTHORITY_BASELINE_RUNTIME=$authority_runtime" >> "$GITHUB_ENV"
           owned_runtime=$(node scripts/prepare-semantic-baseline.mjs "$RUNNER_TEMP/semantic-baselines" owned)
           echo "PROGRAPH_TEST_OWNED_BASELINE_RUNTIME=$owned_runtime" >> "$GITHUB_ENV"
+          fingerprint_runtime=$(node scripts/prepare-semantic-baseline.mjs "$RUNNER_TEMP/semantic-baselines" fingerprint)
+          echo "PROGRAPH_TEST_FINGERPRINT_BASELINE_RUNTIME=$fingerprint_runtime" >> "$GITHUB_ENV"
       - uses: actions/setup-python@v5
         with:
           python-version: '3.14'
