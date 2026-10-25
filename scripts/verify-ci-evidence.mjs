@@ -6,7 +6,7 @@ assert.equal(tests.success, true);
 assert.ok(tests.numTotalTests > 0);
 assert.equal(tests.numPassedTests, tests.numTotalTests);
 assert.equal(tests.numPendingTests, 0);
-for (const [pattern, count] of [[/[/\\]canonical-hash\.test\.ts$/, 8], [/[/\\]fingerprint-runtime\.test\.ts$/, 1]]) {
+for (const [pattern, count] of [[/[/\\]canonical-hash\.test\.ts$/, 8], [/[/\\]fingerprint-runtime\.test\.ts$/, 1], [/[/\\]encoding-audit\.test\.ts$/, 3], [/[/\\]encoding-reuse\.test\.ts$/, 5], [/[/\\]encoding-reuse-runtime\.test\.ts$/, 2]]) {
   const file = tests.testResults.find(file => pattern.test(file.name));
   assert.ok(file && file.assertionResults.length === count && file.assertionResults.every(test => test.status === 'passed'), 'Canonical byte/hash and accepted-runtime fingerprint oracles must execute');
 }

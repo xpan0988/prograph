@@ -6,14 +6,14 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 const exec = promisify(execFile);
-const baselines = { fingerprint: 'a8d02241518c804fe40565bc518e905db499d9e9', owned: '97bcab797c4c5f838f87bfcfd5e298bbaa6cef0b', authority: 'b96118fc7513191b33af5d82caef387ad2c8e01e', previous: '6eefca04b5032f3416fcc95bda23dec4bb8f65db', report: '892d91833cfd22639da3f34948969a24a1ea96bb', retention: 'd38b47b1f3fc0f917f9c1052c868fe29b92b173b' };
+const baselines = { 'encoding-reuse': '0e668fb08f9d8046d5c730848b2c2fc7d7cdaf05', fingerprint: 'a8d02241518c804fe40565bc518e905db499d9e9', owned: '97bcab797c4c5f838f87bfcfd5e298bbaa6cef0b', authority: 'b96118fc7513191b33af5d82caef387ad2c8e01e', previous: '6eefca04b5032f3416fcc95bda23dec4bb8f65db', report: '892d91833cfd22639da3f34948969a24a1ea96bb', retention: 'd38b47b1f3fc0f917f9c1052c868fe29b92b173b' };
 const selector = process.argv[3] ?? 'previous';
 if (!Object.hasOwn(baselines, selector)) throw Error('Unsupported baseline selector');
 const commit = baselines[selector];
 if (!commit) throw Error('Unsupported baseline selector');
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const destination = path.resolve(process.argv[2] ?? '');
-if (!process.argv[2]) throw Error('Usage: node scripts/prepare-semantic-baseline.mjs <parent-directory> [previous|report|retention|authority|owned|fingerprint]');
+if (!process.argv[2]) throw Error('Usage: node scripts/prepare-semantic-baseline.mjs <parent-directory> [previous|report|retention|authority|owned|fingerprint|encoding-reuse]');
 await mkdir(destination, { recursive: true });
 try { await exec('git', ['cat-file', '-e', `${commit}^{commit}`], { cwd: repository }); }
 catch { await exec('git', ['fetch', '--no-tags', '--depth=1', 'origin', commit], { cwd: repository, timeout: 120000, maxBuffer: 1024 ** 2 }); }

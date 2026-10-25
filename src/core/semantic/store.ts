@@ -10,6 +10,7 @@ import path from "node:path";
 import { realpathSync, existsSync } from "node:fs";
 import { IndexLease } from "./maintenance-lock.js";
 import { measureAnalysisPhase } from "../analysis/diagnostics.js";
+import { encodeFactProvenance } from "./provenance-encoding.js";
 import { canonical, semanticKey, PREDICATES, SEMANTIC_FORMAT_VERSION, SEMANTIC_SCHEMA_VERSION, READABLE_SEMANTIC_SCHEMAS, validateFact,
   type EntityKind, type FactInput, type OccurrenceInput, type SemanticSymbol, type SupportAlternative } from "./model.js";
 
@@ -203,7 +204,7 @@ export class SemanticStore {
     const key = semanticKey("fact", [logical, fact.object ?? null, value]);
     this.sql("INSERT OR IGNORE INTO sc_facts(key,logical_key,predicate,context,subject,object,occurrence,value_json) VALUES(?,?,?,?,?,?,?,?)").run(key, logical, fact.predicate, fact.context, subject, object, occurrence, value);
     const f = this.sql("SELECT id FROM sc_facts WHERE key=?").get(key) as { id: number };
-    const provenanceJson = canonical(fact.provenance); const provenanceKey = semanticKey("provenance", fact.provenance);
+    const { encoded: provenanceJson, key: provenanceKey } = encodeFactProvenance(fact);
     this.sql("INSERT OR IGNORE INTO sc_provenance(key,json) VALUES(?,?)").run(provenanceKey, provenanceJson);
     const p = this.sql("SELECT id FROM sc_provenance WHERE key=?").get(provenanceKey) as { id: number };
     const group = fact.supports ? this.support(fact.supports) : null;
