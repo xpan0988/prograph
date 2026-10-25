@@ -1,7 +1,8 @@
 # Stage 6.5 — canonical fingerprint materialization
 
-Status: **single-call-site memory optimization provisionally retained; complete
-local and exact-commit CI qualification pending**. There is no accepted CPU
+Status: **accepted single-call-site memory-residency optimization**, implementation
+[`aff347fce84624d72e3bcf16324088682d34de82`](https://github.com/xpan0988/prograph/commit/aff347fce84624d72e3bcf16324088682d34de82).
+Complete local and exact-commit Node 20/22/24 qualification passed. There is no accepted CPU
 speedup, allocation-volume reduction, whole-process RSS guarantee or scale-gate
 qualification. The string-producing canonical encoder remains unchanged.
 
@@ -176,6 +177,8 @@ That 62.212-s / 1,180,944-KiB run is retained as **invalid for comparison**.
 The one permitted confirmatory run reran accepted code from the same repository
 CWD, with identical harness/heap flags and a fresh output. No further complete
 analysis was run. Measurements and heavy tests ran serially.
+The valid candidate precedes the corrected control; order was not randomized
+and OS-cache warmth was not controlled.
 
 | Valid production observations | Accepted control | Candidate |
 |---|---:|---:|
@@ -186,6 +189,9 @@ analysis was run. Measurements and heavy tests ran serially.
 | V8 allocation traffic during fingerprint | 1,220,645,272 B | 1,404,486,840 B |
 | Fingerprint begin heap used | 336,131,608 B | 341,481,096 B |
 | Fingerprint end heap used | 358,086,560 B | 391,932,856 B |
+| Fingerprint begin/end committed V8 heap | 470,827,008 / 611,598,336 B | 476,332,032 / 523,157,504 B |
+| Fingerprint begin/end instantaneous RSS | 822,460,416 / 1,047,887,872 B | 793,886,720 / 808,157,184 B |
+| Fingerprint end external / ArrayBuffer memory | 2,410,074 / 34,251 B | 2,410,074 / 37,403 B |
 | Process high-water before fingerprint | 837,472 KiB | 806,080 KiB |
 | Process high-water at fingerprint end | 1,157,728 KiB | 816,736 KiB |
 
@@ -201,6 +207,11 @@ including untouched staging/publication. No causal whole-analysis speedup or
 portable tail-latency claim follows. The observed whole-process peak moves from
 TypeScript extraction in the control to the source freshness barrier in the
 candidate. Later graph/compiler/native lifetimes remain unresolved.
+
+For context, owned analysis is 28.122 s control / 29.086 s candidate; its nested
+syntax staging is 20.759 / 22.010 s. Semantic publication is 14.334 / 15.794 s.
+These overlapping phases were not otherwise changed, and must not be summed as
+independent costs. Their variation is larger than the changed fingerprint phase.
 
 One targeted profile pairs two fresh, serial encoding-only processes using the
 same reconstructed real input and heap flag. Preparation, file writes and the
@@ -221,6 +232,37 @@ and process CPU do not give a consistent speedup. **No CPU improvement is
 accepted.** The extra descriptor/qualification and token allocations are a real
 trade-off; they have not been hidden by reporting only a smaller end heap.
 
+The 1-ms sample union under reference `canonical` is 307.695 ms inclusive /
+258.453 ms exclusive. The candidate's canonical-hash frames cover 444.020 ms
+inclusive, including 134.215 ms under qualification; qualification has 131.708 ms
+exclusive. Recursive contexts are counted once per group/sample. Crypto-update
+frames have 83.424 ms reference / 25.156 ms candidate exclusive weight, but native
+work can be charged elsewhere. These are samples, not exact function CPU clocks.
+Inspector start/stop contributes about 44 ms outside the encoding resource
+interval in each trace. Neither the original report's 3.962-s all-call-site
+estimate nor these overlapping groups establish a current production CPU gain.
+
+The memory samples above are process-wide instantaneous counters; max RSS is a
+cumulative process high-water, and `total_allocated_bytes` differences are V8
+cumulative allocation traffic across the phase, including GC/background activity.
+External/ArrayBuffer counters overlap and do not account for all SHA/native or
+SQLite memory. No retained-object or subsystem allocation attribution is inferred
+by subtracting them from RSS.
+
+The allocation sampler (32,768-byte interval; surviving samples, no requested
+GC) estimates 112,075,504 live bytes on the reference `digest`/`update` stack at
+profile end. This is consistent with retaining/flattening the full canonical
+string for native SHA input. Candidate surviving samples total 955,336 bytes,
+mostly inspector/runtime setup, with no comparable full-output stack. These are
+sampled surviving allocations, not exact retained size, total traffic or a
+standalone peak-memory proof; the process high-water observations remain separate.
+The diagnostic reference deliberately keeps `encoded` for writing the byte
+oracle after timing, and counts its UTF-8 bytes inside timing. Production's inline
+`digest(canonical(...))` does not deliberately retain that string after the hash
+returns. The child profile's end-of-region liveness is therefore not an exact
+production lifetime oracle; the ordinary production timeline is the relevant
+RSS witness. Both child timings also include their diagnostic counter work.
+
 The native string-capacity counter/check was added after the ordinary production
 candidate run. Its branch is unreachable for the verified 56-MB input, and it
 creates no input copy. The final encoder was profiled, full-byte compared and
@@ -239,17 +281,38 @@ receipt. No V8/TypeScript subtraction is used to estimate Core-only RSS.
 
 ## Validation, decision and reproduction
 
-Focused equivalence passed. The complete local suite is running once with real
-providers, all historical baselines and seed `0x6a31`, followed serially by
-Node/UI typechecks, complete build, four recovery probes/corruption refusal and
-the strict evidence verifier. The exact implementation Node 20/22/24 matrix
-must pass before final acceptance. No validation or durability setting changed.
+Focused equivalence passed all nine tests. The complete local suite ran **once**:
+**315/315 tests, 41 files, zero skips**, with real providers, historical baselines
+and seed `0x6a31`. All 18 multi-provider clean-rebuild checks agree. Node/UI
+typechecks, complete production build, the four recovery probes and strict
+evidence verifier then passed serially. Corruption is refused without changing
+the database. Before-seal/before-publish/during-publish crashes retain snapshot 1;
+after-publish retains coherent snapshot 2, with the original baseline/history
+still readable. The suite includes historical migrations/rollback and old-reader
+exports, failed publication, source freshness/invalidation, incremental rebuilds,
+negative support/selectors and cancellation. No gate or durability setting changed.
+
+Actual [run 40175602197](https://github.com/xpan0988/prograph/actions/runs/40175602197)
+is successful for the exact implementation SHA:
+
+| Job | Runtime | Actual result |
+|---|---|---|
+| [Node 20](https://github.com/xpan0988/prograph/actions/runs/40175602197/job/121115466314) | 20.20.2 | 315 tests, typechecks, complete build, recovery and evidence verifier passed |
+| [Node 22](https://github.com/xpan0988/prograph/actions/runs/40175602197/job/121115466205) | 22.23.3 | Same complete qualification passed |
+| [Node 24](https://github.com/xpan0988/prograph/actions/runs/40175602197/job/121115466087) | 24.21.0 | Same complete qualification passed |
+
+Decoded completed-job logs confirm checkout SHA, both new oracle files, 41/315
+passing totals and the strict verifier. The receipt records log hashes and all
+three artifact digests bound to `aff347f`. This closure changes documentation and
+evidence only; source/tests/scripts/workflow Git objects remain identical to that
+tested commit. A later documentation commit is not claimed as separately tested.
 
 The memory mechanism is supported by actual bounded SHA input sizes and complete
 byte equality, with ordinary and targeted lower process high-water observations.
-The single-call-site change is provisionally retained for this benefit. More
+The single-call-site change is **accepted** for this benefit. More
 allocation traffic and no established CPU speedup limit that decision; integration
-is not expanded to smaller hash-only callers. Full qualification remains pending.
+is not expanded to smaller hash-only callers. No general peak-RSS or time gate is
+qualified. The exact final-build production-timing limitation above remains.
 
 Reproduction requires the authenticated capture and dependency trees. Use the
 repository CWD for **both** runtimes. Each output must be fresh:

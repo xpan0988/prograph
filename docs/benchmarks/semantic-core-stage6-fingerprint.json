@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "status": "Single-call-site memory optimization provisionally retained; full local and CI qualification pending",
+  "status": "Accepted single-call-site bounded fingerprint residency improvement; no demonstrated CPU speedup or total allocation reduction",
   "baseline": {
     "commit": "a8d02241518c804fe40565bc518e905db499d9e9",
     "branch": "main",
@@ -4958,7 +4958,8 @@
         }
       ],
       "limits": "Encoding-only timing includes counter bookkeeping and profiler overhead. Whole child high-water includes startup/input loading; post-timing artifacts and candidate byte-oracle pass excluded from recorded after resources. No Core-only RSS attribution.",
-      "sha256": "b233d1084c532cd9e81fb1f13ae031ce5dff9a7aed343015141232b62f060b78"
+      "sha256": "b233d1084c532cd9e81fb1f13ae031ce5dff9a7aed343015141232b62f060b78",
+      "harnessLimit": "Reference encoded string remains reachable until the post-timing oracle file is written; production inline digest(canonical(...)) does not deliberately retain it after hashing. Reference profile counts UTF-8 bytes inside timing. Surviving allocation samples/end heap are not exact production liveness. Ordinary phase runs are the production RSS witness."
     },
     "candidate": {
       "mode": "candidate",
@@ -6583,9 +6584,778 @@
         "stateHeader.generatedAt"
       ],
       "reportKeys": "Original keys authenticated independently; compare complete reports excluding clocks and their derived report keys. No graph/export bytes normalized."
+    },
+    "originalStage6Witnesses": {
+      "control": {
+        "format": 1,
+        "sourceStats": {
+          "copiedFiles": 421,
+          "copiedInventory": "046e71411c366bd85acffc12a83cfc80590016e0223629aac9ac11f454ab6e6b",
+          "inventory": "729c1eb199f09ccd9739634699bdc004388402544fcc8806c674ba471b6365b8",
+          "selectedFiles": 315,
+          "selectedBytes": 7452350,
+          "codeFiles": 261,
+          "codeBytes": 6535832,
+          "physicalCodeLines": 173142,
+          "byExtension": {
+            ".py": 6,
+            ".rs": 174,
+            ".ts": 57,
+            ".tsx": 24
+          }
+        },
+        "checksums": {
+          "visibleClaims": {
+            "count": 234946,
+            "sha256": "5374232534de8590dee9761be2541c12725764ab3ef9d7d4c50fe676e450e801"
+          },
+          "occurrences": {
+            "count": 41438,
+            "sha256": "aba2d48774215ab7bf657ba35ab8ee752f1c32a030817a674960fe86d3b60c70"
+          },
+          "calls": {
+            "count": 3757,
+            "sha256": "7235096d392589fba3b66291667c3dc25b3d90e5f2d4a40c55a42082b44cae49"
+          },
+          "scopeRows": {
+            "count": 197892,
+            "sha256": "49e71280d00580d755223ae02563ef640f0e9942e3102e2821ada42d08647ed5"
+          },
+          "boundaries": {
+            "count": 393,
+            "sha256": "f5d82fc62246a88f0ac521be436c49b3d9536f6c1595eb08158dcb37af57277b"
+          },
+          "edges": {
+            "count": 78396,
+            "sha256": "a963166a27ff775cfe92a162b34b32fa6324956f71fbf3013ff114550d7abf8a"
+          },
+          "diagnostics": {
+            "count": 46940,
+            "sha256": "50e7f3ff55301c10941d4d2a4899fad4277f0d45e6c69f8e21abe000fa79b4e3"
+          },
+          "nodes": {
+            "count": 40640,
+            "sha256": "f00be092f9762093f6272319e0ebc56cb906d47453c34b75bf54d621f2a3d20f"
+          }
+        },
+        "sqlite": {
+          "version": "3.53.1",
+          "integrity": "ok",
+          "foreignKeys": [],
+          "journal": "wal",
+          "readConnectionSynchronous": 1,
+          "pageSize": 4096,
+          "pages": 221795,
+          "connectionDefaultCacheSize": -16000,
+          "connectionDefaultMmapSize": 0,
+          "counts": {
+            "facts": 234946,
+            "claims": 234946,
+            "entities": 217234,
+            "occurrences": 41438,
+            "symbols": 9355,
+            "runs": 1193,
+            "owned": 234946,
+            "groups": 20121,
+            "supports": 57693,
+            "projection_rows": 166065,
+            "inputs": 7054
+          }
+        },
+        "jsonWitness": {
+          "nodes": "34ccc16c70eabc69f4d67ef8bf6b80b9f3ef82c0c008200661b397fb8e217704",
+          "edges": "77a75fd0b5437b9ccec8c4c34a1e2d1efc69454577c25a3fbdcc26f78612d3d4",
+          "diagnostics": "41a1c5ff8aebda83ee607abf06ddd06dd2088c5d9404d6b215ebfedfadd701fa"
+        },
+        "bytes": {
+          "semantic.sqlite": 908472320,
+          "graph.sqlite": 197582848,
+          "exports/graph.json": 102548074
+        },
+        "acceptedChecksumsEqual": true,
+        "legacySqliteEqual": true
+      },
+      "candidate": {
+        "format": 1,
+        "sourceStats": {
+          "copiedFiles": 421,
+          "copiedInventory": "046e71411c366bd85acffc12a83cfc80590016e0223629aac9ac11f454ab6e6b",
+          "inventory": "729c1eb199f09ccd9739634699bdc004388402544fcc8806c674ba471b6365b8",
+          "selectedFiles": 315,
+          "selectedBytes": 7452350,
+          "codeFiles": 261,
+          "codeBytes": 6535832,
+          "physicalCodeLines": 173142,
+          "byExtension": {
+            ".py": 6,
+            ".rs": 174,
+            ".ts": 57,
+            ".tsx": 24
+          }
+        },
+        "checksums": {
+          "visibleClaims": {
+            "count": 234946,
+            "sha256": "5374232534de8590dee9761be2541c12725764ab3ef9d7d4c50fe676e450e801"
+          },
+          "occurrences": {
+            "count": 41438,
+            "sha256": "aba2d48774215ab7bf657ba35ab8ee752f1c32a030817a674960fe86d3b60c70"
+          },
+          "calls": {
+            "count": 3757,
+            "sha256": "7235096d392589fba3b66291667c3dc25b3d90e5f2d4a40c55a42082b44cae49"
+          },
+          "scopeRows": {
+            "count": 197892,
+            "sha256": "49e71280d00580d755223ae02563ef640f0e9942e3102e2821ada42d08647ed5"
+          },
+          "boundaries": {
+            "count": 393,
+            "sha256": "f5d82fc62246a88f0ac521be436c49b3d9536f6c1595eb08158dcb37af57277b"
+          },
+          "edges": {
+            "count": 78396,
+            "sha256": "a963166a27ff775cfe92a162b34b32fa6324956f71fbf3013ff114550d7abf8a"
+          },
+          "diagnostics": {
+            "count": 46940,
+            "sha256": "50e7f3ff55301c10941d4d2a4899fad4277f0d45e6c69f8e21abe000fa79b4e3"
+          },
+          "nodes": {
+            "count": 40640,
+            "sha256": "f00be092f9762093f6272319e0ebc56cb906d47453c34b75bf54d621f2a3d20f"
+          }
+        },
+        "sqlite": {
+          "version": "3.53.1",
+          "integrity": "ok",
+          "foreignKeys": [],
+          "journal": "wal",
+          "readConnectionSynchronous": 1,
+          "pageSize": 4096,
+          "pages": 221795,
+          "connectionDefaultCacheSize": -16000,
+          "connectionDefaultMmapSize": 0,
+          "counts": {
+            "facts": 234946,
+            "claims": 234946,
+            "entities": 217234,
+            "occurrences": 41438,
+            "symbols": 9355,
+            "runs": 1193,
+            "owned": 234946,
+            "groups": 20121,
+            "supports": 57693,
+            "projection_rows": 166065,
+            "inputs": 7054
+          }
+        },
+        "jsonWitness": {
+          "nodes": "34ccc16c70eabc69f4d67ef8bf6b80b9f3ef82c0c008200661b397fb8e217704",
+          "edges": "77a75fd0b5437b9ccec8c4c34a1e2d1efc69454577c25a3fbdcc26f78612d3d4",
+          "diagnostics": "41a1c5ff8aebda83ee607abf06ddd06dd2088c5d9404d6b215ebfedfadd701fa"
+        },
+        "bytes": {
+          "semantic.sqlite": 908472320,
+          "graph.sqlite": 197582848,
+          "exports/graph.json": 102548074
+        },
+        "acceptedChecksumsEqual": true,
+        "legacySqliteEqual": true
+      }
     }
   },
   "validation": {
-    "status": "running"
+    "status": "passed",
+    "local": {
+      "tests": 315,
+      "passed": 315,
+      "pending": 0,
+      "files": 41,
+      "fullSuiteRuns": 1,
+      "steps": [
+        {
+          "label": "full-tests",
+          "command": "npm",
+          "args": [
+            "test",
+            "--",
+            "--maxWorkers=1",
+            "--reporter=default",
+            "--reporter=json",
+            "--outputFile=/private/tmp/prograph-stage6-5-20261025/test-results.json"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 2743873
+        },
+        {
+          "label": "typecheck",
+          "command": "npm",
+          "args": [
+            "run",
+            "typecheck"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 3446
+        },
+        {
+          "label": "build",
+          "command": "npm",
+          "args": [
+            "run",
+            "build"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 8051
+        },
+        {
+          "label": "recovery",
+          "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node",
+          "args": [
+            "scripts/semantic-recovery.mjs",
+            "/private/tmp/prograph-stage6-5-20261025/recovery.json"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 419
+        },
+        {
+          "label": "verifier",
+          "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node",
+          "args": [
+            "scripts/verify-ci-evidence.mjs",
+            "/private/tmp/prograph-stage6-5-20261025/test-results.json",
+            "/private/tmp/prograph-stage6-5-20261025/recovery.json",
+            "/private/tmp/prograph-stage6-5-20261025/oracle.json",
+            "/private/tmp/prograph-stage6-5-20261025/upgrade.json",
+            "/private/tmp/prograph-stage6-5-20261025/retention-upgrade.json",
+            "/private/tmp/prograph-stage6-5-20261025/authority-upgrade.json"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 65
+        }
+      ],
+      "focused": {
+        "tests": 9,
+        "passed": 9,
+        "seed": "0x6501",
+        "randomCases": 2000
+      },
+      "oracle": {
+        "seed": 27185,
+        "complete": true,
+        "checks": 18,
+        "expected": 18,
+        "scope": "Actual TS/Clang/Rust/Python/Go/Java/Csharp tools, fresh independent index and reauthorized execution control per edit; no copied facts or producer outputs"
+      },
+      "recovery": {
+        "node": "v25.9.0",
+        "probes": [
+          {
+            "point": "before-seal",
+            "exitCode": 57,
+            "activeSnapshot": 1,
+            "visible": [
+              "callee"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          },
+          {
+            "point": "before-publish",
+            "exitCode": 57,
+            "activeSnapshot": 1,
+            "visible": [
+              "callee"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          },
+          {
+            "point": "during-publish",
+            "exitCode": 57,
+            "activeSnapshot": 1,
+            "visible": [
+              "callee"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          },
+          {
+            "point": "after-publish",
+            "exitCode": 57,
+            "activeSnapshot": 2,
+            "visible": [
+              "other"
+            ],
+            "integrity": "ok",
+            "baselineRetained": true
+          }
+        ],
+        "corruption": {
+          "refused": true,
+          "unchanged": true
+        }
+      },
+      "receiptSha256": {
+        "focused-final.json": "6421efacd435dad507e7c957319cba03fef4248fedc96f4866e4d342c46f572d",
+        "test-results.json": "063514c6099d6110df55ca7205df5d272b34624e537c3e359856a2ed1cbf2f23",
+        "validation-steps.json": "69049956f8116f406c311724e2f8a5437fa258ffda80547d22a227b5e8aa3ae6",
+        "oracle.json": "c67f8cce9d2d17a19e68224dbbd11cffda22b7c5de7292fc447ae1ba6c93a6e5",
+        "upgrade.json": "a062ba4361fb3b3607133aa7bcd6ad4495ba2e3eedb79f5c60cfcded1abc59cc",
+        "retention-upgrade.json": "a858bde45a30c1e123fce84e2943b3b848427925c26e9db4e0ea45943b9a2ed2",
+        "authority-upgrade.json": "4c34e4ec19c44ebc910b64678de60a93efdff553eef500374bd2712d8dc25142",
+        "recovery.json": "abdbd8216328c10191ebcca64958a04fb66950ca34c04fef898b274ad8661ba9",
+        "full-tests.log": "e72420950faa562dea70f3e211b8181c18f573843015bcd091ceea9a3cb39070",
+        "typecheck.log": "b6afb03e277309bb5c81c26ee5941d9f67fd438e350389dfffa093d60b117431",
+        "build.log": "382cb9a8f6f7af599c55014c969eae944e90d4ab5f8c38e688fb763ce0401e85",
+        "recovery.log": "abdbd8216328c10191ebcca64958a04fb66950ca34c04fef898b274ad8661ba9",
+        "verifier.log": "d6b22aface28a952ed347c5d3d3f29f29992b448311483d3d56ffcbe7bc6e1be"
+      },
+      "testFiles": [
+        {
+          "file": "tests/analysis-diagnostics.test.ts",
+          "tests": 4,
+          "passed": 4
+        },
+        {
+          "file": "tests/authority-migration.test.ts",
+          "tests": 7,
+          "passed": 7
+        },
+        {
+          "file": "tests/authority-support.test.ts",
+          "tests": 1,
+          "passed": 1
+        },
+        {
+          "file": "tests/canonical-hash.test.ts",
+          "tests": 8,
+          "passed": 8
+        },
+        {
+          "file": "tests/compatibility-cache.test.ts",
+          "tests": 2,
+          "passed": 2
+        },
+        {
+          "file": "tests/compatibility-export.test.ts",
+          "tests": 4,
+          "passed": 4
+        },
+        {
+          "file": "tests/compatibility-global.test.ts",
+          "tests": 1,
+          "passed": 1
+        },
+        {
+          "file": "tests/compatibility-query-oracle.test.ts",
+          "tests": 4,
+          "passed": 4
+        },
+        {
+          "file": "tests/compatibility-snapshot.test.ts",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "file": "tests/compatibility-support.test.ts",
+          "tests": 1,
+          "passed": 1
+        },
+        {
+          "file": "tests/core.test.ts",
+          "tests": 42,
+          "passed": 42
+        },
+        {
+          "file": "tests/fingerprint-runtime.test.ts",
+          "tests": 1,
+          "passed": 1
+        },
+        {
+          "file": "tests/global-queries.test.ts",
+          "tests": 7,
+          "passed": 7
+        },
+        {
+          "file": "tests/index-execution.test.ts",
+          "tests": 5,
+          "passed": 5
+        },
+        {
+          "file": "tests/index-provider-cli.test.ts",
+          "tests": 6,
+          "passed": 6
+        },
+        {
+          "file": "tests/json-export.test.ts",
+          "tests": 12,
+          "passed": 12
+        },
+        {
+          "file": "tests/json-stream.test.ts",
+          "tests": 7,
+          "passed": 7
+        },
+        {
+          "file": "tests/owned-residency.test.ts",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "file": "tests/polyglot.test.ts",
+          "tests": 13,
+          "passed": 13
+        },
+        {
+          "file": "tests/provider-guard.test.ts",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "file": "tests/query-runtime.test.ts",
+          "tests": 6,
+          "passed": 6
+        },
+        {
+          "file": "tests/rust-traversal.test.ts",
+          "tests": 9,
+          "passed": 9
+        },
+        {
+          "file": "tests/semantic-artifacts.test.ts",
+          "tests": 13,
+          "passed": 13
+        },
+        {
+          "file": "tests/semantic-authority.test.ts",
+          "tests": 5,
+          "passed": 5
+        },
+        {
+          "file": "tests/semantic-clang-inputs.test.ts",
+          "tests": 8,
+          "passed": 8
+        },
+        {
+          "file": "tests/semantic-core.test.ts",
+          "tests": 17,
+          "passed": 17
+        },
+        {
+          "file": "tests/semantic-diagnostics.test.ts",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "file": "tests/semantic-gc.test.ts",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "file": "tests/semantic-incremental.test.ts",
+          "tests": 2,
+          "passed": 2
+        },
+        {
+          "file": "tests/semantic-ingestion.test.ts",
+          "tests": 35,
+          "passed": 35
+        },
+        {
+          "file": "tests/semantic-inputs.test.ts",
+          "tests": 7,
+          "passed": 7
+        },
+        {
+          "file": "tests/semantic-managed.test.ts",
+          "tests": 8,
+          "passed": 8
+        },
+        {
+          "file": "tests/semantic-multiprovider.test.ts",
+          "tests": 2,
+          "passed": 2
+        },
+        {
+          "file": "tests/semantic-passes.test.ts",
+          "tests": 9,
+          "passed": 9
+        },
+        {
+          "file": "tests/semantic-publication.test.ts",
+          "tests": 9,
+          "passed": 9
+        },
+        {
+          "file": "tests/semantic-replay.test.ts",
+          "tests": 8,
+          "passed": 8
+        },
+        {
+          "file": "tests/semantic-retention.test.ts",
+          "tests": 14,
+          "passed": 14
+        },
+        {
+          "file": "tests/semantic-rust.test.ts",
+          "tests": 10,
+          "passed": 10
+        },
+        {
+          "file": "tests/snapshot-report.test.ts",
+          "tests": 5,
+          "passed": 5
+        },
+        {
+          "file": "tests/source-reuse.test.ts",
+          "tests": 6,
+          "passed": 6
+        },
+        {
+          "file": "tests/watch-isolation.test.ts",
+          "tests": 2,
+          "passed": 2
+        }
+      ]
+    },
+    "ci": {
+      "runId": 40175602197,
+      "url": "https://github.com/xpan0988/prograph/actions/runs/40175602197",
+      "headSha": "aff347fce84624d72e3bcf16324088682d34de82",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "major": 24,
+          "node": "v24.21.0",
+          "id": 121115466087,
+          "url": "https://github.com/xpan0988/prograph/actions/runs/40175602197/job/121115466087",
+          "conclusion": "success",
+          "tests": 315,
+          "files": 41,
+          "strictVerifierPassed": true,
+          "focusedCanonicalAndAcceptedRuntimeExecuted": true,
+          "logSha256": "46a6fc6e968551dfaae2d85b348b16ca836d58d3139a5bfbc3ec590b9021b480",
+          "requiredSteps": [
+            {
+              "name": "Run npm run lint",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete tests, including actual Rust producer",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete Node and UI build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Transaction and process recovery probes",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require executed qualification and recovery evidence",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "major": 22,
+          "node": "v22.23.3",
+          "id": 121115466205,
+          "url": "https://github.com/xpan0988/prograph/actions/runs/40175602197/job/121115466205",
+          "conclusion": "success",
+          "tests": 315,
+          "files": 41,
+          "strictVerifierPassed": true,
+          "focusedCanonicalAndAcceptedRuntimeExecuted": true,
+          "logSha256": "cc67bed74478c8a5e1c4c8ce73e979866d7d3208d73a77f40d21d5635fcdba04",
+          "requiredSteps": [
+            {
+              "name": "Run npm run lint",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete tests, including actual Rust producer",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete Node and UI build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Transaction and process recovery probes",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require executed qualification and recovery evidence",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "major": 20,
+          "node": "v20.20.2",
+          "id": 121115466314,
+          "url": "https://github.com/xpan0988/prograph/actions/runs/40175602197/job/121115466314",
+          "conclusion": "success",
+          "tests": 315,
+          "files": 41,
+          "strictVerifierPassed": true,
+          "focusedCanonicalAndAcceptedRuntimeExecuted": true,
+          "logSha256": "ae4b3bd42235e1ff439196908e1b9edf8edbd5ccc49dffe993e282130fa73921",
+          "requiredSteps": [
+            {
+              "name": "Run npm run lint",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete tests, including actual Rust producer",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete Node and UI build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Transaction and process recovery probes",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require executed qualification and recovery evidence",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12593430633,
+          "name": "semantic-evidence-node-22",
+          "bytes": 26910,
+          "digest": "sha256:c893f1ebd731323e313ddd1194edd34b2587a0b96a6d39ed4b80e4bd3c123972",
+          "headSha": "aff347fce84624d72e3bcf16324088682d34de82"
+        },
+        {
+          "id": 12592718105,
+          "name": "semantic-evidence-node-20",
+          "bytes": 26880,
+          "digest": "sha256:da9a6a19421bcc0b6d7f62055d7cff3aeba18922c870b958f4ab8855e4953e1e",
+          "headSha": "aff347fce84624d72e3bcf16324088682d34de82"
+        },
+        {
+          "id": 12592389244,
+          "name": "semantic-evidence-node-24",
+          "bytes": 27014,
+          "digest": "sha256:bc349803e2c2570302d5d8a76f13398fbec87d9a824e8a6f225dfbd8a6570d27",
+          "headSha": "aff347fce84624d72e3bcf16324088682d34de82"
+        }
+      ],
+      "receiptSha256": "d06039dae95546ffe0bb5f69982639fc60f562d2115102f8afb30d511f9e9e8d"
+    }
+  },
+  "implementation": {
+    "commit": "aff347fce84624d72e3bcf16324088682d34de82",
+    "ciRun": "https://github.com/xpan0988/prograph/actions/runs/40175602197",
+    "status": "accepted",
+    "onlyProductionCallSite": "deriveOwnedAnalysis full-graph owned-fingerprint",
+    "protectedBaselineBlobs": {
+      "src/core/semantic/model.ts": "07311cedf473e5ff5d177d4935d41a203e57ccd2",
+      "src/core/semantic/owned-projection.ts": "df9de9af4be9f094a8913bc8414d15ceb5af3fed",
+      "src/core/semantic/projection-shards.ts": "47e1ca43860515fc8fbb58a75460771d5c183bcf",
+      "src/core/graph/builder.ts": "e8eba810e2edef26c838c850828771f1e7123725",
+      "src/adapters/language/rust/index.ts": "1a1aa955d038d3674e24d654d99d9b7282a677a9",
+      "src/core/storage/json-export.ts": "18e67ba76451fb433e4b108d5a5a6f8e2ed2bd4d",
+      "src/core/storage/json-stream.ts": "1f6ad0b3c50bd8d6a068bb6610055ead955f4cb6",
+      "src/core/storage/sqlite.ts": "cb80e25db9ee707cc4aee7ab62f2c23a0f4bd667",
+      "src/core/semantic/store.ts": "3881b3f567f471b28acc0d453e088dd009ba10ff",
+      "src/core/semantic/passes.ts": "b0a63715c13d6d21dbd6566a3c4c36edc6a2421c"
+    },
+    "fileSha256": {
+      "src/core/semantic/canonical-hash.ts": "f3ca65a561379ee4630f3661d5e3c494e83a860175d491ab73d2eed5d8efda78",
+      "src/core/semantic/analysis-passes.ts": "e0294fd4402b9860621eab4fa67b05d1ed186d16527739b90c9373b44c19731c",
+      "tests/canonical-hash.test.ts": "429b9451c0a5506a30a69b7e39321cd5bea746bbf17d1c3d7ca0fc78e7bbdc04",
+      "tests/fingerprint-runtime.test.ts": "576bd4f786cdadc0fedb0804da10ff9393b99f1dafd497dfb0213a6b69188167",
+      "scripts/semantic-fingerprint-profile.mjs": "246474a6173334083d93d98b897885b38cfc11e302c79c9e204708dd040d7bd2",
+      "scripts/prepare-semantic-baseline.mjs": "40ac1707ec1344d0f3b24059b2790c91ef06147b8a58b5ba4200e5e34cab814a",
+      "scripts/verify-ci-evidence.mjs": "73fcf4039a6a826b0ac2fbc046c3dd704a915a1bcf29d360ba2df01f63a21811",
+      ".github/workflows/semantic-core.yml": "6a5e9ae25635391932c7f4ef201af6ebfb48c19162d451fb821f15f96becef57"
+    },
+    "sourceTestsScriptsAndWorkflowUnchangedAfterCI": true
+  },
+  "cpuSampleGroups": {
+    "reference": {
+      "samplingIntervalUs": 1000,
+      "totalProfileUs": 495948,
+      "groups": {
+        "inspector-post": {
+          "selfUs": 43692,
+          "inclusiveUs": 43692
+        },
+        "reference-canonical": {
+          "selfUs": 258453,
+          "inclusiveUs": 307695
+        },
+        "GC": {
+          "selfUs": 51116,
+          "inclusiveUs": 51116
+        },
+        "crypto-update": {
+          "selfUs": 83424,
+          "inclusiveUs": 83424
+        }
+      },
+      "warning": "Inclusive groups overlap; inspector start/stop samples extend outside the encoding resource interval; native CPU can be charged to JS frames."
+    },
+    "candidate": {
+      "samplingIntervalUs": 1000,
+      "totalProfileUs": 519942,
+      "groups": {
+        "inspector-post": {
+          "selfUs": 44553,
+          "inclusiveUs": 44553
+        },
+        "crypto-update": {
+          "selfUs": 25156,
+          "inclusiveUs": 25156
+        },
+        "candidate-encoding": {
+          "selfUs": 285905,
+          "inclusiveUs": 444020
+        },
+        "candidate-qualification": {
+          "selfUs": 131708,
+          "inclusiveUs": 134215
+        },
+        "GC": {
+          "selfUs": 15062,
+          "inclusiveUs": 15062
+        }
+      },
+      "warning": "Inclusive groups overlap; inspector start/stop samples extend outside the encoding resource interval; native CPU can be charged to JS frames."
+    }
+  },
+  "metricDefinitions": {
+    "wall": "performance.now interval, process elapsed wall; phase nesting overlaps",
+    "cpuUs": "process.cpuUsage delta, all process threads, cumulative CPU over interval",
+    "allocatedBytes": "V8 total_allocated_bytes delta over interval, includes GC/background allocation; not retained bytes",
+    "memory": "Instantaneous process.memoryUsage samples at boundaries, bytes; heapTotal is committed V8 heap",
+    "maxRssKiB": "process.resourceUsage cumulative process high-water in KiB, not subsystem-specific",
+    "external": "V8 external includes ArrayBuffer accounting; counters overlap and exclude some native allocations",
+    "cpuSamples": "1ms sampling; inclusive group union prevents recursion double counting within a group; groups overlap",
+    "allocationSampling": "32768-byte interval, live sample estimates at profile end; not total allocation or native residency",
+    "stats": "Exact encoded UTF-8 byte and chunk counters; bounded output strings, no complete document on qualified path"
+  },
+  "decision": {
+    "accepted": true,
+    "reason": "Exact canonical bytes, hashes, complete stable identities/outputs and recovery agree. SHA input is bounded without a complete encoded document on the production payload. Ordinary fingerprint high-water growth is lower and targeted encoding demonstrates the bounded mechanism. CPU gain is unproven; additional allocation traffic is an explicit trade-off. Integration remains one call site.",
+    "wholeAnalysisTimeGateQualified": false,
+    "coreOnlyMemoryGateQualified": false,
+    "wholeProcessPeakPortableReductionQualified": false,
+    "wholeAnalysisFinalGuardVariantRemeasured": false,
+    "fullRegressionSuiteRuns": 1,
+    "additionalOptimizationStarted": false
   }
 }
