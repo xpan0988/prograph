@@ -1,6 +1,7 @@
 import { open, type FileHandle } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import protobuf from "protobufjs";
+import { InputLimitError } from "./inputs.js";
 
 export const SCIP_PROTOCOL_DIGEST = "b38021b65ef90cbbf6af9c829ff75192859ad9b5da05439ef154bea4ceb2bf03";
 // Wire-compatible subset of https://github.com/scip-code/scip/blob/main/scip.proto,
@@ -36,7 +37,7 @@ export class ScipStream {
   static async open(filename: string, maxIndexBytes: number): Promise<ScipStream> {
     const stream = new ScipStream(); stream.maxBytes = maxIndexBytes; stream.handle = await open(filename, "r");
     const info = await stream.handle.stat();
-    if (!info.isFile() || info.size > maxIndexBytes) { await stream.close(); throw Error("SCIP index exceeds file/resource limit"); }
+    if (!info.isFile() || info.size > maxIndexBytes) { await stream.close(); throw new InputLimitError("SCIP index exceeds file/resource limit"); }
     return stream;
   }
   close(): Promise<void> { return this.handle.close(); }
@@ -45,7 +46,7 @@ export class ScipStream {
     if (this.position < this.available) return true;
     const { bytesRead } = await this.handle.read(this.buffer, 0, this.buffer.length, this.offset);
     this.offset += bytesRead; this.position = 0; this.available = bytesRead;
-    if (this.offset > this.maxBytes) throw Error("SCIP index grew beyond resource limit");
+    if (this.offset > this.maxBytes) throw new InputLimitError("SCIP index grew beyond resource limit");
     if (bytesRead) this.hash.update(this.buffer.subarray(0, bytesRead));
     return bytesRead > 0;
   }
@@ -84,11 +85,11 @@ export function validateDocumentSize(bytes: Uint8Array, maxOccurrences: number, 
   const utf8 = new TextDecoder("utf-8", { fatal: true });
   let objects = 0; let fields = 0;
   const inspect = (body: Uint8Array, name: string, depth: number): void => {
-    if (++objects > Math.min(1000000, maxOccurrences * 12 + 1024) || depth > 8) throw Error("SCIP decoded object quota exceeded");
+    if (++objects > Math.min(1000000, maxOccurrences * 12 + 1024) || depth > 8) throw new InputLimitError("SCIP decoded object quota exceeded");
     const reader = protobuf.Reader.create(body); let occurrences = 0; let symbols = 0; let relationships = 0;
     const descriptors = scipType(name).fieldsById;
     while (reader.pos < reader.len) {
-      if (++fields > Math.min(2000000, maxOccurrences * 32 + 1024)) throw Error("SCIP decoded field quota exceeded");
+      if (++fields > Math.min(2000000, maxOccurrences * 32 + 1024)) throw new InputLimitError("SCIP decoded field quota exceeded");
       const tag = reader.uint32(); const field = tag >>> 3; const wire = tag & 7;
       if (!field) throw Error("Invalid document field tag");
       const descriptor = descriptors[field];
@@ -96,8 +97,8 @@ export function validateDocumentSize(bytes: Uint8Array, maxOccurrences: number, 
         const expected = descriptor.type === "string" || !!nested[name]?.[field] ? [2] : descriptor.repeated ? [0, 2] : [0];
         if (!expected.includes(wire)) throw Error("Wrong wire type for known SCIP field");
       }
-      if (name === "Document" && (field === 2 && ++occurrences > maxOccurrences || field === 3 && ++symbols > maxOccurrences)) throw Error("SCIP document exceeds occurrence/symbol bound");
-      if (name === "SymbolInformation" && field === 4 && ++relationships > maxRelationships) throw Error("SCIP relationship quota exceeded");
+      if (name === "Document" && (field === 2 && ++occurrences > maxOccurrences || field === 3 && ++symbols > maxOccurrences)) throw new InputLimitError("SCIP document exceeds occurrence/symbol bound");
+      if (name === "SymbolInformation" && field === 4 && ++relationships > maxRelationships) throw new InputLimitError("SCIP relationship quota exceeded");
       if (wire === 2 && nested[name]?.[field]) {
         const size = reader.uint32(); if (reader.pos + size > reader.len) throw Error("Truncated SCIP nested message");
         inspect(body.subarray(reader.pos, reader.pos + size), nested[name]![field]!, depth + 1); reader.pos += size;
@@ -105,7 +106,10 @@ export function validateDocumentSize(bytes: Uint8Array, maxOccurrences: number, 
         const size = reader.uint32(); if (reader.pos + size > reader.len) throw Error("Truncated SCIP string");
         utf8.decode(body.subarray(reader.pos, reader.pos + size)); reader.pos += size;
       } else if (wire === 2 && (name === "Occurrence" && [1, 7].includes(field) || name === "Diagnostic" && field === 5)) {
-        const size = reader.uint32(); if (size > 64 || reader.pos + size > reader.len) throw Error("SCIP packed scalar quota exceeded"); reader.pos += size;
+        const size = reader.uint32();
+        if (size > 64) throw new InputLimitError("SCIP packed scalar quota exceeded");
+        if (reader.pos + size > reader.len) throw Error("Truncated SCIP packed scalar");
+        reader.pos += size;
       } else reader.skipType(wire);
     }
   };

@@ -11,7 +11,7 @@ import { SourceCoordinates } from "./coordinates.js";
 import { ScipStream, SCIP_PROTOCOL_DIGEST, decodeScip, validateDocumentSize } from "./scip-wire.js";
 import { parseScipSymbol, type ScipSymbol } from "./scip-symbol.js";
 import { inventoryFromDisk, retainProviders } from "./provider-runs.js";
-import { boundedInput, digestFile } from "./inputs.js";
+import { boundedInput, digestFile, InputLimitError } from "./inputs.js";
 import type { ProviderRegistration, PreparedProvider } from "./provider-plan.js";
 import { retainScipArtifact, syncProviderArtifact } from "./provider-artifacts.js";
 
@@ -80,7 +80,9 @@ export async function importScip(repository: string, artifact: string, manifest:
   const root = await resolveRepositoryRoot(repository); const repositoryInfo = await getRepositoryMetadata(root);
   if (await realpath(manifest.sourceRoot) !== await realpath(root)) throw Error("SCIP sidecar source root does not match repository");
   let artifactPath = path.resolve(artifact);
-  const artifactInfo = await lstat(artifactPath); if (!artifactInfo.isFile() || artifactInfo.size > limits.maxIndexBytes) throw Error("SCIP artifact exceeds file/resource limit");
+  const artifactInfo = await lstat(artifactPath);
+  if (!artifactInfo.isFile()) throw Error("SCIP artifact is not a regular file");
+  if (artifactInfo.size > limits.maxIndexBytes) throw new InputLimitError("SCIP artifact exceeds file/resource limit");
   signal?.throwIfAborted();
   if (await digestFile(artifactPath, limits.maxIndexBytes, signal) !== manifest.indexDigest) throw Error("SCIP artifact digest mismatch");
   const directory = path.resolve(index?.endsWith(".sqlite") ? path.dirname(index) : index ?? path.join(root, ".prograph")); await mkdir(directory, { recursive: true });
@@ -135,7 +137,7 @@ export async function importScip(repository: string, artifact: string, manifest:
       if (![1, 2, 3].includes(field)) { await stream.skip(wire); continue; }
       if (wire !== 2) throw Error("Invalid SCIP index framing");
       const size = (await stream.integer())!;
-      if (field === 2 && ++documentCount > limits.maxDocuments) throw Error("SCIP document quota exceeded");
+      if (field === 2 && ++documentCount > limits.maxDocuments) throw new InputLimitError("SCIP document quota exceeded");
       if (field === 1) {
         if (metadata || size > 262144) throw Error("Duplicate/oversized SCIP metadata");
         const bytes = await stream.bytes(size, true); validateDocumentSize(bytes, limits.maxOccurrencesPerDocument, "Metadata"); metadata = decodeScip("Metadata", bytes);
@@ -153,11 +155,12 @@ export async function importScip(repository: string, artifact: string, manifest:
         continue;
       }
       if (size > limits.maxDocumentBytes) {
+        if (execution?.requireAllDocuments) throw new InputLimitError("Managed SCIP document/field exceeds byte quota");
         await stream.bytes(size, false); rejected++; store.diagnostic(summary, "scip-oversized-field", `Skipped field ${field}, ${size} bytes`); continue;
       }
       const bytes = await stream.bytes(size, true);
       if (field === 3) {
-        externalSymbols++; if (externalSymbols > limits.maxDocuments) throw Error("SCIP external-symbol quota exceeded"); validateDocumentSize(bytes, limits.maxOccurrencesPerDocument, "SymbolInformation", limits.maxRelationshipsPerSymbol);
+        externalSymbols++; if (externalSymbols > limits.maxDocuments) throw new InputLimitError("SCIP external-symbol quota exceeded"); validateDocumentSize(bytes, limits.maxOccurrencesPerDocument, "SymbolInformation", limits.maxRelationshipsPerSymbol);
         const info = decodeScip("SymbolInformation", bytes);
         const unscoped = parseSymbol(String(info.symbol ?? "")).local || messages(info.relationships).some(r => parseSymbol(String(r.symbol ?? "")).local);
         if (unscoped && manifest.externalLocalPolicy === "diagnose") { excludedExternalLocals++; store.diagnostic(summary, "scip-unscoped-external-local-excluded", "Excluded external symbol information without a document-local identity; no semantic binding inferred"); }
@@ -176,7 +179,8 @@ export async function importScip(repository: string, artifact: string, manifest:
         if (store.sql("SELECT 1 FROM sc_import_seen WHERE path=?").get(file)) throw Error("Duplicate SCIP document"); store.sql("INSERT INTO sc_import_seen VALUES(?)").run(file);
         const expected = manifest.sources[file]; if (!/^[0-9a-f]{64}$/.test(expected ?? "")) throw Error("SCIP source digest missing");
         const source = path.join(root, file); const info = await lstat(source);
-        if (!info.isFile() || info.isSymbolicLink() || info.size > limits.maxSourceBytes || !(await realpath(source)).startsWith(`${await realpath(root)}${path.sep}`)) throw Error("SCIP source path/resource boundary rejected");
+        if (info.size > limits.maxSourceBytes) throw new InputLimitError("SCIP source exceeds byte quota");
+        if (!info.isFile() || info.isSymbolicLink() || !(await realpath(source)).startsWith(`${await realpath(root)}${path.sep}`)) throw Error("SCIP source path/resource boundary rejected");
         const rawSource = await boundedInput(source, limits.maxSourceBytes); if (digest(rawSource) !== expected) throw Error("SCIP source/index mismatch");
         const text = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(rawSource);
         if (text.includes("\0")) throw Error("SCIP binary/UTF-16 disk sources are unsupported");
@@ -231,7 +235,7 @@ export async function importScip(repository: string, artifact: string, manifest:
         store.input(run, `source:${file}`, expected);
         store.seal(run, { status: "partial", mappingVersion: SCIP_SEMANTIC_VERSION, language: String(doc.language), provider: provenance.provider, definitions: "partial", references: "partial", calls: execution?.derive ? "see-owned-native-pass" : "unsupported", gaps: ["SCIP references/highlighting alone do not establish calls", "Coverage depends on producer and declared dependency environment"] });
         accepted.push(run); occurrences += observations.length;
-      } catch (error) { if (signal?.aborted) throw error; rejected++; store.diagnostic(summary, "scip-document-rejected", `${file}: ${String(error)}`); }
+      } catch (error) { if (signal?.aborted || execution?.requireAllDocuments && error instanceof InputLimitError) throw error; rejected++; store.diagnostic(summary, "scip-document-rejected", `${file}: ${String(error)}`); }
     }
     if (!metadata || stream.digest() !== manifest.indexDigest) throw Error("SCIP framing/artifact changed during ingestion");
     // Bounded disk-backed external metadata shards. Artifact UUIDs, order and path changes

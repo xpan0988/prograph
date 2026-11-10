@@ -58,6 +58,7 @@ export function runProviderProcess(executable: string, args: string[], cwd: stri
       const termination = outcome?.signal ?? signal;
       if (failure) reject(failure);
       else if (termination) reject(new ProviderProcessError("termination", `${termination}: ${err}`));
+      else if (guarded && !outcome) reject(new ProviderProcessError("termination", `guardian exited without an SDK outcome: ${err}`));
       else if (code !== 0 || resultCode !== 0) reject(new ProviderProcessError("exit", `exit ${resultCode ?? code}: ${err}`));
       else resolve({ stdout: out, stderr: err, durationMs: performance.now() - started });
     });

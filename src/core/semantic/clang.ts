@@ -9,7 +9,7 @@ import { SourceCoordinates } from "./coordinates.js";
 import { canonical, digest, semanticKey, CLANG_SEMANTIC_VERSION, type Provenance } from "./model.js";
 import { executePasses } from "./passes.js";
 import { semanticInventory, retainProviders, inventoryFromDisk } from "./provider-runs.js";
-import { boundedInput, digestFile } from "./inputs.js";
+import { boundedInput, digestFile, InputLimitError } from "./inputs.js";
 import type { ProviderPreparation } from "./provider-plan.js";
 import { authorizeProvider, verifyProviderAuthorization } from "./provider-grants.js";
 import { withIndexWork } from "./maintenance-lock.js";
@@ -53,7 +53,7 @@ function dependencyPaths(output: string): string[] {
     else if (/\s/.test(char)) { if (current) { values.push(current); current = ""; } }
     else current += char;
   }
-  if (current) values.push(current); if (values.length > 100000) throw Error("Compiler dependency quota exceeded"); return [...new Set(values)];
+  if (current) values.push(current); if (values.length > 100000) throw new InputLimitError("Compiler dependency quota exceeded"); return [...new Set(values)];
 }
 
 /** Explicit opt-in, fixed trusted executable and allowlisted syntax-only arguments. No discovered shell execution. */
@@ -108,7 +108,7 @@ async function indexClangWithLease(repository: string, unitKey: string, index: s
   const nodes: Array<{ node: Ast; file?: string; ancestry: string[]; owner?: Ast }> = [];
   let lastFile: string | undefined; let unresolved = 0; let macroSkipped = 0;
   const collect = (node: Ast, inherited?: string, ancestry: string[] = [], owner?: Ast): void => {
-    if (nodes.length >= bounds.maxNodes) throw Error("Clang AST node bound exceeded");
+    if (nodes.length >= bounds.maxNodes) throw new InputLimitError("Clang AST node bound exceeded");
     if (node.loc?.file || node.range?.begin.file) lastFile = path.resolve(cwd, node.loc?.file ?? node.range!.begin.file!);
     const file = node.loc?.file ? path.resolve(cwd, node.loc.file) : inherited ?? lastFile;
     nodes.push({ node, ...(file ? { file } : {}), ancestry, ...(owner ? { owner } : {}) });

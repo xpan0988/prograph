@@ -1,6 +1,6 @@
 import path from "node:path";
 import { canonical, digest } from "./model.js";
-import { boundedInput, digestFile } from "./inputs.js";
+import { boundedInput, digestFile, InputLimitError } from "./inputs.js";
 import { recordedDigest } from "./input-check.js";
 
 export interface ClangInputs { inputs: Record<string, string>; environment: unknown; gaps: string[] }
@@ -30,7 +30,7 @@ export async function captureClangInputs(stdout: string, stderr: string, cwd: st
     const previous = inputs[resource]; if (previous !== undefined && previous !== hash) throw Error("Clang search inputs changed during observation");
     if (previous !== undefined) return;
     receiptBytes += Buffer.byteLength(resource) + hash.length;
-    if (++inputCount > maxInputs || receiptBytes > maxReceiptBytes) throw Error("Clang search receipt exceeds input/byte quota");
+    if (++inputCount > maxInputs || receiptBytes > maxReceiptBytes) throw new InputLimitError("Clang search receipt exceeds input/byte quota");
     inputs[resource] = hash;
   };
   const probe = async (resource: string) => { if (inputs[resource] !== undefined) return inputs[resource]!; const hash = (await recordedDigest(resource, ""))!; add(resource, hash); return hash; };
@@ -47,7 +47,7 @@ export async function captureClangInputs(stdout: string, stderr: string, cwd: st
     }
   }
   if (!ended) gaps.add("Compiler did not report a complete include search-root trace");
-  if (roots.length > 4096) throw Error("Clang include-root quota exceeded");
+  if (roots.length > 4096) throw new InputLimitError("Clang include-root quota exceeded");
   const environment: unknown[] = [];
   for (const root of roots) {
     const exists = await probe(`probe-dir:${root.directory}`); await probe(`probe-present:${root.directory}`);
@@ -71,13 +71,13 @@ export async function captureClangInputs(stdout: string, stderr: string, cwd: st
     const include = /^#\s*include\s+(["<])([^">\0\r\n]+)[">]\s*\/\* clang -E -dI \*\/\s*$/.exec(line);
     if (!include) { gaps.add("Unqualified include/import/include_next trace"); continue; }
     queries.push({ name: include[2]!, quoted: include[1] === '"', including: current });
-    if (queries.length > maxInputs) throw Error("Clang include query quota exceeded");
+    if (queries.length > maxInputs) throw new InputLimitError("Clang include query quota exceeded");
   }
   for (let i = 0; i < flags.length; i++) if (["-include", "-imacros"].includes(flags[i]!)) queries.push({ name: flags[++i]!, quoted: true, including: path.join(cwd, "<command-line>") });
   let sourceBytes = 0;
   if (flags.some(flag => /__has_(?:include(?:_next)?|embed)\b|##|%:%:|\?\?|[\\\r\n]/.test(flag))) gaps.add("Command-line conditional filename macros require native preprocessor callbacks");
   for (const file of dependencies) {
-    const bytes = await boundedInput(file, 8 * 1024 ** 2); sourceBytes += bytes.length; if (sourceBytes > 128 * 1024 ** 2) throw Error("Clang preprocessor input observation exceeds 128 MiB");
+    const bytes = await boundedInput(file, 8 * 1024 ** 2); sourceBytes += bytes.length; if (sourceBytes > 128 * 1024 ** 2) throw new InputLimitError("Clang preprocessor input observation exceeds 128 MiB");
     // Raw-token screening is deliberately conservative. Token-pasting can hide a
     // builtin filename query; dead branches/comments may produce a coverage gap.
     const text = bytes.toString("utf8").replace(/\\(?:\r\n?|\n)/g, ""), tokens = [...text.matchAll(/\b__has_include(?:_next)?\b/g)];
@@ -86,7 +86,7 @@ export async function captureClangInputs(stdout: string, stderr: string, cwd: st
     if (tokens.length !== literalQueries.length || /\0|##|%:%:|\?\?|\b__has_embed\b|^\s*#\s*embed\b/m.test(text)) gaps.add("Nonliteral/pasted/embedded header queries require native preprocessor callbacks; negative searches are unqualified");
     if (/\b__(?:DATE|TIME|TIMESTAMP)__\b/.test(text)) gaps.add("Volatile preprocessor clock/mtime inputs are unqualified");
     if (/\b(?:include_alias|_Pragma|__pragma)\b|^\s*#\s*pragma\s+clang\s+module\b/m.test(text)) gaps.add("Header aliases/module pragmas require native preprocessor callbacks");
-    if (queries.length > maxInputs) throw Error("Clang include query quota exceeded");
+    if (queries.length > maxInputs) throw new InputLimitError("Clang include query quota exceeded");
   }
   const directories = [...new Set(dependencies.map(file => path.dirname(file)))];
   if (queries.length && dependencies.some(file => file.includes(".framework/"))) gaps.add("Nested framework lookup requires native preprocessor callbacks");

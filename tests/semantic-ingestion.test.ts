@@ -21,6 +21,7 @@ import { SourceCoordinates } from "../src/core/semantic/coordinates.js";
 import { digest, SEMANTIC_SCHEMA_VERSION } from "../src/core/semantic/model.js";
 import { indexClang } from "../src/core/semantic/clang.js";
 import { inventoryFromDisk, semanticInventory } from "../src/core/semantic/provider-runs.js";
+import { InputLimitError } from "../src/core/semantic/inputs.js";
 import { existsSync } from "node:fs";
 
 const roots: string[] = [];
@@ -76,6 +77,19 @@ test("streamed interchange imports navigation/native facts without turning highl
     expect((q.execute("native", target).items as Array<{ predicate: string }>).some(value => value.predicate === "scip.SymbolInformation")).toBe(true);
     expect(q.execute("references", target).analysisComplete).toBe(false);
   } finally { q.close(); }
+});
+test("managed document quota stops preparation and preserves a published snapshot", async () => {
+  const root = await temporary();
+  const input = await artifact(root, [doc()]);
+  const initial = await importScip(root, input.filename, input.manifest);
+  const prepare = vi.fn();
+  await expect(importScip(root, input.filename, input.manifest, undefined, { maxOccurrencesPerDocument: 1 }, undefined, {
+    version: "fixture", environment: {}, inputs: {}, diagnostics: [], requireAllDocuments: true, prepare, verify: async () => {},
+  })).rejects.toBeInstanceOf(InputLimitError);
+  expect(prepare).not.toHaveBeenCalled();
+  const query = await semanticQueryForRepository(root);
+  try { expect(query.execute("find", "target")).toMatchObject({ snapshot: initial.snapshot, noResult: false }); }
+  finally { query.close(); }
 });
 test("inference-backed SCIP targets cannot become compiler-resolved bindings", async () => {
   const root = await temporary(); const input = await artifact(root, [doc()]); await importScip(root, input.filename, { ...input.manifest, provider: { ...input.manifest.provider, basis: "inference" } });
