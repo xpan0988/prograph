@@ -388,6 +388,10 @@ describe("agent queries and freshness", () => {
       const affected = query.affected(symbol.id, { depth: 3, includeTests: true }) as { relatedTests: string[]; directlyAffectedSymbols: GraphNode[] };
       expect(affected.directlyAffectedSymbols.some((node) => node.name === "testFormatGreeting")).toBe(true);
       expect(affected.relatedTests).toContain("test/actions.ts");
+      const fileImpact = query.affected("src/actions.ts", { depth: 1 }) as { roots: GraphNode[]; relationships: GraphEdge[] };
+      const fileRoot = fileImpact.roots.find(node => node.kind === "file");
+      expect(fileRoot).toBeDefined();
+      expect(fileImpact.relationships.some(edge => edge.kind === "imports" && edge.target === fileRoot?.id)).toBe(true);
     } finally {
       query.close();
     }

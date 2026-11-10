@@ -63,10 +63,10 @@ export class NavigationRead {
   }
   *fileNodes(file: string, rootsOnly = false): Generator<GraphNode> {
     if(this.stableKeys){
-      const query=this.db.prepare(`SELECT n.* FROM cq_nodes q INDEXED BY cq_node_file_navigation CROSS JOIN nodes n ON n.id=q.node WHERE q.file=? ${rootsOnly?"AND q.kind NOT IN ('file','directory','repository','unresolved_symbol')":""} ORDER BY q.start_line,q.name,q.node`);
+      const query=this.db.prepare(`SELECT n.* FROM cq_nodes q INDEXED BY cq_node_file_navigation CROSS JOIN nodes n ON n.id=q.node WHERE q.file=? ${rootsOnly?"AND q.kind NOT IN ('directory','repository','unresolved_symbol')":""} ORDER BY q.start_line,q.name,q.node`);
       for(const row of query.iterate(file)as Iterable<NodeRow>){this.charge(row);const node=graphNodeFromRow(row);this.cache.set(node.id,node);yield node}return;
     }
-    const query = this.db.prepare(`SELECT * FROM nodes INDEXED BY idx_nodes_file WHERE file=? ${rootsOnly ? "AND kind NOT IN ('file','directory','repository','unresolved_symbol') ORDER BY start_line" : "ORDER BY start_line,name"}`);
+    const query = this.db.prepare(`SELECT * FROM nodes INDEXED BY idx_nodes_file WHERE file=? ${rootsOnly ? "AND kind NOT IN ('directory','repository','unresolved_symbol') ORDER BY start_line" : "ORDER BY start_line,name"}`);
     for (const row of query.iterate(file) as Iterable<NodeRow>) { this.charge(row); const node = graphNodeFromRow(row); this.cache.set(node.id, node); yield node; }
   }
   /** Preserve the old multi-index OR order for file dependency arrays. */
