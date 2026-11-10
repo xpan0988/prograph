@@ -2,10 +2,10 @@ import path from "node:path";
 import os from "node:os";
 import { mkdir, lstat, realpath, writeFile, symlink, stat } from "node:fs/promises";
 import { scanRepository, resolveRepositoryRoot } from "../repository/repository.js";
-import { boundedInput, digestFile } from "./inputs.js";
+import { boundedInput, digestFile, InputLimitError } from "./inputs.js";
 import { canonical, digest, RUST_PROVIDER_VERSION } from "./model.js";
 import { importScip, type ScipManifest } from "./scip-import.js";
-import { runProviderProcess } from "./process.js";
+import { runProviderProcess, ProviderProcessError } from "./process.js";
 import { qualifyRustAnalyzer } from "./rust-qualification.js";
 import { deriveScipNative } from "./scip-native.js";
 import { inventoryFromDisk } from "./provider-runs.js";
@@ -16,6 +16,7 @@ import { withIndexWork } from "./maintenance-lock.js";
 import { createProviderWorkspace } from "./provider-artifacts.js";
 
 export { RUST_PROVIDER_VERSION } from "./model.js";
+const maxArtifactBytes = 64 * 1024 ** 2;
 export const RUST_PROVIDER_CAPABILITIES = { symbols: "partial", definitions: "partial", references: "partial", imports: "partial", calls: "partial-declared-static-targets", types: "reported-signatures", traits: "reported-symbols", associatedItems: "reported-symbols", macros: "unqualified", dynamicDispatch: "unsupported" } as const;
 export interface RustOptions extends ProviderPreparation {
   analyzer: string;
@@ -65,7 +66,7 @@ async function indexRustWithLease(repository: string, manifestFile: string, opti
   const manifest = path.relative(root, path.resolve(root, manifestFile)).split(path.sep).join("/");
   if (manifest.startsWith("../") || !scan.snapshot.fileContents.has(manifest) || !manifest.endsWith("Cargo.toml")) throw Error("Selected Rust manifest is not in the repository inventory");
   const files = scan.snapshot.files.filter(file => /\.rs$|(?:^|\/)Cargo\.(?:toml|lock)$|(?:^|\/)rust-toolchain(?:\.toml)?$/.test(file));
-  if (files.length > 1000) throw Error("Rust source/input catalogue exceeds 1000 files");
+  if (files.length > 1000) throw new InputLimitError("Rust source/input catalogue exceeds 1000 files");
   // Cargo config may invoke wrappers/tools or change resolution. Do not silently ignore it.
   for (const file of files.filter(file => file.endsWith("Cargo.toml"))) {
     let parent = path.dirname(path.join(root, file));
@@ -91,7 +92,7 @@ async function indexRustWithLease(repository: string, manifestFile: string, opti
     options.signal?.throwIfAborted(); const original = path.join(root, file); const info = await lstat(original);
     if (!info.isFile() || info.isSymbolicLink() || !(await realpath(original)).startsWith(`${await realpath(root)}${path.sep}`)) throw Error("Rust source escapes repository");
     const bytes = await boundedInput(original, 8 * 1024 ** 2); sourceBytes += bytes.length;
-    if (sourceBytes > 32 * 1024 ** 2) throw Error("Rust source copy exceeds 32 MiB");
+    if (sourceBytes > 32 * 1024 ** 2) throw new InputLimitError("Rust source copy exceeds 32 MiB");
     const expected = digest(bytes); inputs[`source:${file}`] = expected;
     if (file.endsWith(".rs")) sources[file] = expected; else buildInputs[file] = expected;
     const destination = path.join(sourceRoot, file); await mkdir(path.dirname(destination), { recursive: true }); await writeFile(destination, bytes);
@@ -99,7 +100,7 @@ async function indexRustWithLease(repository: string, manifestFile: string, opti
   const env = { PATH: `${options.toolchain}${path.delimiter}/usr/bin${path.delimiter}/bin`, CARGO_HOME: cargoHome, CARGO_NET_OFFLINE: "true", CARGO_TARGET_DIR: path.join(runDirectory, "target"), RUSTC: rustc, LANG: "C", TMPDIR: runDirectory };
   const stages: Record<string, number> = {};
   const run = async (name: string, executable: string, args: string[], cwd = sourceRoot) => {
-    const remaining = Math.floor(timeout - (performance.now() - started)); if (remaining <= 0) throw Error("Rust provider total deadline exceeded");
+    const remaining = Math.floor(timeout - (performance.now() - started)); if (remaining <= 0) throw new ProviderProcessError("deadline", "Rust provider total deadline exceeded");
     const result = await runProviderProcess(executable, args, cwd, env, { timeoutMs: remaining, maxOutputBytes: 4 * 1024 ** 2, ...(options.signal ? { signal: options.signal } : {}) }); stages[name] = +result.durationMs.toFixed(3); return result;
   };
   const analyzerVersion = (await run("analyzer-probe", options.analyzer, ["--version"])).stdout.trim();
@@ -128,7 +129,7 @@ async function indexRustWithLease(repository: string, manifestFile: string, opti
   const configFile = path.join(runDirectory, "analyzer-config.json"); await writeFile(configFile, JSON.stringify(config)); inputs[`physical:${configFile}`] = await digestFile(configFile);
   const artifact = path.join(runDirectory, "index.scip");
   const extracted = await run("semantic-producer", options.analyzer, ["scip", metadata.workspace_root, "--output", artifact, "--config-path", configFile, "--exclude-vendored-libraries", "--num-threads", "1"]);
-  if ((await stat(artifact)).size > 64 * 1024 ** 2) throw Error("Rust SCIP artifact exceeds 64 MiB");
+  if ((await stat(artifact)).size > maxArtifactBytes) throw new InputLimitError("Rust SCIP artifact exceeds 64 MiB");
   const environment = { provider: "rust-analyzer", analyzerVersion, analyzerQualification, analyzerSha256: options.analyzerSha256, cargoVersion, rustcVersion, target, cfg, features, noDefaultFeatures: !!options.noDefaultFeatures, lockDigest,
     packages: [...closure].sort().map(id => { const pkg = byId.get(id)!; return { name: pkg.name, version: pkg.version, manifest: path.relative(sourceRoot, pkg.manifest_path).split(path.sep).join("/"), features: [...(nodes.get(id)?.features ?? [])].sort(), targets: pkg.targets.map(t => ({ kinds: t.kind, source: path.relative(sourceRoot, t.src_path).split(path.sep).join("/") })) }; }), capabilities: RUST_PROVIDER_CAPABILITIES,
     gaps: ["Rust sysroot semantic sources, external normal dependencies, build scripts and proc macros are not qualified", "SCIP supplies navigation/signatures, not call targets, borrow checking or trait obligations", "Enclosing ranges are advisory and invalid values are diagnosed; primary ranges remain strict", "Explicit pinned toolchain; no rustup installations or source repository writes"], sourceFiles: files.length, sourceBytes, compilerChecked: true };
@@ -136,19 +137,19 @@ async function indexRustWithLease(repository: string, manifestFile: string, opti
   const { sourceFiles: _sourceFiles, sourceBytes: _sourceBytes, ...semanticEnvironment } = environment;
   const context = digest(canonical([RUST_PROVIDER_VERSION, semanticEnvironment, buildInputs, inputs[`physical:${cargo}`], inputs[`physical:${rustc}`]]));
   await writeFile(path.join(runDirectory, "execution.json"), JSON.stringify({ environment, stages }, null, 2));
-  const sidecar: ScipManifest = { format: 1, id: `rust-${identity.slice(0, 32)}`, projectContext: `rust/${context}`, sourceRoot: root, indexDigest: await digestFile(artifact),
+  const sidecar: ScipManifest = { format: 1, id: `rust-${identity.slice(0, 32)}`, projectContext: `rust/${context}`, sourceRoot: root, indexDigest: await digestFile(artifact, maxArtifactBytes, options.signal),
     originalProjectRoot: `file://${metadata.workspace_root}`, provider: { name: "rust-analyzer", version: analyzerVersion.replace(/^rust-analyzer /, ""), basis: "lsp" }, sources, inputs: buildInputs,
     ...(prefix ? { documentPathPrefix: prefix } : {}), enclosingPolicy: "diagnose" };
   const verify = async (signal?: AbortSignal) => {
-    signal?.throwIfAborted(); if (performance.now() - started > timeout) throw Error("Rust provider total deadline exceeded before publication");
+    signal?.throwIfAborted(); if (performance.now() - started > timeout) throw new ProviderProcessError("deadline", "Rust provider total deadline exceeded before publication");
     for (const [resource, expected] of Object.entries(inputs)) if (!await inputMatches({ resource, digest: expected }, root, signal)) throw Error(`Rust recorded input changed: ${resource}`);
     if ((await inventoryFromDisk(root, directory, 200000, signal)).inventory !== initialInventory.inventory) throw Error("Rust source/config inventory changed during production");
-    signal?.throwIfAborted(); if (performance.now() - started > timeout) throw Error("Rust provider total deadline exceeded before publication");
+    signal?.throwIfAborted(); if (performance.now() - started > timeout) throw new ProviderProcessError("deadline", "Rust provider total deadline exceeded before publication");
   };
   await verify(options.signal);
   const recipeOptions = { analyzer: options.analyzer, analyzerSha256: options.analyzerSha256, toolchain: options.toolchain, features, noDefaultFeatures: !!options.noDefaultFeatures, target, timeoutMs: timeout };
   const registration = await authorizeProvider({ key: `rust-${digest(canonical([manifest, features, !!options.noDefaultFeatures, target])).slice(0, 32)}`, kind: "rust", recipe: { manifest, options: recipeOptions, prefix: `scip/${sidecar.id}` }, trust, version: RUST_PROVIDER_VERSION }, root, directory);
-  const imported = await importScip(root, artifact, sidecar, directory, { maxIndexBytes: 64 * 1024 ** 2, maxDocuments: 1000 }, options.signal,
+  const imported = await importScip(root, artifact, sidecar, directory, { maxIndexBytes: maxArtifactBytes, maxDocuments: 1000 }, options.signal,
     { version: RUST_PROVIDER_VERSION, environment, inputs, diagnostics: [compiler.stderr, extracted.stderr].filter(Boolean).map(message => message.slice(0, 2048)), requireAllDocuments: true, verify,
       registration, ...(options.prepare ? { prepare: options.prepare } : {}),
       derive: (store, documents, ctx, fingerprint) => deriveScipNative(store, documents, root, "rust", ctx, fingerprint, options.signal) });

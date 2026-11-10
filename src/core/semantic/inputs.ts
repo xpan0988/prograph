@@ -1,20 +1,34 @@
 import { open } from "node:fs/promises";
-import { createReadStream } from "node:fs";
+import { constants } from "node:fs";
 import { createHash } from "node:crypto";
+
+export class InputLimitError extends Error {}
+const readFlags = constants.O_RDONLY | (constants.O_NONBLOCK ?? 0);
 
 /** Hash dependency/artifact inputs without retaining their contents in memory. */
 export async function digestFile(filename: string, maxBytes = 10 * 1024 ** 3, signal?: AbortSignal): Promise<string> {
+  signal?.throwIfAborted();
   const hash = createHash("sha256"); let size = 0;
-  for await (const chunk of createReadStream(filename)) {
-    signal?.throwIfAborted(); size += chunk.length; if (size > maxBytes) throw Error("Input exceeds byte quota"); hash.update(chunk);
-  }
-  return hash.digest("hex");
+  const handle = await open(filename, readFlags);
+  try {
+    const info = await handle.stat();
+    if (!info.isFile()) throw Error("Input is not a regular file");
+    if (info.size > maxBytes) throw new InputLimitError("Input exceeds byte quota");
+    for await (const chunk of handle.createReadStream({ autoClose: false, signal })) {
+      size += chunk.length;
+      if (size > maxBytes) throw new InputLimitError("Input exceeds byte quota");
+      hash.update(chunk);
+    }
+    return hash.digest("hex");
+  } finally { await handle.close(); }
 }
 /** A file growing concurrently cannot turn a bounded read into an unbounded allocation. */
 export async function boundedInput(filename: string, maxBytes: number): Promise<Buffer> {
-  const handle = await open(filename, "r");
+  const handle = await open(filename, readFlags);
   try {
-    const info = await handle.stat(); if (!info.isFile() || info.size > maxBytes) throw Error("Input size quota exceeded");
+    const info = await handle.stat();
+    if (!info.isFile()) throw Error("Input is not a regular file");
+    if (info.size > maxBytes) throw new InputLimitError("Input size quota exceeded");
     const output = Buffer.alloc(info.size); let offset = 0;
     while (offset < output.length) {
       const result = await handle.read(output, offset, output.length - offset, offset);

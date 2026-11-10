@@ -9,6 +9,7 @@ import { runProviderProcess } from "../src/core/semantic/process.js";
 import { SemanticStore } from "../src/core/semantic/store.js";
 import { IndexLease } from "../src/core/semantic/maintenance-lock.js";
 import { digest } from "../src/core/semantic/model.js";
+import { boundedInput, digestFile, InputLimitError } from "../src/core/semantic/inputs.js";
 
 const roots: string[] = [];
 afterEach(async () => { for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true }); });
@@ -26,6 +27,18 @@ test("native guardian preserves complete multibyte output and logical nonzero ex
   const result = await runProviderProcess(process.execPath, ["-e", "process.stdout.write('🚀'.repeat(262144))"], root, process.env, { timeoutMs: 5000, maxOutputBytes: 2 * 1024 ** 2 });
   expect(Buffer.byteLength(result.stdout)).toBe(1048576); expect(digest(result.stdout)).toBe(digest(expected));
   await expect(runProviderProcess(process.execPath, ["-e", "process.stderr.write('qualified-error');process.exitCode=7"], root, process.env, { timeoutMs: 5000, maxOutputBytes: 4096 })).rejects.toThrow("exit 7: qualified-error");
+});
+
+test.skipIf(process.platform === "win32")("provider resource failures distinguish byte limits, nonregular inputs and signal termination", async () => {
+  const root = await temporary(), fifo = path.join(root, "pipe"), artifact = path.join(root, "artifact");
+  await promisify(execFile)("mkfifo", [fifo]);
+  await expect(boundedInput(fifo, 1024)).rejects.toThrow("not a regular file");
+  await expect(digestFile(fifo, 1024)).rejects.toThrow("not a regular file");
+  await writeFile(artifact, Buffer.alloc(1025));
+  await expect(digestFile(artifact, 1024)).rejects.toBeInstanceOf(InputLimitError);
+  const limits = { timeoutMs: 5000, maxOutputBytes: 1024 };
+  await expect(runProviderProcess(process.execPath, ["-e", "process.stdout.write(Buffer.alloc(2048))"], root, process.env, limits)).rejects.toMatchObject({ reason: "output" });
+  await expect(runProviderProcess(process.execPath, ["-e", "process.kill(process.pid, 'SIGKILL')"], root, process.env, limits)).rejects.toMatchObject({ reason: "termination" });
 });
 
 test.skipIf(process.platform === "win32")("hard death of the SDK owner also terminates detached native work and its descendants", async () => {

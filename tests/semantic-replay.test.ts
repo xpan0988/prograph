@@ -89,6 +89,16 @@ test.skipIf(!analyzer || !toolchain)("registered Rust replays manifest features 
   await indexRust(root, "Cargo.toml", { analyzer: analyzer!, analyzerSha256: digest(await readFile(analyzer!)), toolchain: toolchain! }); await analyzeRepository(root);
   const calls = () => { const q = new SemanticQuery(path.join(root, ".prograph/semantic.sqlite")); try { const target = q.execute("find", "run").items[0] as { key: string }; return q.execute("callees", target.key).items.map(item => (item as { name: string }).name).sort(); } finally { q.close(); } };
   expect(calls()).toEqual(["base"]);
+  const lastValid = inspect(root);
+  const oversized = path.join(root, "src/oversized.rs");
+  await writeFile(oversized, "//" + "x".repeat(8 * 1024 ** 2));
+  const rejected = await syncRepository(root);
+  expect(rejected.manifest?.semanticCore).toMatchObject({ status: "failed", reason: expect.stringContaining("Input size quota exceeded") });
+  expect(rejected.statusAfter.state).toBe("stale");
+  expect(inspect(root)).toEqual(lastValid);
+  expect(calls()).toEqual(["base"]);
+  await rm(oversized);
+  expect((await syncRepository(root)).statusAfter.state).toBe("fresh");
   await writeFile(path.join(root, "README.md"), "# Rust docs\n"); const before = inspect(root); await syncRepository(root); expect(inspect(root).runs.filter(row => row.partition_key.startsWith("scip/"))).toEqual(before.runs.filter(row => row.partition_key.startsWith("scip/")));
   await writeFile(path.join(root, "Cargo.toml"), manifest('"special"'));
   const publisher = vi.spyOn(SemanticStore.prototype, "publish");

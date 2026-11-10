@@ -2,11 +2,11 @@ import path from "node:path";
 import { mkdir, readdir, lstat, realpath, readFile, writeFile, chmod, cp } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import { scanRepository, resolveRepositoryRoot } from "../repository/repository.js";
-import { boundedInput, digestFile } from "./inputs.js";
+import { boundedInput, digestFile, InputLimitError } from "./inputs.js";
 import { canonical, digest, MANAGED_SCIP_VERSION } from "./model.js";
 import { importScip, type ScipManifest } from "./scip-import.js";
 import { deriveScipNative, type NativeLanguage } from "./scip-native.js";
-import { runProviderProcess } from "./process.js";
+import { runProviderProcess, ProviderProcessError } from "./process.js";
 import { javac0131Range, python066Symbol } from "./scip-dialects.js";
 import { toolReceipt, toolInputResource } from "./tool-receipt.js";
 export { toolReceipt } from "./tool-receipt.js";
@@ -38,6 +38,7 @@ export const MANAGED_CAPABILITIES = {
 const safeRelative = (value: string) => typeof value === "string" && value.length <= 4096 && !value.includes("\\") && !value.includes("\0") && !path.posix.isAbsolute(value) && !value.split("/").some(part => part === ".." || !part);
 const xml = (text: string) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll('"', "&quot;").replaceAll("'", "&apos;");
 const msbuildPath = (text: string) => xml(text.replace(/[%$@;?*()']/g, character => `%${character.charCodeAt(0).toString(16).toUpperCase()}`));
+const maxArtifactBytes = 256 * 1024 ** 2;
 
 /** Explicit compiler contexts; never invokes repository build scripts, package installation or network discovery. */
 export async function indexManagedProject(repository: string, configuration: string, index?: string, options: { timeoutMs?: number; signal?: AbortSignal } & ProviderPreparation = {}): Promise<Record<string, unknown>> {
@@ -52,6 +53,10 @@ async function indexManagedProjectWithLease(repository: string, configuration: s
   const configBytes = await boundedInput(configFile, 1024 ** 2); const config = JSON.parse(configBytes.toString("utf8")) as ManagedProject;
   if (config.format !== 1 || !/^[A-Za-z0-9._-]{1,128}$/.test(config.id) || !Object.hasOwn(MANAGED_CAPABILITIES, config.language) || !safeRelative(config.root) || !config.package?.name || !config.package.version || [config.package.name, config.package.version].some(v => typeof v !== "string" || v.length > 256 || /[\s\0]/.test(v))) throw Error("Unsupported managed project configuration");
   if (config.sources?.some(f => !safeRelative(f)) || config.sourceRoots?.some(f => !safeRelative(f)) || Buffer.byteLength(canonical(config)) > 32768) throw Error("Managed source selection is invalid or configuration exceeds 32 KiB");
+  const projects = config.language === "csharp" ? config.csharp?.projects : undefined;
+  if (projects && new Set(projects.map(project => path.posix.normalize(project.file))).size !== projects.length) {
+    throw Error("C# project variants must use distinct project paths within one context");
+  }
   const directory = path.resolve(index?.endsWith(".sqlite") ? path.dirname(index) : index ?? path.join(root, ".prograph")); await mkdir(directory, { recursive: true });
   if (options.authorization) {
     const grant = options.authorization;
@@ -65,17 +70,20 @@ async function indexManagedProjectWithLease(repository: string, configuration: s
   const extension = { python: /\.pyi?$/, go: /\.go$/, java: /\.java$/, csharp: /\.cs$/ }[config.language];
   const metadata = /(?:^|\/)(?:pyproject\.toml|pyrightconfig\.json|go\.(?:mod|sum|work)|pom\.xml|build\.gradle(?:\.kts)?|[^/]+\.(?:csproj|sln))$/;
   let bytes = 0; let count = 0;
-  const selected = config.sources ? new Set(config.sources) : undefined;
+  const selected = config.sources ? new Set(config.sources.map(file => path.posix.normalize(file))) : undefined;
   for (const file of scan.snapshot.files) {
     const relative = path.relative(projectRoot, path.join(root, file)).split(path.sep).join("/"); if (!safeRelative(relative) || !(extension.test(file) || metadata.test(file))) continue;
-    if (extension.test(file) && (selected && !selected.has(relative) || config.sourceRoots && !config.sourceRoots.some(prefix => prefix === "." || relative.startsWith(`${prefix}/`)))) continue;
-    if (++count > 10000) throw Error("Managed source catalogue exceeds 10000 files");
+    const isSource = extension.test(file);
+    if (isSource && (selected && !selected.has(relative) || config.sourceRoots && !config.sourceRoots.some(prefix => prefix === "." || relative.startsWith(`${prefix}/`)))) continue;
+    if (++count > 10000) throw new InputLimitError("Managed source catalogue exceeds 10000 files");
     const original = path.join(root, file); const stat = await lstat(original);
     if (!stat.isFile() || stat.isSymbolicLink() || !(await realpath(original)).startsWith(`${await realpath(root)}${path.sep}`)) throw Error("Managed source escapes repository");
-    const body = await boundedInput(original, 8 * 1024 ** 2); if ((bytes += body.length) > 128 * 1024 ** 2) throw Error("Managed source copy exceeds 128 MiB");
-    const hash = digest(body); inputs[`source:${file}`] = hash; if (extension.test(file)) sources[file] = hash; else buildInputs[file] = hash;
+    const body = await boundedInput(original, 8 * 1024 ** 2); if ((bytes += body.length) > 128 * 1024 ** 2) throw new InputLimitError("Managed source copy exceeds 128 MiB");
+    const hash = digest(body); inputs[`source:${file}`] = hash;
+    if (isSource) { sources[file] = hash; selected?.delete(relative); } else buildInputs[file] = hash;
     await mkdir(path.dirname(path.join(source, relative)), { recursive: true }); await writeFile(path.join(source, relative), body);
   }
+  if (selected?.size) throw Error(`Declared managed compile source is not captured: ${selected.values().next().value}`);
   if (!Object.keys(sources).length) throw Error("Managed project has no selected sources");
   const receipts: Array<{ receipt: ToolReceipt; hash: string; files: number; bytes: number }> = [];
   const tool = async (receipt: ToolReceipt): Promise<string> => {
@@ -91,7 +99,7 @@ async function indexManagedProjectWithLease(repository: string, configuration: s
   const env: Record<string, string> = { PATH: `${path.dirname(runtime)}:/usr/bin:/bin`, HOME: path.join(executionDirectory, "home"), LANG: "C.UTF-8", TMPDIR: executionDirectory };
   await mkdir(env.HOME!, { recursive: true }); const stages: Record<string, number> = {};
   const run = async (name: string, executable: string, args: string[], cwd = source) => {
-    const remaining = Math.floor(timeout - (performance.now() - started)); if (remaining <= 0) throw Error("Managed SCIP total deadline exceeded");
+    const remaining = Math.floor(timeout - (performance.now() - started)); if (remaining <= 0) throw new ProviderProcessError("deadline", "Managed SCIP total deadline exceeded");
     const result = await runProviderProcess(executable, args, cwd, env, { timeoutMs: remaining, maxOutputBytes: 8 * 1024 ** 2, ...(options.signal ? { signal: options.signal } : {}) }); stages[name] = +result.durationMs.toFixed(3); return result.stdout.trim();
   };
   const artifact = path.join(executionDirectory, "index.scip"); let provider = ""; let producerVersion = ""; let runtimeVersion = ""; let encoding: 1 | 2 = 2;
@@ -174,17 +182,19 @@ async function indexManagedProjectWithLease(repository: string, configuration: s
   const environment = { language: config.language, configuration: config, runtimeVersion, producerDistribution: { python: "0.6.6", go: "0.2.7", java: "0.13.1", csharp: "0.2.14" }[config.language], artifactReportedVersion: producerVersion, coordinateConvention: config.language === "java" ? "javac-tab-stops-8-utf16" : encoding === 1 ? "utf8" : "utf16", symbolDialect: config.language === "python" ? "scip-python-0.6.6-opaque-lambda-locals" : "scip", tools: receipts.map(r => ({ ...r.receipt, files: r.files, bytes: r.bytes })), capabilities: MANAGED_CAPABILITIES[config.language], selectedFiles: count, sourceBytes: bytes, network: "disabled-by-tool-configuration", effects: "controlled-copy-no-repository-build-scripts", gaps: ["Explicit context, not a claim of equivalence to arbitrary repository builds", "Runtime dispatch, reflection, generated code and metaprogramming remain unqualified", "No kernel sandbox or network firewall is claimed; only trusted pinned tools execute"] };
   const context = digest(canonical([MANAGED_SCIP_VERSION, config, runtimeVersion]));
   const sidecar: ScipManifest = { format: 1, id: `managed-${config.id}`, projectContext: `${config.language}/${context}`, sourceRoot: root, originalProjectRoot: pathToFileURL(source + (config.language === "java" ? path.sep : "")).href,
-    indexDigest: await digestFile(artifact), provider: { name: provider, version: producerVersion, basis: "compiler" }, sources, inputs: buildInputs, legacyPositionEncoding: encoding, ...(config.language === "python" ? { externalLocalPolicy: "diagnose" as const } : {}), ...(config.language === "java" ? { enclosingPolicy: "diagnose" as const } : {}), ...(prefix ? { documentPathPrefix: prefix } : {}) };
+    indexDigest: await digestFile(artifact, maxArtifactBytes, options.signal), provider: { name: provider, version: producerVersion, basis: "compiler" }, sources, inputs: buildInputs, legacyPositionEncoding: encoding, ...(config.language === "python" ? { externalLocalPolicy: "diagnose" as const } : {}), ...(config.language === "java" ? { enclosingPolicy: "diagnose" as const } : {}), ...(prefix ? { documentPathPrefix: prefix } : {}) };
   const verify = async (signal?: AbortSignal) => {
-    for (const [resource, expected] of Object.entries(inputs)) { signal?.throwIfAborted(); if (performance.now() - started > timeout) throw Error("Managed SCIP deadline exceeded before publication"); if (resource.startsWith("tree:")) continue; const file = resource.startsWith("source:") ? path.join(root, resource.slice(7)) : resource.slice(9); if (await digestFile(file, 10 * 1024 ** 3, signal) !== expected) throw Error(`Managed input changed: ${resource}`); }
+    for (const [resource, expected] of Object.entries(inputs)) { signal?.throwIfAborted(); if (performance.now() - started > timeout) throw new ProviderProcessError("deadline", "Managed SCIP deadline exceeded before publication"); if (resource.startsWith("tree:")) continue; const file = resource.startsWith("source:") ? path.join(root, resource.slice(7)) : resource.slice(9); if (await digestFile(file, 10 * 1024 ** 3, signal) !== expected) throw Error(`Managed input changed: ${resource}`); }
     // Reenumeration detects added/removed libraries and stub files as well as modified positive inputs.
     for (const r of receipts) if ((await toolReceipt(r.receipt.path, signal)).sha256 !== r.hash) throw Error("Managed tool directory membership changed");
     if ((await inventoryFromDisk(root, directory, 200000, signal)).inventory !== initialInventory.inventory) throw Error("Managed source/config inventory changed during production");
+    signal?.throwIfAborted();
+    if (performance.now() - started > timeout) throw new ProviderProcessError("deadline", "Managed SCIP deadline exceeded before publication");
   };
   await writeFile(path.join(executionDirectory, "execution.json"), JSON.stringify({ sidecar, environment, stages }, null, 2));
   await verify(options.signal);
   const registration = await authorizeProvider({ key: `managed-${config.id}`, kind: "managed", recipe: { configuration: configFile, id: config.id, language: config.language }, trust: managedToolTrust(config), version: MANAGED_SCIP_VERSION }, root, directory);
-  const result = await importScip(root, artifact, sidecar, directory, { maxDocuments: 10000, maxIndexBytes: 256 * 1024 ** 2 }, options.signal, { version: MANAGED_SCIP_VERSION, environment, inputs, diagnostics: [], capabilities: MANAGED_CAPABILITIES[config.language], requireAllDocuments: true, verify,
+  const result = await importScip(root, artifact, sidecar, directory, { maxDocuments: 10000, maxIndexBytes: maxArtifactBytes }, options.signal, { version: MANAGED_SCIP_VERSION, environment, inputs, diagnostics: [], capabilities: MANAGED_CAPABILITIES[config.language], requireAllDocuments: true, verify,
     registration, ...(options.prepare ? { prepare: options.prepare } : {}),
     ...(config.language === "python" ? { parseSymbol: python066Symbol } : {}), ...(config.language === "java" ? { sourceRange: javac0131Range } : {}),
     derive: (store, documents, ctx, fingerprint) => deriveScipNative(store, documents, root, config.language, ctx, fingerprint, options.signal) });

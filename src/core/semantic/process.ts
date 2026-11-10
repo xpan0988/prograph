@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 
 export interface ProcessLimits { timeoutMs: number; maxOutputBytes: number; signal?: AbortSignal; parentGuard?: boolean }
 export class ProviderProcessError extends Error {
-  constructor(readonly reason: "cancelled" | "deadline" | "output" | "exit" | "startup", detail: string) { super(`Provider ${reason}: ${detail.slice(0, 2048)}`); }
+  constructor(readonly reason: "cancelled" | "deadline" | "output" | "termination" | "exit" | "startup", detail: string) { super(`Provider ${reason}: ${detail.slice(0, 2048)}`); }
 }
 /** Argv-only execution. Native jobs have a small, independent parent-death guard.
  * Already isolated read workers can opt out to preserve their startup budget.
@@ -48,14 +48,17 @@ export function runProviderProcess(executable: string, args: string[], cwd: stri
       else child.send?.(JSON.parse(request), error => { if (error) stop("startup", String(error)); });
     }
     child.on("error", error => { failure ??= new ProviderProcessError("startup", String(error)); });
-    child.on("close", code => {
+    child.on("close", (code, signal) => {
       clearTimeout(timer); if (escalation) clearTimeout(escalation);
       // A successful launcher can leave children with closed/inherited-away pipes.
       if (!guarded || !outcome) kill("SIGKILL");
       limits.signal?.removeEventListener("abort", abort);
       const out = Buffer.concat(stdout).toString("utf8"); const err = Buffer.concat(stderr).toString("utf8");
       const resultCode = guarded ? outcome?.code : code;
-      if (failure) reject(failure); else if (code !== 0 || resultCode !== 0) reject(new ProviderProcessError("exit", `exit ${resultCode ?? code}: ${err}`));
+      const termination = outcome?.signal ?? signal;
+      if (failure) reject(failure);
+      else if (termination) reject(new ProviderProcessError("termination", `${termination}: ${err}`));
+      else if (code !== 0 || resultCode !== 0) reject(new ProviderProcessError("exit", `exit ${resultCode ?? code}: ${err}`));
       else resolve({ stdout: out, stderr: err, durationMs: performance.now() - started });
     });
   });

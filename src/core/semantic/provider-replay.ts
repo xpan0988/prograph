@@ -8,6 +8,8 @@ import { verifyProviderAuthorization } from "./provider-grants.js";
 import { recordedDigest, recordedPath, missingInput } from "./input-check.js";
 import { semanticInventory } from "./provider-runs.js";
 import { discoverProjects } from "./projects.js";
+import { InputLimitError } from "./inputs.js";
+import { ProviderProcessError } from "./process.js";
 
 function registrationPrefix(registration: ProviderRegistration): string {
   return registration.kind === "managed" ? `scip/managed-${String(registration.recipe.id)}` : String(registration.recipe.prefix);
@@ -51,6 +53,9 @@ export async function replayProviders(store: SemanticStore, snapshot: Repository
       const plan = prepared as PreparedProvider;
       runs.push(...plan.runs); registrations.push(plan.registration); outcomes.push({ provider: row.key, status: "partial", reexecuted: true });
     } catch (error) {
+      // A resource stop invalidates the attempted publication, including any
+      // sibling preparations already sealed. Keep the previous active snapshot.
+      if (error instanceof InputLimitError || error instanceof ProviderProcessError && !["startup", "exit"].includes(error.reason)) throw error;
       // Never retain stale precise conclusions after an unavailable compiler. The gap
       // is an owned observation; restoring a dependency must make it stale/retryable.
       const reason = String(error).slice(0, 512), context = semanticKey("provider-gap", [snapshot.repository.identity, row.key]);

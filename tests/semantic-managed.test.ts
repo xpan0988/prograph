@@ -55,6 +55,19 @@ test("managed contexts reject unpinned tools before executing repository code", 
   const store = new SemanticStore(path.join(root, ".prograph/semantic.sqlite")); expect(store.activeSnapshot()).toBeUndefined(); store.close();
 });
 const profilesFile = process.env.PROGRAPH_TEST_MANAGED_PROFILES;
+test("explicit managed sources and C# variants cannot be silently omitted or overwritten", async () => {
+  const root = await temporary();
+  await writeFile(path.join(root, "Foo.cs"), "public class Foo {}\n");
+  const sdk = { path: process.execPath, sha256: "0".repeat(64) };
+  const project = { file: "Probe.csproj", targetFramework: "net10.0", assembly: "Probe", sources: ["Foo.cs"] };
+  const config = { format: 1, id: "variant", language: "csharp", root: ".", package: { name: "probe", version: "1" }, runtime: sdk, producer: sdk };
+  const file = path.join(root, "context.json");
+  await writeFile(file, JSON.stringify({ ...config, csharp: { projects: [project, { ...project, file: "./Probe.csproj", targetFramework: "net9.0" }] } }));
+  await expect(indexManagedProject(root, file)).rejects.toThrow("distinct project paths");
+  await writeFile(file, JSON.stringify({ ...config, csharp: { projects: [project] }, sources: ["Foo.cs", "Missing.cs"] }));
+  await expect(indexManagedProject(root, file)).rejects.toThrow("Declared managed compile source is not captured: Missing.cs");
+});
+
 const fixtures = {
   python: {
     "pkg/__init__.py": "",
