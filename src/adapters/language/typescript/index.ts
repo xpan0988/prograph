@@ -286,7 +286,9 @@ export const compilerApiAdapter: LanguageAdapter = {
         if (!specifier) continue;
         const targetSource = importDeclaration.getModuleSpecifierSourceFile();
         let target: GraphNode | undefined;
-        let confidence: "resolved" | "unresolved" = "resolved";
+        // The written package specifier is an observation. It does not establish
+        // that a module was resolved in this compiler environment.
+        let confidence: "resolved" | "unresolved" = targetSource ? "resolved" : "unresolved";
         if (targetSource) {
           target = fileNodes.get(relative(snapshot, targetSource));
         }
@@ -454,7 +456,7 @@ export const typescriptCompilerProvider: SemanticProvider = {
 export function createTypescriptAdapter(provider: SemanticProvider = typescriptCompilerProvider): LanguageAdapter {
   return {
     ...compilerApiAdapter,
-    version: "4",
+    version: "5",
     appliesTo: file => TYPESCRIPT_EXTENSIONS.has(path.extname(file)),
     async analyze(snapshot) {
       let status = await provider.probe(snapshot);

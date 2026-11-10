@@ -397,6 +397,24 @@ describe("agent queries and freshness", () => {
     }
   });
 
+  test("a missing bare package is retained as an unresolved specifier rather than a compiler binding", async () => {
+    const repository = await mkdtemp(path.join(tmpdir(), "prograph-missing-package-"));
+    try {
+      await writeFile(path.join(repository, "tsconfig.json"), '{"include":["*.ts"]}');
+      await writeFile(path.join(repository, "entry.ts"), 'import { sample } from "prograph-uninstalled-probe"; export const value = sample;\n');
+      const result = await analyzeRepository(repository);
+      const packageNode = result.graph.nodes.find(node => node.kind === "external_package" && node.name === "prograph-uninstalled-probe");
+      expect(packageNode).toBeDefined();
+      const query = new QueryService(path.join(result.outputDirectory, "semantic.sqlite"));
+      try {
+        expect((query.fileDetails("entry.ts").dependencies as GraphEdge[]).some(edge => edge.target === packageNode?.id)).toBe(false);
+        expect(query.fileDetails("entry.ts", { includeUnresolved: true }).dependencies).toEqual(expect.arrayContaining([
+          expect.objectContaining({ target: packageNode?.id, confidence: "unresolved", evidence: [expect.objectContaining({ basis: "unresolved", bindingName: "prograph-uninstalled-probe" })] }),
+        ]));
+      } finally { query.close(); }
+    } finally { await rm(repository, { recursive: true, force: true }); }
+  });
+
   test("detects hash freshness and preserves IDs through conservative sync", async () => {
     const repository = await mkdtemp(path.join(tmpdir(), "prograph-sync-repo-"));
     const index = await mkdtemp(path.join(tmpdir(), "prograph-sync-index-"));

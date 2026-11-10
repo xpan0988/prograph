@@ -24,7 +24,7 @@ export const ADAPTER_VERSIONS = {
   projectDiscovery: PROJECT_DISCOVERY_VERSION,
   ownedPasses: `${OWNED_PASS_VERSION}/${digest(canonical(ANALYSIS_PASS_VERSIONS))}`,
   semanticCore: `${SEMANTIC_SCHEMA_VERSION}/ts:${TYPESCRIPT_SEMANTIC_VERSION}/clang:${CLANG_SEMANTIC_VERSION}/scip:${SCIP_SEMANTIC_VERSION}/rust:${RUST_PROVIDER_VERSION}/managed:${MANAGED_SCIP_VERSION}`,
-  typescript: "4",
+  typescript: "5",
   polyglot: "1",
   architecture: "1",
   providers: JSON.stringify(["tree-sitter", "tree-sitter-python", "tree-sitter-java", "tree-sitter-c", "tree-sitter-cpp", "tree-sitter-go", "tree-sitter-c-sharp", "tree-sitter-rust", "ts-morph", "typescript", "yaml", "graphql", "protobufjs"].map(name => [name, require(`${name}/package.json`).version])),
