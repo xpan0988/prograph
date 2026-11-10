@@ -2,9 +2,10 @@ import {semanticDatabasePath} from "./authority.js";
 import path from "node:path";
 import { readFileSync, statSync } from "node:fs";
 import Database from "better-sqlite3";
-import { resolveRepositoryRoot } from "../repository/repository.js";
+import { requireIndexedRepository, resolveRepositoryRoot } from "../repository/repository.js";
 import { canonical, digest, SEMANTIC_FORMAT_VERSION, READABLE_SEMANTIC_SCHEMAS } from "./model.js";
 import { SemanticRead } from "./read.js";
+import { readSnapshotReport } from "./snapshot-report.js";
 
 export const SEMANTIC_OPERATIONS = ["status", "find", "definition", "references", "callers", "callees", "occurrence", "explain", "context", "native", "relationships", "boundaries", "boundary-participants"] as const;
 export type SemanticOperation = typeof SEMANTIC_OPERATIONS[number];
@@ -12,11 +13,19 @@ export interface SemanticQueryOptions { limit?: number; cursor?: string; snapsho
 interface Cursor { snapshot: number; query: string; after: number }
 interface NavigationRow { occurrence: number; claim_id: number; confidence: string; key: string; path: string; digest: string; start_byte: number; end_byte: number; line: number; column_num: number; end_line: number; end_column: number; role: string; provenance_json: string; claim_key: string; symbol_key: string; name: string; qualified_name: string }
 
+function coverageSummary(partition: string, json: string) {
+  const detail = JSON.parse(json) as Record<string, unknown>;
+  return { partition, status: detail.status ?? "partial", language: detail.language ?? null, provider: detail.provider ?? null,
+    definitions: detail.definitions ?? null, references: detail.references ?? null, calls: detail.calls ?? null,
+    ...(typeof detail.reason === "string" ? { reason: detail.reason.slice(0, 320) } : {}),
+    gaps: Array.isArray(detail.gaps) ? detail.gaps.slice(0, 3).map(g => String(g).slice(0, 180)) : [] };
+}
+
 export class SemanticQuery {
   readonly db: Database.Database;
   private readonly schema: string;
   private readonly hasContexts: boolean;
-  constructor(filename: string, private readonly manifestPath?: string) {
+  constructor(filename: string, private readonly manifestPath?: string, private readonly repository?: string) {
     this.db = new Database(filename, { readonly: true, fileMustExist: true });
     try {
       const format = this.db.prepare("SELECT value FROM sc_meta WHERE key='format'").get() as { value: string } | undefined;
@@ -44,15 +53,20 @@ export class SemanticQuery {
       const active = this.db.prepare("SELECT value FROM sc_meta WHERE key='active'").get() as { value: string } | undefined;
       const snapshot = cursor?.snapshot ?? options.snapshot ?? Number(active?.value);
       if (!Number.isSafeInteger(snapshot) || !this.db.prepare("SELECT 1 FROM sc_snapshots WHERE id=?").get(snapshot)) throw new Error("Semantic snapshot unavailable or expired; run analyze/sync or restart pagination");
+      const report = this.repository === undefined ? undefined : readSnapshotReport(this.db, snapshot);
+      if (report && this.repository !== undefined) {
+        const indexed = report.manifest.repositoryRoot;
+        const resolved = requireIndexedRepository(this.repository, indexed);
+        if (digest(canonical(["source-binding-1", indexed, resolved])) !== report.sourceBinding) {
+          throw Object.assign(Error("The source root changed since this snapshot was indexed"), { code: "QUERY_REPOSITORY_MISMATCH" });
+        }
+      }
       const partitions = this.db.prepare("SELECT r.id,r.partition_key,r.context,r.coverage_json,r.input_fingerprint FROM sc_partitions p JOIN sc_runs r ON r.id=p.run WHERE p.snapshot=? ORDER BY r.id LIMIT 9").all(snapshot) as Array<{ id: number; partition_key: string; context: string; coverage_json: string; input_fingerprint: string }>;
       const relevant = partitions.filter(p => p.partition_key !== "legacy/full");
       const coverage: Array<Record<string, unknown>> = [];
       let coverageBytes = 0; let coverageTruncated = partitions.length > 8;
       for (const partition of relevant.slice(0, 8)) {
-        const detail = JSON.parse(partition.coverage_json) as Record<string, unknown>;
-        const summary = { partition: partition.partition_key, status: detail.status ?? "partial", language: detail.language ?? null, provider: detail.provider ?? null,
-          definitions: detail.definitions ?? null, references: detail.references ?? null, calls: detail.calls ?? null,
-          gaps: Array.isArray(detail.gaps) ? detail.gaps.slice(0, 3).map(g => String(g).slice(0, 180)) : [] };
+        const summary = coverageSummary(partition.partition_key, partition.coverage_json);
         coverageBytes += Buffer.byteLength(JSON.stringify(summary));
         if (coverageBytes > maxBytes / 2) { coverageTruncated = true; break; }
         coverage.push(summary);
@@ -75,7 +89,7 @@ export class SemanticQuery {
       if (operation === "context" && !this.hasContexts) gaps.push("Project contexts unavailable in this Step 1 index; analyze/sync upgrades the additive semantic schema");
       const variants = new Set(relevant.map(partition => partition.context));
       const base = { snapshot, activeSnapshot: Number(active?.value), format: SEMANTIC_FORMAT_VERSION, schema: this.schema, variant: !coverageTruncated && variants.size === 1 ? relevant[0]?.context ?? null : null, scope: "code", coverage, gaps,
-        latestAttempt, semanticFreshness: "snapshot-only; source freshness unchecked", coverageTruncated,
+        latestAttempt, semanticFreshness: "snapshot-only; source freshness unchecked", repositoryBinding: report ? "verified" : "unchecked", coverageTruncated,
         evidencePolicy: "sample claim per occurrence or relation; independent claims retained",
         columnEncoding: "utf-16", byteEncoding: "utf-8", truncated: false, limits: { maxItems: limit, maxBytes, maxCandidateRows: 10000, maxSupportRows: 201, maxMetadataRows: 9 }, work: { candidateRows: 0, supportRows: 0, metadataRows: partitions.length, returnedRows: 0, globalGraphMaterialized: false } };
       const after = cursor?.after ?? 0;
@@ -85,8 +99,8 @@ export class SemanticQuery {
       let supportRows = 0;
       let continuation = after;
       if (operation === "status") {
-        const page = this.db.prepare("SELECT r.id,r.partition_key,r.context,r.input_fingerprint FROM sc_partitions p JOIN sc_runs r ON r.id=p.run WHERE p.snapshot=? AND p.run>? ORDER BY p.run LIMIT ?").all(snapshot, after, limit + 1) as typeof partitions;
-        rows = page.map(p => ({ page_key: p.id, partition: p.partition_key, context: p.context, inputFingerprint: p.input_fingerprint, legacy: p.partition_key === "legacy/full" })); examined = rows.length;
+        const page = this.db.prepare("SELECT r.id,r.partition_key,r.context,r.input_fingerprint,r.coverage_json FROM sc_partitions p JOIN sc_runs r ON r.id=p.run WHERE p.snapshot=? AND p.run>? ORDER BY p.run LIMIT ?").all(snapshot, after, limit + 1) as typeof partitions;
+        rows = page.map(p => ({ page_key: p.id, partition: p.partition_key, context: p.context, inputFingerprint: p.input_fingerprint, legacy: p.partition_key === "legacy/full", coverage: coverageSummary(p.partition_key, p.coverage_json) })); examined = rows.length;
       } else if (operation === "boundaries" || operation === "boundary-participants") {
         const target = operation === "boundaries" ? undefined : this.db.prepare("SELECT id FROM sc_entities WHERE key=?").get(input) as { id: number } | undefined;
         const selected = operation === "boundaries"
@@ -183,7 +197,7 @@ export class SemanticQuery {
       }
       const nextCursor = truncated && continuation > after ? Buffer.from(JSON.stringify({ snapshot, query: fingerprint, after: continuation })).toString("base64url") : undefined;
       return { ...base, items, truncated, truncationReasons: [...new Set(reasons)], ...(nextCursor ? { nextCursor } : {}), work: { ...base.work, candidateRows: Math.max(read.candidateRows, examined), supportRows, returnedRows: items.length },
-        noResult: !items.length, analysisComplete: !coverageTruncated && coverage.length > 0 && coverage.every(c => c.status === "complete") };
+        noResult: !items.length, absenceProven: false, analysisComplete: !coverageTruncated && coverage.length > 0 && coverage.every(c => c.status === "complete") };
     })();
   }
 }
@@ -192,5 +206,5 @@ export async function semanticQueryForRepository(input = ".", index?: string): P
   const root = await resolveRepositoryRoot(input);
   const requested = path.resolve(index ?? path.join(root, ".prograph"));
   const directory = requested.endsWith(".sqlite") ? path.dirname(requested) : requested;
-  return new SemanticQuery(semanticDatabasePath(requested), path.join(directory, "manifest.json"));
+  return new SemanticQuery(semanticDatabasePath(requested), path.join(directory, "manifest.json"), root);
 }

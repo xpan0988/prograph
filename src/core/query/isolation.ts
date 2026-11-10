@@ -34,11 +34,11 @@ async function acquire(deadline: number, signal?: AbortSignal): Promise<() => vo
   // A release hands its existing slot directly to the next waiter.
   return () => { const next = waiting.shift(); if (next) next(); else active--; };
 }
-export async function executeRead(filename: string, domain: "legacy" | "semantic" | "compatibility", operation: string, args: unknown[], manifest?: string, options: ReadExecutionOptions = {}): Promise<unknown> {
+export async function executeRead(filename: string, domain: "legacy" | "semantic" | "compatibility", operation: string, args: unknown[], manifest?: string, options: ReadExecutionOptions = {}, repository?: string): Promise<unknown> {
   const timeout = options.timeoutMs ?? 2000;
   if (!Number.isSafeInteger(timeout) || timeout < 1 || timeout > 10000) throw Error("Invalid read deadline");
   if ((domain === "legacy" || domain === "compatibility") && !(operations as readonly string[]).includes(operation)) throw Error("Invalid read operation");
-  const payload = JSON.stringify({ domain, filename, manifest, operation, args });
+  const payload = JSON.stringify({ domain, filename, manifest, operation, args, repository });
   if (Buffer.byteLength(payload) > 32768) throw new QueryExecutionError("QUERY_INPUT_LIMIT", "Read request exceeds 32 KiB");
   const deadline = performance.now() + timeout;
   const release = await acquire(deadline, options.signal);
@@ -64,10 +64,12 @@ export async function isolatedQueryForRepository(input = ".", index?: string, op
   const root = await resolveRepositoryRoot(input); const selected = index ? path.resolve(index) : path.join(root, ".prograph");
   const filename = selected;
   try { await access(filename); } catch { throw Error(`No ProGraph index found at ${filename}. Run "prograph analyze ${input}" first.`); }
-  return Object.fromEntries(operations.map(operation => [operation, (...args: unknown[]) => executeRead(filename, "compatibility", operation, args, undefined, options)])) as AsyncQueryClient;
+  return Object.fromEntries(operations.map(operation => [operation, (...args: unknown[]) => executeRead(filename, "compatibility", operation, args, undefined, options, root)])) as AsyncQueryClient;
 }
 export async function isolatedSemanticRead(input: string, index: string | undefined, operation: SemanticOperation, value = "", queryOptions: SemanticQueryOptions = {}, options: ReadExecutionOptions = {}): Promise<Record<string, unknown>> {
   const root = await resolveRepositoryRoot(input); const selected = index ? path.resolve(index) : path.join(root, ".prograph");
   const directory = selected.endsWith(".sqlite") ? path.dirname(selected) : selected;
-  return await executeRead(semanticDatabasePath(selected), "semantic", operation, [value, queryOptions], path.join(directory, "manifest.json"), options) as Record<string, unknown>;
+  const filename = semanticDatabasePath(selected);
+  try { await access(filename); } catch { throw Error(`No Semantic Core index found at ${filename}. Run "prograph analyze ${input}" with the intended output directory first.`); }
+  return await executeRead(filename, "semantic", operation, [value, queryOptions], path.join(directory, "manifest.json"), options, root) as Record<string, unknown>;
 }

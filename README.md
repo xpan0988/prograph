@@ -147,11 +147,11 @@ prograph status /path/to/repository --index ./tmp/external-index
 prograph sync /path/to/repository --index ./tmp/external-index
 ```
 
-`graph.sqlite` is the canonical query store. The JSON export is a portable representation, not the canonical query source.
+An activated index directory reads from `semantic.sqlite`. Use an explicit `graph.sqlite` path for the legacy cache. Select an index for the requested repository.
 
 ## Configuration
 
-`prograph init [path]` creates an optional `prograph.config.json`. It does not modify `.gitignore`.
+`prograph init [path]` creates an optional `prograph.config.json` with the default adapters and repository-wide discovery. Set `include` and `exclude` explicitly when you want to narrow it. For example, this configuration narrows discovery to a TypeScript and Tauri layout.
 
 ```json
 {
@@ -310,9 +310,14 @@ prograph mcp /path/to/repository --index /custom/index
 
 MCP handlers are thin wrappers over the shared query and status services. They return bounded compact results by default.
 
+Configure `prograph mcp /absolute/repository/path` as a stdio server in Claude Code or Codex. Add `--index /absolute/index/path` for a custom index. Start with `get_status` to check live source freshness. Use `query_semantic` with `find` and the exact name, then use the returned key for definitions, references and call navigation. Check the file and variant if multiple keys match. A definition's source digest and range refer to the selected snapshot. Use semantic `status` pages for individual provider coverage and follow `nextCursor` when present.
+
+MCP responses include structured content alongside the existing JSON text. Compatibility graph tools include syntax and heuristic evidence. A caller or callee response with `limitReached` may omit edges. Empty pages report zero verified results for that page. The current providers cannot prove that a repository has no callers.
+
 Available MCP capabilities include:
 
 - repository overview and status;
+- snapshot-bound semantic navigation and provider coverage;
 - symbol search and details;
 - callers and callees;
 - file dependencies and reverse dependencies;

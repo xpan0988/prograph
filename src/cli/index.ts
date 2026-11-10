@@ -6,6 +6,7 @@ import { access, writeFile } from "node:fs/promises";
 import { Command, Option } from "commander";
 import open from "open";
 import { executeIndex } from "../core/analysis/index-execution.js";
+import { defaultConfig } from "../core/config/config.js";
 import { watchRepository } from "../core/analysis/watch.js";
 import { type BoundedQuery, type ConfidenceQuery } from "../core/query/query-service.js";
 import { isolatedQueryForRepository, isolatedSemanticRead, type AsyncQueryClient } from "../core/query/isolation.js";
@@ -125,23 +126,7 @@ addFormat(program.command("init [path]", { isDefault: false }).description("crea
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
   }
-  const config = {
-    include: ["src/**/*.ts", "src/**/*.tsx", "src-tauri/src/**/*.rs"],
-    exclude: ["node_modules/**", "dist/**", "build/**", "target/**", ".git/**"],
-    adapters: {
-      typescript: true,
-      rust: true,
-      react: true,
-      tauri: true,
-      markdown: true,
-      packageJson: true,
-      cargoToml: true,
-      tauriConfig: true,
-      tauriCapability: true,
-      tests: true,
-      semanticLinker: true,
-    },
-  };
+  const config = { adapters: defaultConfig().adapters };
   await writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`);
   writeResult({ configPath }, options.format);
 }));

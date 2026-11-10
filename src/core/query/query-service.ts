@@ -4,7 +4,7 @@ import { access } from "node:fs/promises";
 import Database from "better-sqlite3";
 import type { Diagnostic, EdgeKind, GraphEdge, GraphNode, GraphScope, NodeKind } from "../graph/schema.js";
 import { graphNodeFromRow, type NodeRow } from "../storage/sqlite.js";
-import { resolveRepositoryRoot } from "../repository/repository.js";
+import { requireIndexedRepository, resolveRepositoryRoot } from "../repository/repository.js";
 import { CompatibilityGlobalRead } from "./compatibility-global-read.js";
 import { GlobalRead, type FilePageOptions } from "./global-read.js";
 import { NavigationRead, type NavigationLimits } from "./navigation.js";
@@ -61,7 +61,7 @@ export class QueryService {
   private activeRead: NavigationRead | undefined;
   private activeGlobal: CompatibilityGlobalRead | undefined;
 
-  constructor(databasePath: string, private readonly navigationLimits: NavigationLimits = {}) {
+  constructor(databasePath: string, private readonly navigationLimits: NavigationLimits = {}, private readonly repository?: string) {
     this.database = new Database(databasePath, { readonly: true, fileMustExist: true });
     this.semanticCompatibility=!!this.database.prepare("SELECT 1 FROM sqlite_master WHERE name='sc_meta'").get();
   }
@@ -118,15 +118,15 @@ export class QueryService {
     return this.readNavigation(read=>read.node(id));
   }
 
-  callers(id: string, maxNodes = 50, options: ConfidenceQuery = {}): { symbol?: GraphNode; nodes: GraphNode[]; edges: GraphEdge[] } {
+  callers(id: string, maxNodes = 50, options: ConfidenceQuery = {}) {
     return this.directional(id, "target", maxNodes, options, ["calls", "invokes", "renders", "listens"]);
   }
 
-  callees(id: string, maxNodes = 50, options: ConfidenceQuery = {}): { symbol?: GraphNode; nodes: GraphNode[]; edges: GraphEdge[] } {
+  callees(id: string, maxNodes = 50, options: ConfidenceQuery = {}) {
     return this.directional(id, "source", maxNodes, options, ["calls", "invokes", "renders", "emits", "uses_type"]);
   }
 
-  private directional(id: string, direction: "source" | "target", maxNodes: number, options: ConfidenceQuery, kinds: EdgeKind[]): { symbol?: GraphNode; nodes: GraphNode[]; edges: GraphEdge[] } {
+  private directional(id: string, direction: "source" | "target", maxNodes: number, options: ConfidenceQuery, kinds: EdgeKind[]) {
     if (!Number.isSafeInteger(maxNodes) || maxNodes < 0 || maxNodes > 500) throw Error("Navigation maxNodes must be 0..500");
     return this.readNavigation(read => {
       const symbol = read.node(id); const edges: GraphEdge[] = [];
@@ -134,7 +134,7 @@ export class QueryService {
         if (scope(options) === "code" && !kinds.includes(edge.kind) || !this.navigationEdge(read, edge, options)) continue;
         edges.push(edge); if (edges.length === maxNodes) break;
       }
-      return { ...(symbol ? { symbol } : {}), nodes: this.nodesByIds(edges.map(edge => direction === "target" ? edge.source : edge.target)), edges };
+      return { ...(symbol ? { symbol } : {}), nodes: this.nodesByIds(edges.map(edge => direction === "target" ? edge.source : edge.target)), edges, limitReached: edges.length === maxNodes };
     });
   }
 
@@ -294,6 +294,10 @@ export class QueryService {
   private readNavigation<T>(execute: (read: NavigationRead) => T): T {
     if(this.activeRead)return execute(this.activeRead);
     return this.database.transaction(() => {
+      if (this.repository !== undefined) {
+        const root = this.database.prepare("SELECT value FROM repository_metadata WHERE key='root'").get() as { value: string } | undefined;
+        if (root) requireIndexedRepository(this.repository, root.value);
+      }
       const read = new NavigationRead(this.database, this.navigationLimits);
       this.activeRead=read;try{if(this.semanticCompatibility)this.activeGlobal=new CompatibilityGlobalRead(this.database,read);const result=execute(read);read.check();return result}finally{this.activeGlobal=undefined;this.activeRead=undefined}
     }).deferred();
@@ -320,5 +324,5 @@ export async function queryServiceForRepository(input = ".", index?: string): Pr
   } catch {
     throw new Error(`No ProGraph index found at ${databasePath}. Run "prograph analyze ${input}${index ? ` --output ${index}` : ""}" first.`);
   }
-  return new QueryService(databasePath);
+  return new QueryService(databasePath, {}, root);
 }

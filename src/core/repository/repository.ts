@@ -1,3 +1,4 @@
+import { realpathSync } from "node:fs";
 import { access, readFile, stat, realpath } from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
@@ -47,6 +48,16 @@ export async function resolveRepositoryRoot(input = ".", cwd = process.cwd()): P
     if (parent === candidate) return current;
     candidate = parent;
   }
+}
+
+export function requireIndexedRepository(requested: string, indexed: string): string {
+  const resolved = realpathSync(requested);
+  let indexedRoot = indexed;
+  try { indexedRoot = realpathSync(indexed); } catch { /* A moved or removed indexed root cannot match. */ }
+  if (resolved !== indexedRoot) {
+    throw Object.assign(Error(`Index belongs to ${indexed}; requested repository is ${requested}. Select the index for that repository.`), { code: "QUERY_REPOSITORY_MISMATCH" });
+  }
+  return resolved;
 }
 
 export async function getRepositoryMetadata(root: string): Promise<RepositoryMetadata> {

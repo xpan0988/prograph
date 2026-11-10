@@ -30,8 +30,11 @@ function confidence(input: { includeProbable?: boolean | undefined; includeUnres
   };
 }
 
-function response(value: unknown): { content: Array<{ type: "text"; text: string }> } {
-  return { content: [{ type: "text", text: JSON.stringify(formatQueryOutput(value, { mode: "compact", maxEvidence: 1 })) }] };
+function response(value: unknown, qualification?: Record<string, unknown>) {
+  const payload = formatQueryOutput(value, { mode: "compact", maxEvidence: 1 }) ?? null;
+  const structuredContent = payload && typeof payload === "object" && !Array.isArray(payload)
+    ? { ...payload, ...qualification } : { items: payload, ...qualification };
+  return { content: [{ type: "text" as const, text: JSON.stringify(payload) }], structuredContent };
 }
 
 async function withQuery<T>(repository: string, index: string | undefined, signal: AbortSignal, callback: (query: AsyncQueryClient) => T | Promise<T>): Promise<T> {
@@ -39,15 +42,17 @@ async function withQuery<T>(repository: string, index: string | undefined, signa
 }
 
 export function createProGraphMcpServer(defaultRepository = ".", defaultIndex?: string): McpServer {
-  const server = new McpServer({ name: "prograph", version: packageJson.version });
+  const server = new McpServer({ name: "prograph", version: packageJson.version }, {
+    instructions: "Check get_status before using current source locations. Graph tools read indexed evidence with bounded scope. Use query_semantic for compiler-backed navigation, inspect coverage and truncation, and disambiguate by file, variant and key. Empty results do not establish absence of callers or dependencies.",
+  });
   const repo = (input: { repository?: string | undefined }): string => input.repository ?? defaultRepository;
   const index = (input: { index?: string | undefined }): string | undefined => input.index ?? defaultIndex;
   server.registerTool("query_semantic", {
-    description: "Bounded Semantic Core navigation, project/native details; returns snapshot, coverage and evidence; legacy workflows remain compatible",
+    description: "Read bounded snapshot evidence. Use find with an exact name, then pass its key to definition, references, callers or callees. Check get_status for live freshness and use status pages for provider coverage. Empty pages do not prove absence.",
     inputSchema: { ...contextShape, operation: z.enum(SEMANTIC_OPERATIONS), input: z.string().max(1024).optional(), limit: z.number().int().min(1).max(200).optional(), cursor: z.string().max(1024).optional(), snapshot: z.number().int().positive().optional(), maxBytes: z.number().int().min(4096).max(131072).optional() },
   }, async (input, extra) => {
     const value = await isolatedSemanticRead(repo(input), index(input), input.operation, input.input ?? "", { limit: input.limit ?? 50, maxBytes: input.maxBytes ?? 32768, ...(input.cursor ? { cursor: input.cursor } : {}), ...(input.snapshot !== undefined ? { snapshot: input.snapshot } : {}) }, { signal: extra.signal });
-    return { content: [{ type: "text" as const, text: JSON.stringify(value) }] };
+    return { content: [{ type: "text" as const, text: JSON.stringify(value) }], structuredContent: value };
   });
 
   server.registerTool("get_repository_overview", { description: "Get the indexed repository overview", inputSchema: { ...contextShape, scope: z.enum(["code", "code+docs", "code+config", "code+tests", "full"]).optional() } }, async (input, extra) =>
@@ -63,7 +68,7 @@ export function createProGraphMcpServer(defaultRepository = ".", defaultIndex?: 
     inputSchema: { ...contextShape, limit: z.number().int().min(1).max(1000).optional(), cursor: z.string().max(1024).optional() },
   }, async (input, extra) => response(await withQuery(repo(input), index(input), extra.signal, query => query.diagnosticPage({ limit: input.limit ?? 200, ...(input.cursor ? { cursor: input.cursor } : {}) }))));
   server.registerTool("find_symbol", {
-    description: "Find trusted concrete symbols by name or qualified name",
+    description: "Find a bounded set of indexed symbol candidates by name or qualified name. Use query_semantic find for variant-aware exact-name lookup.",
     inputSchema: { ...contextShape, query: z.string(), maxNodes: z.number().int().min(1).max(200).optional(), includeUnresolved: z.boolean().optional(), scope: z.enum(["code", "code+docs", "code+config", "code+tests", "full"]).optional() },
   }, async (input, extra) => response(await withQuery(repo(input), index(input), extra.signal, (query) => query.searchSymbols(input.query, input.maxNodes ?? 20, { ...(input.includeUnresolved ? { includeUnresolved: true } : {}), ...(input.scope ? { scope: input.scope } : {}) }))));
   server.registerTool("get_symbol", {
@@ -71,11 +76,11 @@ export function createProGraphMcpServer(defaultRepository = ".", defaultIndex?: 
     inputSchema: { ...contextShape, id: z.string() },
   }, async (input, extra) => response(await withQuery(repo(input), index(input), extra.signal, (query) => query.symbol(input.id))));
   server.registerTool("get_callers", {
-    description: "Get bounded trusted callers",
+    description: "Get bounded compatibility graph callers. A reached limit may omit edges. Empty edges do not prove absence of callers.",
     inputSchema: { ...boundedShape, id: z.string() },
   }, async (input, extra) => response(await withQuery(repo(input), index(input), extra.signal, (query) => query.callers(input.id, input.maxNodes ?? 50, confidence(input)))));
   server.registerTool("get_callees", {
-    description: "Get bounded trusted callees",
+    description: "Get bounded compatibility graph callees. A reached limit may omit edges. Empty edges do not prove absence of callees.",
     inputSchema: { ...boundedShape, id: z.string() },
   }, async (input, extra) => response(await withQuery(repo(input), index(input), extra.signal, (query) => query.callees(input.id, input.maxNodes ?? 50, confidence(input)))));
   server.registerTool("get_file_dependencies", {
@@ -83,23 +88,31 @@ export function createProGraphMcpServer(defaultRepository = ".", defaultIndex?: 
     inputSchema: { ...boundedShape, file: z.string() },
   }, async (input, extra) => response(await withQuery(repo(input), index(input), extra.signal, async (query) => {
     const details = await query.fileDetails(input.file, confidence(input));
-    return { file: input.file, dependencies: details.dependencies };
+    const dependencies = details.dependencies as unknown[];
+    const limit = input.maxNodes ?? dependencies.length;
+    return { file: input.file, dependencies: dependencies.slice(0, limit), truncated: dependencies.length > limit };
   })));
   server.registerTool("get_reverse_dependencies", {
     description: "Get bounded reverse file dependencies",
     inputSchema: { ...boundedShape, file: z.string() },
   }, async (input, extra) => response(await withQuery(repo(input), index(input), extra.signal, async (query) => {
     const details = await query.fileDetails(input.file, confidence(input));
-    return { file: input.file, reverseDependencies: details.reverseDependencies };
+    const reverseDependencies = details.reverseDependencies as unknown[];
+    const limit = input.maxNodes ?? reverseDependencies.length;
+    return { file: input.file, reverseDependencies: reverseDependencies.slice(0, limit), truncated: reverseDependencies.length > limit };
   })));
   server.registerTool("get_neighborhood", {
     description: "Get a compact bounded symbol neighborhood",
     inputSchema: { ...boundedShape, id: z.string(), depth: z.number().int().min(0).max(8).optional() },
   }, async (input, extra) => response(await withQuery(repo(input), index(input), extra.signal, (query) => query.neighborhood(input.id, { ...confidence(input), depth: input.depth ?? 2, maxNodes: input.maxNodes ?? 50 }))));
   server.registerTool("get_cycles", {
-    description: "Get trusted import and call cycles",
+    description: "Get a bounded selection of representative import and call cycles. Structured output marks result truncation.",
     inputSchema: boundedShape,
-  }, async (input, extra) => response(await withQuery(repo(input), index(input), extra.signal, async (query) => (await query.cycles(confidence(input))).slice(0, input.maxNodes ?? 50))));
+  }, async (input, extra) => withQuery(repo(input), index(input), extra.signal, async (query) => {
+    const cycles = await query.cycles(confidence(input));
+    const limit = input.maxNodes ?? 50;
+    return response(cycles.slice(0, limit), { truncated: cycles.length > limit });
+  }));
   server.registerTool("get_framework_bindings", {
     description: "Get bounded framework and cross-language boundary evidence; framework may be tauri or a protocol such as http, grpc, graphql",
     inputSchema: { ...boundedShape, framework: z.string().optional() },
