@@ -9,6 +9,7 @@ import { SemanticStore } from "../src/core/semantic/store.js";
 import { analyzeRepository } from "../src/core/analysis/analyze.js";
 import { syncRepository } from "../src/core/analysis/sync.js";
 import { semanticSnapshot } from "./oracles/semantic-snapshot.js";
+import { useAcceptedTypeScript } from "./oracles/accepted-typescript.js";
 
 async function accepted() {
   const root = process.env.PROGRAPH_TEST_ENCODING_REUSE_BASELINE_RUNTIME;
@@ -51,6 +52,7 @@ test("accepted Stage 6.5 store agrees on complete stable rows and callback/error
 
 test("bounded provenance reuse preserves accepted Stage 6.5 complete exports, SQL, history and independent incremental rebuilds", async () => {
   const { root: runtime } = await accepted();
+  await useAcceptedTypeScript(runtime);
   const oldAnalyze = (await import(/* @vite-ignore */ pathToFileURL(path.join(runtime, "dist/core/analysis/analyze.js")).href)).analyzeRepository;
   const oldSync = (await import(/* @vite-ignore */ pathToFileURL(path.join(runtime, "dist/core/analysis/sync.js")).href)).syncRepository;
   const root = await mkdtemp(path.join(os.tmpdir(), "prograph-encoding-runtime-")), source = path.join(root, "source"), old = path.join(root, "old"), current = path.join(root, "current"), rebuilt = path.join(root, "rebuilt");

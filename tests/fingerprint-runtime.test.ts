@@ -10,11 +10,13 @@ import { syncRepository } from "../src/core/analysis/sync.js";
 import { SemanticStore } from "../src/core/semantic/store.js";
 import { installAnalysisDiagnostics, type AnalysisDiagnostic } from "../src/core/analysis/diagnostics.js";
 import { semanticSnapshot } from "./oracles/semantic-snapshot.js";
+import { useAcceptedTypeScript } from "./oracles/accepted-typescript.js";
 
 test("fingerprint optimization matches accepted runtime bytes, complete semantic/legacy SQL, incremental history and independent rebuild", async () => {
   const runtime = process.env.PROGRAPH_TEST_FINGERPRINT_BASELINE_RUNTIME;
   if (!runtime) throw Error("Set PROGRAPH_TEST_FINGERPRINT_BASELINE_RUNTIME using prepare-semantic-baseline.mjs fingerprint");
   expect(JSON.parse(await readFile(path.join(runtime, "baseline-receipt.json"), "utf8")).commit).toBe("a8d02241518c804fe40565bc518e905db499d9e9");
+  await useAcceptedTypeScript(runtime);
   const accepted = await import(/* @vite-ignore */ pathToFileURL(path.join(runtime, "dist/core/analysis/analyze.js")).href);
   const previousSync = await import(/* @vite-ignore */ pathToFileURL(path.join(runtime, "dist/core/analysis/sync.js")).href);
   const root = await mkdtemp(path.join(os.tmpdir(), "prograph-fingerprint-oracle-"));

@@ -14,6 +14,7 @@ import { promisify } from "node:util";
 import { analyzeRepository } from "../src/core/analysis/analyze.js";
 import { syncRepository } from "../src/core/analysis/sync.js";
 import { semanticSnapshot } from "./oracles/semantic-snapshot.js";
+import { useAcceptedTypeScript } from "./oracles/accepted-typescript.js";
 
 const roots: string[] = [];
 afterEach(async () => { vi.restoreAllMocks(); for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true }); });
@@ -38,6 +39,7 @@ test("accepted extractor matches complete sealed outputs through branching, over
   const baseline = process.env.PROGRAPH_TEST_OWNED_BASELINE_RUNTIME;
   if (!baseline) throw Error("Set PROGRAPH_TEST_OWNED_BASELINE_RUNTIME using prepare-semantic-baseline.mjs owned");
   expect(JSON.parse(await readFile(path.join(baseline, "baseline-receipt.json"), "utf8")).commit).toBe("97bcab797c4c5f838f87bfcfd5e298bbaa6cef0b");
+  await useAcceptedTypeScript(baseline);
   const accepted = await import(/* @vite-ignore */ pathToFileURL(path.join(baseline, "dist/core/semantic/analysis-passes.js")).href);
   const root = await temporary(), repo = path.join(root, "source"); await mkdir(repo);
   await writeFile(path.join(repo, "a.rs"), "fn a(){}\n"); await writeFile(path.join(repo, "b.rs"), "fn b(){}\n");
@@ -95,6 +97,7 @@ test("accepted extractor matches complete sealed outputs through branching, over
 test("real mixed fixture keeps complete export bytes, sealed ownership, historical reads and independent rebuild results", async () => {
   const baseline = process.env.PROGRAPH_TEST_OWNED_BASELINE_RUNTIME;
   if (!baseline) throw Error("Accepted owned runtime required");
+  await useAcceptedTypeScript(baseline);
   const accepted = await import(/* @vite-ignore */ pathToFileURL(path.join(baseline, "dist/core/analysis/analyze.js")).href);
   const root = await temporary(), repo = path.join(root, "source"), old = path.join(root, "old"), current = path.join(root, "current"), rebuilt = path.join(root, "rebuilt");
   await cp(path.resolve("tests/fixtures/mixed"), repo, { recursive: true });
