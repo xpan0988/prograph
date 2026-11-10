@@ -88,7 +88,7 @@ function fileCounter(store: SemanticStore, scope: string, file: string, nodes: n
   if (row.nodes === 0 && row.outgoing === 0 && row.incoming === 0)
     store.sql('DELETE FROM cq_file_counts WHERE scope=? AND path=?').run(scope, file);
 }
-export function updateCompatibilityNodes(store: SemanticStore, changes: CompatibilityChange[]) {
+export function updateCompatibilityNodes(store: SemanticStore, changes: Iterable<CompatibilityChange>) {
   if (!store.db.inTransaction)
     throw Error('Compatibility query projections require publication transaction');
   const files = new Set<string>(), nodes = new Set<string>(), edgeNodes = new Set<string>();
@@ -164,7 +164,7 @@ export function updateCompatibilityNodes(store: SemanticStore, changes: Compatib
     }
   return { files, nodes, edgeNodes };
 }
-export function updateCompatibilityDiagnostics(store: SemanticStore, changes: CompatibilityChange[]) {
+export function updateCompatibilityDiagnostics(store: SemanticStore, changes: Iterable<CompatibilityChange>) {
   for (const change of changes)
     if (change.kind === 'diagnostic') {
       for (const [item, sign] of [[change.before, -1], [change.after, 1]] as const)
@@ -190,7 +190,7 @@ interface EdgeFlags {
   source_file: string;
   target_file: string;
 }
-export function updateCompatibilityEdges(store: SemanticStore, changes: CompatibilityChange[], changedNodes: Set<string>) {
+function* affectedEdgeChanges(store: SemanticStore, changes: CompatibilityChange[], changedNodes: Set<string>) {
   const changed = new Map(changes.filter(change => change.kind === 'edge').map(change => [change.key, change]));
   const keys = new Set(changed.keys());
   for (const node of changedNodes)
@@ -199,6 +199,13 @@ export function updateCompatibilityEdges(store: SemanticStore, changes: Compatib
         keys.add((raw as {
           edge: string;
         }).edge);
+  for (const key of keys)
+    yield { key, change: changed.get(key) };
+}
+export function updateCompatibilityEdges(store: SemanticStore, changes: CompatibilityChange[], changedNodes: Set<string>, bootstrap?: Iterable<CompatibilityChange>) {
+  const keys = bootstrap
+    ? (function* () { for (const change of bootstrap) yield { key: change.key, change }; })()
+    : affectedEdgeChanges(store, changes, changedNodes);
   const files = new Set<string>(), architectureKeys = new Set<string>(), cyclePartitions = new Map<string, {
     scope: string;
     level: number;
@@ -248,10 +255,10 @@ export function updateCompatibilityEdges(store: SemanticStore, changes: Compatib
   };
   const cycleKey = (flags: EdgeFlags | undefined) => flags ? JSON.stringify([flags.source, flags.target, flags.kind, flags.mask, flags.level]) : '';
   const flagKey = (flags: EdgeFlags | undefined) => flags ? JSON.stringify([flags.source, flags.target, flags.kind, flags.mask, flags.level, flags.source_file, flags.target_file]) : '';
-  for (const key of keys) {
+  for (const { key, change } of keys) {
     if (++visited > 1000000)
       throw Error('Compatibility edge projection exceeds affected-closure budget');
-    const old = store.sql('SELECT * FROM cq_edges WHERE edge=?').get(key) as EdgeFlags | undefined, change = changed.get(key);
+    const old = store.sql('SELECT * FROM cq_edges WHERE edge=?').get(key) as EdgeFlags | undefined;
     let edge: GraphEdge | undefined;
     if (change)
       edge = change.after as GraphEdge | undefined;
@@ -323,7 +330,7 @@ export function updateCompatibilityEdges(store: SemanticStore, changes: Compatib
       if (value && value.degree < 0)
         throw Error('Compatibility degree counter underflow');
     }
-  return { keys, files, cyclePartitions, architectureKeys, structuralChanges };
+  return { visited, files, cyclePartitions, architectureKeys, structuralChanges };
 }
 export function updateCompatibilityFileRows(store: SemanticStore, files: Set<string>) {
   for (const file of files) {
@@ -531,39 +538,34 @@ export function publishCompatibilityQueries(store: SemanticStore, snapshot: numb
       store.db.exec(`DROP TABLE IF EXISTS ${table}`);
   }
   store.db.exec(COMPATIBILITY_QUERY_SQL);
-  let plan = changes, bytes = 0;
-  if (rebuilding) {
-    plan = [];
-    let kind = '', key = '';
+  let payloadChanges = rebuilding ? 0 : changes.length, bytes = 0;
+  // Decode each winner only when its phase consumes it. A bounded keyset page
+  // releases the SQLite statement before that phase mutates its projections.
+  function* bootstrap(kind: CompatibilityChange['kind']): Iterable<CompatibilityChange> {
+    let key = '';
     while (true) {
-      const rows = store.sql('SELECT kind,key FROM cg_current WHERE(kind,key)>(?,?)ORDER BY kind,key LIMIT 500').all(kind, key) as Array<{
-        kind: CompatibilityChange['kind'];
-        key: string;
-      }>;
-      if (!rows.length)
-        break;
+      const rows = store.sql('SELECT key FROM cg_current WHERE kind=? AND key>? ORDER BY key LIMIT 500').all(kind, key) as Array<{ key: string }>;
+      if (!rows.length) return;
       for (const row of rows) {
         let after: CompatibilityChange['after'];
-        if (row.kind === 'node')
+        if (kind === 'node')
           after = graphNodeFromRow(store.sql('SELECT * FROM nodes WHERE id=?').get(row.key) as NodeRow);
-        else if (row.kind === 'edge')
+        else if (kind === 'edge')
           after = graphEdgeFromRow(store.sql('SELECT * FROM edges WHERE id=?').get(row.key) as EdgeRow);
         else
           after = diagnosticFromRow(store.sql('SELECT d.* FROM cg_diagnostic_rows r JOIN diagnostics d ON d.id=r.row WHERE r.key=?').get(row.key) as DiagnosticRow);
         bytes += Buffer.byteLength(JSON.stringify(after));
-        if (plan.length >= 1000000 || bytes > 128 * 1024 ** 2)
+        if (++payloadChanges > 1000000 || bytes > 128 * 1024 ** 2)
           throw Error('Owned query bootstrap exceeds offline budget');
-        plan.push({ ...row, after });
+        yield { kind, key: row.key, after };
       }
-      const last = rows.at(-1)!;
-      kind = last.kind;
-      key = last.key;
+      key = rows.at(-1)!.key;
     }
   }
-  const node = updateCompatibilityNodes(store, plan);
+  const node = updateCompatibilityNodes(store, rebuilding ? bootstrap('node') : changes);
   store.hooks.fault?.("during-compatibility");
-  const edge = updateCompatibilityEdges(store, plan, node.edgeNodes);
-  updateCompatibilityDiagnostics(store, plan);
+  const edge = updateCompatibilityEdges(store, changes, node.edgeNodes, rebuilding ? bootstrap('edge') : undefined);
+  updateCompatibilityDiagnostics(store, rebuilding ? bootstrap('diagnostic') : changes);
   const files = new Set([...node.files, ...edge.files]);
   updateCompatibilityFileRows(store, files);
   const architecture = updateCompatibilityArchitecture(store, files, edge.architectureKeys, node.nodes);
@@ -573,7 +575,7 @@ export function publishCompatibilityQueries(store: SemanticStore, snapshot: numb
     store.sql('DELETE FROM cq_cycles WHERE scope=? AND level=?').run(scope, level);
     store.sql('INSERT INTO cq_cycle_errors VALUES(?,?,?)ON CONFLICT(scope,level)DO UPDATE SET reason=excluded.reason').run(scope, level, 'Owned cycle projection invalidated; run prepare-queries offline');
   }
-  const work = { bootstrap: rebuilding, payloadChanges: plan.length, nodeContributions: node.nodes.size, edgeContributions: edge.keys.size, edgeReclassifications: edge.structuralChanges, architectureRelationships: edge.architectureKeys.size, fileContributions: files.size, architecturePairs: architecture.pairs };
+  const work = { bootstrap: rebuilding, payloadChanges, nodeContributions: node.nodes.size, edgeContributions: edge.visited, edgeReclassifications: edge.structuralChanges, architectureRelationships: edge.architectureKeys.size, fileContributions: files.size, architecturePairs: architecture.pairs };
   for (const [key, value] of Object.entries({ version: COMPATIBILITY_QUERY_VERSION, snapshot: String(snapshot), generation, work: JSON.stringify(work) }))
     store.sql('INSERT INTO cq_meta VALUES(?,?)ON CONFLICT(key)DO UPDATE SET value=excluded.value').run(key, value);
   return work;

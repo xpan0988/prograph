@@ -159,6 +159,7 @@ export function publishCompatibilityCache(store: SemanticStore, snapshot: number
   }).n !== report.manifest.scannedFileCount)
     throw Error("Compatibility source inputs disagree with the bound report");
   const changes: CompatibilityChange[] = [];
+  const changedFiles = new Set<string>();
   const counts = JSON.parse((store.sql("SELECT value FROM cg_meta WHERE key='counts'").get() as {
     value: string;
   } | undefined)?.value ?? '{"node":0,"edge":0,"diagnostic":0}') as Record<Kind, number>;
@@ -219,7 +220,11 @@ export function publishCompatibilityCache(store: SemanticStore, snapshot: number
       if (!row && !previous)
         continue;
       const before = previous ? read(kind, key) : undefined;
-      changes.push({ kind, key, ...(before ? { before } : {}), ...(item ? { after: item } : {}) });
+      if (!rebuilding)
+        changes.push({ kind, key, ...(before ? { before } : {}), ...(item ? { after: item } : {}) });
+      if (kind === 'node')
+        for (const node of [before as GraphNode | undefined, item as GraphNode | undefined])
+          if (node?.kind === 'file' && node.file) changedFiles.add(node.file);
       work.changedPayloads++;
       if (!previous && item)
         counts[kind]++;
@@ -253,21 +258,16 @@ export function publishCompatibilityCache(store: SemanticStore, snapshot: number
   }
   if (counts.node !== report.manifest.nodeCount || counts.edge !== report.manifest.edgeCount || counts.diagnostic !== report.manifest.diagnosticCount)
     throw Error("Owned compatibility counts disagree with the bound report");
-  for (const change of changes)
-    if (change.kind === 'node')
-      for (const item of [change.before, change.after]) {
-        const n = item as GraphNode | undefined;
-        if (n?.kind === 'file' && n.file) {
-          store.sql("DELETE FROM files WHERE path=?").run(n.file);
-          const matches = store.sql("SELECT * FROM nodes WHERE kind='file' AND file=? LIMIT 2").all(n.file) as NodeRow[];
-          if (matches.length > 1)
-            throw Error("Duplicate compatibility file path");
-          if (matches.length) {
-            const current = matches[0]!;
-            store.sql("INSERT INTO files VALUES(?,?,?)").run(n.file, current.language, current.metadata_json);
-          }
-        }
-      }
+  for (const file of changedFiles) {
+    store.sql("DELETE FROM files WHERE path=?").run(file);
+    const matches = store.sql("SELECT * FROM nodes WHERE kind='file' AND file=? LIMIT 2").all(file) as NodeRow[];
+    if (matches.length > 1)
+      throw Error("Duplicate compatibility file path");
+    if (matches.length) {
+      const current = matches[0]!;
+      store.sql("INSERT INTO files VALUES(?,?,?)").run(file, current.language, current.metadata_json);
+    }
+  }
   for (const table of ['schema_metadata', 'repository_metadata', 'analysis_runs', 'adapter_runs'])
     store.db.exec(`DELETE FROM ${table}`);
   const m = report.manifest;
@@ -281,5 +281,5 @@ export function publishCompatibilityCache(store: SemanticStore, snapshot: number
   for (const [key, value] of Object.entries({ snapshot: String(snapshot), counts: JSON.stringify(counts), schema: 'owned-compatibility-1', work: JSON.stringify(work), snapshotKey: report.snapshotKey, reportKey: report.reportKey }))
     store.sql("INSERT INTO cg_meta VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(key, value);
   const queries = publishCompatibilityQueries(store, snapshot, report.reportKey, changes, rebuilding);
-  return { changes, work, queries };
+  return { work, queries };
 }
