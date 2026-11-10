@@ -1,0 +1,4164 @@
+{
+  "format": 1,
+  "decision": {
+    "met": 18,
+    "partial": 3,
+    "unmet": 1,
+    "partialCriteria": [
+      6,
+      14,
+      20
+    ],
+    "unmetCriteria": [
+      22
+    ],
+    "core2Accepted": false,
+    "provisional": true
+  },
+  "commits": {
+    "startingHead": "e8a4ca4e483c9abb5162cfd3822056ca70459a1b",
+    "acceptedStage66": "439e051f6b701895b0b8935f22ce27ae2cc2ee7d",
+    "qualificationRuntime": "3d73f5ef26f07d91333daa6eb90fdaaa523d0cc1",
+    "priorIntegratedRuntime": "a2e10ff3b6a3be9f4598813f606143416b513de0"
+  },
+  "agent": {
+    "wire": {
+      "tools": [
+        "query_semantic",
+        "get_repository_overview",
+        "get_status",
+        "list_files_page",
+        "list_diagnostics_page",
+        "find_symbol",
+        "get_symbol",
+        "get_callers",
+        "get_callees",
+        "get_file_dependencies",
+        "get_reverse_dependencies",
+        "get_neighborhood",
+        "get_cycles",
+        "get_framework_bindings",
+        "get_context",
+        "get_affected",
+        "get_diagnostics"
+      ],
+      "server": {
+        "name": "prograph",
+        "version": "0.3.0"
+      },
+      "instructions": "Check get_status before using current source locations. Graph tools read indexed evidence with bounded scope. Use query_semantic for compiler-backed navigation, inspect coverage and truncation, and disambiguate by file, variant and key. Empty results do not establish absence of callers or dependencies.",
+      "production": {
+        "repositoryCommit": "a8a6fbec4e0e866d6d779b10889bb4f5567e70eb",
+        "fresh": "fresh",
+        "definition": [
+          {
+            "occurrence": "sc2:occurrence:9059db2f510afdf7f4033c9d07342389e549315789da9164da9580dba94bebdf",
+            "symbol": "sc2:symbol:168164b15b226627d4491fa6fa5d7a934502b1f789a9677066cfe38949e7c93c",
+            "file": "index.js",
+            "sourceDigest": "edde12a4a4dbdbe8d27161cdd0853db0bab435d5dc6c15f9f4dedc27ee9bca60",
+            "range": {
+              "startByte": 3644,
+              "endByte": 3663,
+              "line": 144,
+              "column": 10,
+              "endLine": 144,
+              "endColumn": 29
+            },
+            "role": "definition",
+            "confidence": "exact",
+            "evidenceClaim": "sc2:claim:fb5487d7f1a66e5712e20ce61a03a68575d181eb0f458641c600984b755e8158",
+            "provenance": {
+              "basis": "compiler",
+              "context": "sc2:context:9e31d934c9c824496d456af420398a125102441e3419511864f55b17d11e1801",
+              "inputFingerprint": "fbda387dc5e566f78d7302c1b1fd5f8802fb7f2aaf57c5cfbc1f84f55dd76d1e",
+              "method": "compiler-binding",
+              "provider": "typescript/compiler-api",
+              "version": "5.9.2/6"
+            }
+          }
+        ],
+        "expectedReferenceLines": [
+          10,
+          95
+        ],
+        "references": [
+          {
+            "file": "index.js",
+            "line": 10
+          },
+          {
+            "file": "index.js",
+            "line": 95
+          }
+        ],
+        "callers": [
+          {
+            "site_count": 1,
+            "confidence": "resolved",
+            "key": "sc2:symbol:4081035a6052c495e061a6a356e40b9f88245290537c245dcf1bfd2b198a2367",
+            "name": "default",
+            "qualified_name": "index.js::pLimit",
+            "file": "index.js",
+            "evidenceClaim": "sc2:claim:a0c63c30c47a62361b4422e1b01d205994fcf014000a6c26df319fe4a60836a4"
+          },
+          {
+            "site_count": 1,
+            "confidence": "resolved",
+            "key": "sc2:symbol:0e3e7b3be71dae6ebddd3d7b09e538774e382fd0bff0bd796db7f409a3573e12",
+            "name": "set",
+            "qualified_name": "index.js::pLimit::concurrency::set",
+            "file": "index.js",
+            "evidenceClaim": "sc2:claim:5a3dfa1a8a1eb59715054446ee3842e2db5631d89384242e8eb4c03ae053ef3d"
+          }
+        ],
+        "empty": {
+          "noResult": true,
+          "absenceProven": false,
+          "analysisComplete": false
+        },
+        "ambiguous": [
+          "scripts/benchmarker.js::Benchmarker::run",
+          "index.js::pLimit::run",
+          "scripts/benchmarker.js::BenchmarkSuite::run"
+        ],
+        "fileImports": [
+          {
+            "edge": {
+              "id": "edge:imports:3c43224e02522c56",
+              "source": "typescript:file:7febd6d61e95e818",
+              "target": "typescript:file:a1060f9782a8df8b",
+              "kind": "imports",
+              "confidence": "resolved",
+              "evidence": [
+                {
+                  "basis": "compiler",
+                  "provider": "ts-morph/compiler-api",
+                  "file": "benchmark.js",
+                  "line": 8,
+                  "column": 1
+                }
+              ]
+            },
+            "target": {
+              "id": "typescript:file:a1060f9782a8df8b",
+              "name": "benchmarker.js",
+              "kind": "file",
+              "file": "scripts/benchmarker.js"
+            }
+          },
+          {
+            "edge": {
+              "id": "edge:imports:3ff3602d5258547b",
+              "source": "typescript:file:7febd6d61e95e818",
+              "target": "typescript:external_package:ebada6dc93af2e47",
+              "kind": "imports",
+              "confidence": "resolved",
+              "evidence": [
+                {
+                  "basis": "compiler",
+                  "provider": "ts-morph/compiler-api",
+                  "file": "benchmark.js",
+                  "line": 6,
+                  "column": 1
+                }
+              ]
+            },
+            "target": {
+              "id": "typescript:external_package:ebada6dc93af2e47",
+              "name": "node:timers",
+              "kind": "external_package"
+            }
+          },
+          {
+            "edge": {
+              "id": "edge:imports:45b8e58228a2492d",
+              "source": "typescript:file:7febd6d61e95e818",
+              "target": "typescript:external_package:7ad178a696f45e21",
+              "kind": "imports",
+              "confidence": "resolved",
+              "evidence": [
+                {
+                  "basis": "compiler",
+                  "provider": "ts-morph/compiler-api",
+                  "file": "benchmark.js",
+                  "line": 7,
+                  "column": 1
+                }
+              ]
+            },
+            "target": {
+              "id": "typescript:external_package:7ad178a696f45e21",
+              "name": "node:crypto",
+              "kind": "external_package"
+            }
+          },
+          {
+            "edge": {
+              "id": "edge:imports:98c0c7f4287a1288",
+              "source": "typescript:file:7febd6d61e95e818",
+              "target": "typescript:external_package:4d5a7068dd79155c",
+              "kind": "imports",
+              "confidence": "resolved",
+              "evidence": [
+                {
+                  "basis": "compiler",
+                  "provider": "ts-morph/compiler-api",
+                  "file": "benchmark.js",
+                  "line": 1,
+                  "column": 1
+                }
+              ]
+            },
+            "target": {
+              "id": "typescript:external_package:4d5a7068dd79155c",
+              "name": "node:fs",
+              "kind": "external_package"
+            }
+          },
+          {
+            "edge": {
+              "id": "edge:imports:e22f9a24f4d710c3",
+              "source": "typescript:file:7febd6d61e95e818",
+              "target": "typescript:file:60ed08088024b77b",
+              "kind": "imports",
+              "confidence": "resolved",
+              "evidence": [
+                {
+                  "basis": "compiler",
+                  "provider": "ts-morph/compiler-api",
+                  "file": "benchmark.js",
+                  "line": 13,
+                  "column": 1
+                }
+              ]
+            },
+            "target": {
+              "id": "typescript:file:60ed08088024b77b",
+              "name": "index.d.ts",
+              "kind": "file",
+              "file": "index.d.ts"
+            }
+          },
+          {
+            "edge": {
+              "id": "edge:imports:f922520a61f772f4",
+              "source": "typescript:file:7febd6d61e95e818",
+              "target": "typescript:external_package:bacacb74ac577710",
+              "kind": "imports",
+              "confidence": "resolved",
+              "evidence": [
+                {
+                  "basis": "compiler",
+                  "provider": "ts-morph/compiler-api",
+                  "file": "benchmark.js",
+                  "line": 5,
+                  "column": 1
+                }
+              ]
+            },
+            "target": {
+              "id": "typescript:external_package:bacacb74ac577710",
+              "name": "node:path",
+              "kind": "external_package"
+            }
+          }
+        ],
+        "affectedFiles": [
+          "benchmark.js"
+        ],
+        "coverage": [
+          {
+            "partition": "context/typescript/project:<inferred>",
+            "status": "partial",
+            "language": "typescript",
+            "provider": null,
+            "definitions": null,
+            "references": null,
+            "calls": null,
+            "gaps": [
+              "Sources outside compiler-config selection use an explicit inferred unit"
+            ]
+          },
+          {
+            "partition": "typescript/project:<inferred>",
+            "status": "partial",
+            "language": "typescript",
+            "provider": "typescript/compiler-api",
+            "definitions": "partial",
+            "references": "partial",
+            "calls": "partial",
+            "gaps": [
+              "Sources outside compiler-config selection use an explicit inferred unit",
+              "Static targets do not enumerate runtime dispatch",
+              "Declarations/references from supported compiler AST forms; not an exhaustive native type index"
+            ]
+          }
+        ],
+        "wrongRepositoryRejected": true,
+        "missingGraphSymbolNull": true
+      },
+      "self": {
+        "expectedLine": 15,
+        "definition": [
+          {
+            "occurrence": "sc2:occurrence:52aef43221e4a2925214cf3a13473358c78448888fa1034442946557dbec7d1e",
+            "symbol": "sc2:symbol:7963737ac2ecb3b4e22214663ebbb149db0040a1f997877f4e7df9955d4e2dc4",
+            "file": "src/core/semantic/query.ts",
+            "sourceDigest": "61bbd9b1b76b9595c235155b663596bfcbbd70650543485cc700e6cec84a7d4d",
+            "range": {
+              "startByte": 1216,
+              "endByte": 1229,
+              "line": 15,
+              "column": 14,
+              "endLine": 15,
+              "endColumn": 27
+            },
+            "role": "definition",
+            "confidence": "exact",
+            "evidenceClaim": "sc2:claim:a423e6806fec5c4b4c77870bfde17eabde20b1361b81f522baa90d0ac7426d80",
+            "provenance": {
+              "basis": "compiler",
+              "context": "sc2:context:367187552c6039c1ae5ba74eeeb631c2034ece52167566ddf361d0aff28e4f76",
+              "inputFingerprint": "36661325550c9fcf646cdad6779a43f91346251d5c8865f054423aa4f3098d6a",
+              "method": "compiler-binding",
+              "provider": "typescript/compiler-api",
+              "version": "5.9.2/6"
+            }
+          }
+        ],
+        "verified": true
+      }
+    },
+    "incrementalAndClean": {
+      "before": {
+        "snapshot": 1,
+        "claims": {
+          "count": 4286,
+          "sha256": "64698dbaba2454038f6dc28f2c666531c90ea1438605d8fef7a506b02ada97a1"
+        },
+        "owners": {
+          "count": 4286,
+          "sha256": "263b34a32ebbb57ba4813713a8c01b370a1390cf08c5782e41e703790e8a7b80"
+        },
+        "supports": {
+          "count": 1698,
+          "sha256": "4747d84f9725f3e09ee4b6b1cebc66c6e741608b26c175d6e44c0d3b027410a5"
+        },
+        "graphNodes": {
+          "count": 270,
+          "sha256": "f35e9962decc32101b0ebc44d0a5329eb283d66303d707242a7e3010ed782007"
+        },
+        "edges": {
+          "count": 635,
+          "sha256": "dacb92f325fbf748fe0530768d415415816fcac42ffa9828cc9e68354e36bcd3"
+        },
+        "diagnostics": {
+          "count": 177,
+          "sha256": "882d5d6902d1f505b628fe824995d4338087fe0aef7959ce6c4b6ad9276022e1"
+        }
+      },
+      "noopMs": 3102.0697499999997,
+      "staleModifiedFiles": [
+        "index.js"
+      ],
+      "incrementalId": 2,
+      "cleanId": 1,
+      "incrementalMs": 18318.923292,
+      "cleanMs": 12777.481667,
+      "cleanWitnesses": {
+        "claims": {
+          "count": 4286,
+          "sha256": "a133bd196af42dcc05ad5812f1a6eaee41f8e1cefb5e17aa4232ff6323b49d19"
+        },
+        "owners": {
+          "count": 4286,
+          "sha256": "97dcb01dd6305d377de52742a1d61c23921717d9eb5a5a15b7631638756c6d83"
+        },
+        "supports": {
+          "count": 1698,
+          "sha256": "930d4d20757ee7262f424371372a3a8cfee5369d69e505550f05b7a4d45eb3f2"
+        },
+        "graphNodes": {
+          "count": 270,
+          "sha256": "3cc1272815f5d014a6d3379546733b9edc9978de3e53322b8c4eae0545e37edd"
+        },
+        "edges": {
+          "count": 635,
+          "sha256": "87d2b70f0c89a66f6d5068d04bdc5a0d2deb2ee9074206899e640ad516483536"
+        },
+        "diagnostics": {
+          "count": 177,
+          "sha256": "882d5d6902d1f505b628fe824995d4338087fe0aef7959ce6c4b6ad9276022e1"
+        }
+      },
+      "historyVerified": true,
+      "failedAttempt": {
+        "format": 2,
+        "status": "failed",
+        "durationMs": 3,
+        "reason": "Error: Invalid TypeScript project: jsconfig.json: '}' expected."
+      },
+      "priorSnapshotRetained": true
+    },
+    "typescriptBarePackagePolicy": {
+      "statusBefore": "stale",
+      "adapterVersionsChanged": true,
+      "declared": "^1.2.1",
+      "installed": false,
+      "before": {
+        "id": "edge:imports:275d27c630b61a90",
+        "source": "typescript:file:045e29a3bc1c9772",
+        "target": "typescript:external_package:ec90a862b8067545",
+        "kind": "imports",
+        "confidence": "resolved",
+        "evidence": [
+          {
+            "basis": "compiler",
+            "provider": "ts-morph/compiler-api",
+            "file": "index.js",
+            "line": 1,
+            "column": 1
+          }
+        ]
+      },
+      "after": {
+        "id": "edge:imports:275d27c630b61a90",
+        "source": "typescript:file:045e29a3bc1c9772",
+        "target": "typescript:external_package:ec90a862b8067545",
+        "kind": "imports",
+        "confidence": "unresolved",
+        "evidence": [
+          {
+            "basis": "unresolved",
+            "provider": "ts-morph/compiler-api",
+            "file": "index.js",
+            "line": 1,
+            "column": 1
+          }
+        ]
+      },
+      "stableRelationshipId": true,
+      "afterState": "fresh",
+      "oldSnapshot": 3,
+      "activeSnapshot": 4
+    },
+    "clients": {
+      "claude": {
+        "version": "2.1.318",
+        "result": "success",
+        "tools": [
+          {
+            "name": "mcp__prograph_acceptance__get_status",
+            "operation": null
+          },
+          {
+            "name": "mcp__prograph_acceptance__query_semantic",
+            "operation": "find"
+          },
+          {
+            "name": "mcp__prograph_acceptance__query_semantic",
+            "operation": "definition"
+          },
+          {
+            "name": "mcp__prograph_acceptance__query_semantic",
+            "operation": "callers"
+          }
+        ],
+        "rawTraceSha256": "c7bd1418f96b63f801a8c1a61d4c982720ef7b8034b10cc373d55d570e59dabf"
+      },
+      "codexDefault": {
+        "version": "0.163.0",
+        "approvalMode": "default",
+        "calls": [
+          {
+            "name": "get_status",
+            "operation": null,
+            "status": "failed",
+            "error": {
+              "message": "MCP tool call requires approval, but approval policy is never"
+            }
+          },
+          {
+            "name": "query_semantic",
+            "operation": "find",
+            "status": "failed",
+            "error": {
+              "message": "MCP tool call requires approval, but approval policy is never"
+            }
+          }
+        ],
+        "turnCompleted": true,
+        "rawTraceSha256": "00354e8d46ee0626cfe5e3015349d73f697731683b68eb242a850a3a0af3e5d1"
+      },
+      "codexReadOnly": {
+        "version": "0.163.0",
+        "approvalMode": "writes",
+        "calls": [
+          {
+            "name": "get_status",
+            "operation": null,
+            "status": "completed",
+            "error": null
+          },
+          {
+            "name": "query_semantic",
+            "operation": "find",
+            "status": "completed",
+            "error": null
+          },
+          {
+            "name": "query_semantic",
+            "operation": "status",
+            "status": "completed",
+            "error": null
+          },
+          {
+            "name": "query_semantic",
+            "operation": "definition",
+            "status": "completed",
+            "error": null
+          },
+          {
+            "name": "query_semantic",
+            "operation": "callers",
+            "status": "completed",
+            "error": null
+          }
+        ],
+        "turnCompleted": true,
+        "rawTraceSha256": "c5b8f7b1fb2784d0c1fe815d88ad48c2b702c8d758addc720e6befe9a4700b5d"
+      },
+      "claudeFinal": {
+        "version": "2.1.318",
+        "result": "success",
+        "tools": [
+          {
+            "name": "mcp__prograph_acceptance__get_status",
+            "operation": null
+          },
+          {
+            "name": "mcp__prograph_acceptance__query_semantic",
+            "operation": "find"
+          },
+          {
+            "name": "mcp__prograph_acceptance__query_semantic",
+            "operation": "definition"
+          },
+          {
+            "name": "mcp__prograph_acceptance__query_semantic",
+            "operation": "callers"
+          }
+        ],
+        "rawTraceSha256": "4a67c7aa40ee5c9780f1373188299ddcd23505b116217f266888ffab0c382556"
+      },
+      "codexFinal": {
+        "version": "0.163.0",
+        "approvalMode": "writes",
+        "calls": [
+          {
+            "name": "get_status",
+            "operation": null,
+            "status": "completed",
+            "error": null
+          },
+          {
+            "name": "query_semantic",
+            "operation": "find",
+            "status": "completed",
+            "error": null
+          },
+          {
+            "name": "query_semantic",
+            "operation": "definition",
+            "status": "completed",
+            "error": null
+          },
+          {
+            "name": "query_semantic",
+            "operation": "callers",
+            "status": "completed",
+            "error": null
+          }
+        ],
+        "turnCompleted": true,
+        "rawTraceSha256": "4cf15751c329cc10d63d22486d576342ded637e85c029a69a9c65277bccd38ba"
+      }
+    },
+    "packageInstall": {
+      "node": "25.9.0",
+      "baselineStartupFailure": "Cannot find module typescript/package.json",
+      "fixedCleanTarball": "0.3.0; installation and actual analyze/init completed",
+      "testedPackRuntime": "a2e10ff3b6a3be9f4598813f606143416b513de0",
+      "fixedTarballSha256": "7e79322e98a075f9f6d6e33d67c336f5dd891b805b3e13349275f1c7a812817e"
+    },
+    "selfIndex": {
+      "sourceCommit": "e8a4ca4e483c9abb5162cfd3822056ca70459a1b",
+      "clean": {
+        "format": 2,
+        "status": "partial",
+        "snapshot": 1,
+        "context": "sc2:context:367187552c6039c1ae5ba74eeeb631c2034ece52167566ddf361d0aff28e4f76",
+        "durationMs": 101014
+      },
+      "concurrentSourceChangeRefusal": {
+        "format": 2,
+        "status": "failed",
+        "durationMs": 87408,
+        "reason": "Error: Compiler input changed during extraction: src/core/repository/repository.ts"
+      }
+    }
+  },
+  "resources": {
+    "recoveryAndCorruption": {
+      "node": "v25.9.0",
+      "probes": [
+        {
+          "point": "before-seal",
+          "exitCode": 57,
+          "activeSnapshot": 1,
+          "visible": [
+            "callee"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        },
+        {
+          "point": "before-publish",
+          "exitCode": 57,
+          "activeSnapshot": 1,
+          "visible": [
+            "callee"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        },
+        {
+          "point": "during-publish",
+          "exitCode": 57,
+          "activeSnapshot": 1,
+          "visible": [
+            "callee"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        },
+        {
+          "point": "after-publish",
+          "exitCode": 57,
+          "activeSnapshot": 2,
+          "visible": [
+            "other"
+          ],
+          "integrity": "ok",
+          "baselineRetained": true
+        }
+      ],
+      "corruption": {
+        "refused": true,
+        "unchanged": true
+      }
+    },
+    "goNativeProcessObservations": {
+      "repository": "https://github.com/google/go-cmp",
+      "sourceCommit": "b133f1f1932e48f466f597a3346ce6f5a49a0dc1",
+      "scope": "Offline darwin/arm64 non-cgo Go 1.26.9 and scip-go 0.2.7",
+      "accepted": 31,
+      "rejected": 0,
+      "runnerMs": 134878,
+      "stagesMs": {
+        "runtime-version": 356.785,
+        "producer-version": 288.548,
+        "module-context:go.mod": 195.145,
+        "compiler-check": 9673.513,
+        "index": 1200.339
+      },
+      "samples": 1223,
+      "intervalMs": 100,
+      "perExecutableSampledPeakKiB": {
+        "node": 223984,
+        "git": 7168,
+        "scip-go": 33856,
+        "go": 31120,
+        "compile": 307536,
+        "asm": 3648
+      },
+      "treeSampledPeakKiB": 530864,
+      "rawTimelineSha256": "e51f28da6f1fc25ccaef9133042f54fcd617c6e5227b5fb7321f01485d3bbac7",
+      "limitations": "ps sampled resident pages; short-lived children can be missed and aggregate RSS counts shared pages for each process."
+    },
+    "hardTreeRssQualified": false,
+    "hardTemporaryDiskQuotaQualified": false
+  },
+  "scale": {
+    "host": {
+      "os": "macOS 26.5.2 (25F84)",
+      "arch": "arm64",
+      "cpu": "Apple M5",
+      "logicalCpus": 10,
+      "memoryBytes": 17179869184,
+      "filesystem": "APFS",
+      "power": "battery, low-power mode 1",
+      "conditions": "Different background test/download load; filesystem caches not controlled, pairs serial with fixed order. No whole-run causality or portability claim."
+    },
+    "pastey": {
+      "sourceCommit": "8714e1ee57e00b70fdf1e03d6c182a8ef984ded0",
+      "source": {
+        "selectedFiles": 309,
+        "sourceFiles": 259,
+        "lines": 172935,
+        "bytes": 6526873,
+        "inventorySha256": "b0471e04e687d84deca1c74d234aa905b9c43520fff73545cbd396d9186ad0b8"
+      },
+      "controlRuntime": "e8a4ca4e483c9abb5162cfd3822056ca70459a1b",
+      "candidateRuntime": "a2e10ff3b6a3be9f4598813f606143416b513de0",
+      "control": {
+        "startedAt": "2026-11-10T07:59:39.614Z",
+        "node": "v25.9.0",
+        "wallMs": 138535.817209,
+        "cpuUs": {
+          "user": 80731224,
+          "system": 38076343
+        },
+        "sharedPeakRssKiB": 1061152,
+        "counts": {
+          "nodes": 40491,
+          "edges": 78181,
+          "diagnostics": 46845
+        },
+        "databaseBytes": 905822208,
+        "semanticCore": {
+          "format": 2,
+          "status": "partial",
+          "snapshot": 1,
+          "context": "sc2:context:f4a753f30189e01094091d42a58838794761c41c88cc3063720c359373885b7a",
+          "durationMs": 70047
+        },
+        "phases": [
+          {
+            "phase": "repository-discovery",
+            "wallMs": 157.14612499999998,
+            "cpuMs": {
+              "user": 75.685,
+              "system": 59.5
+            },
+            "rssAtEndBytes": 178913280
+          },
+          {
+            "phase": "adapter:typescript",
+            "wallMs": 3435.962709,
+            "cpuMs": {
+              "user": 5173.546,
+              "system": 331.089
+            },
+            "rssAtEndBytes": 465616896
+          },
+          {
+            "phase": "rust-parse",
+            "wallMs": 669.9637080000002,
+            "cpuMs": {
+              "user": 616.172,
+              "system": 33.512
+            },
+            "rssAtEndBytes": 615071744
+          },
+          {
+            "phase": "rust-definitions",
+            "wallMs": 1179.8641669999997,
+            "cpuMs": {
+              "user": 1201.946,
+              "system": 31.687
+            },
+            "rssAtEndBytes": 620380160
+          },
+          {
+            "phase": "rust-calls",
+            "wallMs": 2887.062999999999,
+            "cpuMs": {
+              "user": 3036.136,
+              "system": 66.791
+            },
+            "rssAtEndBytes": 749469696
+          },
+          {
+            "phase": "adapter:rust",
+            "wallMs": 4767.662459,
+            "cpuMs": {
+              "user": 4898.264,
+              "system": 137.028
+            },
+            "rssAtEndBytes": 760823808
+          },
+          {
+            "phase": "adapter:python",
+            "wallMs": 259.03283399999964,
+            "cpuMs": {
+              "user": 530.921,
+              "system": 27.659
+            },
+            "rssAtEndBytes": 766984192
+          },
+          {
+            "phase": "adapter:java",
+            "wallMs": 0.04754200000024866,
+            "cpuMs": {
+              "user": 0.08,
+              "system": 0.012
+            },
+            "rssAtEndBytes": 768262144
+          },
+          {
+            "phase": "adapter:c",
+            "wallMs": 0.022957999999562162,
+            "cpuMs": {
+              "user": 0.017,
+              "system": 0.003
+            },
+            "rssAtEndBytes": 769540096
+          },
+          {
+            "phase": "adapter:cpp",
+            "wallMs": 0.024457999999867752,
+            "cpuMs": {
+              "user": 0.017,
+              "system": 0.003
+            },
+            "rssAtEndBytes": 770818048
+          },
+          {
+            "phase": "adapter:go",
+            "wallMs": 0.01954200000000128,
+            "cpuMs": {
+              "user": 0.015,
+              "system": 0.003
+            },
+            "rssAtEndBytes": 772096000
+          },
+          {
+            "phase": "adapter:csharp",
+            "wallMs": 0.015625,
+            "cpuMs": {
+              "user": 0.011,
+              "system": 0.002
+            },
+            "rssAtEndBytes": 773373952
+          },
+          {
+            "phase": "syntax-graph",
+            "wallMs": 8702.321166,
+            "cpuMs": {
+              "user": 10930.83,
+              "system": 517.282
+            },
+            "rssAtEndBytes": 753696768
+          },
+          {
+            "phase": "owned-fingerprint",
+            "wallMs": 1276.8690420000003,
+            "cpuMs": {
+              "user": 1325.462,
+              "system": 14.026
+            },
+            "rssAtEndBytes": 786759680
+          },
+          {
+            "phase": "syntax-fact-staging",
+            "wallMs": 32129.449500000002,
+            "cpuMs": {
+              "user": 13578.737,
+              "system": 9996.486
+            },
+            "rssAtEndBytes": 906575872
+          },
+          {
+            "phase": "owned-input:framework-react",
+            "wallMs": null,
+            "rssAtEndBytes": 928940032
+          },
+          {
+            "phase": "adapter:react",
+            "wallMs": 27.8862500000032,
+            "cpuMs": {
+              "user": 49.131,
+              "system": 0.293
+            },
+            "rssAtEndBytes": 930283520
+          },
+          {
+            "phase": "owned-retained:framework-react",
+            "wallMs": null,
+            "rssAtEndBytes": 926695424
+          },
+          {
+            "phase": "owned-pass:framework-react",
+            "wallMs": 394.04204200000095,
+            "cpuMs": {
+              "user": 235.698,
+              "system": 94.196
+            },
+            "rssAtEndBytes": 926695424
+          },
+          {
+            "phase": "owned-input:framework-tauri",
+            "wallMs": null,
+            "rssAtEndBytes": 949026816
+          },
+          {
+            "phase": "adapter:tauri",
+            "wallMs": 534.1265420000054,
+            "cpuMs": {
+              "user": 542.476,
+              "system": 2.034
+            },
+            "rssAtEndBytes": 950386688
+          },
+          {
+            "phase": "owned-retained:framework-tauri",
+            "wallMs": null,
+            "rssAtEndBytes": 946634752
+          },
+          {
+            "phase": "owned-pass:framework-tauri",
+            "wallMs": 804.0766250000015,
+            "cpuMs": {
+              "user": 665.374,
+              "system": 52.905
+            },
+            "rssAtEndBytes": 946634752
+          },
+          {
+            "phase": "owned-input:schema-contracts",
+            "wallMs": null,
+            "rssAtEndBytes": 968949760
+          },
+          {
+            "phase": "adapter:architecture",
+            "wallMs": 9.430208999998285,
+            "cpuMs": {
+              "user": 12.947,
+              "system": 0.26
+            },
+            "rssAtEndBytes": 970424320
+          },
+          {
+            "phase": "owned-retained:schema-contracts",
+            "wallMs": null,
+            "rssAtEndBytes": 981385216
+          },
+          {
+            "phase": "owned-pass:schema-contracts",
+            "wallMs": 50.74879100000544,
+            "cpuMs": {
+              "user": 51.112,
+              "system": 3.892
+            },
+            "rssAtEndBytes": 981385216
+          },
+          {
+            "phase": "owned-input:documentation",
+            "wallMs": null,
+            "rssAtEndBytes": 1003782144
+          },
+          {
+            "phase": "adapter:markdown",
+            "wallMs": 34.75441700000374,
+            "cpuMs": {
+              "user": 49.006,
+              "system": 0.357
+            },
+            "rssAtEndBytes": 1005125632
+          },
+          {
+            "phase": "owned-retained:documentation",
+            "wallMs": null,
+            "rssAtEndBytes": 968802304
+          },
+          {
+            "phase": "owned-pass:documentation",
+            "wallMs": 407.82012499999837,
+            "cpuMs": {
+              "user": 210.008,
+              "system": 84.681
+            },
+            "rssAtEndBytes": 968802304
+          },
+          {
+            "phase": "owned-input:package-config",
+            "wallMs": null,
+            "rssAtEndBytes": 991150080
+          },
+          {
+            "phase": "adapter:packageJson",
+            "wallMs": 1.8976669999974547,
+            "cpuMs": {
+              "user": 1.885,
+              "system": 0.012
+            },
+            "rssAtEndBytes": 992444416
+          },
+          {
+            "phase": "owned-retained:package-config",
+            "wallMs": null,
+            "rssAtEndBytes": 988971008
+          },
+          {
+            "phase": "owned-pass:package-config",
+            "wallMs": 82.73929199999839,
+            "cpuMs": {
+              "user": 53.753,
+              "system": 14.381
+            },
+            "rssAtEndBytes": 988971008
+          },
+          {
+            "phase": "owned-input:cargo-config",
+            "wallMs": null,
+            "rssAtEndBytes": 1011253248
+          },
+          {
+            "phase": "adapter:cargoToml",
+            "wallMs": 5.186334000005445,
+            "cpuMs": {
+              "user": 5.583,
+              "system": 0.036
+            },
+            "rssAtEndBytes": 1012547584
+          },
+          {
+            "phase": "owned-retained:cargo-config",
+            "wallMs": null,
+            "rssAtEndBytes": 1023459328
+          },
+          {
+            "phase": "owned-pass:cargo-config",
+            "wallMs": 130.56341699999757,
+            "cpuMs": {
+              "user": 73.587,
+              "system": 23.278
+            },
+            "rssAtEndBytes": 1023459328
+          },
+          {
+            "phase": "owned-input:tauri-config",
+            "wallMs": null,
+            "rssAtEndBytes": 1015660544
+          },
+          {
+            "phase": "adapter:tauriConfig",
+            "wallMs": 1.6916669999991427,
+            "cpuMs": {
+              "user": 1.716,
+              "system": 0.06
+            },
+            "rssAtEndBytes": 1016954880
+          },
+          {
+            "phase": "owned-retained:tauri-config",
+            "wallMs": null,
+            "rssAtEndBytes": 1027883008
+          },
+          {
+            "phase": "owned-pass:tauri-config",
+            "wallMs": 55.280583999992814,
+            "cpuMs": {
+              "user": 48.361,
+              "system": 6.215
+            },
+            "rssAtEndBytes": 1027883008
+          },
+          {
+            "phase": "owned-input:tauri-capabilities",
+            "wallMs": null,
+            "rssAtEndBytes": 1050165248
+          },
+          {
+            "phase": "adapter:tauriCapability",
+            "wallMs": 1.8936249999969732,
+            "cpuMs": {
+              "user": 2.661,
+              "system": 0.049
+            },
+            "rssAtEndBytes": 1051459584
+          },
+          {
+            "phase": "owned-retained:tauri-capabilities",
+            "wallMs": null,
+            "rssAtEndBytes": 1062453248
+          },
+          {
+            "phase": "owned-pass:tauri-capabilities",
+            "wallMs": 64.98137500000303,
+            "cpuMs": {
+              "user": 43.797,
+              "system": 11.651
+            },
+            "rssAtEndBytes": 1062453248
+          },
+          {
+            "phase": "owned-input:test-relevance",
+            "wallMs": null,
+            "rssAtEndBytes": 1084784640
+          },
+          {
+            "phase": "adapter:tests",
+            "wallMs": 438.14137499999924,
+            "cpuMs": {
+              "user": 930.989,
+              "system": 63.25
+            },
+            "rssAtEndBytes": 931151872
+          },
+          {
+            "phase": "owned-retained:test-relevance",
+            "wallMs": null,
+            "rssAtEndBytes": 887750656
+          },
+          {
+            "phase": "owned-pass:test-relevance",
+            "wallMs": 2723.154542000004,
+            "cpuMs": {
+              "user": 1867.941,
+              "system": 679.767
+            },
+            "rssAtEndBytes": 887750656
+          },
+          {
+            "phase": "owned-input:knowledge-links",
+            "wallMs": null,
+            "rssAtEndBytes": 900857856
+          },
+          {
+            "phase": "adapter:semanticLinker",
+            "wallMs": 566.5951669999995,
+            "cpuMs": {
+              "user": 621.798,
+              "system": 10.475
+            },
+            "rssAtEndBytes": 895074304
+          },
+          {
+            "phase": "owned-retained:knowledge-links",
+            "wallMs": null,
+            "rssAtEndBytes": 880951296
+          },
+          {
+            "phase": "owned-pass:knowledge-links",
+            "wallMs": 2976.320958000004,
+            "cpuMs": {
+              "user": 1589.343,
+              "system": 663.215
+            },
+            "rssAtEndBytes": 880951296
+          },
+          {
+            "phase": "owned-input:boundary-binding",
+            "wallMs": null,
+            "rssAtEndBytes": 903233536
+          },
+          {
+            "phase": "owned-retained:boundary-binding",
+            "wallMs": null,
+            "rssAtEndBytes": 750993408
+          },
+          {
+            "phase": "owned-pass:boundary-binding",
+            "wallMs": 1947.3063750000001,
+            "cpuMs": {
+              "user": 1398.814,
+              "system": 243.486
+            },
+            "rssAtEndBytes": 750993408
+          },
+          {
+            "phase": "owned-input:dependency-projection",
+            "wallMs": null,
+            "rssAtEndBytes": 787873792
+          },
+          {
+            "phase": "owned-dependencies:planned",
+            "wallMs": null,
+            "rssAtEndBytes": 757268480
+          },
+          {
+            "phase": "owned-retained:dependency-projection",
+            "wallMs": null,
+            "rssAtEndBytes": 370622464
+          },
+          {
+            "phase": "owned-pass:dependency-projection",
+            "wallMs": 5148.692374999999,
+            "cpuMs": {
+              "user": 1773.051,
+              "system": 1153.879
+            },
+            "rssAtEndBytes": 370900992
+          },
+          {
+            "phase": "owned-analysis",
+            "wallMs": 48222.937084000005,
+            "cpuMs": {
+              "user": 22922.432,
+              "system": 13055.291
+            },
+            "rssAtEndBytes": 372457472
+          },
+          {
+            "phase": "semantic-typescript-program",
+            "wallMs": 659.9748340000006,
+            "cpuMs": {
+              "user": 811.302,
+              "system": 87.635
+            },
+            "rssAtEndBytes": 512589824
+          },
+          {
+            "phase": "semantic-typescript",
+            "wallMs": 21564.101833,
+            "cpuMs": {
+              "user": 11450.584,
+              "system": 6151.601
+            },
+            "rssAtEndBytes": 499499008
+          },
+          {
+            "phase": "semantic-typescript-program",
+            "wallMs": 397.6858329999959,
+            "cpuMs": {
+              "user": 469.759,
+              "system": 29.674
+            },
+            "rssAtEndBytes": 556040192
+          },
+          {
+            "phase": "semantic-typescript",
+            "wallMs": 648.6952919999894,
+            "cpuMs": {
+              "user": 739.162,
+              "system": 86.863
+            },
+            "rssAtEndBytes": 598114304
+          },
+          {
+            "phase": "semantic-typescript-program",
+            "wallMs": 776.9892499999987,
+            "cpuMs": {
+              "user": 687.351,
+              "system": 61.269
+            },
+            "rssAtEndBytes": 682295296
+          },
+          {
+            "phase": "semantic-typescript",
+            "wallMs": 6126.1344589999935,
+            "cpuMs": {
+              "user": 3270.515,
+              "system": 1818.501
+            },
+            "rssAtEndBytes": 649920512
+          },
+          {
+            "phase": "native-provider-retention-replay",
+            "wallMs": 0.8249999999970896,
+            "cpuMs": {
+              "user": 0.763,
+              "system": 0.051
+            },
+            "rssAtEndBytes": 650018816
+          },
+          {
+            "phase": "source-freshness-barrier",
+            "wallMs": 726.7354579999956,
+            "cpuMs": {
+              "user": 1049.002,
+              "system": 368.11
+            },
+            "rssAtEndBytes": 740818944
+          },
+          {
+            "phase": "publication:content-key",
+            "wallMs": 15.40754200000083,
+            "rssAtEndBytes": 740835328
+          },
+          {
+            "phase": "publication:membership",
+            "wallMs": 237.9160830000037,
+            "rssAtEndBytes": 711655424
+          },
+          {
+            "phase": "publication:support-eligibility",
+            "wallMs": 113.00950000000012,
+            "rssAtEndBytes": 711688192
+          },
+          {
+            "phase": "publication:navigation",
+            "wallMs": 2797.990208999996,
+            "rssAtEndBytes": 707821568
+          },
+          {
+            "phase": "publication:symbols",
+            "wallMs": 0.06241600000066683,
+            "rssAtEndBytes": 707821568
+          },
+          {
+            "phase": "publication:call-summary",
+            "wallMs": 32.1976250000007,
+            "rssAtEndBytes": 707969024
+          },
+          {
+            "phase": "publication:snapshot-report",
+            "wallMs": 3.401584000006551,
+            "rssAtEndBytes": 707969024
+          },
+          {
+            "phase": "publication:compatibility-projection",
+            "wallMs": 35847.593708,
+            "rssAtEndBytes": 767950848
+          },
+          {
+            "phase": "publication:pointer-and-commit",
+            "wallMs": 1770.6319999999978,
+            "rssAtEndBytes": 577486848
+          },
+          {
+            "phase": "semantic-publication",
+            "wallMs": 40818.635834,
+            "cpuMs": {
+              "user": 22884.999,
+              "system": 10603.167
+            },
+            "rssAtEndBytes": 577536000
+          },
+          {
+            "phase": "semantic-foundation",
+            "wallMs": 70070.5305,
+            "cpuMs": {
+              "user": 39524.935,
+              "system": 19069.875
+            },
+            "rssAtEndBytes": 577077248
+          },
+          {
+            "phase": "legacy-sqlite-export",
+            "wallMs": 9221.137542000011,
+            "cpuMs": {
+              "user": 4359.762,
+              "system": 4985.078
+            },
+            "rssAtEndBytes": 703266816
+          },
+          {
+            "phase": "json-export",
+            "wallMs": 1967.9860829999961,
+            "cpuMs": {
+              "user": 2356.541,
+              "system": 250.81
+            },
+            "rssAtEndBytes": 733560832
+          }
+        ],
+        "writerPragmas": [
+          {
+            "journal": "wal",
+            "synchronous": 2,
+            "cacheSize": -16000,
+            "mmapSize": 0,
+            "pageSize": 4096
+          },
+          {
+            "journal": "wal",
+            "synchronous": 2,
+            "cacheSize": -16000,
+            "mmapSize": 0,
+            "pageSize": 4096
+          }
+        ],
+        "rawProfileSha256": "d30846a0cfdff069f2a53dad1d8f498ddd165257b36644663a9a86ba26e4d6d6"
+      },
+      "candidate": {
+        "startedAt": "2026-11-10T08:15:24.547Z",
+        "node": "v25.9.0",
+        "wallMs": 250282.849875,
+        "cpuUs": {
+          "user": 117872918,
+          "system": 60393653
+        },
+        "sharedPeakRssKiB": 685344,
+        "counts": {
+          "nodes": 40491,
+          "edges": 78181,
+          "diagnostics": 46845
+        },
+        "databaseBytes": 905822208,
+        "semanticCore": {
+          "format": 2,
+          "status": "partial",
+          "snapshot": 1,
+          "context": "sc2:context:f4a753f30189e01094091d42a58838794761c41c88cc3063720c359373885b7a",
+          "durationMs": 108096
+        },
+        "phases": [
+          {
+            "phase": "repository-discovery",
+            "wallMs": 231.46854100000007,
+            "cpuMs": {
+              "user": 85.192,
+              "system": 69.526
+            },
+            "rssAtEndBytes": 180207616
+          },
+          {
+            "phase": "adapter:typescript",
+            "wallMs": 5573.097042,
+            "cpuMs": {
+              "user": 6379.975,
+              "system": 472.644
+            },
+            "rssAtEndBytes": 461242368
+          },
+          {
+            "phase": "rust-parse",
+            "wallMs": 1002.1358749999999,
+            "cpuMs": {
+              "user": 743.393,
+              "system": 55.255
+            },
+            "rssAtEndBytes": 601636864
+          },
+          {
+            "phase": "rust-definitions",
+            "wallMs": 1611.0346670000008,
+            "cpuMs": {
+              "user": 1463.458,
+              "system": 66.399
+            },
+            "rssAtEndBytes": 621920256
+          },
+          {
+            "phase": "rust-calls",
+            "wallMs": 4753.820374999999,
+            "cpuMs": {
+              "user": 4082.873,
+              "system": 222.177
+            },
+            "rssAtEndBytes": 533872640
+          },
+          {
+            "phase": "adapter:rust",
+            "wallMs": 7398.703792000001,
+            "cpuMs": {
+              "user": 6320.336,
+              "system": 350.724
+            },
+            "rssAtEndBytes": 543948800
+          },
+          {
+            "phase": "adapter:python",
+            "wallMs": 454.93495800000164,
+            "cpuMs": {
+              "user": 627.393,
+              "system": 64.143
+            },
+            "rssAtEndBytes": 585351168
+          },
+          {
+            "phase": "adapter:java",
+            "wallMs": 0.07083400000010442,
+            "cpuMs": {
+              "user": 0.043,
+              "system": 0.007
+            },
+            "rssAtEndBytes": 586629120
+          },
+          {
+            "phase": "adapter:c",
+            "wallMs": 0.0455420000016602,
+            "cpuMs": {
+              "user": 0.136,
+              "system": 0.008
+            },
+            "rssAtEndBytes": 585121792
+          },
+          {
+            "phase": "adapter:cpp",
+            "wallMs": 0.2687079999996058,
+            "cpuMs": {
+              "user": 0.072,
+              "system": 0.013
+            },
+            "rssAtEndBytes": 577323008
+          },
+          {
+            "phase": "adapter:go",
+            "wallMs": 0.0467079999998532,
+            "cpuMs": {
+              "user": 0.113,
+              "system": 0.01
+            },
+            "rssAtEndBytes": 578699264
+          },
+          {
+            "phase": "adapter:csharp",
+            "wallMs": 0.02495900000030815,
+            "cpuMs": {
+              "user": 0.015,
+              "system": 0.005
+            },
+            "rssAtEndBytes": 580435968
+          },
+          {
+            "phase": "syntax-graph",
+            "wallMs": 14032.66475,
+            "cpuMs": {
+              "user": 13830.013,
+              "system": 1020.154
+            },
+            "rssAtEndBytes": 552124416
+          },
+          {
+            "phase": "owned-fingerprint",
+            "wallMs": 2978.9187920000004,
+            "cpuMs": {
+              "user": 2207.342,
+              "system": 179.623
+            },
+            "rssAtEndBytes": 371228672
+          },
+          {
+            "phase": "syntax-fact-staging",
+            "wallMs": 88439.232541,
+            "cpuMs": {
+              "user": 26826.528,
+              "system": 22267.195
+            },
+            "rssAtEndBytes": 262193152
+          },
+          {
+            "phase": "owned-input:framework-react",
+            "wallMs": null,
+            "rssAtEndBytes": 332840960
+          },
+          {
+            "phase": "adapter:react",
+            "wallMs": 74.46745799999917,
+            "cpuMs": {
+              "user": 84.328,
+              "system": 13.717
+            },
+            "rssAtEndBytes": 363593728
+          },
+          {
+            "phase": "owned-retained:framework-react",
+            "wallMs": null,
+            "rssAtEndBytes": 370671616
+          },
+          {
+            "phase": "owned-pass:framework-react",
+            "wallMs": 1109.6906670000026,
+            "cpuMs": {
+              "user": 528.097,
+              "system": 276.216
+            },
+            "rssAtEndBytes": 370671616
+          },
+          {
+            "phase": "owned-input:framework-tauri",
+            "wallMs": null,
+            "rssAtEndBytes": 392986624
+          },
+          {
+            "phase": "adapter:tauri",
+            "wallMs": 1787.8581249999988,
+            "cpuMs": {
+              "user": 1581.792,
+              "system": 44.868
+            },
+            "rssAtEndBytes": 402358272
+          },
+          {
+            "phase": "owned-retained:framework-tauri",
+            "wallMs": null,
+            "rssAtEndBytes": 403161088
+          },
+          {
+            "phase": "owned-pass:framework-tauri",
+            "wallMs": 2270.5707089999923,
+            "cpuMs": {
+              "user": 1833.47,
+              "system": 144.167
+            },
+            "rssAtEndBytes": 403161088
+          },
+          {
+            "phase": "owned-input:schema-contracts",
+            "wallMs": null,
+            "rssAtEndBytes": 425410560
+          },
+          {
+            "phase": "adapter:architecture",
+            "wallMs": 19.166957999987062,
+            "cpuMs": {
+              "user": 23.334,
+              "system": 2.127
+            },
+            "rssAtEndBytes": 428818432
+          },
+          {
+            "phase": "owned-retained:schema-contracts",
+            "wallMs": null,
+            "rssAtEndBytes": 442433536
+          },
+          {
+            "phase": "owned-pass:schema-contracts",
+            "wallMs": 121.37120799999684,
+            "cpuMs": {
+              "user": 104.999,
+              "system": 12.795
+            },
+            "rssAtEndBytes": 442433536
+          },
+          {
+            "phase": "owned-input:documentation",
+            "wallMs": null,
+            "rssAtEndBytes": 462454784
+          },
+          {
+            "phase": "adapter:markdown",
+            "wallMs": 204.8452499999985,
+            "cpuMs": {
+              "user": 141.45,
+              "system": 6.97
+            },
+            "rssAtEndBytes": 465600512
+          },
+          {
+            "phase": "owned-retained:documentation",
+            "wallMs": null,
+            "rssAtEndBytes": 427163648
+          },
+          {
+            "phase": "owned-pass:documentation",
+            "wallMs": 1134.2279580000031,
+            "cpuMs": {
+              "user": 428.554,
+              "system": 190.624
+            },
+            "rssAtEndBytes": 427163648
+          },
+          {
+            "phase": "owned-input:package-config",
+            "wallMs": null,
+            "rssAtEndBytes": 449560576
+          },
+          {
+            "phase": "adapter:packageJson",
+            "wallMs": 4.982875000001513,
+            "cpuMs": {
+              "user": 4.157,
+              "system": 0.237
+            },
+            "rssAtEndBytes": 450985984
+          },
+          {
+            "phase": "owned-retained:package-config",
+            "wallMs": null,
+            "rssAtEndBytes": 447283200
+          },
+          {
+            "phase": "owned-pass:package-config",
+            "wallMs": 217.19341600000917,
+            "cpuMs": {
+              "user": 114.862,
+              "system": 39.836
+            },
+            "rssAtEndBytes": 447283200
+          },
+          {
+            "phase": "owned-input:cargo-config",
+            "wallMs": null,
+            "rssAtEndBytes": 469565440
+          },
+          {
+            "phase": "adapter:cargoToml",
+            "wallMs": 10.883874999999534,
+            "cpuMs": {
+              "user": 11.297,
+              "system": 0.308
+            },
+            "rssAtEndBytes": 470925312
+          },
+          {
+            "phase": "owned-retained:cargo-config",
+            "wallMs": null,
+            "rssAtEndBytes": 481968128
+          },
+          {
+            "phase": "owned-pass:cargo-config",
+            "wallMs": 281.2354159999959,
+            "cpuMs": {
+              "user": 161.311,
+              "system": 47.749
+            },
+            "rssAtEndBytes": 481968128
+          },
+          {
+            "phase": "owned-input:tauri-config",
+            "wallMs": null,
+            "rssAtEndBytes": 474398720
+          },
+          {
+            "phase": "adapter:tauriConfig",
+            "wallMs": 2.658832999994047,
+            "cpuMs": {
+              "user": 2.717,
+              "system": 0.107
+            },
+            "rssAtEndBytes": 475824128
+          },
+          {
+            "phase": "owned-retained:tauri-config",
+            "wallMs": null,
+            "rssAtEndBytes": 486735872
+          },
+          {
+            "phase": "owned-pass:tauri-config",
+            "wallMs": 99.87950000001001,
+            "cpuMs": {
+              "user": 82.034,
+              "system": 13.097
+            },
+            "rssAtEndBytes": 486735872
+          },
+          {
+            "phase": "owned-input:tauri-capabilities",
+            "wallMs": null,
+            "rssAtEndBytes": 508264448
+          },
+          {
+            "phase": "adapter:tauriCapability",
+            "wallMs": 2.922707999998238,
+            "cpuMs": {
+              "user": 4.154,
+              "system": 0.161
+            },
+            "rssAtEndBytes": 509575168
+          },
+          {
+            "phase": "owned-retained:tauri-capabilities",
+            "wallMs": null,
+            "rssAtEndBytes": 520568832
+          },
+          {
+            "phase": "owned-pass:tauri-capabilities",
+            "wallMs": 112.00375000000349,
+            "cpuMs": {
+              "user": 76.145,
+              "system": 19.642
+            },
+            "rssAtEndBytes": 520568832
+          },
+          {
+            "phase": "owned-input:test-relevance",
+            "wallMs": null,
+            "rssAtEndBytes": 540868608
+          },
+          {
+            "phase": "adapter:tests",
+            "wallMs": 498.4626250000001,
+            "cpuMs": {
+              "user": 493.76,
+              "system": 8.841
+            },
+            "rssAtEndBytes": 492634112
+          },
+          {
+            "phase": "owned-retained:test-relevance",
+            "wallMs": null,
+            "rssAtEndBytes": 500695040
+          },
+          {
+            "phase": "owned-pass:test-relevance",
+            "wallMs": 2808.1612500000047,
+            "cpuMs": {
+              "user": 1397.004,
+              "system": 661.789
+            },
+            "rssAtEndBytes": 500711424
+          },
+          {
+            "phase": "owned-input:knowledge-links",
+            "wallMs": null,
+            "rssAtEndBytes": 514146304
+          },
+          {
+            "phase": "adapter:semanticLinker",
+            "wallMs": 547.5548750000016,
+            "cpuMs": {
+              "user": 596.497,
+              "system": 10.731
+            },
+            "rssAtEndBytes": 517505024
+          },
+          {
+            "phase": "owned-retained:knowledge-links",
+            "wallMs": null,
+            "rssAtEndBytes": 515653632
+          },
+          {
+            "phase": "owned-pass:knowledge-links",
+            "wallMs": 2588.316334000003,
+            "cpuMs": {
+              "user": 1431.88,
+              "system": 585.584
+            },
+            "rssAtEndBytes": 515653632
+          },
+          {
+            "phase": "owned-input:boundary-binding",
+            "wallMs": null,
+            "rssAtEndBytes": 537935872
+          },
+          {
+            "phase": "owned-retained:boundary-binding",
+            "wallMs": null,
+            "rssAtEndBytes": 631521280
+          },
+          {
+            "phase": "owned-pass:boundary-binding",
+            "wallMs": 1367.8962080000056,
+            "cpuMs": {
+              "user": 1211.136,
+              "system": 196.767
+            },
+            "rssAtEndBytes": 631521280
+          },
+          {
+            "phase": "owned-input:dependency-projection",
+            "wallMs": null,
+            "rssAtEndBytes": 658653184
+          },
+          {
+            "phase": "owned-dependencies:planned",
+            "wallMs": null,
+            "rssAtEndBytes": 662175744
+          },
+          {
+            "phase": "owned-retained:dependency-projection",
+            "wallMs": null,
+            "rssAtEndBytes": 554663936
+          },
+          {
+            "phase": "owned-pass:dependency-projection",
+            "wallMs": 3753.1274589999957,
+            "cpuMs": {
+              "user": 1624.983,
+              "system": 972.386
+            },
+            "rssAtEndBytes": 554680320
+          },
+          {
+            "phase": "owned-analysis",
+            "wallMs": 107311.028875,
+            "cpuMs": {
+              "user": 38037.867,
+              "system": 25619.531
+            },
+            "rssAtEndBytes": 554926080
+          },
+          {
+            "phase": "semantic-typescript-program",
+            "wallMs": 860.4171669999923,
+            "cpuMs": {
+              "user": 1228.167,
+              "system": 104.415
+            },
+            "rssAtEndBytes": 510951424
+          },
+          {
+            "phase": "semantic-typescript",
+            "wallMs": 23830.416375000015,
+            "cpuMs": {
+              "user": 13986.843,
+              "system": 5917.655
+            },
+            "rssAtEndBytes": 425050112
+          },
+          {
+            "phase": "semantic-typescript-program",
+            "wallMs": 318.92037499998696,
+            "cpuMs": {
+              "user": 586.094,
+              "system": 29.301
+            },
+            "rssAtEndBytes": 480968704
+          },
+          {
+            "phase": "semantic-typescript",
+            "wallMs": 647.9313329999859,
+            "cpuMs": {
+              "user": 907.896,
+              "system": 92.209
+            },
+            "rssAtEndBytes": 538132480
+          },
+          {
+            "phase": "semantic-typescript-program",
+            "wallMs": 534.1794999999984,
+            "cpuMs": {
+              "user": 757.026,
+              "system": 56.428
+            },
+            "rssAtEndBytes": 621395968
+          },
+          {
+            "phase": "semantic-typescript",
+            "wallMs": 7780.187375000009,
+            "cpuMs": {
+              "user": 4009.359,
+              "system": 2153.081
+            },
+            "rssAtEndBytes": 596295680
+          },
+          {
+            "phase": "native-provider-retention-replay",
+            "wallMs": 0.7292920000036247,
+            "cpuMs": {
+              "user": 0.665,
+              "system": 0.052
+            },
+            "rssAtEndBytes": 596377600
+          },
+          {
+            "phase": "source-freshness-barrier",
+            "wallMs": 983.1895000000077,
+            "cpuMs": {
+              "user": 1170.769,
+              "system": 388.403
+            },
+            "rssAtEndBytes": 682229760
+          },
+          {
+            "phase": "publication:content-key",
+            "wallMs": 19.472208999999566,
+            "rssAtEndBytes": 682229760
+          },
+          {
+            "phase": "publication:membership",
+            "wallMs": 307.67062499999884,
+            "rssAtEndBytes": 687308800
+          },
+          {
+            "phase": "publication:support-eligibility",
+            "wallMs": 133.7713330000115,
+            "rssAtEndBytes": 686866432
+          },
+          {
+            "phase": "publication:navigation",
+            "wallMs": 3818.193499999994,
+            "rssAtEndBytes": 683786240
+          },
+          {
+            "phase": "publication:symbols",
+            "wallMs": 0.07166699998197146,
+            "rssAtEndBytes": 683786240
+          },
+          {
+            "phase": "publication:call-summary",
+            "wallMs": 46.71754100001999,
+            "rssAtEndBytes": 683819008
+          },
+          {
+            "phase": "publication:snapshot-report",
+            "wallMs": 2.0113750000018626,
+            "rssAtEndBytes": 683835392
+          },
+          {
+            "phase": "publication:compatibility-projection",
+            "wallMs": 67357.09666699998,
+            "rssAtEndBytes": 290095104
+          },
+          {
+            "phase": "publication:pointer-and-commit",
+            "wallMs": 2996.1238330000197,
+            "rssAtEndBytes": 194871296
+          },
+          {
+            "phase": "semantic-publication",
+            "wallMs": 74682.02133399999,
+            "cpuMs": {
+              "user": 34567.853,
+              "system": 17181.847
+            },
+            "rssAtEndBytes": 195280896
+          },
+          {
+            "phase": "semantic-foundation",
+            "wallMs": 108136.775958,
+            "cpuMs": {
+              "user": 54778.412,
+              "system": 25779.128
+            },
+            "rssAtEndBytes": 197574656
+          },
+          {
+            "phase": "legacy-sqlite-export",
+            "wallMs": 16866.779167,
+            "cpuMs": {
+              "user": 7280.094,
+              "system": 7237.092
+            },
+            "rssAtEndBytes": 405307392
+          },
+          {
+            "phase": "json-export",
+            "wallMs": 3502.8868749999965,
+            "cpuMs": {
+              "user": 2917.177,
+              "system": 417.595
+            },
+            "rssAtEndBytes": 402145280
+          }
+        ],
+        "writerPragmas": [
+          {
+            "journal": "wal",
+            "synchronous": 2,
+            "cacheSize": -16000,
+            "mmapSize": 0,
+            "pageSize": 4096
+          },
+          {
+            "journal": "wal",
+            "synchronous": 2,
+            "cacheSize": -16000,
+            "mmapSize": 0,
+            "pageSize": 4096
+          }
+        ],
+        "rawProfileSha256": "3a8c15c483fbb372a3ed404ec7987c80bd6d63d33f5a1fbceb9cde62cbc98d79"
+      },
+      "exportWitness": {
+        "format": 1,
+        "files": {
+          "exports/graph.json": {
+            "equal": true,
+            "bytes": 102257994,
+            "sha256": "ef14baf370f2ba115d8f7dad4f5a9275f22716a12600849799eccee30d5a00ba"
+          },
+          "diagnostics.json": {
+            "equal": true,
+            "bytes": 15499572,
+            "sha256": "51a360fc5837018a1f473142a41b6fa5a3520e2aea650f98cce4b0a48ead0a6b"
+          }
+        },
+        "tables": {
+          "sc_facts": {
+            "count": 234423,
+            "sha256": "0e983ae2d848f06409b5f5afd02b1e287beaa4d4b60f72b76092a9e4de2a9506",
+            "equal": true,
+            "excludedColumns": []
+          },
+          "sc_claims": {
+            "count": 234423,
+            "sha256": "e8cb19bf1b19e0fb207ca26f0c060d761bb2fe31c77ae985e2b9e8d4e0749872",
+            "equal": true,
+            "excludedColumns": []
+          },
+          "sc_entities": {
+            "count": 216767,
+            "sha256": "ad95f13392425d799f65b3bebcc9111dde3187b92def80363ab3222b6dbd7058",
+            "equal": true,
+            "excludedColumns": []
+          },
+          "sc_occurrences": {
+            "count": 41438,
+            "sha256": "95c92d8eea6637328112121f19d997d061eb0f34e9c309fbef624707d87b308d",
+            "equal": true,
+            "excludedColumns": []
+          },
+          "sc_symbols": {
+            "count": 9355,
+            "sha256": "e84d7f32deffaa99d1c10713e4e435b9fe8e7aa5c13723dbc7c47fe7dd0fbdc8",
+            "equal": true,
+            "excludedColumns": []
+          },
+          "sc_owned": {
+            "count": 234423,
+            "sha256": "4ce3bcfcb16fc1df97a5745ff567d48190e9e73ae9f007c74dc774bc2419b979",
+            "equal": true,
+            "excludedColumns": []
+          },
+          "sc_groups": {
+            "count": 20024,
+            "sha256": "ba32715ea947f4cabc012662f7fbfb4dbe0cd5c4701b50e54413a331535684d1",
+            "equal": true,
+            "excludedColumns": []
+          },
+          "sc_supports": {
+            "count": 57423,
+            "sha256": "f83bf4dc96d6ce08c764c8aa4be3fcf607b32db8118f6b2d047e713965892e8b",
+            "equal": true,
+            "excludedColumns": []
+          },
+          "sc_inputs": {
+            "count": 7123,
+            "sha256": "b3f144a08dc4047d6e4889c3edc28661f671816a756b30f9de67f8b41613d03b",
+            "equal": true,
+            "excludedColumns": []
+          },
+          "sc_observed_inputs": {
+            "count": 996,
+            "sha256": "d1df1f8af8f7bd0abd5a16dee8e919c86f87d4569c8e5ce9e2a23a06eba56a68",
+            "equal": true,
+            "excludedColumns": []
+          },
+          "sc_run_digests": {
+            "count": 1181,
+            "sha256": "03f87d736d8add4dd71061bd9eb013a7bc8eeb9b5eba69caa85e38e6bf82715f",
+            "equal": true,
+            "excludedColumns": []
+          },
+          "sc_run_selectors": {
+            "count": 769,
+            "sha256": "677e5d557696a02d39d4352678bd814a48f7b98e95ba6098c7e7747bce19bc42",
+            "equal": true,
+            "excludedColumns": []
+          },
+          "sc_selector_gates": {
+            "count": 684,
+            "sha256": "022f3c02a9bef719174b554d78ec97b3736b7b45f74cd79a30301ebf57fb6b97",
+            "equal": true,
+            "excludedColumns": []
+          },
+          "sc_runs": {
+            "count": 1181,
+            "sha256": "3ec1cb67349554beb4adee09475c73856c55275512f20d5f92b4bb7fcfa3f306",
+            "equal": true,
+            "excludedColumns": [
+              "created_at"
+            ]
+          }
+        },
+        "freshness": {
+          "repositoryRoot": "/tmp/prograph-core-final/pastey",
+          "indexDirectory": "/tmp/prograph-core-final/pastey-candidate",
+          "indexGeneratedAt": "2026-11-10T08:17:26.153Z",
+          "schemaVersion": "1.2.0",
+          "toolVersion": "0.3.0",
+          "enabledAdapters": [
+            "typescript",
+            "rust",
+            "python",
+            "react",
+            "tauri",
+            "architecture",
+            "markdown",
+            "packageJson",
+            "cargoToml",
+            "tauriConfig",
+            "tauriCapability",
+            "tests",
+            "semanticLinker"
+          ],
+          "indexedFileCount": 309,
+          "currentSupportedFileCount": 309,
+          "addedFiles": [],
+          "modifiedFiles": [],
+          "deletedFiles": [],
+          "configChanged": false,
+          "adapterVersionsChanged": false,
+          "schemaChanged": false,
+          "repositoryChanged": false,
+          "authority": "semantic",
+          "semanticPublication": {
+            "state": "matches-semantic-snapshot",
+            "snapshot": 1
+          },
+          "semanticInputsChanged": false,
+          "semanticInputs": {
+            "state": "checked-recorded",
+            "checked": 4587,
+            "additionalChanges": 0
+          },
+          "stale": false,
+          "state": "fresh"
+        },
+        "limits": "Raw graph/diagnostics compared completely without normalization. Complete selected SQL rows compared in primary-key order; only sc_runs.created_at excluded. Complete semantic report/manifest run clocks are not byte-compared across analyses."
+      },
+      "sqlWitness": {
+        "format": 1,
+        "databases": {
+          "semantic.sqlite": {
+            "schemaEqual": true,
+            "tables": {
+              "adapter_runs": {
+                "count": 18,
+                "sha256": "5da5bfa46ed52808e05c260862a38fe414c8d20388e161280cb072d73bdf68c9",
+                "equal": true
+              },
+              "analysis_runs": {
+                "count": 1,
+                "sha256": "3183b7038d54e8e97cb081c1ec8c75914078bb0240e2dfb0abbdab5c705c5151",
+                "equal": true
+              },
+              "cg_candidates": {
+                "count": 165605,
+                "sha256": "1d75f83c18f69c959a2968ac024e915bf09e4b9a1cee68a8e067a9e2f9e6b035",
+                "equal": true
+              },
+              "cg_current": {
+                "count": 165517,
+                "sha256": "8e9c2842528a85666f920ff929b1f6406a201a1f004b25677de1729dcae623da",
+                "equal": true
+              },
+              "cg_diagnostic_rows": {
+                "count": 46845,
+                "sha256": "fddec360f1a4a6724d373de604d3732b845cc88b5bffa7a3dd1052d3395eef9f",
+                "equal": true
+              },
+              "cg_meta": {
+                "count": 6,
+                "sha256": "3c600837b6a047fedfb626f1e4a495ec6631011153831487c6e663e58a27af77",
+                "equal": true
+              },
+              "cg_owners": {
+                "count": 1007,
+                "sha256": "11253422e25a0da3c0176d3beb48ffb7a633aa22df9773a0f591a62f846a352b",
+                "equal": true
+              },
+              "cg_source_inputs": {
+                "count": 309,
+                "sha256": "e141ffa54cd5af51f96cd5620dd813d191acf7838234120b189e52a75434f064",
+                "equal": true
+              },
+              "cq_arch_counts": {
+                "count": 256,
+                "sha256": "fa8fa0505447ccd2d11249832d338566b38a38af127e46198f91164f15c2d6e2",
+                "equal": true
+              },
+              "cq_arch_edges": {
+                "count": 2342,
+                "sha256": "63eb9ab4bc48a18492dae06b903520ec39edf35c99afef4dffd69dcb775c4676",
+                "equal": true
+              },
+              "cq_arch_files": {
+                "count": 260,
+                "sha256": "ceacab6e41f6d6e34cbcf0d18f485accb87ebf65e55cafe88bf814f127e2e8f1",
+                "equal": true
+              },
+              "cq_arch_nodes": {
+                "count": 822,
+                "sha256": "4af5e4bf2fc572d20b1fc465e4c8a2dd894585a54c982d54eedeefe605ecaf80",
+                "equal": true
+              },
+              "cq_boundaries": {
+                "count": 393,
+                "sha256": "feabc3a65f9e12bd926e7eb2f1f8ff6e7eefc72a3e9e4221fc43d88c0100ede9",
+                "equal": true
+              },
+              "cq_boundary_edges": {
+                "count": 1140,
+                "sha256": "178289961de5f542fb97734848783705a27e9e832a6a716a4173c07d1d3dc9ca",
+                "equal": true
+              },
+              "cq_counts": {
+                "count": 155,
+                "sha256": "de8a1516a0cc55d1c132c8bc8cf2453fbeb25976e830b1ed73764645088a0eb1",
+                "equal": true
+              },
+              "cq_cycle_errors": {
+                "count": 15,
+                "sha256": "62c5ae3c4dda6c99c72125d810294232f0cf785e9016cb845376af7157d4c80b",
+                "equal": true
+              },
+              "cq_cycles": {
+                "count": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "equal": true
+              },
+              "cq_diagnostics": {
+                "count": 46845,
+                "sha256": "edd495ba35050694215c2ee7cabe7d2fd503e3c7f9e6c5bed58f36b5a0fc53cd",
+                "equal": true
+              },
+              "cq_edges": {
+                "count": 78181,
+                "sha256": "ed219235b62cdcbd7743a844850baabc7472e360a78b464946f72de25b293e18",
+                "equal": true
+              },
+              "cq_file_counts": {
+                "count": 1697,
+                "sha256": "5951490553991d309958858197d2fbf1357f6c43fa3e945ca11d857ed9342a3d",
+                "equal": true
+              },
+              "cq_files": {
+                "count": 1372,
+                "sha256": "adeb77099a0a95f4a64720ac946b0e0949f368e62ca0efeb4f75f349d6fabea4",
+                "equal": true
+              },
+              "cq_flow": {
+                "count": 4551,
+                "sha256": "f8707cb3017f9335b1051f893f1747f21fcfd59afd836852c90a3d910f6bf643",
+                "equal": true
+              },
+              "cq_flow_counts": {
+                "count": 931,
+                "sha256": "d2296564e9de453f7f44fba401b2c9b10c42356ffaaa9b1b99e02dad19d649ee",
+                "equal": true
+              },
+              "cq_flow_evidence": {
+                "count": 4551,
+                "sha256": "6aa51ebecc5e2a4bcf5d7335839882486aef623457353419e065f9b6a88867e9",
+                "equal": true
+              },
+              "cq_meta": {
+                "count": 5,
+                "sha256": "7d4286369b8f8a99b6e912eadcd3b4c9617da9c47722cfb6d719b8af386d5f47",
+                "equal": true
+              },
+              "cq_nodes": {
+                "count": 40491,
+                "sha256": "2da24863aebcfdec97515eb63592a1713b60f6dc379739c97256579554f3f572",
+                "equal": true
+              },
+              "cq_scope_nodes": {
+                "count": 197205,
+                "sha256": "ba8f7fc373334674e047c98888da5e59cd6a2a1c0c599dc6fa24a3e73ee69192",
+                "equal": true
+              },
+              "cq_search": {
+                "count": 40491,
+                "sha256": "da971d96ffc3d959b22902b7f71f83fd2c147582fe20caa0e0dffe2e2b5f8c32",
+                "equal": true
+              },
+              "cq_search_config": {
+                "count": 1,
+                "sha256": "756c92c2cdbdddc20ef0fe8713974731a08470d68ddf1bd4041a187aace0dbe6",
+                "equal": true
+              },
+              "cq_search_content": {
+                "count": 40491,
+                "sha256": "7ad18094f9e7fa889a09fc5191e4a897ecbc715d137fc0b6743aecc886b1b242",
+                "equal": true
+              },
+              "cq_search_data": {
+                "count": 4007,
+                "sha256": "f33aafa82c0549ce2173831af5bad12cbf70f6bd62e26cf44b67c14966f3c357",
+                "equal": true
+              },
+              "cq_search_docs": {
+                "count": 40491,
+                "sha256": "c7361f2bae567532202a7867c631531558463e3f9d417d8e55fb770e6414b677",
+                "equal": true
+              },
+              "cq_search_docsize": {
+                "count": 40491,
+                "sha256": "833004f016c3556abd39fca65f77610174c1e025a98e454ae8893cfe51fcc44d",
+                "equal": true
+              },
+              "cq_search_idx": {
+                "count": 2750,
+                "sha256": "1e0415bb8a8cbe1f1d37f3c88993b4c43de2fcde71b39e3e896d0c59be5baf19",
+                "equal": true
+              },
+              "diagnostics": {
+                "count": 46845,
+                "sha256": "8632381415f9644cbd279294f5ff39c1719ac43a5b0002d4b8ddf1fb057d585b",
+                "equal": true
+              },
+              "edges": {
+                "count": 78181,
+                "sha256": "445b5b8ef93478316177e6b49ae61cb23e5c509c57b6da26bd2cb5f44e4671ac",
+                "equal": true
+              },
+              "files": {
+                "count": 296,
+                "sha256": "57bc6d5429167d17b358d39d66859d950a31858cdb92e1d7ff8aa828ddee3d8e",
+                "equal": true
+              },
+              "nodes": {
+                "count": 40491,
+                "sha256": "b31ee641fdcef54b8b0110ffe578ab5816bfc97275244ea303af24f89253f866",
+                "equal": true
+              },
+              "repository_metadata": {
+                "count": 2,
+                "sha256": "06a5d532053befa276d5d1d0a7a23267f7418a183ef24ae40e76ab046070e7d7",
+                "equal": true
+              },
+              "sc_call_epochs": {
+                "count": 3757,
+                "sha256": "17dc5b38c4b3739f65dc0ff880fc01e789b135e853191e12e25850af843a8982",
+                "equal": true
+              },
+              "sc_claim_navigation": {
+                "count": 234423,
+                "sha256": "fbf5902e3f3fd963e5794c9f87220a4edc337c51457819fa94780c4f056239e9",
+                "equal": true
+              },
+              "sc_claim_origins": {
+                "count": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "equal": true
+              },
+              "sc_claims": {
+                "count": 234423,
+                "sha256": "2ee53e0c63637da7164dad9ed6f7f496b300cc71dde4c3b9c831ec22a37c7966",
+                "equal": true
+              },
+              "sc_diagnostics": {
+                "count": 246,
+                "sha256": "dd6aca80116989453109400d8069cdc1ce9fb8e013f58655151908bc82cc89c4",
+                "equal": true
+              },
+              "sc_entities": {
+                "count": 216767,
+                "sha256": "985933c0fdee9601dd18701602852e068fd06cf49fddecb37e38c7d6d7a50074",
+                "equal": true
+              },
+              "sc_epoch_snapshots": {
+                "count": 1,
+                "sha256": "51bc513113548e062ada62b03efea153cae2abdf46b051c551c3e62a4dfb88cf",
+                "equal": true
+              },
+              "sc_facts": {
+                "count": 234423,
+                "sha256": "93399663ac57ce98cdf89cf9e073a1a7beeb5d11efb6fbc301a23ac6a626a21f",
+                "equal": true
+              },
+              "sc_groups": {
+                "count": 20024,
+                "sha256": "ba32715ea947f4cabc012662f7fbfb4dbe0cd5c4701b50e54413a331535684d1",
+                "equal": true
+              },
+              "sc_inputs": {
+                "count": 7123,
+                "sha256": "6d9e6640058ff4e1a0d8c4f0d45beed6da97f263119ae5e89ddfdd28e963b258",
+                "equal": true
+              },
+              "sc_legacy_active": {
+                "count": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "equal": true
+              },
+              "sc_legacy_calls": {
+                "count": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "equal": true
+              },
+              "sc_legacy_context_lookup": {
+                "count": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "equal": true
+              },
+              "sc_legacy_navigation": {
+                "count": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "equal": true
+              },
+              "sc_legacy_visible_symbols": {
+                "count": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "equal": true
+              },
+              "sc_meta": {
+                "count": 5,
+                "sha256": "2f98fb23813c06782495bf9fface81753d3529d3b118569d30d83377e33a31b5",
+                "equal": true
+              },
+              "sc_observed_inputs": {
+                "count": 996,
+                "sha256": "d9d3f727c6c4d2fa3c96dfa319ebabbebae4831b5ef2b74bd0fd5a8baa012f8c",
+                "equal": true
+              },
+              "sc_occurrences": {
+                "count": 41438,
+                "sha256": "296e51a0f990395186e4b6878468e3236cfe5d44385ded5b3fc9e091e899ec3f",
+                "equal": true
+              },
+              "sc_origin_runs": {
+                "count": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "equal": true
+              },
+              "sc_owned": {
+                "count": 234423,
+                "sha256": "e4154d30a1915021313358b88ddfe40cf72fb268e03b368179f5f6461eb0902e",
+                "equal": true
+              },
+              "sc_partitions": {
+                "count": 1181,
+                "sha256": "d8a33359fb71cb80b4051671d97436bf0f2677f6d9accc28a216fc5ec07137eb",
+                "equal": true
+              },
+              "sc_projection_rows": {
+                "count": 165605,
+                "sha256": "1e3ca3d3098f241c00bce2c7cd60b35f34617bf8097085f4b66d5ed62b7cd374",
+                "equal": true
+              },
+              "sc_provenance": {
+                "count": 1254,
+                "sha256": "a51e33886eb90f9d0aaeee9be5ce93068cea58c541570cf405ad8baf17c2f5bc",
+                "equal": true
+              },
+              "sc_provider_recipes": {
+                "count": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "equal": true
+              },
+              "sc_run_digests": {
+                "count": 1181,
+                "sha256": "833bc7bbc774d9a8457be32d27d6aaa44be849a095b64e01bb5f41cef36197d1",
+                "equal": true
+              },
+              "sc_run_selectors": {
+                "count": 769,
+                "sha256": "a5886abf7764f7dcc31f385616971cc1ade86ab72ee1809f6e3ba46e1e4290ca",
+                "equal": true
+              },
+              "sc_runs": {
+                "count": 1181,
+                "sha256": "a151b54f4dbfe519ba746cc11e4803b18a8556fa44ed97365f759e2cbe443ad8",
+                "equal": true
+              },
+              "sc_selector_gates": {
+                "count": 684,
+                "sha256": "6050959faa7d6632fd0accc72fc2386f5d6359cc89519d535daa6ec4ac5c79e5",
+                "equal": true
+              },
+              "sc_snapshot_pins": {
+                "count": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "equal": true
+              },
+              "sc_snapshot_reports": {
+                "count": 1,
+                "sha256": "967f6ec08232f224b3336a90b69d58fa9df3e51bb9aa43a1c2f914528e0c7784",
+                "equal": true
+              },
+              "sc_snapshots": {
+                "count": 1,
+                "sha256": "b9ec1676b9b67030f37eccdd262015ba991ca37334370d10f0fc36a9140a8592",
+                "equal": true
+              },
+              "sc_sources": {
+                "count": 87,
+                "sha256": "8a582faef70666d7e606e3c86c3d4b271ff6220da0e3e8d4f7c54812d3335dcf",
+                "equal": true
+              },
+              "sc_supports": {
+                "count": 57423,
+                "sha256": "7dae00831cce5f34b8223bc9f0f6383591df26fdc62169333ec420e80c18d9eb",
+                "equal": true
+              },
+              "sc_symbols": {
+                "count": 9355,
+                "sha256": "10ecf09b33e819625bdfc6efbaa4e7ebaefdf7d23318be9168222e20e5a21b06",
+                "equal": true
+              },
+              "sc_visibility": {
+                "count": 234423,
+                "sha256": "b723db93fa662c708e2fa48343309b19df1bc21a45ba273342d7851f98b39698",
+                "equal": true
+              },
+              "schema_metadata": {
+                "count": 3,
+                "sha256": "bac91eb1294a8df8dfb51ba72109c4351d48e16598a4a5edfcf6d6bf1bf1a724",
+                "equal": true
+              },
+              "sqlite_sequence": {
+                "count": 2,
+                "sha256": "ccbb97588d3ecd4ce9c3d5550202dee3348a21d6d4da49e70ea99a66ba1865a3",
+                "equal": true
+              }
+            },
+            "integrity": "ok",
+            "foreignKeys": "ok"
+          },
+          "graph.sqlite": {
+            "schemaEqual": true,
+            "tables": {
+              "adapter_runs": {
+                "count": 18,
+                "sha256": "5da5bfa46ed52808e05c260862a38fe414c8d20388e161280cb072d73bdf68c9",
+                "equal": true
+              },
+              "analysis_runs": {
+                "count": 1,
+                "sha256": "60ea9f86ad4f76b9cd190e0c008d006fbecd6b9b9a6305fabf05cc4530a2a56d",
+                "equal": true
+              },
+              "diagnostics": {
+                "count": 46845,
+                "sha256": "712ad44512ffeed80bcd82ac2ff01da8eb87b43ddb73afdb2aa712f85478a422",
+                "equal": true
+              },
+              "edges": {
+                "count": 78181,
+                "sha256": "2b949eab0e917fd46f28b3c5ca3173776d73f3b24297803b4b519b664cad8274",
+                "equal": true
+              },
+              "files": {
+                "count": 296,
+                "sha256": "1279c77cdefa5a8352c1142c9460c39804870da8e573a30ea0785f92277d9159",
+                "equal": true
+              },
+              "nodes": {
+                "count": 40491,
+                "sha256": "afe0b99b5230ff21ab825f71d6801588078bb8c33244f126a06c5672d93ec3da",
+                "equal": true
+              },
+              "q_arch_edges": {
+                "count": 2342,
+                "sha256": "693465ad62bfdd531c42471cd234fc381ef542a0d9ade4eb0725882050b0bd37",
+                "equal": true
+              },
+              "q_arch_nodes": {
+                "count": 822,
+                "sha256": "68a8377718f03a315a8144a806a1fc15b2111b502de1a7a9e9ae85805e5f788f",
+                "equal": true
+              },
+              "q_boundaries": {
+                "count": 393,
+                "sha256": "d8bcc6731d40998b9f82d7221938f4391ba3f4771db4bc0c5230ab5e28628e93",
+                "equal": true
+              },
+              "q_context": {
+                "count": 2000,
+                "sha256": "332c8462feebd9fb9fe2e305c6a3edc12697ea5a5bf69a2ada89b50cb5b7f0b3",
+                "equal": true
+              },
+              "q_cycle_errors": {
+                "count": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "equal": true
+              },
+              "q_cycles": {
+                "count": 215,
+                "sha256": "41ab1abba697e36f3f35ee782c1925b67030f3fe6d2002edeab2523a942e8d3f",
+                "equal": true
+              },
+              "q_diagnostics": {
+                "count": 46845,
+                "sha256": "ea100a77df57e83e450b12ba9fc48369b2fda525943ca3ecb87cb102568bba44",
+                "equal": true
+              },
+              "q_edges": {
+                "count": 78181,
+                "sha256": "24cfabc11e87ef47a1f56b829fe9730591df5553c2153255941779c904c6d457",
+                "equal": true
+              },
+              "q_files": {
+                "count": 1372,
+                "sha256": "780f5975e61a3795dbe5277bf43f0199f1f11b5789e6817fa55cc862a52aa7bd",
+                "equal": true
+              },
+              "q_framework_edges": {
+                "count": 3375,
+                "sha256": "09cb978a108db8be46a6e06e9a7386c14ca6c895203cbff63186edaed592c6d1",
+                "equal": true
+              },
+              "q_meta": {
+                "equal": false,
+                "accepted": {
+                  "count": 7,
+                  "sha256": "961332f1603d45fd0eff76c2d5e038410dc3c253ff7772fbac2c2e20b2edc8f5"
+                },
+                "current": {
+                  "count": 7,
+                  "sha256": "4587f9e92292f55e2dcdacdfd68a6f0eebbe691554c17e08dc005bdf35b7f398"
+                },
+                "randomGenerationTokens": [
+                  "7774e304-556a-4411-990e-f79414bd3191",
+                  "68ee80f4-7e2c-40f2-8a44-15981fcb6ef8"
+                ],
+                "limitation": "All remaining rows equal. Raw non-clock cache UUID difference retained; complete SQL byte equality is not claimed."
+              },
+              "q_scope_nodes": {
+                "count": 197205,
+                "sha256": "d9545242f067ac6fe81d309b4285cf850aa0f8cdf5ae9a98c8a4c880c8ea3362",
+                "equal": true
+              },
+              "q_search": {
+                "count": 40491,
+                "sha256": "da971d96ffc3d959b22902b7f71f83fd2c147582fe20caa0e0dffe2e2b5f8c32",
+                "equal": true
+              },
+              "q_search_config": {
+                "count": 1,
+                "sha256": "756c92c2cdbdddc20ef0fe8713974731a08470d68ddf1bd4041a187aace0dbe6",
+                "equal": true
+              },
+              "q_search_content": {
+                "count": 40491,
+                "sha256": "4447645162df0aee3e08430de82ea4c5c47056950d98c4baabba5a769ad673c6",
+                "equal": true
+              },
+              "q_search_data": {
+                "count": 3981,
+                "sha256": "95ec068507d3387c53492a17687d1ea95178964cffa749c4a6ec2d3f7d8a0590",
+                "equal": true
+              },
+              "q_search_docs": {
+                "count": 40491,
+                "sha256": "b23aa2dc15909ac68bd6943704f1015b95e896638ba90ea0020d2f080b629065",
+                "equal": true
+              },
+              "q_search_docsize": {
+                "count": 40491,
+                "sha256": "3e24be23665b7cd4bdf0c3ca756825373db73711bf3413a68eae7e249a917f56",
+                "equal": true
+              },
+              "q_search_idx": {
+                "count": 3812,
+                "sha256": "84f835a40fa49e7af601066ff705c1e2d99e142d4977f2aca1e95b7037a7c68d",
+                "equal": true
+              },
+              "q_summaries": {
+                "count": 5,
+                "sha256": "3c15619216af4676709c6a82b9d22fef994d74b0b974320420d2a5d6688ace91",
+                "equal": true
+              },
+              "repository_metadata": {
+                "count": 2,
+                "sha256": "06a5d532053befa276d5d1d0a7a23267f7418a183ef24ae40e76ab046070e7d7",
+                "equal": true
+              },
+              "schema_metadata": {
+                "count": 3,
+                "sha256": "9ccb3252ad4f7e04f63f50dd0344a3d85fb375c5a528a8d6024d6ec03d7af219",
+                "equal": true
+              },
+              "sqlite_sequence": {
+                "count": 2,
+                "sha256": "ccbb97588d3ecd4ce9c3d5550202dee3348a21d6d4da49e70ea99a66ba1865a3",
+                "equal": true
+              }
+            },
+            "integrity": "ok",
+            "foreignKeys": "ok"
+          }
+        },
+        "excludedClockFields": [
+          "sc_runs.created_at",
+          "sc_snapshots.created_at",
+          "sc_origin_runs.created_at",
+          "sc_provider_recipes.updated_at",
+          "analysis_runs.generated_at",
+          "adapter_runs.duration_ms",
+          "manifest.generatedAt",
+          "manifest.analysisDuration",
+          "manifest.adapterRuns[].durationMs",
+          "manifest.semanticCore.durationMs",
+          "stateHeader.generatedAt"
+        ],
+        "reportKeys": "Original keys authenticated independently; compare complete reports excluding clocks and their derived report keys. No graph/export bytes normalized."
+      }
+    },
+    "bootstrap": {
+      "scope": "Fresh compatibility query rebuild only, same source database cloned twice; excludes compiler. Normal FULL/WAL.",
+      "control": {
+        "elapsedMs": 67123.383,
+        "cpu": {
+          "user": 25970542,
+          "system": 15610035
+        },
+        "startRss": 55040,
+        "endRss": 337376,
+        "before": {
+          "rss": 56360960,
+          "heapTotal": 10108928,
+          "heapUsed": 6481176,
+          "external": 2290633,
+          "arrayBuffers": 108721
+        },
+        "after": {
+          "rss": 271253504,
+          "heapTotal": 314785792,
+          "heapUsed": 241052168,
+          "external": 3229936,
+          "arrayBuffers": 1069315
+        },
+        "snapshot": 1,
+        "work": {
+          "bootstrap": true,
+          "payloadChanges": 165517,
+          "nodeContributions": 40491,
+          "edgeContributions": 78181,
+          "edgeReclassifications": 78181,
+          "architectureRelationships": 78181,
+          "fileContributions": 361,
+          "architecturePairs": 783
+        },
+        "witnesses": {
+          "cq_arch_counts": {
+            "count": 256,
+            "sha256": "fa8fa0505447ccd2d11249832d338566b38a38af127e46198f91164f15c2d6e2"
+          },
+          "cq_arch_edges": {
+            "count": 2342,
+            "sha256": "63eb9ab4bc48a18492dae06b903520ec39edf35c99afef4dffd69dcb775c4676"
+          },
+          "cq_arch_files": {
+            "count": 260,
+            "sha256": "ceacab6e41f6d6e34cbcf0d18f485accb87ebf65e55cafe88bf814f127e2e8f1"
+          },
+          "cq_arch_nodes": {
+            "count": 822,
+            "sha256": "4af5e4bf2fc572d20b1fc465e4c8a2dd894585a54c982d54eedeefe605ecaf80"
+          },
+          "cq_boundaries": {
+            "count": 393,
+            "sha256": "feabc3a65f9e12bd926e7eb2f1f8ff6e7eefc72a3e9e4221fc43d88c0100ede9"
+          },
+          "cq_boundary_edges": {
+            "count": 1140,
+            "sha256": "178289961de5f542fb97734848783705a27e9e832a6a716a4173c07d1d3dc9ca"
+          },
+          "cq_counts": {
+            "count": 155,
+            "sha256": "de8a1516a0cc55d1c132c8bc8cf2453fbeb25976e830b1ed73764645088a0eb1"
+          },
+          "cq_cycle_errors": {
+            "count": 15,
+            "sha256": "62c5ae3c4dda6c99c72125d810294232f0cf785e9016cb845376af7157d4c80b"
+          },
+          "cq_cycles": {
+            "count": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "cq_diagnostics": {
+            "count": 46845,
+            "sha256": "edd495ba35050694215c2ee7cabe7d2fd503e3c7f9e6c5bed58f36b5a0fc53cd"
+          },
+          "cq_edges": {
+            "count": 78181,
+            "sha256": "ed219235b62cdcbd7743a844850baabc7472e360a78b464946f72de25b293e18"
+          },
+          "cq_file_counts": {
+            "count": 1697,
+            "sha256": "5951490553991d309958858197d2fbf1357f6c43fa3e945ca11d857ed9342a3d"
+          },
+          "cq_files": {
+            "count": 1372,
+            "sha256": "adeb77099a0a95f4a64720ac946b0e0949f368e62ca0efeb4f75f349d6fabea4"
+          },
+          "cq_flow": {
+            "count": 4551,
+            "sha256": "f8707cb3017f9335b1051f893f1747f21fcfd59afd836852c90a3d910f6bf643"
+          },
+          "cq_flow_counts": {
+            "count": 931,
+            "sha256": "d2296564e9de453f7f44fba401b2c9b10c42356ffaaa9b1b99e02dad19d649ee"
+          },
+          "cq_flow_evidence": {
+            "count": 4551,
+            "sha256": "6aa51ebecc5e2a4bcf5d7335839882486aef623457353419e065f9b6a88867e9"
+          },
+          "cq_meta": {
+            "count": 5,
+            "sha256": "2ec21a155fbd6dceb09dc6a8bc75990235a99261369dcc97e6c06aea964cae2a"
+          },
+          "cq_nodes": {
+            "count": 40491,
+            "sha256": "2da24863aebcfdec97515eb63592a1713b60f6dc379739c97256579554f3f572"
+          },
+          "cq_scope_nodes": {
+            "count": 197205,
+            "sha256": "ba8f7fc373334674e047c98888da5e59cd6a2a1c0c599dc6fa24a3e73ee69192"
+          },
+          "cq_search": {
+            "count": 40491,
+            "sha256": "11373f981dacb0b7146db8c07cc689846c826c9da96cc7bf27faccdd0e77a0f4"
+          },
+          "cq_search_docs": {
+            "count": 40491,
+            "sha256": "c7361f2bae567532202a7867c631531558463e3f9d417d8e55fb770e6414b677"
+          }
+        },
+        "integrity": "ok",
+        "foreignKeys": [],
+        "pragmas": [
+          [
+            "journal_mode",
+            "wal"
+          ],
+          [
+            "synchronous",
+            2
+          ]
+        ]
+      },
+      "candidate": {
+        "elapsedMs": 62536.603666,
+        "cpu": {
+          "user": 23460136,
+          "system": 13166344
+        },
+        "startRss": 54896,
+        "endRss": 176112,
+        "before": {
+          "rss": 56197120,
+          "heapTotal": 9584640,
+          "heapUsed": 6491856,
+          "external": 2290618,
+          "arrayBuffers": 108706
+        },
+        "after": {
+          "rss": 99483648,
+          "heapTotal": 113213440,
+          "heapUsed": 66935040,
+          "external": 2304240,
+          "arrayBuffers": 143619
+        },
+        "snapshot": 1,
+        "work": {
+          "bootstrap": true,
+          "payloadChanges": 165517,
+          "nodeContributions": 40491,
+          "edgeContributions": 78181,
+          "edgeReclassifications": 78181,
+          "architectureRelationships": 78181,
+          "fileContributions": 361,
+          "architecturePairs": 783
+        },
+        "witnesses": {
+          "cq_arch_counts": {
+            "count": 256,
+            "sha256": "fa8fa0505447ccd2d11249832d338566b38a38af127e46198f91164f15c2d6e2"
+          },
+          "cq_arch_edges": {
+            "count": 2342,
+            "sha256": "63eb9ab4bc48a18492dae06b903520ec39edf35c99afef4dffd69dcb775c4676"
+          },
+          "cq_arch_files": {
+            "count": 260,
+            "sha256": "ceacab6e41f6d6e34cbcf0d18f485accb87ebf65e55cafe88bf814f127e2e8f1"
+          },
+          "cq_arch_nodes": {
+            "count": 822,
+            "sha256": "4af5e4bf2fc572d20b1fc465e4c8a2dd894585a54c982d54eedeefe605ecaf80"
+          },
+          "cq_boundaries": {
+            "count": 393,
+            "sha256": "feabc3a65f9e12bd926e7eb2f1f8ff6e7eefc72a3e9e4221fc43d88c0100ede9"
+          },
+          "cq_boundary_edges": {
+            "count": 1140,
+            "sha256": "178289961de5f542fb97734848783705a27e9e832a6a716a4173c07d1d3dc9ca"
+          },
+          "cq_counts": {
+            "count": 155,
+            "sha256": "de8a1516a0cc55d1c132c8bc8cf2453fbeb25976e830b1ed73764645088a0eb1"
+          },
+          "cq_cycle_errors": {
+            "count": 15,
+            "sha256": "62c5ae3c4dda6c99c72125d810294232f0cf785e9016cb845376af7157d4c80b"
+          },
+          "cq_cycles": {
+            "count": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "cq_diagnostics": {
+            "count": 46845,
+            "sha256": "edd495ba35050694215c2ee7cabe7d2fd503e3c7f9e6c5bed58f36b5a0fc53cd"
+          },
+          "cq_edges": {
+            "count": 78181,
+            "sha256": "ed219235b62cdcbd7743a844850baabc7472e360a78b464946f72de25b293e18"
+          },
+          "cq_file_counts": {
+            "count": 1697,
+            "sha256": "5951490553991d309958858197d2fbf1357f6c43fa3e945ca11d857ed9342a3d"
+          },
+          "cq_files": {
+            "count": 1372,
+            "sha256": "adeb77099a0a95f4a64720ac946b0e0949f368e62ca0efeb4f75f349d6fabea4"
+          },
+          "cq_flow": {
+            "count": 4551,
+            "sha256": "f8707cb3017f9335b1051f893f1747f21fcfd59afd836852c90a3d910f6bf643"
+          },
+          "cq_flow_counts": {
+            "count": 931,
+            "sha256": "d2296564e9de453f7f44fba401b2c9b10c42356ffaaa9b1b99e02dad19d649ee"
+          },
+          "cq_flow_evidence": {
+            "count": 4551,
+            "sha256": "6aa51ebecc5e2a4bcf5d7335839882486aef623457353419e065f9b6a88867e9"
+          },
+          "cq_meta": {
+            "count": 5,
+            "sha256": "2ec21a155fbd6dceb09dc6a8bc75990235a99261369dcc97e6c06aea964cae2a"
+          },
+          "cq_nodes": {
+            "count": 40491,
+            "sha256": "2da24863aebcfdec97515eb63592a1713b60f6dc379739c97256579554f3f572"
+          },
+          "cq_scope_nodes": {
+            "count": 197205,
+            "sha256": "ba8f7fc373334674e047c98888da5e59cd6a2a1c0c599dc6fa24a3e73ee69192"
+          },
+          "cq_search": {
+            "count": 40491,
+            "sha256": "11373f981dacb0b7146db8c07cc689846c826c9da96cc7bf27faccdd0e77a0f4"
+          },
+          "cq_search_docs": {
+            "count": 40491,
+            "sha256": "c7361f2bae567532202a7867c631531558463e3f9d417d8e55fb770e6414b677"
+          }
+        },
+        "integrity": "ok",
+        "foreignKeys": [],
+        "pragmas": [
+          [
+            "journal_mode",
+            "wal"
+          ],
+          [
+            "synchronous",
+            2
+          ]
+        ]
+      },
+      "projectionRowsEqual": true
+    },
+    "ownerCatalogueProbe": [
+      {
+        "owners": 1000,
+        "setupMs": 104.47454199999999,
+        "initial": {
+          "snapshot": 1,
+          "ms": 15.554749999999956,
+          "cpu": {
+            "user": 14431,
+            "system": 1138
+          },
+          "stages": [
+            {
+              "stage": "content-key",
+              "ms": 5.1474999999999795
+            },
+            {
+              "stage": "membership",
+              "ms": 8.252959000000033
+            },
+            {
+              "stage": "support-eligibility",
+              "ms": 0.15529099999997698
+            },
+            {
+              "stage": "navigation",
+              "ms": 0.382000000000005
+            },
+            {
+              "stage": "symbols",
+              "ms": 0.005166999999971722
+            },
+            {
+              "stage": "call-summary",
+              "ms": 0.3461250000000291
+            },
+            {
+              "stage": "pointer-and-commit",
+              "ms": 0.7429579999999874
+            }
+          ]
+        },
+        "noop": {
+          "snapshot": 2,
+          "ms": 18.31495799999999,
+          "cpu": {
+            "user": 16223,
+            "system": 2190
+          },
+          "stages": [
+            {
+              "stage": "content-key",
+              "ms": 4.872375000000034
+            },
+            {
+              "stage": "membership",
+              "ms": 12.148874999999975
+            },
+            {
+              "stage": "support-eligibility",
+              "ms": 0.1895420000000172
+            },
+            {
+              "stage": "navigation",
+              "ms": 0.06466599999998834
+            },
+            {
+              "stage": "symbols",
+              "ms": 0.003917000000001281
+            },
+            {
+              "stage": "call-summary",
+              "ms": 0.1598329999999919
+            },
+            {
+              "stage": "pointer-and-commit",
+              "ms": 0.8532920000000104
+            }
+          ]
+        },
+        "replaced": {
+          "snapshot": 3,
+          "ms": 21.131124999999997,
+          "cpu": {
+            "user": 14315,
+            "system": 3031
+          },
+          "stages": [
+            {
+              "stage": "content-key",
+              "ms": 3.9809999999999945
+            },
+            {
+              "stage": "membership",
+              "ms": 15.50429200000002
+            },
+            {
+              "stage": "support-eligibility",
+              "ms": 0.02845800000000054
+            },
+            {
+              "stage": "navigation",
+              "ms": 0.05616700000001629
+            },
+            {
+              "stage": "symbols",
+              "ms": 0.0009579999999687061
+            },
+            {
+              "stage": "call-summary",
+              "ms": 0.06479200000001129
+            },
+            {
+              "stage": "pointer-and-commit",
+              "ms": 1.466957999999977
+            }
+          ]
+        },
+        "historicalVisible": 1,
+        "currentVisible": 0,
+        "pragmas": {
+          "journal_mode": "wal",
+          "synchronous": 2
+        }
+      },
+      {
+        "owners": 10000,
+        "setupMs": 832.2669589999999,
+        "initial": {
+          "snapshot": 1,
+          "ms": 168.35870899999986,
+          "cpu": {
+            "user": 161994,
+            "system": 20498
+          },
+          "stages": [
+            {
+              "stage": "content-key",
+              "ms": 57.85166600000002
+            },
+            {
+              "stage": "membership",
+              "ms": 100.00233399999979
+            },
+            {
+              "stage": "support-eligibility",
+              "ms": 0.16204100000004473
+            },
+            {
+              "stage": "navigation",
+              "ms": 0.4723340000000462
+            },
+            {
+              "stage": "symbols",
+              "ms": 0.0036250000000563887
+            },
+            {
+              "stage": "call-summary",
+              "ms": 0.3937499999999545
+            },
+            {
+              "stage": "pointer-and-commit",
+              "ms": 9.430957999999919
+            }
+          ]
+        },
+        "noop": {
+          "snapshot": 2,
+          "ms": 199.14316600000006,
+          "cpu": {
+            "user": 175821,
+            "system": 17324
+          },
+          "stages": [
+            {
+              "stage": "content-key",
+              "ms": 54.246832999999924
+            },
+            {
+              "stage": "membership",
+              "ms": 142.23920900000007
+            },
+            {
+              "stage": "support-eligibility",
+              "ms": 0.12979100000006838
+            },
+            {
+              "stage": "navigation",
+              "ms": 0.08429200000000492
+            },
+            {
+              "stage": "symbols",
+              "ms": 0.0015829999999823485
+            },
+            {
+              "stage": "call-summary",
+              "ms": 0.13045899999997346
+            },
+            {
+              "stage": "pointer-and-commit",
+              "ms": 2.2722080000000915
+            }
+          ]
+        },
+        "replaced": {
+          "snapshot": 3,
+          "ms": 206.29224999999997,
+          "cpu": {
+            "user": 175360,
+            "system": 23157
+          },
+          "stages": [
+            {
+              "stage": "content-key",
+              "ms": 47.85179199999993
+            },
+            {
+              "stage": "membership",
+              "ms": 155.92995799999994
+            },
+            {
+              "stage": "support-eligibility",
+              "ms": 0.03491699999995035
+            },
+            {
+              "stage": "navigation",
+              "ms": 0.05520799999999326
+            },
+            {
+              "stage": "symbols",
+              "ms": 0.0007500000001527951
+            },
+            {
+              "stage": "call-summary",
+              "ms": 0.0255419999998594
+            },
+            {
+              "stage": "pointer-and-commit",
+              "ms": 2.3632920000000013
+            }
+          ]
+        },
+        "historicalVisible": 1,
+        "currentVisible": 0,
+        "pragmas": {
+          "journal_mode": "wal",
+          "synchronous": 2
+        }
+      }
+    ],
+    "millionSource": {
+      "repository": "https://github.com/python/cpython",
+      "tag": "v3.14.0",
+      "sourceCommit": "ebf955df7a89ed0c7968f79faec1de49f61ed7cb",
+      "source": {
+        "selectedFiles": 3362,
+        "sourceFiles": 3191,
+        "lines": 1959715,
+        "bytes": 68452219,
+        "inventorySha256": "a41f5827acaca8cbcb2cc47df0ad4245ee065a08e3dacf016fc635960c7acd8e"
+      },
+      "attempt": {
+        "timeout": true,
+        "seconds": 420,
+        "elapsedMs": 420198.13920836896
+      },
+      "rss": {
+        "pid": 11933,
+        "intervalMs": 200,
+        "sampledPeakKiB": 3911104,
+        "samples": 1838
+      },
+      "completion": null,
+      "retainedDatabaseAfterStop": {
+        "activeSnapshot": null,
+        "snapshots": 0,
+        "runs": 0,
+        "owned": 0,
+        "facts": 0,
+        "quickCheck": "ok"
+      }
+    }
+  },
+  "validation": {
+    "localPriorIntegrated": null,
+    "localExact": {
+      "platform": "darwin-arm64",
+      "node": "v25.9.0",
+      "status": "completed-with-timeouts",
+      "success": false,
+      "numTestFiles": 44,
+      "numTotalTests": 329,
+      "numPassedTests": 327,
+      "numFailedTests": 2,
+      "numPendingTests": 0,
+      "failures": [
+        {
+          "file": "tests/semantic-multiprovider.test.ts",
+          "title": "seeded multi-provider edits match independent actual compiler rebuilds for facts, claims, coverage, projections and confidence",
+          "kind": "timeout",
+          "timeoutMs": 5400000
+        },
+        {
+          "file": "tests/semantic-multiprovider.test.ts",
+          "title": "actual accepted writer upgrade invalidates prior mappings, replays registered producers and preserves pinned history through GC",
+          "kind": "timeout",
+          "timeoutMs": 300000
+        }
+      ],
+      "independentCompilerOracle": {
+        "complete": false,
+        "executedChecks": 17,
+        "expectedChecks": 18,
+        "lastCompletedEdit": "schema contract replacement",
+        "sha256": "dc70837a21e42fb9c3b384ef20986cccd541608b9befc63c5f9acce605527e94"
+      },
+      "priorWriterUpgrade": "timed-out-without-completed-receipt",
+      "typecheck": "passed",
+      "productionBuild": "passed",
+      "strictEvidenceVerifier": "not-reached",
+      "rawReportSha256": "303bf218462acf6770791f5dac74f5264e5b72cabcbb9509efa16ec047bc268d",
+      "logSha256": "efe4be9eeaf523fa7f9d5e9d47a82d7d1a085d095c509dbbc71801d3507909de"
+    },
+    "focusedDecoderAndResourceLogSha256": "a2846f9c924c0231f81d06e90a311896deac66c35622cb6b10b3adcb5655bd4f",
+    "typecheckLogSha256": "b6afb03e277309bb5c81c26ee5941d9f67fd438e350389dfffa093d60b117431",
+    "buildLogSha256": "1bc2f0ae2e294fa8953070c6064220e764353aead38b1e7f594139e997240a4a",
+    "frozenPolicyOracles": {
+      "testsPassed": 6,
+      "skipped": 0,
+      "logSha256": "79b0af7e9d77f69d57367502c15b61c5cf11f7e880b8fd8ed77bf5f3d01fd075"
+    },
+    "githubActions": [
+      {
+        "id": 42783356918,
+        "sha": "3d73f5ef26f07d91333daa6eb90fdaaa523d0cc1",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/xpan0988/prograph/actions/runs/42783356918",
+        "jobs": [
+          {
+            "id": 129718463711,
+            "name": "regression (20)",
+            "head_sha": "3d73f5ef26f07d91333daa6eb90fdaaa523d0cc1",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/xpan0988/prograph/actions/runs/42783356918/job/129718463711",
+            "started_at": "2026-11-10T08:31:53Z",
+            "completed_at": "2026-11-10T09:07:59Z",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-10T08:31:53Z",
+                "completed_at": "2026-11-10T08:31:55Z"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-10T08:31:55Z",
+                "completed_at": "2026-11-10T08:31:56Z"
+              },
+              {
+                "name": "Run actions/setup-node@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-10T08:31:56Z",
+                "completed_at": "2026-11-10T08:32:00Z"
+              },
+              {
+                "name": "Run npm ci",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-10T08:32:00Z",
+                "completed_at": "2026-11-10T08:32:55Z"
+              },
+              {
+                "name": "Install explicit Rust qualification tools",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5,
+                "started_at": "2026-11-10T08:32:55Z",
+                "completed_at": "2026-11-10T08:33:02Z"
+              },
+              {
+                "name": "Run npm run lint",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6,
+                "started_at": "2026-11-10T08:33:02Z",
+                "completed_at": "2026-11-10T08:33:08Z"
+              },
+              {
+                "name": "Compile accepted prior writer for actual upgrade oracle",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 7,
+                "started_at": "2026-11-10T08:33:08Z",
+                "completed_at": "2026-11-10T08:33:35Z"
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8,
+                "started_at": "2026-11-10T08:33:35Z",
+                "completed_at": "2026-11-10T08:33:35Z"
+              },
+              {
+                "name": "Run actions/setup-go@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9,
+                "started_at": "2026-11-10T08:33:35Z",
+                "completed_at": "2026-11-10T08:33:41Z"
+              },
+              {
+                "name": "Run actions/setup-dotnet@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 10,
+                "started_at": "2026-11-10T08:33:41Z",
+                "completed_at": "2026-11-10T08:33:50Z"
+              },
+              {
+                "name": "Install pinned mainstream semantic qualification tools",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11,
+                "started_at": "2026-11-10T08:33:50Z",
+                "completed_at": "2026-11-10T08:34:56Z"
+              },
+              {
+                "name": "Complete tests, including actual Rust producer",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 12,
+                "started_at": "2026-11-10T08:34:56Z",
+                "completed_at": "2026-11-10T09:07:40Z"
+              },
+              {
+                "name": "Complete Node and UI build",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 13,
+                "started_at": "2026-11-10T09:07:40Z",
+                "completed_at": "2026-11-10T09:07:53Z"
+              },
+              {
+                "name": "Transaction and process recovery probes",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 14,
+                "started_at": "2026-11-10T09:07:53Z",
+                "completed_at": "2026-11-10T09:07:54Z"
+              },
+              {
+                "name": "Require executed qualification and recovery evidence",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 15,
+                "started_at": "2026-11-10T09:07:54Z",
+                "completed_at": "2026-11-10T09:07:54Z"
+              },
+              {
+                "name": "Run actions/upload-artifact@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 16,
+                "started_at": "2026-11-10T09:07:54Z",
+                "completed_at": "2026-11-10T09:07:55Z"
+              },
+              {
+                "name": "Post Run actions/setup-dotnet@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 28,
+                "started_at": "2026-11-10T09:07:55Z",
+                "completed_at": "2026-11-10T09:07:55Z"
+              },
+              {
+                "name": "Post Run actions/setup-go@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 29,
+                "started_at": "2026-11-10T09:07:55Z",
+                "completed_at": "2026-11-10T09:07:55Z"
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 30,
+                "started_at": "2026-11-10T09:07:55Z",
+                "completed_at": "2026-11-10T09:07:55Z"
+              },
+              {
+                "name": "Post Run actions/setup-node@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 31,
+                "started_at": "2026-11-10T09:07:55Z",
+                "completed_at": "2026-11-10T09:07:55Z"
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 32,
+                "started_at": "2026-11-10T09:07:55Z",
+                "completed_at": "2026-11-10T09:07:56Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 33,
+                "started_at": "2026-11-10T09:07:56Z",
+                "completed_at": "2026-11-10T09:07:56Z"
+              }
+            ]
+          },
+          {
+            "id": 129718464087,
+            "name": "regression (22)",
+            "head_sha": "3d73f5ef26f07d91333daa6eb90fdaaa523d0cc1",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/xpan0988/prograph/actions/runs/42783356918/job/129718464087",
+            "started_at": "2026-11-10T08:31:53Z",
+            "completed_at": "2026-11-10T09:42:51Z",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-10T08:31:54Z",
+                "completed_at": "2026-11-10T08:31:56Z"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-10T08:31:56Z",
+                "completed_at": "2026-11-10T08:31:57Z"
+              },
+              {
+                "name": "Run actions/setup-node@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-10T08:31:57Z",
+                "completed_at": "2026-11-10T08:31:58Z"
+              },
+              {
+                "name": "Run npm ci",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-10T08:31:58Z",
+                "completed_at": "2026-11-10T08:32:07Z"
+              },
+              {
+                "name": "Install explicit Rust qualification tools",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5,
+                "started_at": "2026-11-10T08:32:07Z",
+                "completed_at": "2026-11-10T08:32:16Z"
+              },
+              {
+                "name": "Run npm run lint",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6,
+                "started_at": "2026-11-10T08:32:16Z",
+                "completed_at": "2026-11-10T08:32:24Z"
+              },
+              {
+                "name": "Compile accepted prior writer for actual upgrade oracle",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 7,
+                "started_at": "2026-11-10T08:32:24Z",
+                "completed_at": "2026-11-10T08:33:03Z"
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8,
+                "started_at": "2026-11-10T08:33:03Z",
+                "completed_at": "2026-11-10T08:33:03Z"
+              },
+              {
+                "name": "Run actions/setup-go@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9,
+                "started_at": "2026-11-10T08:33:03Z",
+                "completed_at": "2026-11-10T08:33:11Z"
+              },
+              {
+                "name": "Run actions/setup-dotnet@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 10,
+                "started_at": "2026-11-10T08:33:11Z",
+                "completed_at": "2026-11-10T08:33:18Z"
+              },
+              {
+                "name": "Install pinned mainstream semantic qualification tools",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11,
+                "started_at": "2026-11-10T08:33:18Z",
+                "completed_at": "2026-11-10T08:35:08Z"
+              },
+              {
+                "name": "Complete tests, including actual Rust producer",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 12,
+                "started_at": "2026-11-10T08:35:08Z",
+                "completed_at": "2026-11-10T09:42:23Z"
+              },
+              {
+                "name": "Complete Node and UI build",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 13,
+                "started_at": "2026-11-10T09:42:23Z",
+                "completed_at": "2026-11-10T09:42:43Z"
+              },
+              {
+                "name": "Transaction and process recovery probes",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 14,
+                "started_at": "2026-11-10T09:42:43Z",
+                "completed_at": "2026-11-10T09:42:43Z"
+              },
+              {
+                "name": "Require executed qualification and recovery evidence",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 15,
+                "started_at": "2026-11-10T09:42:43Z",
+                "completed_at": "2026-11-10T09:42:43Z"
+              },
+              {
+                "name": "Run actions/upload-artifact@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 16,
+                "started_at": "2026-11-10T09:42:43Z",
+                "completed_at": "2026-11-10T09:42:45Z"
+              },
+              {
+                "name": "Post Run actions/setup-dotnet@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 28,
+                "started_at": "2026-11-10T09:42:45Z",
+                "completed_at": "2026-11-10T09:42:45Z"
+              },
+              {
+                "name": "Post Run actions/setup-go@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 29,
+                "started_at": "2026-11-10T09:42:45Z",
+                "completed_at": "2026-11-10T09:42:45Z"
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 30,
+                "started_at": "2026-11-10T09:42:45Z",
+                "completed_at": "2026-11-10T09:42:45Z"
+              },
+              {
+                "name": "Post Run actions/setup-node@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 31,
+                "started_at": "2026-11-10T09:42:45Z",
+                "completed_at": "2026-11-10T09:42:46Z"
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 32,
+                "started_at": "2026-11-10T09:42:46Z",
+                "completed_at": "2026-11-10T09:42:46Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 33,
+                "started_at": "2026-11-10T09:42:46Z",
+                "completed_at": "2026-11-10T09:42:46Z"
+              }
+            ]
+          },
+          {
+            "id": 129718464148,
+            "name": "regression (24)",
+            "head_sha": "3d73f5ef26f07d91333daa6eb90fdaaa523d0cc1",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/xpan0988/prograph/actions/runs/42783356918/job/129718464148",
+            "started_at": "2026-11-10T08:31:53Z",
+            "completed_at": "2026-11-10T09:49:21Z",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-10T08:31:54Z",
+                "completed_at": "2026-11-10T08:31:56Z"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-10T08:31:56Z",
+                "completed_at": "2026-11-10T08:31:57Z"
+              },
+              {
+                "name": "Run actions/setup-node@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-10T08:31:57Z",
+                "completed_at": "2026-11-10T08:31:58Z"
+              },
+              {
+                "name": "Run npm ci",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-10T08:31:58Z",
+                "completed_at": "2026-11-10T08:32:07Z"
+              },
+              {
+                "name": "Install explicit Rust qualification tools",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5,
+                "started_at": "2026-11-10T08:32:07Z",
+                "completed_at": "2026-11-10T08:32:17Z"
+              },
+              {
+                "name": "Run npm run lint",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6,
+                "started_at": "2026-11-10T08:32:17Z",
+                "completed_at": "2026-11-10T08:32:24Z"
+              },
+              {
+                "name": "Compile accepted prior writer for actual upgrade oracle",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 7,
+                "started_at": "2026-11-10T08:32:24Z",
+                "completed_at": "2026-11-10T08:32:58Z"
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8,
+                "started_at": "2026-11-10T08:32:58Z",
+                "completed_at": "2026-11-10T08:32:58Z"
+              },
+              {
+                "name": "Run actions/setup-go@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9,
+                "started_at": "2026-11-10T08:32:58Z",
+                "completed_at": "2026-11-10T08:33:07Z"
+              },
+              {
+                "name": "Run actions/setup-dotnet@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 10,
+                "started_at": "2026-11-10T08:33:07Z",
+                "completed_at": "2026-11-10T08:33:19Z"
+              },
+              {
+                "name": "Install pinned mainstream semantic qualification tools",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11,
+                "started_at": "2026-11-10T08:33:19Z",
+                "completed_at": "2026-11-10T08:35:50Z"
+              },
+              {
+                "name": "Complete tests, including actual Rust producer",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 12,
+                "started_at": "2026-11-10T08:35:50Z",
+                "completed_at": "2026-11-10T09:48:57Z"
+              },
+              {
+                "name": "Complete Node and UI build",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 13,
+                "started_at": "2026-11-10T09:48:57Z",
+                "completed_at": "2026-11-10T09:49:15Z"
+              },
+              {
+                "name": "Transaction and process recovery probes",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 14,
+                "started_at": "2026-11-10T09:49:15Z",
+                "completed_at": "2026-11-10T09:49:15Z"
+              },
+              {
+                "name": "Require executed qualification and recovery evidence",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 15,
+                "started_at": "2026-11-10T09:49:15Z",
+                "completed_at": "2026-11-10T09:49:15Z"
+              },
+              {
+                "name": "Run actions/upload-artifact@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 16,
+                "started_at": "2026-11-10T09:49:15Z",
+                "completed_at": "2026-11-10T09:49:16Z"
+              },
+              {
+                "name": "Post Run actions/setup-dotnet@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 28,
+                "started_at": "2026-11-10T09:49:16Z",
+                "completed_at": "2026-11-10T09:49:17Z"
+              },
+              {
+                "name": "Post Run actions/setup-go@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 29,
+                "started_at": "2026-11-10T09:49:17Z",
+                "completed_at": "2026-11-10T09:49:17Z"
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 30,
+                "started_at": "2026-11-10T09:49:17Z",
+                "completed_at": "2026-11-10T09:49:17Z"
+              },
+              {
+                "name": "Post Run actions/setup-node@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 31,
+                "started_at": "2026-11-10T09:49:17Z",
+                "completed_at": "2026-11-10T09:49:18Z"
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 32,
+                "started_at": "2026-11-10T09:49:18Z",
+                "completed_at": "2026-11-10T09:49:18Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 33,
+                "started_at": "2026-11-10T09:49:18Z",
+                "completed_at": "2026-11-10T09:49:18Z"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "githubArtifacts": [
+      {
+        "artifactId": 13749839486,
+        "name": "semantic-evidence-node-20",
+        "sha256": "895d23ccf8abcb846ae8203748d6e5f48f3b76b9f3541ef3b10ba92f844a513c",
+        "commit": "3d73f5ef26f07d91333daa6eb90fdaaa523d0cc1",
+        "node": "v20.20.2",
+        "tests": {
+          "success": true,
+          "numTotalTests": 329,
+          "numPassedTests": 329,
+          "numPendingTests": 0,
+          "numFailedTests": 0,
+          "numTestFiles": 44
+        },
+        "recovery": {
+          "node": "v20.20.2",
+          "probes": [
+            {
+              "point": "before-seal",
+              "exitCode": 57,
+              "activeSnapshot": 1,
+              "visible": [
+                "callee"
+              ],
+              "integrity": "ok",
+              "baselineRetained": true
+            },
+            {
+              "point": "before-publish",
+              "exitCode": 57,
+              "activeSnapshot": 1,
+              "visible": [
+                "callee"
+              ],
+              "integrity": "ok",
+              "baselineRetained": true
+            },
+            {
+              "point": "during-publish",
+              "exitCode": 57,
+              "activeSnapshot": 1,
+              "visible": [
+                "callee"
+              ],
+              "integrity": "ok",
+              "baselineRetained": true
+            },
+            {
+              "point": "after-publish",
+              "exitCode": 57,
+              "activeSnapshot": 2,
+              "visible": [
+                "other"
+              ],
+              "integrity": "ok",
+              "baselineRetained": true
+            }
+          ],
+          "corruption": {
+            "refused": true,
+            "unchanged": true
+          }
+        },
+        "independentCompilerOracle": {
+          "complete": true,
+          "executedChecks": 18,
+          "expectedChecks": 18,
+          "seed": 20,
+          "scope": "Actual TS/Clang/Rust/Python/Go/Java/Csharp tools, fresh independent index and reauthorized execution control per edit; no copied facts or producer outputs"
+        },
+        "priorWriterUpgrade": {
+          "freshness": "fresh",
+          "unpinnedGc": "complete"
+        },
+        "jobId": 129718463711,
+        "jobLogSha256": "b5b3d4e65892306922d078ce33d95186d8658168192d2dc931aa83cf6b197685"
+      },
+      {
+        "artifactId": 13752726232,
+        "name": "semantic-evidence-node-22",
+        "sha256": "606cd39472f372a63d2cafb2112a9fd6533daa1240bf86180c0c81ea3dcc7675",
+        "commit": "3d73f5ef26f07d91333daa6eb90fdaaa523d0cc1",
+        "node": "v22.23.4",
+        "tests": {
+          "success": true,
+          "numTotalTests": 329,
+          "numPassedTests": 329,
+          "numPendingTests": 0,
+          "numFailedTests": 0,
+          "numTestFiles": 44
+        },
+        "recovery": {
+          "node": "v22.23.4",
+          "probes": [
+            {
+              "point": "before-seal",
+              "exitCode": 57,
+              "activeSnapshot": 1,
+              "visible": [
+                "callee"
+              ],
+              "integrity": "ok",
+              "baselineRetained": true
+            },
+            {
+              "point": "before-publish",
+              "exitCode": 57,
+              "activeSnapshot": 1,
+              "visible": [
+                "callee"
+              ],
+              "integrity": "ok",
+              "baselineRetained": true
+            },
+            {
+              "point": "during-publish",
+              "exitCode": 57,
+              "activeSnapshot": 1,
+              "visible": [
+                "callee"
+              ],
+              "integrity": "ok",
+              "baselineRetained": true
+            },
+            {
+              "point": "after-publish",
+              "exitCode": 57,
+              "activeSnapshot": 2,
+              "visible": [
+                "other"
+              ],
+              "integrity": "ok",
+              "baselineRetained": true
+            }
+          ],
+          "corruption": {
+            "refused": true,
+            "unchanged": true
+          }
+        },
+        "independentCompilerOracle": {
+          "complete": true,
+          "executedChecks": 18,
+          "expectedChecks": 18,
+          "seed": 22,
+          "scope": "Actual TS/Clang/Rust/Python/Go/Java/Csharp tools, fresh independent index and reauthorized execution control per edit; no copied facts or producer outputs"
+        },
+        "priorWriterUpgrade": {
+          "freshness": "fresh",
+          "unpinnedGc": "complete"
+        },
+        "jobId": 129718464087,
+        "jobLogSha256": "aea5903204076211dac8a8a038a83db7b1bdf47e1cb7321ceefaf351286142d2"
+      },
+      {
+        "artifactId": 13752507971,
+        "name": "semantic-evidence-node-24",
+        "sha256": "a4d44c6ad42c7972aef8d184d422109cee6fb916dafe8e7fb45dc69f8c702d38",
+        "commit": "3d73f5ef26f07d91333daa6eb90fdaaa523d0cc1",
+        "node": "v24.22.2",
+        "tests": {
+          "success": true,
+          "numTotalTests": 329,
+          "numPassedTests": 329,
+          "numPendingTests": 0,
+          "numFailedTests": 0,
+          "numTestFiles": 44
+        },
+        "recovery": {
+          "node": "v24.22.2",
+          "probes": [
+            {
+              "point": "before-seal",
+              "exitCode": 57,
+              "activeSnapshot": 1,
+              "visible": [
+                "callee"
+              ],
+              "integrity": "ok",
+              "baselineRetained": true
+            },
+            {
+              "point": "before-publish",
+              "exitCode": 57,
+              "activeSnapshot": 1,
+              "visible": [
+                "callee"
+              ],
+              "integrity": "ok",
+              "baselineRetained": true
+            },
+            {
+              "point": "during-publish",
+              "exitCode": 57,
+              "activeSnapshot": 1,
+              "visible": [
+                "callee"
+              ],
+              "integrity": "ok",
+              "baselineRetained": true
+            },
+            {
+              "point": "after-publish",
+              "exitCode": 57,
+              "activeSnapshot": 2,
+              "visible": [
+                "other"
+              ],
+              "integrity": "ok",
+              "baselineRetained": true
+            }
+          ],
+          "corruption": {
+            "refused": true,
+            "unchanged": true
+          }
+        },
+        "independentCompilerOracle": {
+          "complete": true,
+          "executedChecks": 18,
+          "expectedChecks": 18,
+          "seed": 24,
+          "scope": "Actual TS/Clang/Rust/Python/Go/Java/Csharp tools, fresh independent index and reauthorized execution control per edit; no copied facts or producer outputs"
+        },
+        "priorWriterUpgrade": {
+          "freshness": "fresh",
+          "unpinnedGc": "complete"
+        },
+        "jobId": 129718464148,
+        "jobLogSha256": "4b2f3809b6cc86c2df29b9837dc04419accbd294847806e4e4ec0a9cab8fcb89"
+      }
+    ]
+  }
+}

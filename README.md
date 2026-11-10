@@ -42,8 +42,8 @@ The Knowledge Overlay is local-first and deterministic. It does not use cloud se
 ProGraph is currently maintained as a local self-use tool.
 
 ```bash
-cd /Users/prograph
-npm install
+cd /path/to/prograph
+npm ci
 npm run build
 npm link
 ```
@@ -312,7 +312,21 @@ MCP handlers are thin wrappers over the shared query and status services. They r
 
 Configure `prograph mcp /absolute/repository/path` as a stdio server in Claude Code or Codex. Add `--index /absolute/index/path` for a custom index. Start with `get_status` to check live source freshness. Use `query_semantic` with `find` and the exact name, then use the returned key for definitions, references and call navigation. Check the file and variant if multiple keys match. A definition's source digest and range refer to the selected snapshot. Use semantic `status` pages for individual provider coverage and follow `nextCursor` when present.
 
+For Claude Code, register the stdio command with `claude mcp add --transport stdio prograph -- /absolute/path/to/prograph mcp /absolute/repository/path`. For Codex, a dedicated server entry can use the read-only annotations with the `writes` approval mode. [Codex MCP configuration](https://learn.chatgpt.com/docs/extend/mcp)
+
+```toml
+[mcp_servers.prograph]
+command = "/absolute/path/to/prograph"
+args = ["mcp", "/absolute/repository/path"]
+cwd = "/absolute/repository/path"
+default_tools_approval_mode = "writes"
+```
+
+Launch indexing and MCP from the same working directory. The TypeScript input check records that directory as part of the compiler environment.
+
 MCP responses include structured content alongside the existing JSON text. Compatibility graph tools include syntax and heuristic evidence. A caller or callee response with `limitReached` may omit edges. Empty pages report zero verified results for that page. The current providers cannot prove that a repository has no callers.
+
+An observed TypeScript package specifier without a compiler binding is available with `includeUnresolved`. Run sync after an adapter version change to update its confidence in an existing index.
 
 Available MCP capabilities include:
 
